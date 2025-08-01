@@ -16,7 +16,9 @@ public class RenderState {
             AdapterForNode<Block, BlockRenderer>(),
             AdapterForNode<Return, ReturnRenderer>(),
             AdapterForNode<DoStatement, DoRenderer>(),
-            AdapterForNode<Assignment, AssignmentRenderer>()
+            AdapterForNode<Assignment, AssignmentRenderer>(),
+            AdapterForNode<Var, VarRenderer>(),
+            AdapterForNode<Expression, ExpressionRenderer>()
         ]
     );
 
