@@ -12,11 +12,7 @@ public static class SyntaxUtilities {
         return hasPublic;
     }
 
-    /// <summary>
-    /// Maps a supposedly primitive type to the Luau equivalent.
-    /// </summary>
-    /// <returns>The mapped type, <c>null</c> if it isn't a primitive.</returns>
-    public static string? MapPrimitive(ITypeSymbol typeSymbol) {
+    public static string MapPrimitive(ITypeSymbol typeSymbol) {
         return typeSymbol.SpecialType switch {
             SpecialType.System_Boolean => "boolean",
             SpecialType.System_Byte => "number",
@@ -32,8 +28,8 @@ public static class SyntaxUtilities {
             SpecialType.System_Char => "string",
             SpecialType.System_String => "string",
             SpecialType.System_Object => "any",
-
-            _ => null
+            
+            _ => throw new ArgumentOutOfRangeException(nameof(typeSymbol), typeSymbol.SpecialType, null)
         };
     }
 

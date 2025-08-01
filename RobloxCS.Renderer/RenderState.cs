@@ -2,6 +2,7 @@
 using System.Text;
 using RobloxCS.AST;
 using RobloxCS.AST.Statements;
+using RobloxCS.AST.Types;
 using RobloxCS.Renderer.Renderers;
 
 namespace RobloxCS.Renderer;
@@ -18,7 +19,10 @@ public class RenderState {
             AdapterForNode<DoStatement, DoRenderer>(),
             AdapterForNode<Assignment, AssignmentRenderer>(),
             AdapterForNode<Var, VarRenderer>(),
-            AdapterForNode<Expression, ExpressionRenderer>()
+            AdapterForNode<Expression, ExpressionRenderer>(),
+            AdapterForNode<TypeDeclaration, TypeDeclarationRenderer>(),
+            AdapterForNode<TypeInfo, TypeInfoRenderer>(),
+            AdapterForNode<TypeFieldKey, TypeFieldKeyRenderer>()
         ]
     );
 

@@ -33,7 +33,10 @@ public sealed class CSharpCompiler {
         var references = AppDomain.CurrentDomain.GetAssemblies()
             .Where(a => !a.IsDynamic && !string.IsNullOrWhiteSpace(a.Location))
             .Select(a => MetadataReference.CreateFromFile(a.Location))
-            .Cast<MetadataReference>();
+            .Concat([MetadataReference.CreateFromFile(typeof(List<>).Assembly.Location)])
+            .Distinct()
+            .Cast<MetadataReference>()
+            .ToList();
 
         var compilation = CSharpCompilation.Create(
             assemblyName: "Anonymous",

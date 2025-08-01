@@ -1,6 +1,7 @@
 ﻿namespace RobloxCS.Example;
 
 internal class Program {
-    internal static void Main(string[] args) {
-    }
+    public int A = 0;
+    
+    internal static void Main(string[] args) { }
 }

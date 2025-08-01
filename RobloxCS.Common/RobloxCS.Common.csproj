@@ -6,9 +6,4 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\RobloxCS.AST\RobloxCS.AST.csproj" />
-      <ProjectReference Include="..\RobloxCS.Common\RobloxCS.Common.csproj" />
-    </ItemGroup>
-
 </Project>
