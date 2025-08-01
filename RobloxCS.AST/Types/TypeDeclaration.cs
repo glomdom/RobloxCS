@@ -6,4 +6,11 @@ public sealed class TypeDeclaration : AstNode {
     public required string Name { get; set; }
     public List<GenericDeclaration>? Declarations { get; set; }
     public required TypeInfo DeclareAs { get; set; }
+
+    public static TypeDeclaration EmptyTable(string name) {
+        return new TypeDeclaration {
+            Name = name,
+            DeclareAs = TableTypeInfo.Empty(),
+        };
+    }
 }
