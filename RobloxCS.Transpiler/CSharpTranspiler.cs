@@ -5,6 +5,7 @@ using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
+using RobloxCS.AST.Types;
 
 namespace RobloxCS.Transpiler;
 
@@ -21,6 +22,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     public List<Statement> Exports { get; set; } = [];
 
     public Block? CurrentBlock { get; set; }
+    public TypeDeclaration? CurrentTypeDeclaration { get; set; }
 
     public CSharpTranspiler(TranspilerOptions options, CSharpCompiler compiler) {
         Options = options;
@@ -44,7 +46,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         Nodes.Add(local);
     
         var classBlock = Block.Empty();
-        classBlock.AddStatement(new Assignment([VarName.FromString(className)], [new BooleanExpression(false)]));
+        classBlock.AddStatement(new Assignment([VarName.FromString(className), VarName.FromString("doubleTest")], [new BooleanExpression(false), new BooleanExpression(true)]));
         
         CurrentBlock = classBlock;
         foreach (var member in node.Members) {
