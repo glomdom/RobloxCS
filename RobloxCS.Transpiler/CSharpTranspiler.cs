@@ -42,7 +42,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     public override void VisitClassDeclaration(ClassDeclarationSyntax node) {
         var className = node.Identifier.ValueText;
     
-        var local = LocalAssignment.AloneWithoutExpr(className);
+        var local = LocalAssignment.Naked(className);
         Nodes.Add(local);
     
         var classBlock = Block.Empty();

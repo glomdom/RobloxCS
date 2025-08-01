@@ -15,7 +15,7 @@ public sealed class LocalAssignment : Statement {
         Expressions = expressions;
     }
 
-    public static LocalAssignment AloneWithoutExpr(string name) {
+    public static LocalAssignment Naked(string name) {
         return new LocalAssignment([new SymbolExpression(name)], []);
     }
 
