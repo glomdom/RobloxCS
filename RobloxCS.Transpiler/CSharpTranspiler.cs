@@ -93,13 +93,11 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
         if (variables.Count == 1) {
             var var = variables[0];
-            var fieldType = Semantics.GetTypeInfo(decl.Type).Type;
-            
-            Console.WriteLine(fieldType);
+            var fieldType = Semantics.GetTypeInfo(decl.Type).Type; // this shouldn't error
 
             return new TypeField {
                 Key = NameTypeFieldKey.FromString(var.Identifier.ValueText),
-                Value = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(Semantics.GetTypeInfo(decl.Type).Type!))
+                Value = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType!))
             };
         }
 
