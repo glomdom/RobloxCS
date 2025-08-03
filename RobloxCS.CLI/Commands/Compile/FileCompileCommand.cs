@@ -37,8 +37,6 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
 
         foreach (var diagnostic in diagnosticMessages) {
             _console.MarkupLine(diagnostic);
-
-            return 1;
         }
 
         var transpiler = new CSharpTranspiler(options, compiler);
