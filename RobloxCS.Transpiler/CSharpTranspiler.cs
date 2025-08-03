@@ -71,7 +71,10 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
     public override void VisitFieldDeclaration(FieldDeclarationSyntax node) {
         if (CurrentTypeDeclaration?.DeclareAs is TableTypeInfo tableInfo) {
-            tableInfo.Fields.Add(GenerateTypeFieldFromField(node));
+            var typeFields = GenerateTypeFieldsFromField(node);
+            foreach (var field in typeFields) {
+                tableInfo.Fields.Add(field);
+            }
 
             return;
         }
@@ -87,20 +90,28 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         base.VisitFieldDeclaration(node);
     }
 
-    private TypeField GenerateTypeFieldFromField(FieldDeclarationSyntax fieldSyntax) {
+    private List<TypeField> GenerateTypeFieldsFromField(FieldDeclarationSyntax fieldSyntax) {
         var decl = fieldSyntax.Declaration;
         var variables = decl.Variables;
 
         if (variables.Count == 1) {
             var var = variables[0];
-            var fieldType = Semantics.GetTypeInfo(decl.Type).Type; // this shouldn't error
+            var fieldType = Semantics.GetTypeInfo(decl.Type).Type!; // this shouldn't error
 
-            return new TypeField {
-                Key = NameTypeFieldKey.FromString(var.Identifier.ValueText),
-                Value = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType!))
-            };
+            return [
+                new TypeField {
+                    Key = NameTypeFieldKey.FromString(var.Identifier.ValueText),
+                    Value = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType))
+                }
+            ];
+        } else {
+            var varNames = variables.Select(v => v.Identifier.ValueText);
+            var fieldType = Semantics.GetTypeInfo(decl.Type).Type!;
+            var primitiveType = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType));
+
+            var types = varNames.Select(name => new TypeField { Key = NameTypeFieldKey.FromString(name), Value = primitiveType });
+
+            return [..types];
         }
-
-        return default;
     }
 }
