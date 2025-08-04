@@ -41,10 +41,6 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
 
         var transpiler = new CSharpTranspiler(options, compiler);
         transpiler.Transpile();
-        
-        foreach (var node in transpiler.Nodes) {
-            Console.WriteLine(node.GetType());
-        }
 
         var renderer = new Renderer.Renderer(transpiler.Nodes);
         var output = renderer.Render();
