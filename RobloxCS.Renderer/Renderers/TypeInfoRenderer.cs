@@ -13,7 +13,7 @@ public class TypeInfoRenderer : IRenderer<TypeInfo> {
                 var hasModifier = field.Access is not null;
                 
                 if (hasModifier) {
-                    state.AppendIndented(field.Access!.Value.ToFriendlyString().ToLowerInvariant());
+                    state.AppendIndented(field.Access!.Value.ToFriendlyString().ToLowerInvariant() + " ");
                 } else {
                     state.AppendIndent();
                 }
