@@ -38,7 +38,7 @@ public class RenderState {
 
     public void RenderPunctuated<T>(IList<T> list, RenderState state) where T : AstNode {
         for (var i = 0; i < list.Count; i++) {
-            var renderer = GetRenderer(typeof(T));
+            var renderer = GetRenderer<T>();
             renderer.Render(state, list[i]);
 
             if (i != list.Count - 1) {
