@@ -70,22 +70,22 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         var decl = fieldSyntax.Declaration;
         var variables = decl.Variables;
 
+        var fieldType = InferNonnull(decl.Type);
+        var primitiveType = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType));
+
         if (variables.Count == 1) {
             var var = variables[0];
-            var fieldType = Semantics.GetTypeInfo(decl.Type).Type!; // this shouldn't error
             var isReadonly = fieldSyntax.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
 
             return [
                 new TypeField {
                     Key = NameTypeFieldKey.FromString(var.Identifier.ValueText),
                     Access = isReadonly ? AccessModifier.Read : null,
-                    Value = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType))
+                    Value = primitiveType,
                 }
             ];
         } else {
             var varNames = variables.Select(v => v.Identifier.ValueText);
-            var fieldType = Semantics.GetTypeInfo(decl.Type).Type!;
-            var primitiveType = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType));
             var isReadonly = fieldSyntax.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
 
             var types = varNames.Select(name => new TypeField {
@@ -127,5 +127,14 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
         CurrentBlock = null;
         Nodes.Add(DoStatement.From(classBlock));
+    }
+
+    private ITypeSymbol InferNonnull(TypeSyntax syntax) {
+        var fieldType = Semantics.GetTypeInfo(syntax).Type!;
+        if (fieldType is IErrorTypeSymbol err) {
+            throw new Exception("Error occured while attempting to infer type.");
+        }
+
+        return fieldType;
     }
 }
