@@ -1,33 +1,19 @@
 ﻿using System.Text;
 using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Types;
 
 namespace RobloxCS.AST.Statements;
 
 public sealed class LocalAssignment : Statement {
-    public List<SymbolExpression> Names { get; set; }
-    public List<Expression> Expressions { get; set; }
+    public required List<SymbolExpression> Names { get; set; }
+    public required List<Expression> Expressions { get; set; }
+    public required List<TypeInfo> Types { get; set; }
 
-    public LocalAssignment(
-        List<SymbolExpression> names,
-        List<Expression> expressions
-    ) {
-        Names = names;
-        Expressions = expressions;
-    }
-
-    public static LocalAssignment Naked(string name) {
-        return new LocalAssignment([new SymbolExpression(name)], []);
-    }
-
-    public override string ToString() {
-        var sb = new StringBuilder();
-        sb.Append("local ");
-        sb.Append(string.Join(", ", Names));
-
-        if (Expressions.Count == 0) return sb.ToString();
-        sb.Append(" = ");
-        sb.Append(string.Join(", ", Expressions));
-
-        return sb.ToString();
+    public static LocalAssignment Naked(string name, TypeInfo type) {
+        return new LocalAssignment {
+            Names = [SymbolExpression.FromString(name)],
+            Expressions = [],
+            Types = [type]
+        };
     }
 }

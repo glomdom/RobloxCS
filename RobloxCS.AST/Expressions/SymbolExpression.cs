@@ -1,11 +1,7 @@
 ﻿namespace RobloxCS.AST.Expressions;
 
 public sealed class SymbolExpression : Expression {
-    public string Value { get; set; }
+    public required string Value { get; set; }
 
-    public SymbolExpression(string value) {
-        Value = value;
-    }
-
-    public override string ToString() => Value;
+    public static SymbolExpression FromString(string name) => new() { Value = name };
 }

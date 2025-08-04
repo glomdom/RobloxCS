@@ -34,7 +34,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         if (Options.ScriptType != ScriptType.Module) return;
 
         // handle module exports (functions, etc)
-        var moduleReturn = Exports.Count == 0 ? new Return([new SymbolExpression("nil")]) : new Return([]);
+        var moduleReturn = Exports.Count == 0 ? new Return([SymbolExpression.FromString("nil")]) : new Return([]);
         Nodes.Add(moduleReturn);
     }
 
@@ -126,7 +126,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
                         ReturnType = BasicTypeInfo.Void()
                     };
 
-                    if (CurrentTypeDeclaration?.DeclareAs is TableTypeInfo tableInfo) {
+                    if (CurrentTypeDeclaration!.DeclareAs is TableTypeInfo tableInfo) {
                         tableInfo.Fields.Add(TypeField.FromNameAndType("constructor", ctorType));
                     }
 
@@ -144,16 +144,16 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
             }
         }
 
+
         CurrentTypeDeclaration = null;
         Nodes.Add(classInstanceDecl);
-    }
 
+        var local = LocalAssignment.Naked(className, BasicTypeInfo.FromString(classInstanceDecl.Name));
+        Nodes.Add(local);
+    }
 
     private void ProcessClassRuntimeFields(ClassDeclarationSyntax node) {
         var className = node.Identifier.ValueText;
-
-        var local = LocalAssignment.Naked(className);
-        Nodes.Add(local);
 
         var classBlock = Block.Empty();
         CurrentBlock = classBlock;
