@@ -1,7 +1,6 @@
 ﻿// ReSharper disable ClassNeverInstantiated.Global
 
 using System.ComponentModel;
-using RobloxCS.AST;
 using RobloxCS.Transpiler;
 using Spectre.Console;
 using Spectre.Console.Cli;
