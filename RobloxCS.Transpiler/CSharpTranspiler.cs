@@ -41,32 +41,8 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     }
 
     public override void VisitClassDeclaration(ClassDeclarationSyntax node) {
-        var className = node.Identifier.ValueText;
-
-        var classInstanceDecl = TypeDeclaration.EmptyTable($"_Instance{className}");
-        CurrentTypeDeclaration = classInstanceDecl;
-
-        foreach (var member in node.Members) {
-            Visit(member);
-        }
-
-        CurrentTypeDeclaration = null;
-        Nodes.Add(classInstanceDecl);
-
-        var local = LocalAssignment.Naked(className);
-        Nodes.Add(local);
-
-        var classBlock = Block.Empty();
-        classBlock.AddStatement(new Assignment([VarName.FromString(className), VarName.FromString("doubleTest")],
-            [new BooleanExpression(false), new BooleanExpression(true)]));
-
-        CurrentBlock = classBlock;
-        foreach (var member in node.Members) {
-            Visit(member);
-        }
-
-        CurrentBlock = null;
-        Nodes.Add(DoStatement.From(classBlock));
+        ProcessClassTypeDeclaration(node);
+        ProcessClassRuntimeFields(node);
     }
 
     public override void VisitFieldDeclaration(FieldDeclarationSyntax node) {
@@ -97,10 +73,12 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         if (variables.Count == 1) {
             var var = variables[0];
             var fieldType = Semantics.GetTypeInfo(decl.Type).Type!; // this shouldn't error
+            var isReadonly = fieldSyntax.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
 
             return [
                 new TypeField {
                     Key = NameTypeFieldKey.FromString(var.Identifier.ValueText),
+                    Access = isReadonly ? AccessModifier.Read : null,
                     Value = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType))
                 }
             ];
@@ -108,10 +86,46 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
             var varNames = variables.Select(v => v.Identifier.ValueText);
             var fieldType = Semantics.GetTypeInfo(decl.Type).Type!;
             var primitiveType = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType));
+            var isReadonly = fieldSyntax.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
 
-            var types = varNames.Select(name => new TypeField { Key = NameTypeFieldKey.FromString(name), Value = primitiveType });
+            var types = varNames.Select(name => new TypeField {
+                Key = NameTypeFieldKey.FromString(name),
+                Access = isReadonly ? AccessModifier.Read : null,
+                Value = primitiveType
+            });
 
             return [..types];
         }
+    }
+
+    private void ProcessClassTypeDeclaration(ClassDeclarationSyntax node) {
+        var className = node.Identifier.ValueText;
+
+        var classInstanceDecl = TypeDeclaration.EmptyTable($"_Instance{className}");
+        CurrentTypeDeclaration = classInstanceDecl;
+
+        foreach (var member in node.Members) {
+            Visit(member);
+        }
+
+        CurrentTypeDeclaration = null;
+        Nodes.Add(classInstanceDecl);
+    }
+
+    private void ProcessClassRuntimeFields(ClassDeclarationSyntax node) {
+        var className = node.Identifier.ValueText;
+
+        var local = LocalAssignment.Naked(className);
+        Nodes.Add(local);
+
+        var classBlock = Block.Empty();
+        CurrentBlock = classBlock;
+
+        foreach (var member in node.Members) {
+            Visit(member);
+        }
+
+        CurrentBlock = null;
+        Nodes.Add(DoStatement.From(classBlock));
     }
 }
