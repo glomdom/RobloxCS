@@ -108,42 +108,48 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
             Visit(member);
         }
 
-        var hasConstructor = node.Members.Any(m => m is ConstructorDeclarationSyntax);
-        if (hasConstructor) {
-            var ctor = node.Members.OfType<ConstructorDeclarationSyntax>()
-                .First(); // TODO: support multiple constructors, requires figuring out method overloading
+        var classSymbol = Semantics.GetDeclaredSymbol(node);
+        if (classSymbol != null) {
+            var ctors = classSymbol.Constructors
+                .Where(c => !c.IsStatic)
+                .ToList();
 
-            Console.WriteLine(ctor.ParameterList.Parameters);
-            
-            var pars = ctor.ParameterList.Parameters;
-            var parArguments = new List<TypeArgument>(pars.Count);
-            foreach (var t in pars) {
-                var inferred = SyntaxUtilities.MapPrimitive(InferNonnull(t.Type!));
-                parArguments.Add(TypeArgument.From(t.Identifier.ValueText, BasicTypeInfo.FromString(inferred)));
-            }
+            if (ctors.Count > 0) {
+                foreach (var ctorSymbol in ctors) {
+                    var parameters = ctorSymbol.Parameters.Select(p =>
+                        TypeArgument.From(
+                            p.Name,
+                            SyntaxUtilities.BasicFromSymbol(p.Type)
+                        )
+                    ).ToList();
 
-            var paramlessCtorType = new CallbackTypeInfo {
-                Arguments = parArguments,
-                ReturnType = BasicTypeInfo.Void(),
-            };
-            
-            if (CurrentTypeDeclaration?.DeclareAs is TableTypeInfo tableInfo) {
-                tableInfo.Fields.Add(TypeField.FromNameAndType("constructor", paramlessCtorType));
-            }
-        } else {
-            var paramlessCtorType = new CallbackTypeInfo {
-                Arguments = [],
-                ReturnType = BasicTypeInfo.Void(),
-            };
+                    var ctorType = new CallbackTypeInfo {
+                        Arguments = parameters,
+                        ReturnType = BasicTypeInfo.Void()
+                    };
 
-            if (CurrentTypeDeclaration?.DeclareAs is TableTypeInfo tableInfo) {
-                tableInfo.Fields.Add(TypeField.FromNameAndType("constructor", paramlessCtorType));
+                    if (CurrentTypeDeclaration?.DeclareAs is TableTypeInfo tableInfo) {
+                        tableInfo.Fields.Add(TypeField.FromNameAndType("constructor", ctorType));
+                    }
+
+                    break; // TODO: more than 1 ctor
+                }
+            } else {
+                var ctorType = new CallbackTypeInfo {
+                    Arguments = [],
+                    ReturnType = BasicTypeInfo.Void()
+                };
+
+                if (CurrentTypeDeclaration?.DeclareAs is TableTypeInfo tableInfo) {
+                    tableInfo.Fields.Add(TypeField.FromNameAndType("constructor", ctorType));
+                }
             }
         }
 
         CurrentTypeDeclaration = null;
         Nodes.Add(classInstanceDecl);
     }
+
 
     private void ProcessClassRuntimeFields(ClassDeclarationSyntax node) {
         var className = node.Identifier.ValueText;

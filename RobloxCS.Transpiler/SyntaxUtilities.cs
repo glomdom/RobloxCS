@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using RobloxCS.AST.Types;
 
 namespace RobloxCS.Transpiler;
 
@@ -10,6 +11,17 @@ public static class SyntaxUtilities {
         var hasPublic = modifiers.Any(m => m.IsKind(SyntaxKind.PublicKeyword));
 
         return hasPublic;
+    }
+
+    public static BasicTypeInfo BasicFromSymbol(ITypeSymbol symbol) {
+        return symbol.SpecialType switch {
+            SpecialType.System_Boolean => BasicTypeInfo.Boolean(),
+            SpecialType.System_Int32 => BasicTypeInfo.Number(),
+            SpecialType.System_Void => BasicTypeInfo.Void(),
+            SpecialType.System_String => BasicTypeInfo.String(),
+
+            _ => throw new ArgumentOutOfRangeException(nameof(symbol), symbol.SpecialType, null),
+        };
     }
 
     public static string MapPrimitive(ITypeSymbol typeSymbol) {
@@ -28,7 +40,7 @@ public static class SyntaxUtilities {
             SpecialType.System_Char => "string",
             SpecialType.System_String => "string",
             SpecialType.System_Object => "any",
-            
+
             _ => throw new ArgumentOutOfRangeException(nameof(typeSymbol), typeSymbol.SpecialType, null)
         };
     }
