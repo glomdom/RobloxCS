@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections;
+using System.Collections.Immutable;
 using System.Text;
 using RobloxCS.AST;
 using RobloxCS.AST.Statements;
@@ -10,7 +11,7 @@ namespace RobloxCS.Renderer;
 public class RenderState {
     public string Indent => new(' ', _indentLevel * IndentCharacter.Length);
     public StringBuilder Builder = new();
-    
+
     private ImmutableDictionary<Type, IRenderer> Renderers { get; } = ImmutableDictionary.CreateRange(
         [
             AdapterForNode<LocalAssignment, LocalAssignmentRenderer>(),
@@ -22,7 +23,8 @@ public class RenderState {
             AdapterForNode<Expression, ExpressionRenderer>(),
             AdapterForNode<TypeDeclaration, TypeDeclarationRenderer>(),
             AdapterForNode<TypeInfo, TypeInfoRenderer>(),
-            AdapterForNode<TypeFieldKey, TypeFieldKeyRenderer>()
+            AdapterForNode<TypeFieldKey, TypeFieldKeyRenderer>(),
+            AdapterForNode<TypeArgument, TypeArgumentRenderer>(),
         ]
     );
 
@@ -34,6 +36,17 @@ public class RenderState {
     public void AppendIndent() => Builder.Append(Indent);
     public void AppendIndented(string text) => Builder.Append($"{Indent}{text}");
     public void AppendIndentedLine(string text) => Builder.AppendLine($"{Indent}{text}");
+
+    public void RenderPunctuated<T>(IList<T> list, RenderState state) where T : AstNode {
+        for (var i = 0; i < list.Count; i++) {
+            var renderer = GetRenderer(typeof(T));
+            renderer.Render(state, list[i]);
+
+            if (i != list.Count - 1) {
+                state.Builder.Append(", ");
+            }
+        }
+    }
 
     /// <summary>
     /// Gets a renderer from the provided <c>type</c>.

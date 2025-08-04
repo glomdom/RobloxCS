@@ -11,7 +11,7 @@ public class TypeInfoRenderer : IRenderer<TypeInfo> {
 
             foreach (var field in table.Fields) {
                 var hasModifier = field.Access is not null;
-                
+
                 if (hasModifier) {
                     state.AppendIndented(field.Access!.Value.ToFriendlyString().ToLowerInvariant() + " ");
                 } else {
@@ -24,11 +24,21 @@ public class TypeInfoRenderer : IRenderer<TypeInfo> {
                 state.Builder.Append(',');
                 state.Builder.AppendLine();
             }
-            
+
             state.PopIndent();
             state.Builder.Append('}');
         } else if (node is BasicTypeInfo basic) {
             state.Builder.Append(basic.Name);
+        } else if (node is CallbackTypeInfo callback) {
+            state.Builder.Append('(');
+            state.RenderPunctuated(callback.Arguments, state);
+            state.Builder.Append(')');
+            state.Builder.Append(" -> ");
+
+            var returnRenderer = state.GetRenderer<TypeInfo>();
+            returnRenderer.Render(state, callback.ReturnType);
+        } else {
+            throw new Exception($"Unhandled TypeInfo {node.GetType().Name}");
         }
     }
 }

@@ -108,6 +108,39 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
             Visit(member);
         }
 
+        var hasConstructor = node.Members.Any(m => m is ConstructorDeclarationSyntax);
+        if (hasConstructor) {
+            var ctor = node.Members.OfType<ConstructorDeclarationSyntax>()
+                .First(); // TODO: support multiple constructors, requires figuring out method overloading
+
+            Console.WriteLine(ctor.ParameterList.Parameters);
+            
+            var pars = ctor.ParameterList.Parameters;
+            var parArguments = new List<TypeArgument>(pars.Count);
+            foreach (var t in pars) {
+                var inferred = SyntaxUtilities.MapPrimitive(InferNonnull(t.Type!));
+                parArguments.Add(TypeArgument.From(t.Identifier.ValueText, BasicTypeInfo.FromString(inferred)));
+            }
+
+            var paramlessCtorType = new CallbackTypeInfo {
+                Arguments = parArguments,
+                ReturnType = BasicTypeInfo.Void(),
+            };
+            
+            if (CurrentTypeDeclaration?.DeclareAs is TableTypeInfo tableInfo) {
+                tableInfo.Fields.Add(TypeField.FromNameAndType("constructor", paramlessCtorType));
+            }
+        } else {
+            var paramlessCtorType = new CallbackTypeInfo {
+                Arguments = [],
+                ReturnType = BasicTypeInfo.Void(),
+            };
+
+            if (CurrentTypeDeclaration?.DeclareAs is TableTypeInfo tableInfo) {
+                tableInfo.Fields.Add(TypeField.FromNameAndType("constructor", paramlessCtorType));
+            }
+        }
+
         CurrentTypeDeclaration = null;
         Nodes.Add(classInstanceDecl);
     }
