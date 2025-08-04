@@ -3,10 +3,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
-using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
-using TypeInfo = RobloxCS.AST.Types.TypeInfo;
 
 namespace RobloxCS.Transpiler;
 
@@ -170,7 +168,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
     private ITypeSymbol InferNonnull(TypeSyntax syntax) {
         var fieldType = Semantics.GetTypeInfo(syntax).Type!;
-        if (fieldType is IErrorTypeSymbol err) {
+        if (fieldType is IErrorTypeSymbol) {
             throw new Exception("Error occured while attempting to infer type.");
         }
 
