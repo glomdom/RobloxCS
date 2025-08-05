@@ -46,6 +46,17 @@ public class RenderState {
             }
         }
     }
+    
+    public void RenderDelimited<T>(IList<T> list, RenderState state, char delimiter) where T : AstNode {
+        for (var i = 0; i < list.Count; i++) {
+            var renderer = GetRenderer<T>();
+            renderer.Render(state, list[i]);
+
+            if (i != list.Count - 1) {
+                state.Builder.Append($" {delimiter} ");
+            }
+        }
+    }
 
     /// <summary>
     /// Gets a renderer from the provided <c>type</c>.

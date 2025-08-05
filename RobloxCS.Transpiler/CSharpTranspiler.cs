@@ -99,6 +99,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     private void ProcessClassTypeDeclaration(ClassDeclarationSyntax node) {
         var className = node.Identifier.ValueText;
 
+        TypeField? ctorDecl = null;
         var classInstanceDecl = TypeDeclaration.EmptyTable($"_Instance{className}");
         CurrentTypeDeclaration = classInstanceDecl;
 
@@ -127,6 +128,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
                     };
 
                     if (CurrentTypeDeclaration!.DeclareAs is TableTypeInfo tableInfo) {
+                        ctorDecl = TypeField.FromNameAndType("constructor", ctorType);
                         tableInfo.Fields.Add(TypeField.FromNameAndType("constructor", ctorType));
                     }
 
@@ -138,17 +140,30 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
                     ReturnType = BasicTypeInfo.Void()
                 };
 
-                if (CurrentTypeDeclaration?.DeclareAs is TableTypeInfo tableInfo) {
+                if (CurrentTypeDeclaration!.DeclareAs is TableTypeInfo tableInfo) {
                     tableInfo.Fields.Add(TypeField.FromNameAndType("constructor", ctorType));
                 }
             }
         }
 
-
         CurrentTypeDeclaration = null;
         Nodes.Add(classInstanceDecl);
 
-        var local = LocalAssignment.Naked(className, BasicTypeInfo.FromString(classInstanceDecl.Name));
+        var classTypeTypeDecl = TypeDeclaration.EmptyTable($"_Type{className}");
+        CurrentTypeDeclaration = classTypeTypeDecl;
+
+        if (CurrentTypeDeclaration!.DeclareAs is TableTypeInfo table) {
+            ctorDecl!.Key = NameTypeFieldKey.FromString("new");
+            table.Fields.Add(ctorDecl);
+
+            var index = TypeField.FromNameAndType("__index", BasicTypeInfo.FromString(className));
+            table.Fields.Add(index);
+        }
+
+        CurrentTypeDeclaration = null;
+        Nodes.Add(classTypeTypeDecl);
+
+        var local = LocalAssignment.Naked(className, IntersectionTypeInfo.FromNames(classInstanceDecl.Name, classTypeTypeDecl.Name));
         Nodes.Add(local);
     }
 
