@@ -156,7 +156,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
             ctorDecl!.Key = NameTypeFieldKey.FromString("new");
             table.Fields.Add(ctorDecl);
 
-            var index = TypeField.FromNameAndType("__index", BasicTypeInfo.FromString(className));
+            var index = TypeField.FromNameAndType("__index", BasicTypeInfo.FromString(classTypeTypeDecl.Name));
             table.Fields.Add(index);
         }
 
