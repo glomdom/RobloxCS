@@ -37,6 +37,10 @@ public class TypeInfoRenderer : IRenderer<TypeInfo> {
 
             var returnRenderer = state.GetRenderer<TypeInfo>();
             returnRenderer.Render(state, callback.ReturnType);
+        } else if (node is UnionTypeInfo union) {
+            state.RenderDelimited(union.Types, state, '|');
+        } else if (node is IntersectionTypeInfo intersection) {
+            state.RenderDelimited(intersection.Types, state, '&');
         } else {
             throw new Exception($"Unhandled TypeInfo {node.GetType().Name}");
         }
