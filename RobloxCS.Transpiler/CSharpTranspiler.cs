@@ -34,7 +34,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         if (Options.ScriptType != ScriptType.Module) return;
 
         // handle module exports (functions, etc)
-        var moduleReturn = Exports.Count == 0 ? new Return([SymbolExpression.FromString("nil")]) : new Return([]);
+        var moduleReturn = Exports.Count == 0 ? Return.FromExpressions([SymbolExpression.FromString("nil")]) : Return.Empty();
         Nodes.Add(moduleReturn);
     }
 
@@ -123,13 +123,14 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
                     ).ToList();
 
                     var ctorType = new CallbackTypeInfo {
-                        Arguments = parameters,
+                        Arguments =
+                            parameters.Prepend(TypeArgument.From("self", BasicTypeInfo.FromString(classInstanceDecl.Name))).ToList(),
                         ReturnType = BasicTypeInfo.Void()
                     };
 
                     if (CurrentTypeDeclaration!.DeclareAs is TableTypeInfo tableInfo) {
                         ctorDecl = TypeField.FromNameAndType("constructor", ctorType);
-                        tableInfo.Fields.Add(TypeField.FromNameAndType("constructor", ctorType));
+                        tableInfo.Fields.Add(ctorDecl.DeepClone());
                     }
 
                     break; // TODO: more than 1 ctor
@@ -154,6 +155,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
         if (CurrentTypeDeclaration!.DeclareAs is TableTypeInfo table) {
             ctorDecl!.Key = NameTypeFieldKey.FromString("new");
+            (ctorDecl.Value as CallbackTypeInfo)!.Arguments.RemoveAt(0); // remove self param
             table.Fields.Add(ctorDecl);
 
             var index = TypeField.FromNameAndType("__index", BasicTypeInfo.FromString(classTypeTypeDecl.Name));
