@@ -1,11 +1,7 @@
 ﻿namespace RobloxCS.AST.Statements;
 
 public sealed class Return : Statement {
-    public List<Expression> Returns;
+    public required List<Expression> Returns;
 
-    public Return(List<Expression> returns) {
-        Returns = returns;
-    }
-
-    public override string ToString() => $"return {string.Join(", ", Returns)}";
+    public override Return DeepClone() => new() { Returns = Returns.Select(ret => (Expression)ret.DeepClone()).ToList() };
 }

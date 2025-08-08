@@ -12,4 +12,6 @@ public sealed class Block : AstNode {
 
         return this;
     }
+
+    public override Block DeepClone() => new() { Statements = Statements.Select(s => (Statement)s.DeepClone()).ToList() };
 }

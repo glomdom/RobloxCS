@@ -9,4 +9,6 @@ public sealed class BasicTypeInfo : TypeInfo {
     public static BasicTypeInfo String() => new() { Name = "string" };
     public static BasicTypeInfo Number() => new() { Name = "number" };
     public static BasicTypeInfo Boolean() => new() { Name = "boolean" };
+
+    public override BasicTypeInfo DeepClone() => new() { Name = Name };
 }

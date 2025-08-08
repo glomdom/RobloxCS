@@ -16,4 +16,10 @@ public sealed class LocalAssignment : Statement {
             Types = [type]
         };
     }
+
+    public override LocalAssignment DeepClone() => new() {
+        Names = Names.Select(n => (SymbolExpression)n.DeepClone()).ToList(),
+        Expressions = Expressions.Select(e => (Expression)e.DeepClone()).ToList(),
+        Types = Types.Select(t => (TypeInfo)t.DeepClone()).ToList(),
+    };
 }

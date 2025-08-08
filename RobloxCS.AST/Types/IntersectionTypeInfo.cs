@@ -9,4 +9,6 @@ public sealed class IntersectionTypeInfo : TypeInfo {
     public static IntersectionTypeInfo FromNames(params string[] typeNames) => new() {
         Types = typeNames.Select(BasicTypeInfo.FromString).Cast<TypeInfo>().ToList()
     };
+
+    public override IntersectionTypeInfo DeepClone() => new() { Types = Types.Select(t => (TypeInfo)t.DeepClone()).ToList() };
 }

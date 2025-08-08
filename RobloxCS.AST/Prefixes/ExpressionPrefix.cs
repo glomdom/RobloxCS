@@ -1,11 +1,7 @@
 ﻿namespace RobloxCS.AST.Prefixes;
 
 public sealed class ExpressionPrefix : Prefix {
-    public Expression Expression { get; set; }
+    public required Expression Expression { get; set; }
 
-    public ExpressionPrefix(Expression expression) {
-        Expression = expression;
-    }
-    
-    public override string ToString() => Expression.ToString();
+    public override ExpressionPrefix DeepClone() => new() { Expression = (Expression)Expression.DeepClone() };
 }

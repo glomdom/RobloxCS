@@ -11,7 +11,7 @@ public sealed class TableConstructor : Expression {
         return new TableConstructor { Fields = fields };
     }
 
-    public override string ToString() => Fields.Count == 0 ? "{}" : $"{{ {string.Join(", ", Fields)} }}";
+    public override TableConstructor DeepClone() => new() { Fields = Fields.Select(f => (TableField)f.DeepClone()).ToList() };
 }
 
 public abstract class TableField : AstNode;
@@ -19,7 +19,7 @@ public abstract class TableField : AstNode;
 public sealed class NoKey : TableField {
     public required Expression Expression { get; set; }
 
-    public override string ToString() => Expression.ToString();
+    public override NoKey DeepClone() => new() { Expression = (Expression)Expression.DeepClone() };
 }
 
 // TODO: Index signature

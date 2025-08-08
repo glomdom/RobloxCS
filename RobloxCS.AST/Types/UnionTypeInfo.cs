@@ -9,4 +9,6 @@ public sealed class UnionTypeInfo : TypeInfo {
     public static UnionTypeInfo FromNames(params string[] typeNames) => new() {
         Types = typeNames.Select(BasicTypeInfo.FromString).Cast<TypeInfo>().ToList()
     };
+
+    public override UnionTypeInfo DeepClone() => new() { Types = Types.Select(t => (TypeInfo)t.DeepClone()).ToList() };
 }

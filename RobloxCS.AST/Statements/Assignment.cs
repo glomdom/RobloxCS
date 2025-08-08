@@ -1,14 +1,11 @@
 ﻿namespace RobloxCS.AST.Statements;
 
 public sealed class Assignment : Statement {
-    public List<Var> Vars { get; set; }
-    public List<Expression> Expressions { get; set; }
+    public required List<Var> Vars { get; set; }
+    public required List<Expression> Expressions { get; set; }
 
-    public Assignment(
-        List<Var> vars,
-        List<Expression> expressions
-    ) {
-        Vars = vars;
-        Expressions = expressions;
-    }
+    public override Assignment DeepClone() => new() {
+        Vars = Vars.Select(v => (Var)v.DeepClone()).ToList(),
+        Expressions = Expressions.Select(e => (Expression)e.DeepClone()).ToList(),
+    };
 }

@@ -17,6 +17,8 @@ public sealed class NameGenericParameter : GenericParameterInfo {
     public static NameGenericParameter FromSymbol(SymbolExpression expr) {
         return new NameGenericParameter { Name = expr.Value };
     }
+
+    public override NameGenericParameter DeepClone() => new() { Name = Name };
 }
 
 /// <summary>
@@ -32,5 +34,6 @@ public sealed class VariadicGenericParameter : GenericParameterInfo {
     public static VariadicGenericParameter FromSymbol(SymbolExpression expr) {
         return new VariadicGenericParameter { Name = expr.Value };
     }
+    
+    public override VariadicGenericParameter DeepClone() => new() { Name = Name };
 }
-
