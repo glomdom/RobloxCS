@@ -6,4 +6,10 @@ public sealed class TypeField : AstNode {
     public required TypeInfo Value { get; set; }
 
     public static TypeField FromNameAndType(string name, TypeInfo type) => new() { Key = NameTypeFieldKey.FromString(name), Value = type };
+
+    public override TypeField DeepClone() => new() {
+        Access = Access,
+        Key = (TypeFieldKey)Key.DeepClone(),
+        Value = (TypeInfo)Value.DeepClone(),
+    };
 }

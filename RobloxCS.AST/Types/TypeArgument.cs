@@ -6,5 +6,7 @@ public sealed class TypeArgument : AstNode {
 
     public bool HasName => Name is not null;
 
-    public static TypeArgument From(string name, TypeInfo info) => new TypeArgument { Name = name, TypeInfo = info };
+    public static TypeArgument From(string name, TypeInfo info) => new() { Name = name, TypeInfo = info };
+
+    public override TypeArgument DeepClone() => new() { Name = Name, TypeInfo = (TypeInfo)TypeInfo.DeepClone() };
 }

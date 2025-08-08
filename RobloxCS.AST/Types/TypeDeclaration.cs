@@ -13,4 +13,10 @@ public sealed class TypeDeclaration : AstNode {
             DeclareAs = TableTypeInfo.Empty(),
         };
     }
+
+    public override TypeDeclaration DeepClone() => new() {
+        Name = Name,
+        Declarations = Declarations?.Select(decl => (GenericDeclaration)decl.DeepClone()).ToList(),
+        DeclareAs = (TypeInfo)DeclareAs.DeepClone()
+    };
 }

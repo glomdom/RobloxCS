@@ -1,15 +1,11 @@
 ﻿namespace RobloxCS.AST;
 
 public sealed class FunctionArgs : AstNode {
-    public List<Expression> Arguments { get; set; }
-
-    public FunctionArgs(List<Expression> arguments) {
-        Arguments = arguments;
-    }
+    public required List<Expression> Arguments { get; set; }
 
     public static FunctionArgs Empty() {
-        return new FunctionArgs([]);
+        return new FunctionArgs { Arguments = [] };
     }
-    
-    public override string ToString() => $"({string.Join(", ", Arguments)})";
+
+    public override FunctionArgs DeepClone() => new() { Arguments = Arguments.Select(arg => (Expression)arg.DeepClone()).ToList() };
 }

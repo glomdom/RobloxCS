@@ -6,4 +6,6 @@ public class DoStatement : Statement {
     public static DoStatement From(Block block) {
         return new DoStatement { Block = block };
     }
+
+    public override DoStatement DeepClone() => new() { Block = Block.DeepClone() };
 }
