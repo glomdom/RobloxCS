@@ -170,8 +170,6 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     }
 
     private void ProcessClassRuntimeFields(ClassDeclarationSyntax node) {
-        var className = node.Identifier.ValueText;
-
         var classBlock = Block.Empty();
         CurrentBlock = classBlock;
 
