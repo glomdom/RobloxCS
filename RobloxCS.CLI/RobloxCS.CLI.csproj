@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <PlatformTarget>x64</PlatformTarget>
         <Nullable>enable</Nullable>
@@ -16,8 +16,8 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="Spectre.Console" Version="0.50.1-preview.0.20"/>
-        <PackageReference Include="Spectre.Console.Cli" Version="0.50.1-preview.0.20"/>
+        <PackageReference Include="Spectre.Console" Version="0.50.1-preview.0.25" />
+        <PackageReference Include="Spectre.Console.Cli" Version="0.50.1-preview.0.21" />
     </ItemGroup>
 
     <ItemGroup>
