@@ -79,7 +79,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
                 new TypeField {
                     Key = NameTypeFieldKey.FromString(var.Identifier.ValueText),
                     Access = isReadonly ? AccessModifier.Read : null,
-                    Value = primitiveType,
+                    Value = primitiveType
                 }
             ];
         } else {
