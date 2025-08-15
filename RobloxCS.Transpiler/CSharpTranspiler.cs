@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.ComponentModel.Design;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
@@ -62,38 +63,6 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         }
 
         base.VisitFieldDeclaration(node);
-    }
-
-    private List<TypeField> GenerateTypeFieldsFromField(FieldDeclarationSyntax fieldSyntax) {
-        var decl = fieldSyntax.Declaration;
-        var variables = decl.Variables;
-
-        var fieldType = InferNonnull(decl.Type);
-        var primitiveType = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType));
-
-        if (variables.Count == 1) {
-            var var = variables[0];
-            var isReadonly = fieldSyntax.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
-
-            return [
-                new TypeField {
-                    Key = NameTypeFieldKey.FromString(var.Identifier.ValueText),
-                    Access = isReadonly ? AccessModifier.Read : null,
-                    Value = primitiveType
-                }
-            ];
-        } else {
-            var varNames = variables.Select(v => v.Identifier.ValueText);
-            var isReadonly = fieldSyntax.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
-
-            var types = varNames.Select(name => new TypeField {
-                Key = NameTypeFieldKey.FromString(name),
-                Access = isReadonly ? AccessModifier.Read : null,
-                Value = primitiveType
-            });
-
-            return [..types];
-        }
     }
 
     private void ProcessClassTypeDeclaration(ClassDeclarationSyntax node) {
@@ -169,6 +138,22 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         Nodes.Add(local);
     }
 
+    private IEnumerable<TypeField> GenerateTypeFieldsFromField(FieldDeclarationSyntax fieldSyntax) {
+        var decl = fieldSyntax.Declaration;
+        var fieldType = InferNonnull(decl.Type);
+        var primitiveType = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType));
+
+        var isReadonly = fieldSyntax.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
+
+        foreach (var v in decl.Variables) {
+            yield return new TypeField {
+                Key = NameTypeFieldKey.FromString(v.Identifier.ValueText),
+                Access = isReadonly ? AccessModifier.Read : null,
+                Value = primitiveType
+            };
+        }
+    }
+
     private void ProcessClassRuntimeFields(ClassDeclarationSyntax node) {
         var classBlock = Block.Empty();
         CurrentBlock = classBlock;
@@ -183,10 +168,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
     private ITypeSymbol InferNonnull(TypeSyntax syntax) {
         var fieldType = Semantics.GetTypeInfo(syntax).Type!;
-        if (fieldType is IErrorTypeSymbol) {
-            throw new Exception("Error occured while attempting to infer type.");
-        }
 
-        return fieldType;
+        return fieldType is IErrorTypeSymbol or null ? throw new Exception("Error occured while attempting to infer type.") : fieldType;
     }
 }
