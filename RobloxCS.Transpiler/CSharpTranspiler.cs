@@ -130,7 +130,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
             Log.Warning("Unimplemented initializer for field {FieldName}", decl.Identifier.ValueText);
         }
     }
-
+    
     private (TypeDeclaration instanceDecl, TypeDeclaration typeDecl, TypeField? ctorField) BuildClassTypeDeclarations(ClassDeclarationSyntax node) {
         Log.Debug("Building type declaration for {ClassName}", node.Identifier.ValueText);
 
