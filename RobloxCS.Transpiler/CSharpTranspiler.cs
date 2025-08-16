@@ -24,12 +24,11 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     public List<Statement> Exports = [];
 
     private readonly Stack<Block> _blockStack = new();
-    private readonly Stack<TypeDeclaration> _typeStack = new();
 
     private Block CurrentBlock => _blockStack.Peek();
     private TypeDeclaration CurrentType { get; set; } = NoTypeSentinel;
 
-    private static readonly Block RootBlockSentinel = Block.Empty();
+    private static readonly Block RootBlock = Block.Empty();
     private static readonly TypeDeclaration NoTypeSentinel = TypeDeclaration.EmptyTable("__SHOULD_NOT_BE_IN_OUTPUT");
 
     public CSharpTranspiler(TranspilerOptions options, CSharpCompiler compiler) {
@@ -39,8 +38,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         Root = Compiler.Root;
         Semantics = Compiler.Compilation.GetSemanticModel(Root.SyntaxTree);
 
-        _blockStack.Push(RootBlockSentinel);
-        _typeStack.Push(NoTypeSentinel);
+        _blockStack.Push(RootBlock); // seeded stack so we can avoid null checks
     }
 
     public void Transpile() {
@@ -48,15 +46,12 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
         var watch = Stopwatch.StartNew();
 
-        using (var scope = WithBlock(Block.Empty())) {
-            Visit(Root);
+        Visit(Root);
 
-            if (Options.ScriptType != ScriptType.Module) return;
+        if (Options.ScriptType != ScriptType.Module) return;
 
-            // handle module exports (functions, etc)
-            var moduleReturn = Exports.Count == 0 ? Return.FromExpressions([SymbolExpression.FromString("nil")]) : Return.Empty();
-            Nodes.Add(moduleReturn);
-        }
+        var moduleReturn = Exports.Count == 0 ? Return.FromExpressions([SymbolExpression.FromString("nil")]) : Return.Empty();
+        Nodes.Add(moduleReturn);
 
         watch.Stop();
 
@@ -64,15 +59,12 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     }
 
     public override void VisitClassDeclaration(ClassDeclarationSyntax node) {
-        Log.Verbose("Visiting class declaration {ClassName}", node.Identifier.ValueText);
+        var className = node.Identifier.ValueText;
+        Log.Verbose("Visiting class declaration {ClassName}", className);
 
         var (instanceDecl, typeDecl, ctorFieldMaybe) = BuildClassTypeDeclarations(node);
-
-        Block classBlock;
-        using (WithBlock(Block.Empty())) {
-            VisitMembers(node.Members, this);
-            classBlock = CurrentBlock!;
-        }
+        Nodes.Add(instanceDecl);
+        Nodes.Add(typeDecl);
 
         if (ctorFieldMaybe is { } ctorField && typeDecl.DeclareAs is TableTypeInfo typeTable) {
             ctorField.Key = NameTypeFieldKey.FromString("new");
@@ -86,12 +78,14 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
             typeTable.Fields.Add(index);
         }
 
-        Nodes.Add(instanceDecl);
-        Nodes.Add(typeDecl);
-
         var both = IntersectionTypeInfo.FromNames(instanceDecl.Name, typeDecl.Name);
         Nodes.Add(LocalAssignment.Naked(node.Identifier.ValueText, both));
-        Nodes.Add(DoStatement.FromBlock(classBlock));
+
+        using (WithBlock(Block.Empty(), $"ClassBlock_{className}")) {
+            VisitMembers(node.Members, this);
+
+            Nodes.Add(DoStatement.FromBlock(CurrentBlock));
+        }
     }
 
     public override void VisitFieldDeclaration(FieldDeclarationSyntax node) {
@@ -192,10 +186,11 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         return true;
     }
 
-    private Scope WithBlock(Block block) {
-        Log.Verbose("Starting to populate a block");
+    private Scope WithBlock(Block block, string? name = null) {
+        var scope = new Scope(_blockStack, block, name);
+        Log.Verbose("Starting to populate {Name}", scope.GetFriendlyName());
 
-        return new Scope(_blockStack, block);
+        return scope;
     }
 
     private SetterGuard<TypeDeclaration> UseType(TypeDeclaration next) => new(t => CurrentType = t, CurrentType, next);
