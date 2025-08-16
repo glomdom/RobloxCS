@@ -24,6 +24,8 @@ public class RenderState {
             AdapterForNode<TypeInfo, TypeInfoRenderer>(),
             AdapterForNode<TypeFieldKey, TypeFieldKeyRenderer>(),
             AdapterForNode<TypeArgument, TypeArgumentRenderer>(),
+            AdapterForNode<Prefix, PrefixRenderer>(),
+            AdapterForNode<Suffix, SuffixRenderer>(),
         ]
     );
 
@@ -46,7 +48,7 @@ public class RenderState {
             }
         }
     }
-    
+
     public void RenderDelimited<T>(IList<T> list, RenderState state, char delimiter) where T : AstNode {
         for (var i = 0; i < list.Count; i++) {
             var renderer = GetRenderer<T>();

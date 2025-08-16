@@ -4,10 +4,13 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
+using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
 using RobloxCS.Transpiler.Scoping;
 using Serilog;
+using FunctionCall = RobloxCS.AST.Expressions.FunctionCall;
 
 namespace RobloxCS.Transpiler;
 
@@ -82,6 +85,23 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         Nodes.Add(LocalAssignment.Naked(node.Identifier.ValueText, both));
 
         using (WithBlock(Block.Empty(), $"ClassBlock_{className}")) {
+            CurrentBlock.AddStatement(new Assignment {
+                Vars = [VarName.FromString(className)],
+                Expressions = [
+                    new FunctionCall {
+                        Prefix = new NamePrefix { Name = "setmetatable" }, Suffixes = [
+                            new AnonymousCall {
+                                Arguments = new FunctionArgs {
+                                    Arguments = [TableConstructor.Empty(), TableConstructor.Empty()]
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            CurrentBlock.AddStatement(Assignment.AssignToSymbol($"{className}.__index", className));
+
             VisitMembers(node.Members, this);
 
             Nodes.Add(DoStatement.FromBlock(CurrentBlock));
