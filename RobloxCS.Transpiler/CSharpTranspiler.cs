@@ -85,18 +85,28 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         Nodes.Add(LocalAssignment.Naked(node.Identifier.ValueText, both));
 
         using (WithBlock(Block.Empty(), $"ClassBlock_{className}")) {
+            Log.Debug("Creating required functions for class functionality");
+
+            Block toStringBlock;
+            using (WithBlock(Block.Empty(), $"FunctionToStringBlock_{className}")) {
+                CurrentBlock.AddStatement(Return.FromExpressions([StringExpression.FromString(className)]));
+
+                toStringBlock = CurrentBlock;
+            }
+            
+            var toStringFunction = new AnonymousFunction {
+                Body = new FunctionBody {
+                    Body = toStringBlock,
+                    Parameters = [],
+                    ReturnType = BasicTypeInfo.String(),
+                    TypeSpecifiers = []
+                }
+            };
+
             CurrentBlock.AddStatement(new Assignment {
                 Vars = [VarName.FromString(className)],
                 Expressions = [
-                    new FunctionCall {
-                        Prefix = new NamePrefix { Name = "setmetatable" }, Suffixes = [
-                            new AnonymousCall {
-                                Arguments = new FunctionArgs {
-                                    Arguments = [TableConstructor.Empty(), TableConstructor.Empty()]
-                                }
-                            }
-                        ]
-                    }
+                    FunctionCall.Basic("setmetatable", TableConstructor.Empty(), TableConstructor.With(new NameKey { Key = "__tostring", Value = toStringFunction }))
                 ]
             });
 

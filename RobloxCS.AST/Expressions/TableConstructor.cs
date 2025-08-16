@@ -22,4 +22,11 @@ public sealed class NoKey : TableField {
     public override NoKey DeepClone() => new() { Expression = (Expression)Expression.DeepClone() };
 }
 
+public sealed class NameKey : TableField {
+    public required string Key { get; set; }
+    public required Expression Value { get; set; }
+
+    public override NameKey DeepClone() => new() { Key = Key, Value = (Expression)Value.DeepClone() };
+}
+
 // TODO: Index signature

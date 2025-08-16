@@ -3,5 +3,7 @@
 public sealed class StringExpression : Expression {
     public required string Value { get; set; }
 
+    public static StringExpression FromString(string value) => new() { Value = value };
+
     public override StringExpression DeepClone() => new() { Value = Value };
 }
