@@ -21,7 +21,7 @@ public sealed class CSharpCompiler {
         SyntaxTree = ParseToTree();
         Compilation = CreateCompilation();
 
-        Log.Information("Running diagnostics");
+        Log.Information("Running diagnostics for {File}", path);
 
         var watch = Stopwatch.StartNew();
         Diagnostics = Compilation.GetDiagnostics();

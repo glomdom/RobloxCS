@@ -29,8 +29,6 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
 
         Log.Information("Creating C# compiler");
         var compiler = new CSharpCompiler(settings.Path);
-
-        Log.Debug("Running diagnostics on {Path}", settings.Path);
         var diagnosticMessages = compiler.FormatDiagnostics();
 
         TranspilerOptions options;
