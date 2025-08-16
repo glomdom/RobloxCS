@@ -147,18 +147,6 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         }
     }
 
-    private void ProcessClassRuntimeFields(ClassDeclarationSyntax node) {
-        var classBlock = Block.Empty();
-        CurrentBlock = classBlock;
-
-        foreach (var member in node.Members) {
-            Visit(member);
-        }
-
-        CurrentBlock = null;
-        Nodes.Add(DoStatement.FromBlock(classBlock));
-    }
-
     private ITypeSymbol InferNonnull(TypeSyntax syntax) {
         var fieldType = Semantics.GetTypeInfo(syntax).Type!;
 
