@@ -21,8 +21,8 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     public List<AstNode> Nodes = [];
     public List<Statement> Exports = [];
 
-    public Block? CurrentBlock { get; set; }
-    public TypeDeclaration? CurrentTypeDeclaration { get; set; }
+    private Block? CurrentBlock { get; set; }
+    private TypeDeclaration? CurrentTypeDeclaration { get; set; }
 
     public CSharpTranspiler(TranspilerOptions options, CSharpCompiler compiler) {
         Options = options;
