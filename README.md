@@ -6,5 +6,10 @@ A C# to Luau compiler.
 
 ## Status
 
-**Note:** PRs will be closed until v0.0.1 is released so I can focus on the core. Issues
-and feature suggestions are welcomme.
+**Note:** PRs submitted which modify the following projects will be closed, unless there is a good reason to merge:
+- `RobloxCS.AST`
+- `RobloxCS.Common`
+- `RobloxCS.Example`
+- `RobloxCS.Transpiler`
+
+Issues and feature suggestions are welcome.
