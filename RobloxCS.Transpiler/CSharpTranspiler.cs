@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.Design;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
+using RobloxCS.Transpiler.Scoping;
 
 namespace RobloxCS.Transpiler;
 
@@ -18,8 +18,8 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     public SemanticModel Semantics => Compiler.Compilation.GetSemanticModel(Root.SyntaxTree);
     public CompilationUnitSyntax Root => Compiler.Root;
 
-    public List<AstNode> Nodes { get; set; } = [];
-    public List<Statement> Exports { get; set; } = [];
+    public List<AstNode> Nodes = [];
+    public List<Statement> Exports = [];
 
     public Block? CurrentBlock { get; set; }
     public TypeDeclaration? CurrentTypeDeclaration { get; set; }
@@ -40,102 +40,92 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     }
 
     public override void VisitClassDeclaration(ClassDeclarationSyntax node) {
-        ProcessClassTypeDeclaration(node);
-        ProcessClassRuntimeFields(node);
+        var (instanceDecl, typeDecl, ctorFieldMaybe) = BuildClassTypeDeclarations(node);
+
+        Block classBlock;
+        using (WithBlock(Block.Empty())) {
+            VisitMembers(node.Members, this);
+            classBlock = CurrentBlock!;
+        }
+
+        if (ctorFieldMaybe is { } ctorField && typeDecl.DeclareAs is TableTypeInfo typeTable) {
+            ctorField.Key = NameTypeFieldKey.FromString("new");
+            if (ctorField.Value is CallbackTypeInfo { Arguments.Count: > 0 } cb) {
+                cb.Arguments.RemoveAt(0); // remove self
+            }
+
+            typeTable.Fields.Add(ctorField);
+
+            var index = TypeField.FromNameAndType("__index", BasicTypeInfo.FromString(typeDecl.Name));
+            typeTable.Fields.Add(index);
+        }
+
+        Nodes.Add(instanceDecl);
+        Nodes.Add(typeDecl);
+
+        var both = IntersectionTypeInfo.FromNames(instanceDecl.Name, typeDecl.Name);
+        Nodes.Add(LocalAssignment.Naked(node.Identifier.ValueText, both));
+        Nodes.Add(DoStatement.FromBlock(classBlock));
     }
 
     public override void VisitFieldDeclaration(FieldDeclarationSyntax node) {
-        if (CurrentTypeDeclaration?.DeclareAs is TableTypeInfo tableInfo) {
-            var typeFields = GenerateTypeFieldsFromField(node);
-            foreach (var field in typeFields) {
-                tableInfo.Fields.Add(field);
-            }
-
-            return;
-        }
-
-        if (CurrentBlock is null) {
-            throw new Exception("Attempted to visit field declaration when CurrentBlock is null.");
+        if (WithTableFields(table => {
+            foreach (var f in GenerateTypeFieldsFromField(node)) table.Fields.Add(f);
+        })) {
+            if (CurrentBlock is null) return;
+        } else {
+            if (CurrentBlock is null) return;
         }
 
         foreach (var decl in node.Declaration.Variables) {
             Console.WriteLine($"TODO: implement declaration for {decl.Identifier.ValueText}");
         }
-
-        base.VisitFieldDeclaration(node);
     }
 
-    private void ProcessClassTypeDeclaration(ClassDeclarationSyntax node) {
+    private (TypeDeclaration instanceDecl, TypeDeclaration typeDecl, TypeField? ctorField) BuildClassTypeDeclarations(ClassDeclarationSyntax node) {
         var className = node.Identifier.ValueText;
 
-        TypeField? ctorDecl = null;
-        var classInstanceDecl = TypeDeclaration.EmptyTable($"_Instance{className}");
-        CurrentTypeDeclaration = classInstanceDecl;
-
-        foreach (var member in node.Members) {
-            Visit(member);
+        var instanceDecl = TypeDeclaration.EmptyTable($"_Instance{className}");
+        using (WithType(instanceDecl)) {
+            VisitMembers(node.Members, this);
         }
 
+        var ctorField = TryBuildConstructorField(node, instanceDecl.Name);
+
+        var typeDecl = TypeDeclaration.EmptyTable($"_Type{className}");
+        using (WithType(typeDecl)) {
+            // todo: visit statics
+        }
+
+        return (instanceDecl, typeDecl, ctorField);
+    }
+
+    private TypeField? TryBuildConstructorField(ClassDeclarationSyntax node, string instanceTypeName) {
         var classSymbol = Semantics.GetDeclaredSymbol(node);
-        if (classSymbol != null) {
-            var ctors = classSymbol.Constructors
-                .Where(c => !c.IsStatic)
-                .ToList();
+        if (classSymbol is null) return DefaultCtor();
 
-            if (ctors.Count > 0) {
-                foreach (var ctorSymbol in ctors) {
-                    var parameters = ctorSymbol.Parameters.Select(p =>
-                        TypeArgument.From(
-                            p.Name,
-                            SyntaxUtilities.BasicFromSymbol(p.Type)
-                        )
-                    ).ToList();
+        var ctorSymbol = classSymbol.Constructors.FirstOrDefault(c => !c.IsStatic);
+        if (ctorSymbol is null) return null;
 
-                    var ctorType = new CallbackTypeInfo {
-                        Arguments =
-                            parameters.Prepend(TypeArgument.From("self", BasicTypeInfo.FromString(classInstanceDecl.Name))).ToList(),
-                        ReturnType = BasicTypeInfo.Void()
-                    };
+        var parameters = ctorSymbol.Parameters.Select(p =>
+            TypeArgument.From(p.Name, SyntaxUtilities.BasicFromSymbol(p.Type))
+        ).ToList();
 
-                    if (CurrentTypeDeclaration!.DeclareAs is TableTypeInfo tableInfo) {
-                        ctorDecl = TypeField.FromNameAndType("constructor", ctorType);
-                        tableInfo.Fields.Add(ctorDecl.DeepClone());
-                    }
+        var ctorType = new CallbackTypeInfo {
+            Arguments = parameters.Prepend(TypeArgument.From("self", BasicTypeInfo.FromString(instanceTypeName))).ToList(),
+            ReturnType = BasicTypeInfo.Void()
+        };
 
-                    break; // TODO: more than 1 ctor
-                }
-            } else {
-                var ctorType = new CallbackTypeInfo {
-                    Arguments = [],
-                    ReturnType = BasicTypeInfo.Void()
-                };
+        return TypeField.FromNameAndType("constructor", ctorType);
 
-                if (CurrentTypeDeclaration!.DeclareAs is TableTypeInfo tableInfo) {
-                    tableInfo.Fields.Add(TypeField.FromNameAndType("constructor", ctorType));
-                }
-            }
+        TypeField DefaultCtor() {
+            var cb = new CallbackTypeInfo {
+                Arguments = [],
+                ReturnType = BasicTypeInfo.Void()
+            };
+
+            return TypeField.FromNameAndType("constructor", cb);
         }
-
-        CurrentTypeDeclaration = null;
-        Nodes.Add(classInstanceDecl);
-
-        var classTypeTypeDecl = TypeDeclaration.EmptyTable($"_Type{className}");
-        CurrentTypeDeclaration = classTypeTypeDecl;
-
-        if (CurrentTypeDeclaration!.DeclareAs is TableTypeInfo table) {
-            ctorDecl!.Key = NameTypeFieldKey.FromString("new");
-            (ctorDecl.Value as CallbackTypeInfo)!.Arguments.RemoveAt(0); // remove self param
-            table.Fields.Add(ctorDecl);
-
-            var index = TypeField.FromNameAndType("__index", BasicTypeInfo.FromString(classTypeTypeDecl.Name));
-            table.Fields.Add(index);
-        }
-
-        CurrentTypeDeclaration = null;
-        Nodes.Add(classTypeTypeDecl);
-
-        var local = LocalAssignment.Naked(className, IntersectionTypeInfo.FromNames(classInstanceDecl.Name, classTypeTypeDecl.Name));
-        Nodes.Add(local);
     }
 
     private IEnumerable<TypeField> GenerateTypeFieldsFromField(FieldDeclarationSyntax fieldSyntax) {
@@ -170,5 +160,33 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         var fieldType = Semantics.GetTypeInfo(syntax).Type!;
 
         return fieldType is IErrorTypeSymbol or null ? throw new Exception("Error occured while attempting to infer type.") : fieldType;
+    }
+
+    private bool WithTableFields(Action<TableTypeInfo> action) {
+        if (CurrentTypeDeclaration?.DeclareAs is not TableTypeInfo table) return false;
+
+        action(table);
+
+        return true;
+    }
+
+    private IDisposable WithBlock(Block block) {
+        var prev = CurrentBlock;
+        CurrentBlock = block;
+
+        return new Scope<Block?>(v => CurrentBlock = v, prev);
+    }
+
+    private IDisposable WithType(TypeDeclaration decl) {
+        var prev = CurrentTypeDeclaration;
+        CurrentTypeDeclaration = decl;
+
+        return new Scope<TypeDeclaration?>(v => CurrentTypeDeclaration = v, prev);
+    }
+
+    private static void VisitMembers(SyntaxList<MemberDeclarationSyntax> members, CSharpSyntaxWalker walker) {
+        foreach (var member in members) {
+            walker.Visit(member);
+        }
     }
 }
