@@ -23,8 +23,14 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     public List<AstNode> Nodes = [];
     public List<Statement> Exports = [];
 
-    private Block? CurrentBlock { get; set; }
-    private TypeDeclaration? CurrentTypeDeclaration { get; set; }
+    private readonly Stack<Block> _blockStack = new();
+    private readonly Stack<TypeDeclaration> _typeStack = new();
+
+    private Block CurrentBlock => _blockStack.Peek();
+    private TypeDeclaration CurrentType { get; set; } = NoTypeSentinel;
+
+    private static readonly Block RootBlockSentinel = Block.Empty();
+    private static readonly TypeDeclaration NoTypeSentinel = TypeDeclaration.EmptyTable("__SHOULD_NOT_BE_IN_OUTPUT");
 
     public CSharpTranspiler(TranspilerOptions options, CSharpCompiler compiler) {
         Options = options;
@@ -32,19 +38,25 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
         Root = Compiler.Root;
         Semantics = Compiler.Compilation.GetSemanticModel(Root.SyntaxTree);
+
+        _blockStack.Push(RootBlockSentinel);
+        _typeStack.Push(NoTypeSentinel);
     }
 
     public void Transpile() {
         Log.Information("Starting to transpile");
 
         var watch = Stopwatch.StartNew();
-        Visit(Root);
 
-        if (Options.ScriptType != ScriptType.Module) return;
+        using (var scope = WithBlock(Block.Empty())) {
+            Visit(Root);
 
-        // handle module exports (functions, etc)
-        var moduleReturn = Exports.Count == 0 ? Return.FromExpressions([SymbolExpression.FromString("nil")]) : Return.Empty();
-        Nodes.Add(moduleReturn);
+            if (Options.ScriptType != ScriptType.Module) return;
+
+            // handle module exports (functions, etc)
+            var moduleReturn = Exports.Count == 0 ? Return.FromExpressions([SymbolExpression.FromString("nil")]) : Return.Empty();
+            Nodes.Add(moduleReturn);
+        }
 
         watch.Stop();
 
@@ -86,9 +98,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         if (WithTableFields(table => {
             foreach (var f in GenerateTypeFieldsFromField(node)) table.Fields.Add(f);
         })) {
-            if (CurrentBlock is null) return;
-        } else {
-            if (CurrentBlock is null) return;
+            return; // we are generating a type, return and don't create initializers
         }
 
         foreach (var decl in node.Declaration.Variables) {
@@ -102,14 +112,14 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         var className = node.Identifier.ValueText;
 
         var instanceDecl = TypeDeclaration.EmptyTable($"_Instance{className}");
-        using (WithType(instanceDecl)) {
+        using (UseType(instanceDecl)) {
             VisitMembers(node.Members, this);
         }
 
         var ctorField = TryBuildConstructorField(node, instanceDecl.Name);
 
         var typeDecl = TypeDeclaration.EmptyTable($"_Type{className}");
-        using (WithType(typeDecl)) {
+        using (UseType(typeDecl)) {
             // todo: visit statics
         }
 
@@ -118,7 +128,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
     private TypeField? TryBuildConstructorField(ClassDeclarationSyntax node, string instanceTypeName) {
         Log.Debug("Attempting to build constructor callback for {ClassName}", node.Identifier.ValueText);
-        
+
         var classSymbol = Semantics.GetDeclaredSymbol(node);
         if (classSymbol is null) return DefaultCtor();
 
@@ -148,7 +158,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
     private IEnumerable<TypeField> GenerateTypeFieldsFromField(FieldDeclarationSyntax fieldSyntax) {
         Log.Debug("Generating {FieldCount} type field(s)", fieldSyntax.Declaration.Variables.Count);
-        
+
         var decl = fieldSyntax.Declaration;
         var fieldType = InferNonnull(decl.Type);
         var primitiveType = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType));
@@ -174,30 +184,21 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     }
 
     private bool WithTableFields(Action<TableTypeInfo> action) {
-        if (CurrentTypeDeclaration?.DeclareAs is not TableTypeInfo table) return false;
+        if (ReferenceEquals(CurrentType, NoTypeSentinel)) return false;
+        if (CurrentType.DeclareAs is not TableTypeInfo table) return false;
 
         action(table);
 
         return true;
     }
 
-    private Scope<Block?> WithBlock(Block block) {
+    private Scope WithBlock(Block block) {
         Log.Verbose("Starting to populate a block");
-        
-        var prev = CurrentBlock;
-        CurrentBlock = block;
 
-        return new Scope<Block?>(v => CurrentBlock = v, prev);
+        return new Scope(_blockStack, block);
     }
 
-    private Scope<TypeDeclaration?> WithType(TypeDeclaration decl) {
-        Log.Verbose("Starting to populate {TypeName}", decl.Name);
-        
-        var prev = CurrentTypeDeclaration;
-        CurrentTypeDeclaration = decl;
-
-        return new Scope<TypeDeclaration?>(v => CurrentTypeDeclaration = v, prev);
-    }
+    private SetterGuard<TypeDeclaration> UseType(TypeDeclaration next) => new(t => CurrentType = t, CurrentType, next);
 
     private static void VisitMembers(SyntaxList<MemberDeclarationSyntax> members, CSharpSyntaxWalker walker) {
         foreach (var member in members) {

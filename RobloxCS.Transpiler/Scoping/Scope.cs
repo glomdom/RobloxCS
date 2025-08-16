@@ -1,5 +1,33 @@
-﻿namespace RobloxCS.Transpiler.Scoping;
+﻿using System.Diagnostics;
+using RobloxCS.AST;
+using Serilog;
 
-public struct Scope<T>(Action<T> setter, T previous) : IDisposable {
-    public void Dispose() => setter(previous);
+namespace RobloxCS.Transpiler.Scoping;
+
+public sealed class Scope : IDisposable {
+    public Block Value { get; }
+    public HashSet<string> Locals { get; } = new();
+    public uint NextTempN { get; private set; }
+
+    private readonly Stack<Block> _stack;
+
+    public Scope(Stack<Block> stack, Block value) {
+        _stack = stack;
+        _stack.Push(value);
+
+        Value = value;
+        
+        Log.Debug("Pushed block scope");
+    }
+
+    public bool AddLocal(string name) => Locals.Add(name);
+    public bool HasLocal(string name) => Locals.Contains(name);
+    public string NewTempName(string prefix = "_tmp_") => $"{prefix}{NextTempN++}";
+
+    public void Dispose() {
+        var popped = _stack.Pop();
+
+        Log.Debug("Popped block scope");
+        Debug.Assert(ReferenceEquals(popped, Value), "Scope stack imbalance, please run compiler with verbose input and file an issue.");
+    }
 }
