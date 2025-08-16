@@ -163,7 +163,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         }
 
         CurrentBlock = null;
-        Nodes.Add(DoStatement.From(classBlock));
+        Nodes.Add(DoStatement.FromBlock(classBlock));
     }
 
     private ITypeSymbol InferNonnull(TypeSyntax syntax) {
