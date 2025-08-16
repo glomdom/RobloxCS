@@ -181,7 +181,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         return true;
     }
 
-    private IDisposable WithBlock(Block block) {
+    private Scope<Block?> WithBlock(Block block) {
         Log.Verbose("Starting to populate a block");
         
         var prev = CurrentBlock;
@@ -190,7 +190,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         return new Scope<Block?>(v => CurrentBlock = v, prev);
     }
 
-    private IDisposable WithType(TypeDeclaration decl) {
+    private Scope<TypeDeclaration?> WithType(TypeDeclaration decl) {
         Log.Verbose("Starting to populate {TypeName}", decl.Name);
         
         var prev = CurrentTypeDeclaration;
