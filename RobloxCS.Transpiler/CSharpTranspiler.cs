@@ -15,8 +15,8 @@ namespace RobloxCS.Transpiler;
 public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     public TranspilerOptions Options { get; }
     public CSharpCompiler Compiler { get; }
-    public SemanticModel Semantics => Compiler.Compilation.GetSemanticModel(Root.SyntaxTree);
-    public CompilationUnitSyntax Root => Compiler.Root;
+    public SemanticModel Semantics { get; }
+    public CompilationUnitSyntax Root { get; }
 
     public List<AstNode> Nodes = [];
     public List<Statement> Exports = [];
@@ -27,6 +27,9 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     public CSharpTranspiler(TranspilerOptions options, CSharpCompiler compiler) {
         Options = options;
         Compiler = compiler;
+
+        Root = Compiler.Root;
+        Semantics = Compiler.Compilation.GetSemanticModel(Root.SyntaxTree);
     }
 
     public void Transpile() {
