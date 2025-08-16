@@ -1,7 +1,9 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Serilog;
 
 namespace RobloxCS.Transpiler;
 
@@ -30,6 +32,9 @@ public sealed class CSharpCompiler {
     }
 
     private CSharpCompilation CreateCompilation() {
+        Log.Debug("Creating compilation");
+
+        var watch = Stopwatch.StartNew();
         var references = AppDomain.CurrentDomain.GetAssemblies()
             .Where(a => !a.IsDynamic && !string.IsNullOrWhiteSpace(a.Location))
             .Select(a => MetadataReference.CreateFromFile(a.Location))
@@ -45,6 +50,10 @@ public sealed class CSharpCompiler {
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
         );
 
+        watch.Stop();
+
+        Log.Debug("Created compilation in {Time}ms", watch.ElapsedMilliseconds);
+        
         return compilation;
     }
 

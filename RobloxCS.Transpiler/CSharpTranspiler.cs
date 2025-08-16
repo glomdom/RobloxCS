@@ -6,6 +6,7 @@ using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
 using RobloxCS.Transpiler.Scoping;
+using Serilog;
 
 namespace RobloxCS.Transpiler;
 
@@ -81,7 +82,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         }
 
         foreach (var decl in node.Declaration.Variables) {
-            Console.WriteLine($"TODO: implement declaration for {decl.Identifier.ValueText}");
+            Log.Warning("Unimplemented initializer for field {FieldName}", decl.Identifier.ValueText);
         }
     }
 
@@ -149,8 +150,11 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
     private ITypeSymbol InferNonnull(TypeSyntax syntax) {
         var fieldType = Semantics.GetTypeInfo(syntax).Type!;
+        if (fieldType is IErrorTypeSymbol or null) throw new Exception("Error occured while attempting to infer type.");
 
-        return fieldType is IErrorTypeSymbol or null ? throw new Exception("Error occured while attempting to infer type.") : fieldType;
+        Log.Verbose("Inferred type {Type} for {Name}", syntax.ToString(), fieldType.Name);
+
+        return fieldType;
     }
 
     private bool WithTableFields(Action<TableTypeInfo> action) {

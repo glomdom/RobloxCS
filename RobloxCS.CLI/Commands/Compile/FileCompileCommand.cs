@@ -1,7 +1,10 @@
 ﻿// ReSharper disable ClassNeverInstantiated.Global
 
 using System.ComponentModel;
+using RobloxCS.Common;
 using RobloxCS.Transpiler;
+using Serilog;
+using Serilog.Events;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -22,7 +25,12 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
     }
 
     public override int Execute(CommandContext context, Settings settings) {
+        Logger.LevelSwitch.MinimumLevel = settings.Verbosity ? LogEventLevel.Verbose : LogEventLevel.Warning;
+
+        Log.Information("Creating C# compiler");
         var compiler = new CSharpCompiler(settings.Path);
+
+        Log.Debug("Running diagnostics on {Path}", settings.Path);
         var diagnosticMessages = compiler.FormatDiagnostics();
 
         TranspilerOptions options;
@@ -38,12 +46,14 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
             _console.MarkupLine(diagnostic);
         }
 
+        Log.Information("Creating C# transpiler");
         var transpiler = new CSharpTranspiler(options, compiler);
         transpiler.Transpile();
 
+        Log.Information("Starting to render {NodeCount} nodes", transpiler.Nodes.Count);
         var renderer = new Renderer.Renderer(transpiler.Nodes);
         var output = renderer.Render();
-        
+
         Console.WriteLine(output);
 
         return 0;
