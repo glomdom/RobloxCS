@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Diagnostics;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
@@ -34,6 +35,9 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     }
 
     public void Transpile() {
+        Log.Information("Starting to transpile");
+
+        var watch = Stopwatch.StartNew();
         Visit(Root);
 
         if (Options.ScriptType != ScriptType.Module) return;
@@ -41,9 +45,15 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         // handle module exports (functions, etc)
         var moduleReturn = Exports.Count == 0 ? Return.FromExpressions([SymbolExpression.FromString("nil")]) : Return.Empty();
         Nodes.Add(moduleReturn);
+
+        watch.Stop();
+
+        Log.Information("Finished transpiling in {TimeMS}ms", watch.ElapsedMilliseconds);
     }
 
     public override void VisitClassDeclaration(ClassDeclarationSyntax node) {
+        Log.Verbose("Visiting class declaration {ClassName}", node.Identifier.ValueText);
+
         var (instanceDecl, typeDecl, ctorFieldMaybe) = BuildClassTypeDeclarations(node);
 
         Block classBlock;
@@ -87,6 +97,8 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     }
 
     private (TypeDeclaration instanceDecl, TypeDeclaration typeDecl, TypeField? ctorField) BuildClassTypeDeclarations(ClassDeclarationSyntax node) {
+        Log.Debug("Building type declaration for {ClassName}", node.Identifier.ValueText);
+
         var className = node.Identifier.ValueText;
 
         var instanceDecl = TypeDeclaration.EmptyTable($"_Instance{className}");
@@ -105,6 +117,8 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     }
 
     private TypeField? TryBuildConstructorField(ClassDeclarationSyntax node, string instanceTypeName) {
+        Log.Debug("Attempting to build constructor callback for {ClassName}", node.Identifier.ValueText);
+        
         var classSymbol = Semantics.GetDeclaredSymbol(node);
         if (classSymbol is null) return DefaultCtor();
 
@@ -133,6 +147,8 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     }
 
     private IEnumerable<TypeField> GenerateTypeFieldsFromField(FieldDeclarationSyntax fieldSyntax) {
+        Log.Debug("Generating {FieldCount} type field(s)", fieldSyntax.Declaration.Variables.Count);
+        
         var decl = fieldSyntax.Declaration;
         var fieldType = InferNonnull(decl.Type);
         var primitiveType = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType));
@@ -152,7 +168,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         var fieldType = Semantics.GetTypeInfo(syntax).Type!;
         if (fieldType is IErrorTypeSymbol or null) throw new Exception("Error occured while attempting to infer type.");
 
-        Log.Verbose("Inferred type {Type} for {Name}", syntax.ToString(), fieldType.Name);
+        Log.Verbose("Inferred type {Type} from {Name}", syntax.ToString(), fieldType.Name);
 
         return fieldType;
     }
@@ -166,6 +182,8 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     }
 
     private IDisposable WithBlock(Block block) {
+        Log.Verbose("Starting to populate a block");
+        
         var prev = CurrentBlock;
         CurrentBlock = block;
 
@@ -173,6 +191,8 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     }
 
     private IDisposable WithType(TypeDeclaration decl) {
+        Log.Verbose("Starting to populate {TypeName}", decl.Name);
+        
         var prev = CurrentTypeDeclaration;
         CurrentTypeDeclaration = decl;
 

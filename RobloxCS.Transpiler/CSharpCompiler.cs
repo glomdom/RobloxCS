@@ -20,7 +20,14 @@ public sealed class CSharpCompiler {
 
         SyntaxTree = ParseToTree();
         Compilation = CreateCompilation();
+
+        Log.Information("Running diagnostics");
+
+        var watch = Stopwatch.StartNew();
         Diagnostics = Compilation.GetDiagnostics();
+        watch.Stop();
+
+        Log.Information("Ran diagnostics for {File} in {TimeMS}ms", path, watch.ElapsedMilliseconds);
     }
 
     // TODO: Read from a .csproj and parse all csharp files.
@@ -53,7 +60,7 @@ public sealed class CSharpCompiler {
         watch.Stop();
 
         Log.Debug("Created compilation in {Time}ms", watch.ElapsedMilliseconds);
-        
+
         return compilation;
     }
 
