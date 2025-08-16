@@ -87,6 +87,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         using (WithBlock(Block.Empty(), $"ClassBlock_{className}")) {
             Log.Debug("Creating required functions for class functionality");
 
+            Log.Verbose("Creating __tostring body for {ClassName}", className);
             Block toStringBlock;
             using (WithBlock(Block.Empty(), $"FunctionToStringBlock_{className}")) {
                 CurrentBlock.AddStatement(Return.FromExpressions([StringExpression.FromString(className)]));
@@ -122,7 +123,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         if (WithTableFields(table => {
             foreach (var f in GenerateTypeFieldsFromField(node)) table.Fields.Add(f);
         })) {
-            return; // we are generating a type, return and don't create initializers
+            return; // we are generating a type, return
         }
 
         foreach (var decl in node.Declaration.Variables) {
