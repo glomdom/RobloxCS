@@ -44,6 +44,10 @@ public class RendererWalker : AstVisitorBase {
     }
 
     public override void VisitTypeField(TypeField node) {
+        if (node.Access is not null) {
+            _state.Builder.Append(node.Access == AccessModifier.Read ? "read " : "write ");
+        }
+
         Visit(node.Key);
         _state.Builder.Append(": ");
         Visit(node.Value);
