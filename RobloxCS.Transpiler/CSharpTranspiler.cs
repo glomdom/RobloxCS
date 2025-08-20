@@ -6,7 +6,6 @@ using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
-using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
 using RobloxCS.Transpiler.Scoping;
 using Serilog;
@@ -94,7 +93,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
                 toStringBlock = CurrentBlock;
             }
-            
+
             var toStringFunction = new AnonymousFunction {
                 Body = new FunctionBody {
                     Body = toStringBlock,
@@ -113,6 +112,10 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
             CurrentBlock.AddStatement(Assignment.AssignToSymbol($"{className}.__index", className));
 
+            foreach (var ctorNode in CreateConstructors(node)) {
+                Nodes.Add(ctorNode);
+            }
+
             VisitMembers(node.Members, this);
 
             Nodes.Add(DoStatement.FromBlock(CurrentBlock));
@@ -130,7 +133,26 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
             Log.Warning("Unimplemented initializer for field {FieldName}", decl.Identifier.ValueText);
         }
     }
-    
+
+    private IEnumerable<AstNode> CreateConstructors(ClassDeclarationSyntax node) {
+        var classSymbol = Semantics.GetDeclaredSymbol(node);
+        if (classSymbol is IErrorTypeSymbol or null) throw new Exception("Failed to ask semantic model what the class is.");
+
+        foreach (var ctor in classSymbol.InstanceConstructors) {
+            Log.Debug("Found constructor {CtorName} for {ClassName}", ctor.Name, node.Identifier.ValueText);
+
+            if (ctor.IsImplicitlyDeclared) {
+                yield return CreateParameterlessConstructor(classSymbol);
+            }
+        }
+    }
+
+    private AstNode CreateParameterlessConstructor(INamedTypeSymbol classSymbol) {
+        var functionNode = new FunctionCall { Prefix = NamePrefix.FromString("constructor"), Suffixes = [] };
+        
+        return functionNode;
+    }
+
     private (TypeDeclaration instanceDecl, TypeDeclaration typeDecl, TypeField? ctorField) BuildClassTypeDeclarations(ClassDeclarationSyntax node) {
         Log.Debug("Building type declaration for {ClassName}", node.Identifier.ValueText);
 
