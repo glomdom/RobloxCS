@@ -1,5 +1,6 @@
 ﻿using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Generics;
+using RobloxCS.AST.Parameters;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
