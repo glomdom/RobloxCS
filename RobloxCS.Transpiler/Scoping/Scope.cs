@@ -29,7 +29,7 @@ public sealed class Scope : IDisposable {
     public void Dispose() {
         var popped = _stack.Pop();
 
-        Log.Debug("Popped block scope {Name}", GetFriendlyName());
+        Log.Debug("Popped scope {Name}", GetFriendlyName());
         Debug.Assert(ReferenceEquals(popped, Value), "Scope stack imbalance, please run compiler with verbose input and file an issue.");
     }
 
