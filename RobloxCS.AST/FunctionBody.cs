@@ -11,4 +11,6 @@ public sealed class FunctionBody : AstNode {
     public required Block Body { get; set; }
     
     public override FunctionBody DeepClone() => throw new NotImplementedException();
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }

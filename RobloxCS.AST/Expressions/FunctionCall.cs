@@ -21,4 +21,6 @@ public class FunctionCall : Expression {
     }
 
     public override FunctionCall DeepClone() => new() { Prefix = (Prefix)Prefix.DeepClone(), Suffixes = Suffixes.Select(s => (Suffix)s.DeepClone()).ToList() };
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }

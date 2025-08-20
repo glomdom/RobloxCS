@@ -14,4 +14,6 @@ public sealed class Block : AstNode {
     }
 
     public override Block DeepClone() => new() { Statements = Statements.Select(s => (Statement)s.DeepClone()).ToList() };
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }
