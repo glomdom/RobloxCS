@@ -5,4 +5,8 @@ public abstract class AstNode {
 
     public abstract void Accept(IAstVisitor v);
     public abstract T Accept<T>(IAstVisitor<T> v) where T : AstNode;
+
+    public virtual IEnumerable<AstNode> Children() {
+        yield break;
+    }
 }

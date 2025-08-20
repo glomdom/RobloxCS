@@ -6,6 +6,6 @@ public sealed class BooleanTypeInfo : TypeInfo {
     public static BooleanTypeInfo FromBoolean(bool value) => new() { Value = value };
 
     public override BooleanTypeInfo DeepClone() => new() { Value = Value };
-    public override void Accept(IAstVisitor v) => v.Visit(this);
-    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
+    public override void Accept(IAstVisitor v) => v.VisitBooleanTypeInfo(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.VisitBooleanTypeInfo(this);
 }

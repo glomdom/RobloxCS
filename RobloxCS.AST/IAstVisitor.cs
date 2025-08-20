@@ -8,106 +8,130 @@ using RobloxCS.AST.Types;
 namespace RobloxCS.AST;
 
 public interface IAstVisitor {
-    public void Visit(Block node);
-    public void Visit(Expression node);
-    public void Visit(FunctionArgs node);
-    public void Visit(FunctionBody node);
-    public void Visit(Parameter node);
-    public void Visit(Prefix node);
-    public void Visit(Statement node);
-    public void Visit(Suffix node);
-    public void Visit(Var node);
+    public void VisitBlock(Block node);
+    public void VisitChunk(Chunk node);
+    public void VisitExpression(Expression node);
+    public void VisitFunctionArgs(FunctionArgs node);
+    public void VisitFunctionBody(FunctionBody node);
+    public void VisitParameter(Parameter node);
+    public void VisitPrefix(Prefix node);
+    public void VisitStatement(Statement node);
+    public void VisitSuffix(Suffix node);
+    public void VisitVar(Var node);
 
-    public void Visit(AnonymousFunction node);
-    public void Visit(BooleanExpression node);
-    public void Visit(FunctionCall node);
-    public void Visit(NumberExpression node);
-    public void Visit(StringExpression node);
-    public void Visit(SymbolExpression node);
-    public void Visit(TableConstructor node);
-    public void Visit(TableField node);
-    public void Visit(NoKey node);
-    public void Visit(NameKey node);
+    public void VisitAnonymousFunction(AnonymousFunction node);
+    public void VisitBooleanExpression(BooleanExpression node);
+    public void VisitFunctionCall(FunctionCall node);
+    public void VisitNumberExpression(NumberExpression node);
+    public void VisitStringExpression(StringExpression node);
+    public void VisitSymbolExpression(SymbolExpression node);
+    public void VisitTableConstructor(TableConstructor node);
+    public void VisitTableField(TableField node);
+    public void VisitNoKey(NoKey node);
+    public void VisitNameKey(NameKey node);
 
-    public void Visit(GenericDeclaration node);
-    public void Visit(GenericDeclarationParameter node);
-    public void Visit(GenericParameterInfo node);
+    public void VisitGenericDeclaration(GenericDeclaration node);
+    public void VisitGenericDeclarationParameter(GenericDeclarationParameter node);
+    public void VisitGenericParameterInfo(GenericParameterInfo node);
+    public void VisitNameGenericParameter(NameGenericParameter node);
+    public void VisitVariadicGenericParameter(VariadicGenericParameter node);
 
-    public void Visit(ExpressionPrefix node);
-    public void Visit(NamePrefix node);
+    public void VisitEllipsisParameter(EllipsisParameter node);
+    public void VisitNameParameter(NameParameter node);
 
-    public void Visit(Assignment node);
-    public void Visit(DoStatement node);
-    public void Visit(LocalAssignment node);
-    public void Visit(Return node);
+    public void VisitExpressionPrefix(ExpressionPrefix node);
+    public void VisitNamePrefix(NamePrefix node);
 
-    public void Visit(AnonymousCall node);
-    public void Visit(Call node);
+    public void VisitAssignment(Assignment node);
+    public void VisitDoStatement(DoStatement node);
+    public void VisitFunctionDeclaration(FunctionDeclaration node);
+    public void VisitLocalAssignment(LocalAssignment node);
+    public void VisitReturn(Return node);
 
-    public void Visit(ArrayTypeInfo node);
-    public void Visit(BasicTypeInfo node);
-    public void Visit(BooleanTypeInfo node);
-    public void Visit(CallbackTypeInfo node);
-    public void Visit(IntersectionTypeInfo node);
-    public void Visit(StringTypeInfo node);
-    public void Visit(TableTypeInfo node);
-    public void Visit(TypeArgument node);
-    public void Visit(TypeDeclaration node);
-    public void Visit(TypeField node);
-    public void Visit(TypeFieldKey node);
-    public void Visit(UnionTypeInfo node);
+    public void VisitAnonymousCall(AnonymousCall node);
+    public void VisitCall(Call node);
+
+    public void VisitArrayTypeInfo(ArrayTypeInfo node);
+    public void VisitBasicTypeInfo(BasicTypeInfo node);
+    public void VisitBooleanTypeInfo(BooleanTypeInfo node);
+    public void VisitCallbackTypeInfo(CallbackTypeInfo node);
+    public void VisitIntersectionTypeInfo(IntersectionTypeInfo node);
+    public void VisitStringTypeInfo(StringTypeInfo node);
+    public void VisitTableTypeInfo(TableTypeInfo node);
+    public void VisitTypeArgument(TypeArgument node);
+    public void VisitTypeDeclaration(TypeDeclaration node);
+    public void VisitTypeField(TypeField node);
+    public void VisitTypeFieldKey(TypeFieldKey node);
+    public void VisitNameTypeFieldKey(NameTypeFieldKey node);
+    public void VisitIndexSignatureFieldKey(IndexSignatureTypeFieldKey node);
+    public void VisitUnionTypeInfo(UnionTypeInfo node);
+    
+    public void VisitVarExpression(VarExpression node);
+    public void VisitVarName(VarName node);
 
     public void DefaultVisit(AstNode node);
 }
 
 public interface IAstVisitor<out T> where T : AstNode {
-    public T Visit(Block node);
-    public T Visit(Expression node);
-    public T Visit(FunctionArgs node);
-    public T Visit(FunctionBody node);
-    public T Visit(Parameter node);
-    public T Visit(Prefix node);
-    public T Visit(Statement node);
-    public T Visit(Suffix node);
-    public T Visit(Var node);
+    public T VisitBlock(Block node);
+    public T VisitChunk(Chunk node);
+    public T VisitExpression(Expression node);
+    public T VisitFunctionArgs(FunctionArgs node);
+    public T VisitFunctionBody(FunctionBody node);
+    public T VisitParameter(Parameter node);
+    public T VisitPrefix(Prefix node);
+    public T VisitStatement(Statement node);
+    public T VisitSuffix(Suffix node);
+    public T VisitVar(Var node);
 
-    public T Visit(AnonymousFunction node);
-    public T Visit(BooleanExpression node);
-    public T Visit(FunctionCall node);
-    public T Visit(NumberExpression node);
-    public T Visit(StringExpression node);
-    public T Visit(SymbolExpression node);
-    public T Visit(TableConstructor node);
-    public T Visit(NoKey node);
-    public T Visit(NameKey node);
+    public T VisitAnonymousFunction(AnonymousFunction node);
+    public T VisitBooleanExpression(BooleanExpression node);
+    public T VisitFunctionCall(FunctionCall node);
+    public T VisitNumberExpression(NumberExpression node);
+    public T VisitStringExpression(StringExpression node);
+    public T VisitSymbolExpression(SymbolExpression node);
+    public T VisitTableConstructor(TableConstructor node);
+    public T VisitNoKey(NoKey node);
+    public T VisitNameKey(NameKey node);
 
-    public T Visit(GenericDeclaration node);
-    public T Visit(GenericDeclarationParameter node);
-    public T Visit(GenericParameterInfo node);
+    public T VisitGenericDeclaration(GenericDeclaration node);
+    public T VisitGenericDeclarationParameter(GenericDeclarationParameter node);
+    public T VisitGenericParameterInfo(GenericParameterInfo node);
+    public T VisitNameGenericParameter(NameGenericParameter node);
+    public T VisitVariadicGenericParameter(VariadicGenericParameter node);
 
-    public T Visit(ExpressionPrefix node);
-    public T Visit(NamePrefix node);
+    public T VisitEllipsisParameter(EllipsisParameter node);
+    public T VisitNameParameter(NameParameter node);
 
-    public T Visit(Assignment node);
-    public T Visit(DoStatement node);
-    public T Visit(LocalAssignment node);
-    public T Visit(Return node);
+    public T VisitExpressionPrefix(ExpressionPrefix node);
+    public T VisitNamePrefix(NamePrefix node);
 
-    public T Visit(AnonymousCall node);
-    public T Visit(Call node);
+    public T VisitAssignment(Assignment node);
+    public T VisitDoStatement(DoStatement node);
+    public T VisitFunctionDeclaration(FunctionDeclaration node);
+    public T VisitLocalAssignment(LocalAssignment node);
+    public T VisitReturn(Return node);
 
-    public T Visit(ArrayTypeInfo node);
-    public T Visit(BasicTypeInfo node);
-    public T Visit(BooleanTypeInfo node);
-    public T Visit(CallbackTypeInfo node);
-    public T Visit(IntersectionTypeInfo node);
-    public T Visit(StringTypeInfo node);
-    public T Visit(TableTypeInfo node);
-    public T Visit(TypeArgument node);
-    public T Visit(TypeDeclaration node);
-    public T Visit(TypeField node);
-    public T Visit(TypeFieldKey node);
-    public T Visit(UnionTypeInfo node);
+    public T VisitAnonymousCall(AnonymousCall node);
+    public T VisitCall(Call node);
+
+    public T VisitArrayTypeInfo(ArrayTypeInfo node);
+    public T VisitBasicTypeInfo(BasicTypeInfo node);
+    public T VisitBooleanTypeInfo(BooleanTypeInfo node);
+    public T VisitCallbackTypeInfo(CallbackTypeInfo node);
+    public T VisitIntersectionTypeInfo(IntersectionTypeInfo node);
+    public T VisitStringTypeInfo(StringTypeInfo node);
+    public T VisitTableTypeInfo(TableTypeInfo node);
+    public T VisitTypeArgument(TypeArgument node);
+    public T VisitTypeDeclaration(TypeDeclaration node);
+    public T VisitTypeField(TypeField node);
+    public T VisitTypeFieldKey(TypeFieldKey node);
+    public T VisitNameTypeFieldKey(NameTypeFieldKey node);
+    public T VisitIndexSignatureFieldKey(IndexSignatureTypeFieldKey node);
+    public T VisitUnionTypeInfo(UnionTypeInfo node);
+    
+    public T VisitVarExpression(VarExpression node);
+    public T VisitVarName(VarName node);
 
     public T DefaultVisit(AstNode node);
 }

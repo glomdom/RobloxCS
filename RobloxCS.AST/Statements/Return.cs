@@ -9,6 +9,10 @@ public sealed class Return : Statement {
     public static Return Empty() => new() { Returns = [] };
 
     public override Return DeepClone() => new() { Returns = Returns.Select(ret => (Expression)ret.DeepClone()).ToList() };
-    public override void Accept(IAstVisitor v) => v.Visit(this);
-    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
+    public override void Accept(IAstVisitor v) => v.VisitReturn(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.VisitReturn(this);
+
+    public override IEnumerable<AstNode> Children() {
+        return Returns;
+    }
 }

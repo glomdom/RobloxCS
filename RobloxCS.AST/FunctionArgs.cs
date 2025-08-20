@@ -10,6 +10,8 @@ public sealed class FunctionArgs : AstNode {
     }
 
     public override FunctionArgs DeepClone() => new() { Arguments = Arguments.Select(arg => (Expression)arg.DeepClone()).ToList() };
-    public override void Accept(IAstVisitor v) => v.Visit(this);
-    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
+    public override void Accept(IAstVisitor v) => v.VisitFunctionArgs(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.VisitFunctionArgs(this);
+
+    public override IEnumerable<AstNode> Children() => Arguments;
 }

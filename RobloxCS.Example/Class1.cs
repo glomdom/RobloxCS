@@ -10,4 +10,9 @@ internal class Program {
         A = a;
         B = b;
     }
+    
+    internal Program(int a, int b, int c) {
+        A = a;
+        B = b + c;
+    }
 }

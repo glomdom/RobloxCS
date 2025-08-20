@@ -19,8 +19,8 @@ public sealed class NameGenericParameter : GenericParameterInfo {
     }
 
     public override NameGenericParameter DeepClone() => new() { Name = Name };
-    public override void Accept(IAstVisitor v) => v.Visit(this);
-    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
+    public override void Accept(IAstVisitor v) => v.VisitNameGenericParameter(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.VisitNameGenericParameter(this);
 }
 
 /// <summary>
@@ -38,6 +38,6 @@ public sealed class VariadicGenericParameter : GenericParameterInfo {
     }
     
     public override VariadicGenericParameter DeepClone() => new() { Name = Name };
-    public override void Accept(IAstVisitor v) => v.Visit(this);
-    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
+    public override void Accept(IAstVisitor v) => v.VisitVariadicGenericParameter(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.VisitVariadicGenericParameter(this);
 }

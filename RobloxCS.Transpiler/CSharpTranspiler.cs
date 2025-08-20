@@ -22,7 +22,6 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
     public SemanticModel Semantics { get; }
     public CompilationUnitSyntax Root { get; }
 
-    public List<AstNode> Nodes = [];
     public List<Statement> Exports = [];
 
     private readonly Stack<Block> _blockStack = new();
@@ -43,21 +42,19 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         _blockStack.Push(RootBlock); // seeded stack so we can avoid null checks
     }
 
-    public void Transpile() {
+    public Chunk Transpile() {
         Log.Information("Starting to transpile");
 
         var watch = Stopwatch.StartNew();
 
         Visit(Root);
-
-        if (Options.ScriptType != ScriptType.Module) return;
-
-        var moduleReturn = Exports.Count == 0 ? Return.FromExpressions([SymbolExpression.FromString("nil")]) : Return.Empty();
-        Nodes.Add(moduleReturn);
+        var chunk = new Chunk { Block = RootBlock };
 
         watch.Stop();
 
         Log.Information("Finished transpiling in {TimeMS}ms", watch.ElapsedMilliseconds);
+
+        return chunk;
     }
 
     public override void VisitClassDeclaration(ClassDeclarationSyntax node) {
@@ -65,8 +62,8 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         Log.Verbose("Visiting class declaration {ClassName}", className);
 
         var (instanceDecl, typeDecl, ctorFieldMaybe) = BuildClassTypeDeclarations(node);
-        Nodes.Add(instanceDecl);
-        Nodes.Add(typeDecl);
+        CurrentBlock.AddStatement(instanceDecl);
+        CurrentBlock.AddStatement(typeDecl);
 
         if (ctorFieldMaybe is { } ctorField && typeDecl.DeclareAs is TableTypeInfo typeTable) {
             ctorField.Key = NameTypeFieldKey.FromString("new");
@@ -81,17 +78,17 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         }
 
         var both = IntersectionTypeInfo.FromNames(instanceDecl.Name, typeDecl.Name);
-        Nodes.Add(LocalAssignment.Naked(node.Identifier.ValueText, both));
+        CurrentBlock.AddStatement(LocalAssignment.Naked(node.Identifier.ValueText, both));
 
-        using (WithBlock(Block.Empty(), $"ClassBlock_{className}")) {
+        var classBlock = Block.Empty();
+        using (WithBlock(classBlock, $"ClassBlock_{className}")) {
             Log.Debug("Creating required functions for class functionality");
 
             Log.Verbose("Creating __tostring body for {ClassName}", className);
-            Block toStringBlock;
-            using (WithBlock(Block.Empty(), $"FunctionToStringBlock_{className}")) {
-                CurrentBlock.AddStatement(Return.FromExpressions([StringExpression.FromString(className)]));
 
-                toStringBlock = CurrentBlock;
+            var toStringBlock = Block.Empty();
+            using (WithBlock(toStringBlock, $"FunctionToStringBlock_{className}")) {
+                CurrentBlock.AddStatement(Return.FromExpressions([StringExpression.FromString(className)]));
             }
 
             var toStringFunction = new AnonymousFunction {
@@ -99,27 +96,25 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
                     Body = toStringBlock,
                     Parameters = [],
                     ReturnType = BasicTypeInfo.String(),
-                    TypeSpecifiers = []
-                }
+                    TypeSpecifiers = [],
+                },
             };
 
             CurrentBlock.AddStatement(new Assignment {
                 Vars = [VarName.FromString(className)],
                 Expressions = [
-                    FunctionCall.Basic("setmetatable", TableConstructor.Empty(), TableConstructor.With(new NameKey { Key = "__tostring", Value = toStringFunction }))
-                ]
+                    FunctionCall.Basic("setmetatable", TableConstructor.Empty(), TableConstructor.With(new NameKey { Key = "__tostring", Value = toStringFunction })),
+                ],
             });
 
             CurrentBlock.AddStatement(Assignment.AssignToSymbol($"{className}.__index", className));
 
             foreach (var ctorNode in CreateConstructors(node)) {
-                Nodes.Add(ctorNode);
+                CurrentBlock.AddStatement(ctorNode);
             }
-
-            VisitMembers(node.Members, this);
-
-            Nodes.Add(DoStatement.FromBlock(CurrentBlock));
         }
+
+        CurrentBlock.AddStatement(DoStatement.FromBlock(classBlock));
     }
 
     public override void VisitFieldDeclaration(FieldDeclarationSyntax node) {
@@ -134,22 +129,30 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         }
     }
 
-    private IEnumerable<AstNode> CreateConstructors(ClassDeclarationSyntax node) {
+    private IEnumerable<Statement> CreateConstructors(ClassDeclarationSyntax node) {
         var classSymbol = Semantics.GetDeclaredSymbol(node);
         if (classSymbol is IErrorTypeSymbol or null) throw new Exception("Failed to ask semantic model what the class is.");
 
         foreach (var ctor in classSymbol.InstanceConstructors) {
-            Log.Debug("Found constructor {CtorName} for {ClassName}", ctor.Name, node.Identifier.ValueText);
+            Log.Debug("Found constructor for {ClassName}", node.Identifier.ValueText);
 
             if (ctor.IsImplicitlyDeclared) {
+                // always parameterless
                 yield return CreateParameterlessConstructor(classSymbol);
             }
         }
     }
 
-    private AstNode CreateParameterlessConstructor(INamedTypeSymbol classSymbol) {
-        var functionNode = new FunctionCall { Prefix = NamePrefix.FromString("constructor"), Suffixes = [] };
-        
+    private Statement CreateParameterlessConstructor(INamedTypeSymbol classSymbol) {
+        var functionNode = new FunctionDeclaration {
+            Name = "constructor", Body = new FunctionBody {
+                Body = Block.Empty(),
+                Parameters = [],
+                TypeSpecifiers = [],
+                ReturnType = BasicTypeInfo.String(),
+            },
+        };
+
         return functionNode;
     }
 
@@ -188,7 +191,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
         var ctorType = new CallbackTypeInfo {
             Arguments = parameters.Prepend(TypeArgument.From("self", BasicTypeInfo.FromString(instanceTypeName))).ToList(),
-            ReturnType = BasicTypeInfo.Void()
+            ReturnType = BasicTypeInfo.Void(),
         };
 
         return TypeField.FromNameAndType("constructor", ctorType);
@@ -196,7 +199,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         TypeField DefaultCtor() {
             var cb = new CallbackTypeInfo {
                 Arguments = [],
-                ReturnType = BasicTypeInfo.Void()
+                ReturnType = BasicTypeInfo.Void(),
             };
 
             return TypeField.FromNameAndType("constructor", cb);
@@ -216,7 +219,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
             yield return new TypeField {
                 Key = NameTypeFieldKey.FromString(v.Identifier.ValueText),
                 Access = isReadonly ? AccessModifier.Read : null,
-                Value = primitiveType
+                Value = primitiveType,
             };
         }
     }
