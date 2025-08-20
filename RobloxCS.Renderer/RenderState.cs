@@ -29,7 +29,7 @@ public class RenderState {
             AdapterForNode<TypeArgument, TypeArgumentRenderer>(),
             AdapterForNode<Prefix, PrefixRenderer>(),
             AdapterForNode<Suffix, SuffixRenderer>(),
-            AdapterForNode<Parameter, ParameterRenderer>()
+            AdapterForNode<Parameter, ParameterRenderer>(),
         ]
     );
 

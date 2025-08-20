@@ -8,54 +8,70 @@ using RobloxCS.AST.Types;
 namespace RobloxCS.AST;
 
 public class AstVisitorBase : IAstVisitor {
-    public virtual void DefaultVisit(AstNode node) { }
-    
-    public virtual void Visit(Block node) => DefaultVisit(node);
-    public virtual void Visit(Expression node) => DefaultVisit(node);
-    public virtual void Visit(FunctionArgs node) => DefaultVisit(node);
-    public virtual void Visit(FunctionBody node) => DefaultVisit(node);
-    public virtual void Visit(Parameter node) => DefaultVisit(node);
-    public virtual void Visit(Prefix node) => DefaultVisit(node);
-    public virtual void Visit(Statement node) => DefaultVisit(node);
-    public virtual void Visit(Suffix node) => DefaultVisit(node);
-    public virtual void Visit(Var node) => DefaultVisit(node);
-    
-    public virtual void Visit(AnonymousFunction node) => DefaultVisit(node);
-    public virtual void Visit(BooleanExpression node) => DefaultVisit(node);
-    public virtual void Visit(FunctionCall node) => DefaultVisit(node);
-    public virtual void Visit(NumberExpression node) => DefaultVisit(node);
-    public virtual void Visit(StringExpression node) => DefaultVisit(node);
-    public virtual void Visit(SymbolExpression node) => DefaultVisit(node);
-    public virtual void Visit(TableConstructor node) => DefaultVisit(node);
-    public virtual void Visit(TableField node) => DefaultVisit(node);
-    public virtual void Visit(NoKey node) => DefaultVisit(node);
-    public virtual void Visit(NameKey node) => DefaultVisit(node);
+    public virtual void DefaultVisit(AstNode node) {
+        foreach (var child in node.Children()) {
+            child.Accept(this);
+        }
+    }
 
-    public virtual void Visit(GenericDeclaration node) => DefaultVisit(node);
-    public virtual void Visit(GenericDeclarationParameter node) => DefaultVisit(node);
-    public virtual void Visit(GenericParameterInfo node) => DefaultVisit(node);
+    public virtual void VisitBlock(Block node) => DefaultVisit(node);
+    public virtual void VisitChunk(Chunk node) => DefaultVisit(node);
+    public virtual void VisitExpression(Expression node) => DefaultVisit(node);
+    public virtual void VisitFunctionArgs(FunctionArgs node) => DefaultVisit(node);
+    public virtual void VisitFunctionBody(FunctionBody node) => DefaultVisit(node);
+    public virtual void VisitParameter(Parameter node) => DefaultVisit(node);
+    public virtual void VisitPrefix(Prefix node) => DefaultVisit(node);
+    public virtual void VisitStatement(Statement node) => DefaultVisit(node);
+    public virtual void VisitSuffix(Suffix node) => DefaultVisit(node);
+    public virtual void VisitVar(Var node) => DefaultVisit(node);
 
-    public virtual void Visit(ExpressionPrefix node) => DefaultVisit(node);
-    public virtual void Visit(NamePrefix node) => DefaultVisit(node);
+    public virtual void VisitAnonymousFunction(AnonymousFunction node) => DefaultVisit(node);
+    public virtual void VisitBooleanExpression(BooleanExpression node) => DefaultVisit(node);
+    public virtual void VisitFunctionCall(FunctionCall node) => DefaultVisit(node);
+    public virtual void VisitNumberExpression(NumberExpression node) => DefaultVisit(node);
+    public virtual void VisitStringExpression(StringExpression node) => DefaultVisit(node);
+    public virtual void VisitSymbolExpression(SymbolExpression node) => DefaultVisit(node);
+    public virtual void VisitTableConstructor(TableConstructor node) => DefaultVisit(node);
+    public virtual void VisitTableField(TableField node) => DefaultVisit(node);
+    public virtual void VisitNoKey(NoKey node) => DefaultVisit(node);
+    public virtual void VisitNameKey(NameKey node) => DefaultVisit(node);
 
-    public virtual void Visit(Assignment node) => DefaultVisit(node);
-    public virtual void Visit(DoStatement node) => DefaultVisit(node);
-    public virtual void Visit(LocalAssignment node) => DefaultVisit(node);
-    public virtual void Visit(Return node) => DefaultVisit(node);
+    public virtual void VisitGenericDeclaration(GenericDeclaration node) => DefaultVisit(node);
+    public virtual void VisitGenericDeclarationParameter(GenericDeclarationParameter node) => DefaultVisit(node);
+    public virtual void VisitGenericParameterInfo(GenericParameterInfo node) => DefaultVisit(node);
+    public virtual void VisitNameGenericParameter(NameGenericParameter node) => DefaultVisit(node);
+    public virtual void VisitVariadicGenericParameter(VariadicGenericParameter node) => DefaultVisit(node);
 
-    public virtual void Visit(AnonymousCall node) => DefaultVisit(node);
-    public virtual void Visit(Call node) => DefaultVisit(node);
+    public virtual void VisitEllipsisParameter(EllipsisParameter node) => DefaultVisit(node);
+    public virtual void VisitNameParameter(NameParameter node) => DefaultVisit(node);
 
-    public virtual void Visit(ArrayTypeInfo node) => DefaultVisit(node);
-    public virtual void Visit(BasicTypeInfo node) => DefaultVisit(node);
-    public virtual void Visit(BooleanTypeInfo node) => DefaultVisit(node);
-    public virtual void Visit(CallbackTypeInfo node) => DefaultVisit(node);
-    public virtual void Visit(IntersectionTypeInfo node) => DefaultVisit(node);
-    public virtual void Visit(StringTypeInfo node) => DefaultVisit(node);
-    public virtual void Visit(TableTypeInfo node) => DefaultVisit(node);
-    public virtual void Visit(TypeArgument node) => DefaultVisit(node);
-    public virtual void Visit(TypeDeclaration node) => DefaultVisit(node);
-    public virtual void Visit(TypeField node) => DefaultVisit(node);
-    public virtual void Visit(TypeFieldKey node) => DefaultVisit(node);
-    public virtual void Visit(UnionTypeInfo node) => DefaultVisit(node);
+    public virtual void VisitExpressionPrefix(ExpressionPrefix node) => DefaultVisit(node);
+    public virtual void VisitNamePrefix(NamePrefix node) => DefaultVisit(node);
+
+    public virtual void VisitAssignment(Assignment node) => DefaultVisit(node);
+    public virtual void VisitDoStatement(DoStatement node) => DefaultVisit(node);
+    public virtual void VisitFunctionDeclaration(FunctionDeclaration node) => DefaultVisit(node);
+    public virtual void VisitLocalAssignment(LocalAssignment node) => DefaultVisit(node);
+    public virtual void VisitReturn(Return node) => DefaultVisit(node);
+
+    public virtual void VisitAnonymousCall(AnonymousCall node) => DefaultVisit(node);
+    public virtual void VisitCall(Call node) => DefaultVisit(node);
+
+    public virtual void VisitArrayTypeInfo(ArrayTypeInfo node) => DefaultVisit(node);
+    public virtual void VisitBasicTypeInfo(BasicTypeInfo node) => DefaultVisit(node);
+    public virtual void VisitBooleanTypeInfo(BooleanTypeInfo node) => DefaultVisit(node);
+    public virtual void VisitCallbackTypeInfo(CallbackTypeInfo node) => DefaultVisit(node);
+    public virtual void VisitIntersectionTypeInfo(IntersectionTypeInfo node) => DefaultVisit(node);
+    public virtual void VisitStringTypeInfo(StringTypeInfo node) => DefaultVisit(node);
+    public virtual void VisitTableTypeInfo(TableTypeInfo node) => DefaultVisit(node);
+    public virtual void VisitTypeArgument(TypeArgument node) => DefaultVisit(node);
+    public virtual void VisitTypeDeclaration(TypeDeclaration node) => DefaultVisit(node);
+    public virtual void VisitTypeField(TypeField node) => DefaultVisit(node);
+    public virtual void VisitTypeFieldKey(TypeFieldKey node) => DefaultVisit(node);
+    public virtual void VisitNameTypeFieldKey(NameTypeFieldKey node) => DefaultVisit(node);
+    public virtual void VisitIndexSignatureFieldKey(IndexSignatureTypeFieldKey node) => DefaultVisit(node);
+    public virtual void VisitUnionTypeInfo(UnionTypeInfo node) => DefaultVisit(node);
+
+    public virtual void VisitVarExpression(VarExpression node) => DefaultVisit(node);
+    public virtual void VisitVarName(VarName node) => DefaultVisit(node);
 }

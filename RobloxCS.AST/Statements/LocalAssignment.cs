@@ -12,16 +12,22 @@ public sealed class LocalAssignment : Statement {
         return new LocalAssignment {
             Names = [SymbolExpression.FromString(name)],
             Expressions = [],
-            Types = [type]
+            Types = [type],
         };
     }
 
     public override LocalAssignment DeepClone() => new() {
-        Names = Names.Select(n => (SymbolExpression)n.DeepClone()).ToList(),
+        Names = Names.Select(n => n.DeepClone()).ToList(),
         Expressions = Expressions.Select(e => (Expression)e.DeepClone()).ToList(),
         Types = Types.Select(t => (TypeInfo)t.DeepClone()).ToList(),
     };
-    
-    public override void Accept(IAstVisitor v) => v.Visit(this);
-    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
+
+    public override void Accept(IAstVisitor v) => v.VisitLocalAssignment(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.VisitLocalAssignment(this);
+
+    public override IEnumerable<AstNode> Children() {
+        foreach (var n in Names) yield return n;
+        foreach (var e in Expressions) yield return e;
+        foreach (var t in Types) yield return t;
+    }
 }

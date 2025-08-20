@@ -41,7 +41,7 @@ public static class SyntaxUtilities {
             SpecialType.System_String => "string",
             SpecialType.System_Object => "any",
 
-            _ => throw new ArgumentOutOfRangeException(nameof(typeSymbol), typeSymbol.SpecialType, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(typeSymbol), typeSymbol.SpecialType, null),
         };
     }
 
@@ -62,7 +62,7 @@ public static class SyntaxUtilities {
             SpecialType.System_String => true,
             SpecialType.System_Object => true,
 
-            _ => false
+            _ => false,
         };
     }
 }

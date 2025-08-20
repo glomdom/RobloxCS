@@ -3,5 +3,5 @@
 public enum ScriptType {
     Local,
     Server,
-    Module
+    Module,
 }

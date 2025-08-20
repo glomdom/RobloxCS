@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Serilog" Version="4.3.1-dev-02373" />
       <PackageReference Include="Spectre.Console.Cli" Version="0.50.1-preview.0.21" />
     </ItemGroup>
 

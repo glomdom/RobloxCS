@@ -13,6 +13,11 @@ public sealed class TypeField : AstNode {
         Value = (TypeInfo)Value.DeepClone(),
     };
     
-    public override void Accept(IAstVisitor v) => v.Visit(this);
-    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
+    public override void Accept(IAstVisitor v) => v.VisitTypeField(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.VisitTypeField(this);
+
+    public override IEnumerable<AstNode> Children() {
+        yield return Key;
+        yield return Value;
+    }
 }

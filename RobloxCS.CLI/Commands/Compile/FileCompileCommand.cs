@@ -1,7 +1,9 @@
 ﻿// ReSharper disable ClassNeverInstantiated.Global
 
 using System.ComponentModel;
+using RobloxCS.AST;
 using RobloxCS.Common;
+using RobloxCS.Renderer;
 using RobloxCS.Transpiler;
 using Serilog;
 using Serilog.Events;
@@ -46,13 +48,13 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
 
         Log.Information("Creating C# transpiler");
         var transpiler = new CSharpTranspiler(options, compiler);
-        transpiler.Transpile();
+        var chunk = transpiler.Transpile();
+        var children = chunk.Children();
 
-        Log.Information("Starting to render {NodeCount} nodes", transpiler.Nodes.Count);
-        var renderer = new Renderer.Renderer(transpiler.Nodes);
-        var output = renderer.Render();
-
-        Console.WriteLine(output);
+        Log.Information("Starting to render nodes");
+        
+        var t = new RendererWalker();
+        t.VisitChunk(chunk);
 
         return 0;
     }
