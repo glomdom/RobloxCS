@@ -3,5 +3,9 @@
 public sealed class NamePrefix : Prefix {
     public required string Name { get; set; }
 
+    public static NamePrefix FromString(string prefix) {
+        return new NamePrefix { Name = prefix };
+    }
+
     public override NamePrefix DeepClone() => new() { Name = Name };
 }
