@@ -2,7 +2,7 @@
 using RobloxCS.AST.Parameters;
 using RobloxCS.AST.Types;
 
-namespace RobloxCS.AST;
+namespace RobloxCS.AST.Functions;
 
 public sealed class FunctionBody : AstNode {
     public List<GenericDeclaration>? Generics { get; set; }

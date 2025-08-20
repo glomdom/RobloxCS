@@ -1,4 +1,6 @@
-﻿namespace RobloxCS.AST.Expressions;
+﻿using RobloxCS.AST.Functions;
+
+namespace RobloxCS.AST.Expressions;
 
 public sealed class AnonymousFunction : Expression {
     public required FunctionBody Body { get; set; }

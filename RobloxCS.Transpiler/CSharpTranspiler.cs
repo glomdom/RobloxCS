@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Functions;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
@@ -85,7 +86,6 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
             Log.Debug("Creating required functions for class functionality");
 
             Log.Verbose("Creating __tostring body for {ClassName}", className);
-
             var toStringBlock = Block.Empty();
             using (WithBlock(toStringBlock, $"FunctionToStringBlock_{className}")) {
                 CurrentBlock.AddStatement(Return.FromExpressions([StringExpression.FromString(className)]));
@@ -124,6 +124,8 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
             return; // we are generating a type, return
         }
 
+        Console.WriteLine("Hey");
+
         foreach (var decl in node.Declaration.Variables) {
             Log.Warning("Unimplemented initializer for field {FieldName}", decl.Identifier.ValueText);
         }
@@ -143,13 +145,39 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         }
     }
 
-    private Statement CreateParameterlessConstructor(INamedTypeSymbol classSymbol) {
+    private FunctionDeclaration CreateParameterlessConstructor(INamedTypeSymbol classSymbol) {
+        Log.Debug("Creating parameterless constructor for {ClassName}", classSymbol.Name);
+
+        var functionBlock = Block.Empty();
+        using (WithBlock(functionBlock, $"FunctionParameterlessCtor_{classSymbol.Name}")) {
+            var fields = classSymbol.GetMembers().OfType<IFieldSymbol>();
+            foreach (var field in fields) {
+                if (field.IsStatic) {
+                    Log.Warning("TODO: Implement static fields");
+                }
+
+                foreach (var declRef in field.DeclaringSyntaxReferences) {
+                    if (declRef.GetSyntax() is not VariableDeclaratorSyntax v) continue;
+
+                    var init = v.Initializer;
+                    if (init is null) continue;
+
+                    var rhs = LowerExpr(init.Value);
+
+                    CurrentBlock.AddStatement(new Assignment {
+                        Vars = [VarName.FromString($"self.{field.Name}")],
+                        Expressions = [rhs],
+                    });
+                }
+            }
+        }
+
         var functionNode = new FunctionDeclaration {
-            Name = "constructor", Body = new FunctionBody {
-                Body = Block.Empty(),
+            Name = FunctionName.FromString($"{classSymbol.Name}:constructor"), Body = new FunctionBody {
+                Body = functionBlock,
                 Parameters = [],
                 TypeSpecifiers = [],
-                ReturnType = BasicTypeInfo.String(),
+                ReturnType = BasicTypeInfo.Void(),
             },
         };
 
@@ -256,4 +284,11 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
             walker.Visit(member);
         }
     }
+
+    private static Expression LowerExpr(ExpressionSyntax syntax) => syntax switch {
+        LiteralExpressionSyntax literal when literal.IsKind(SyntaxKind.StringLiteralExpression) => StringExpression.FromString(literal.Token.ValueText),
+        LiteralExpressionSyntax lit when lit.IsKind(SyntaxKind.NumericLiteralExpression) => new NumberExpression { Value = Convert.ToDouble(lit.Token.Value) },
+        LiteralExpressionSyntax lit when lit.IsKind(SyntaxKind.TrueLiteralExpression) => new BooleanExpression { Value = true },
+        LiteralExpressionSyntax lit when lit.IsKind(SyntaxKind.FalseLiteralExpression) => new BooleanExpression { Value = false },
+    };
 }

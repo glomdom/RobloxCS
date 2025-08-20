@@ -1,5 +1,6 @@
 ﻿using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Functions;
 using RobloxCS.AST.Parameters;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
@@ -69,6 +70,13 @@ public class RendererWalker : AstVisitorBase {
 
     public override void VisitBasicTypeInfo(BasicTypeInfo node) {
         _state.Builder.Append(node.Name);
+    }
+
+    public override void VisitFunctionDeclaration(FunctionDeclaration node) {
+        _state.AppendIndented("function ");
+        _state.Builder.Append(node.Name.ToFriendly());
+        Visit(node.Body);
+        _state.AppendIndentedLine("end");
     }
 
     public override void VisitTypeArgument(TypeArgument node) {
@@ -201,6 +209,10 @@ public class RendererWalker : AstVisitorBase {
     }
 
     public override void VisitSymbolExpression(SymbolExpression node) {
+        _state.Builder.Append(node.Value);
+    }
+
+    public override void VisitNumberExpression(NumberExpression node) {
         _state.Builder.Append(node.Value);
     }
 

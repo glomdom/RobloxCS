@@ -1,6 +1,6 @@
 ﻿using RobloxCS.AST.Expressions;
 
-namespace RobloxCS.AST;
+namespace RobloxCS.AST.Functions;
 
 public sealed class FunctionArgs : AstNode {
     public required List<Expression> Arguments { get; set; }

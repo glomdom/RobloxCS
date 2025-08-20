@@ -1,4 +1,5 @@
-﻿using RobloxCS.AST.Prefixes;
+﻿using RobloxCS.AST.Functions;
+using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Suffixes;
 
 namespace RobloxCS.AST.Expressions;

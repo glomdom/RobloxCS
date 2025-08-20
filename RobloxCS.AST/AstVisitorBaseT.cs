@@ -1,4 +1,5 @@
 ﻿using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Functions;
 using RobloxCS.AST.Generics;
 using RobloxCS.AST.Parameters;
 using RobloxCS.AST.Prefixes;
@@ -16,7 +17,7 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
 
         return (T)node;
     }
-    
+
     public T Visit(AstNode node) => node.Accept(this);
 
     public virtual T VisitBlock(Block node) => DefaultVisit(node);
@@ -24,6 +25,7 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
     public virtual T VisitExpression(Expression node) => DefaultVisit(node);
     public virtual T VisitFunctionArgs(FunctionArgs node) => DefaultVisit(node);
     public virtual T VisitFunctionBody(FunctionBody node) => DefaultVisit(node);
+    public virtual T VisitFunctionName(FunctionName node) => DefaultVisit(node);
     public virtual T VisitParameter(Parameter node) => DefaultVisit(node);
     public virtual T VisitPrefix(Prefix node) => DefaultVisit(node);
     public virtual T VisitStatement(Statement node) => DefaultVisit(node);

@@ -1,4 +1,6 @@
-﻿namespace RobloxCS.AST.Suffixes;
+﻿using RobloxCS.AST.Functions;
+
+namespace RobloxCS.AST.Suffixes;
 
 public sealed class AnonymousCall : Call {
     public required FunctionArgs Arguments { get; set; }
