@@ -50,6 +50,12 @@ public class RenderState {
         }
     }
 
+    /// <summary>
+    /// Renders a list of nodes separated by the provided <paramref name="delimiter"/>.
+    /// </summary>
+    /// <param name="list">A list containing <see cref="AstNode"/>s.</param>
+    /// <param name="state">The shared render state.</param>
+    /// <param name="delimiter">The delimiter to separate nodes by. Automatically surrounded with spaces.</param>
     public void RenderDelimited<T>(IList<T> list, RenderState state, char delimiter) where T : AstNode {
         for (var i = 0; i < list.Count; i++) {
             var renderer = GetRenderer<T>();
@@ -65,7 +71,7 @@ public class RenderState {
     /// Gets a renderer from the provided <c>type</c>.
     /// </summary>
     /// <returns>A renderer, if it was found.</returns>
-    /// <exception cref="NotImplementedException">Thrown when a renderer was not found.</exception>
+    /// <exception cref="RendererNotFoundException">Thrown when a renderer was not found.</exception>
     public IRenderer GetRenderer(Type type) {
         if (!Renderers.TryGetValue(type, out var renderer)) {
             throw new RendererNotFoundException("Renderer is not registered/implemented.", type.Name);
@@ -78,7 +84,7 @@ public class RenderState {
     /// Gets a renderer from the provided <c>type</c>.
     /// </summary>
     /// <returns>A typed renderer, if it was found.</returns>
-    /// <exception cref="NotImplementedException">Thrown when a renderer was not found.</exception>
+    /// <exception cref="RendererNotFoundException">Thrown when a renderer was not found.</exception>
     /// <exception cref="InvalidCastException">Thrown if a renderer was found, but does not match type constraint.</exception>
     public IRenderer<T> GetRenderer<T>() where T : AstNode {
         var renderer = GetRenderer(typeof(T));
