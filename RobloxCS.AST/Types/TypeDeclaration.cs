@@ -16,7 +16,10 @@ public sealed class TypeDeclaration : AstNode {
 
     public override TypeDeclaration DeepClone() => new() {
         Name = Name,
-        Declarations = Declarations?.Select(decl => (GenericDeclaration)decl.DeepClone()).ToList(),
+        Declarations = Declarations?.Select(decl => decl.DeepClone()).ToList(),
         DeclareAs = (TypeInfo)DeclareAs.DeepClone()
     };
+    
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }

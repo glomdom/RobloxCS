@@ -21,4 +21,7 @@ public sealed class LocalAssignment : Statement {
         Expressions = Expressions.Select(e => (Expression)e.DeepClone()).ToList(),
         Types = Types.Select(t => (TypeInfo)t.DeepClone()).ToList(),
     };
+    
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }

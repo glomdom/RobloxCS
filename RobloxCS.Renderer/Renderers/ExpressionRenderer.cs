@@ -1,5 +1,6 @@
-﻿using RobloxCS.AST;
-using RobloxCS.AST.Expressions;
+﻿using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Prefixes;
+using RobloxCS.AST.Suffixes;
 
 namespace RobloxCS.Renderer.Renderers;
 

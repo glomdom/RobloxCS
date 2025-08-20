@@ -1,4 +1,6 @@
-﻿namespace RobloxCS.AST;
+﻿using RobloxCS.AST.Statements;
+
+namespace RobloxCS.AST;
 
 public sealed class Block : AstNode {
     public required List<Statement> Statements { get; set; }

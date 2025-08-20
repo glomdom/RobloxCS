@@ -11,4 +11,6 @@ public sealed class UnionTypeInfo : TypeInfo {
     };
 
     public override UnionTypeInfo DeepClone() => new() { Types = Types.Select(t => (TypeInfo)t.DeepClone()).ToList() };
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }

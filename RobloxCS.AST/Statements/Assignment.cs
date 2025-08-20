@@ -17,4 +17,7 @@ public sealed class Assignment : Statement {
         Vars = Vars.Select(v => (Var)v.DeepClone()).ToList(),
         Expressions = Expressions.Select(e => (Expression)e.DeepClone()).ToList(),
     };
+    
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }

@@ -12,4 +12,7 @@ public sealed class TypeField : AstNode {
         Key = (TypeFieldKey)Key.DeepClone(),
         Value = (TypeInfo)Value.DeepClone(),
     };
+    
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }
