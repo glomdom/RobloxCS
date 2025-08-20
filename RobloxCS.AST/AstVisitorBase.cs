@@ -70,6 +70,7 @@ public class AstVisitorBase : IAstVisitor {
     public virtual void VisitTypeFieldKey(TypeFieldKey node) => DefaultVisit(node);
     public virtual void VisitNameTypeFieldKey(NameTypeFieldKey node) => DefaultVisit(node);
     public virtual void VisitIndexSignatureFieldKey(IndexSignatureTypeFieldKey node) => DefaultVisit(node);
+    public virtual void VisitTypeInfo(TypeInfo node) => DefaultVisit(node);
     public virtual void VisitUnionTypeInfo(UnionTypeInfo node) => DefaultVisit(node);
 
     public virtual void VisitVarExpression(VarExpression node) => DefaultVisit(node);

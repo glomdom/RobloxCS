@@ -54,7 +54,9 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
         Log.Information("Starting to render nodes");
         
         var t = new RendererWalker();
-        t.VisitChunk(chunk);
+        var output = t.Render(chunk);
+        
+        Console.WriteLine(output);
 
         return 0;
     }
