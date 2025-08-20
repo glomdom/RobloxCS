@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using RobloxCS.AST;
+using Serilog;
 
 #if !DEBUG
 using System.Runtime.ExceptionServices;
@@ -30,7 +31,7 @@ public class Renderer {
                 renderer.Render(state, node);
             } catch (RendererNotFoundException e) {
 #if DEBUG
-                Console.WriteLine($"Renderer {e.RendererName} was not found, ignoring as this is a debug build.");
+                Log.Warning("Renderer for {NodeName} was not found, ignoring as this is a debug build", e.RendererName);
 
                 continue;
 #else
