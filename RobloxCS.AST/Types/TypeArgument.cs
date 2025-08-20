@@ -9,4 +9,6 @@ public sealed class TypeArgument : AstNode {
     public static TypeArgument From(string name, TypeInfo info) => new() { Name = name, TypeInfo = info };
 
     public override TypeArgument DeepClone() => new() { Name = Name, TypeInfo = (TypeInfo)TypeInfo.DeepClone() };
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }

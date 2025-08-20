@@ -1,5 +1,4 @@
-﻿using RobloxCS.AST;
-using RobloxCS.AST.Suffixes;
+﻿using RobloxCS.AST.Suffixes;
 
 namespace RobloxCS.Renderer.Renderers;
 

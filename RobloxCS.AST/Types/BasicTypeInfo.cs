@@ -11,4 +11,6 @@ public sealed class BasicTypeInfo : TypeInfo {
     public static BasicTypeInfo Boolean() => new() { Name = "boolean" };
 
     public override BasicTypeInfo DeepClone() => new() { Name = Name };
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }

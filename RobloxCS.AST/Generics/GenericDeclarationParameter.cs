@@ -9,4 +9,7 @@ public sealed class GenericDeclarationParameter : AstNode {
     public override GenericDeclarationParameter DeepClone() => new() {
         Parameter = (GenericParameterInfo)Parameter.DeepClone(), Default = (TypeInfo?)Default?.DeepClone()
     };
+
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }

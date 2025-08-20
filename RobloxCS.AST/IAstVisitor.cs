@@ -40,10 +40,10 @@ public interface IAstVisitor {
     public void Visit(DoStatement doStmt);
     public void Visit(LocalAssignment localAssignmentStmt);
     public void Visit(Return returnStmt);
-    
+
     public void Visit(AnonymousCall anonCall);
     public void Visit(Call call);
-    
+
     public void Visit(ArrayTypeInfo arrTypeInfo);
     public void Visit(BasicTypeInfo basicTypeInfo);
     public void Visit(BooleanTypeInfo boolTypeInfo);
@@ -92,10 +92,10 @@ public interface IAstVisitor<T> {
     public T Visit(DoStatement doStmt);
     public T Visit(LocalAssignment localAssignmentStmt);
     public T Visit(Return returnStmt);
-    
+
     public T Visit(AnonymousCall anonCall);
     public T Visit(Call call);
-    
+
     public T Visit(ArrayTypeInfo arrTypeInfo);
     public T Visit(BasicTypeInfo basicTypeInfo);
     public T Visit(BooleanTypeInfo boolTypeInfo);

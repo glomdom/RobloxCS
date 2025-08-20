@@ -12,4 +12,7 @@ public sealed class CallbackTypeInfo : TypeInfo {
         Arguments = Arguments.Select(arg => arg.DeepClone()).ToList(),
         ReturnType = (TypeInfo)ReturnType.DeepClone()
     };
+    
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }

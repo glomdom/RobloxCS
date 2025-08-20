@@ -1,4 +1,6 @@
-﻿namespace RobloxCS.AST;
+﻿using RobloxCS.AST.Expressions;
+
+namespace RobloxCS.AST;
 
 public sealed class FunctionArgs : AstNode {
     public required List<Expression> Arguments { get; set; }
