@@ -25,6 +25,9 @@ public interface IAstVisitor {
     public void Visit(StringExpression strExpr);
     public void Visit(SymbolExpression symExpr);
     public void Visit(TableConstructor tableCtor);
+    public void Visit(TableField tableField);
+    public void Visit(NoKey noKey);
+    public void Visit(NameKey nameKey);
 
     public void Visit(GenericDeclaration genericDecl);
     public void Visit(GenericDeclarationParameter genericDeclParam);
@@ -75,6 +78,8 @@ public interface IAstVisitor<T> {
     public T Visit(StringExpression strExpr);
     public T Visit(SymbolExpression symExpr);
     public T Visit(TableConstructor tableCtor);
+    public T Visit(NoKey noKey);
+    public T Visit(NameKey nameKey);
 
     public T Visit(GenericDeclaration genericDecl);
     public T Visit(GenericDeclarationParameter genericDeclParam);

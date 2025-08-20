@@ -6,4 +6,6 @@ public sealed class SymbolExpression : Expression {
     public static SymbolExpression FromString(string name) => new() { Value = name };
 
     public override SymbolExpression DeepClone() => new() { Value = Value };
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }

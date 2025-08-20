@@ -6,4 +6,6 @@ public sealed class StringExpression : Expression {
     public static StringExpression FromString(string value) => new() { Value = value };
 
     public override StringExpression DeepClone() => new() { Value = Value };
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }

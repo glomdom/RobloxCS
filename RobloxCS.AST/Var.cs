@@ -10,6 +10,8 @@ public sealed class VarExpression : Var {
     public static VarExpression FromExpression(Expression expr) => new() { Expression = expr };
 
     public override VarExpression DeepClone() => new() { Expression = (Expression)Expression.DeepClone() };
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }
 
 public sealed class VarName : Var {
@@ -19,4 +21,6 @@ public sealed class VarName : Var {
     public static VarName FromString(string str) => new() { Name = str };
 
     public override VarName DeepClone() => new() { Name = Name };
+    public override void Accept(IAstVisitor v) => v.Visit(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.Visit(this);
 }
