@@ -12,7 +12,7 @@ public class RendererWalker : AstVisitorBase {
     private readonly RenderState _state = new();
 
     public string Render(Chunk chunk) {
-        chunk.Accept(this);
+        Visit(chunk);
 
         return _state.Builder.ToString();
     }
@@ -23,7 +23,7 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.Append(node.Name);
         _state.Builder.Append(" = ");
 
-        node.DeclareAs.Accept(this);
+        Visit(node.DeclareAs);
 
         _state.Builder.AppendLine();
     }
@@ -35,7 +35,7 @@ public class RendererWalker : AstVisitorBase {
 
         foreach (var field in node.Fields) {
             _state.AppendIndent();
-            field.Accept(this);
+            Visit(field);
             _state.Builder.AppendLine(",");
         }
 
@@ -44,9 +44,9 @@ public class RendererWalker : AstVisitorBase {
     }
 
     public override void VisitTypeField(TypeField node) {
-        node.Key.Accept(this);
+        Visit(node.Key);
         _state.Builder.Append(": ");
-        node.Value.Accept(this);
+        Visit(node.Value);
     }
 
     public override void VisitNameTypeFieldKey(NameTypeFieldKey node) {
@@ -60,7 +60,7 @@ public class RendererWalker : AstVisitorBase {
 
         _state.Builder.Append(')');
         _state.Builder.Append(" -> ");
-        node.ReturnType.Accept(this);
+        Visit(node.ReturnType);
     }
 
     public override void VisitBasicTypeInfo(BasicTypeInfo node) {
@@ -70,7 +70,7 @@ public class RendererWalker : AstVisitorBase {
     public override void VisitTypeArgument(TypeArgument node) {
         _state.Builder.Append(node.Name);
         _state.Builder.Append(": ");
-        node.TypeInfo.Accept(this);
+        Visit(node.TypeInfo);
     }
 
     public override void VisitLocalAssignment(LocalAssignment node) {
@@ -78,9 +78,9 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.Append("local ");
 
         for (var i = 0; i < node.Names.Count; i++) {
-            node.Names[i].Accept(this);
+            Visit(node.Names[i]);
             _state.Builder.Append(": ");
-            node.Types[i].Accept(this);
+            Visit(node.Types[i]);
 
             if (i != node.Names.Count - 1) {
                 _state.Builder.Append(", ");
@@ -99,7 +99,7 @@ public class RendererWalker : AstVisitorBase {
         _state.AppendIndentedLine("do");
         _state.PushIndent();
 
-        node.Block.Accept(this);
+        Visit(node.Block);
 
         _state.PopIndent();
         _state.AppendIndentedLine("end");
@@ -114,8 +114,7 @@ public class RendererWalker : AstVisitorBase {
     }
 
     public override void VisitFunctionCall(FunctionCall node) {
-        node.Prefix.Accept(this);
-
+        Visit(node.Prefix);
         RenderList(node.Suffixes);
     }
 
@@ -125,9 +124,7 @@ public class RendererWalker : AstVisitorBase {
 
     public override void VisitAnonymousCall(AnonymousCall node) {
         _state.Builder.Append('(');
-
-        node.Arguments.Accept(this);
-
+        Visit(node.Arguments);
         _state.Builder.Append(')');
     }
 
@@ -155,12 +152,12 @@ public class RendererWalker : AstVisitorBase {
         _state.AppendIndent();
         _state.Builder.Append(node.Key);
         _state.Builder.Append(" = ");
-        node.Value.Accept(this);
+        Visit(node.Value);
     }
 
     public override void VisitAnonymousFunction(AnonymousFunction node) {
         _state.Builder.Append("function");
-        node.Body.Accept(this);
+        Visit(node.Body);
         _state.AppendIndented("end");
     }
 
@@ -169,11 +166,11 @@ public class RendererWalker : AstVisitorBase {
         RenderDelimited(node.Parameters, ", ");
         _state.Builder.Append("): ");
 
-        node.ReturnType.Accept(this);
+        Visit(node.ReturnType);
         _state.Builder.AppendLine();
 
         _state.PushIndent();
-        node.Body.Accept(this);
+        Visit(node.Body);
         _state.PopIndent();
     }
 
@@ -209,7 +206,7 @@ public class RendererWalker : AstVisitorBase {
 
     private void RenderDelimited<T>(List<T> items, string delimiter) where T : AstNode {
         for (var i = 0; i < items.Count; i++) {
-            items[i].Accept(this);
+            Visit(items[i]);
 
             if (i != items.Count - 1) {
                 _state.Builder.Append(delimiter);
@@ -219,15 +216,13 @@ public class RendererWalker : AstVisitorBase {
 
     private void RenderPunctuatedLine<T>(List<T> items, string delimiter) where T : AstNode {
         foreach (var item in items) {
-            item.Accept(this);
+            Visit(item);
 
             _state.Builder.AppendLine(delimiter);
         }
     }
 
     private void RenderList<T>(List<T> items) where T : AstNode {
-        foreach (var item in items) {
-            item.Accept(this);
-        }
+        items.ForEach(Visit);
     }
 }

@@ -15,6 +15,8 @@ public class AstVisitorBase : IAstVisitor {
         }
     }
 
+    public void Visit(AstNode node) => node.Accept(this);
+
     public virtual void VisitBlock(Block node) => DefaultVisit(node);
     public virtual void VisitChunk(Chunk node) => DefaultVisit(node);
     public virtual void VisitExpression(Expression node) => DefaultVisit(node);

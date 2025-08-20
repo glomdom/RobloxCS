@@ -16,6 +16,8 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
 
         return (T)node;
     }
+    
+    public T Visit(AstNode node) => node.Accept(this);
 
     public virtual T VisitBlock(Block node) => DefaultVisit(node);
     public virtual T VisitChunk(Chunk node) => DefaultVisit(node);
