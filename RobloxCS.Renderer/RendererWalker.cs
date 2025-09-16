@@ -6,6 +6,7 @@ using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
+using Serilog;
 
 namespace RobloxCS.Renderer;
 
@@ -130,6 +131,12 @@ public class RendererWalker : AstVisitorBase {
         RenderList(node.Suffixes);
     }
 
+    public override void VisitFunctionCallStatement(FunctionCallStatement node) {
+        _state.AppendIndent();
+        Visit(node.Prefix);
+        RenderList(node.Suffixes);
+    }
+
     public override void VisitNamePrefix(NamePrefix node) {
         _state.Builder.Append(node.Name);
     }
@@ -138,6 +145,13 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.Append('(');
         Visit(node.Arguments);
         _state.Builder.Append(')');
+    }
+    
+    public override void VisitMethodCall(MethodCall node) {
+        _state.Builder.Append($":{node.Name}(");
+        Visit(node.Args);
+        _state.Builder.Append(')');
+        _state.Builder.AppendLine();
     }
 
     public override void VisitFunctionArgs(FunctionArgs node) {
@@ -175,7 +189,17 @@ public class RendererWalker : AstVisitorBase {
 
     public override void VisitFunctionBody(FunctionBody node) {
         _state.Builder.Append('(');
-        RenderDelimited(node.Parameters, ", ");
+
+        if (node.Parameters.Count != node.TypeSpecifiers.Count) {
+            throw new Exception("Function body parameter and type specifier count does not match.");
+        }
+
+        for (var i = 0; i < node.Parameters.Count; i++) {
+            Visit(node.Parameters[i]);
+            _state.Builder.Append(": ");
+            Visit(node.TypeSpecifiers[i]);
+        }
+
         _state.Builder.Append("): ");
 
         Visit(node.ReturnType);

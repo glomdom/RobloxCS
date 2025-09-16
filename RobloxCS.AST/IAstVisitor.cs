@@ -49,9 +49,11 @@ public interface IAstVisitor {
     public void VisitDoStatement(DoStatement node);
     public void VisitFunctionDeclaration(FunctionDeclaration node);
     public void VisitLocalAssignment(LocalAssignment node);
+    public void VisitFunctionCallStatement(FunctionCallStatement node);
     public void VisitReturn(Return node);
 
     public void VisitAnonymousCall(AnonymousCall node);
+    public void VisitMethodCall(MethodCall node);
     public void VisitCall(Call node);
 
     public void VisitArrayTypeInfo(ArrayTypeInfo node);
@@ -69,7 +71,7 @@ public interface IAstVisitor {
     public void VisitIndexSignatureFieldKey(IndexSignatureTypeFieldKey node);
     public void VisitTypeInfo(TypeInfo node);
     public void VisitUnionTypeInfo(UnionTypeInfo node);
-    
+
     public void VisitVarExpression(VarExpression node);
     public void VisitVarName(VarName node);
 
@@ -118,6 +120,7 @@ public interface IAstVisitor<out T> where T : AstNode {
     public T VisitReturn(Return node);
 
     public T VisitAnonymousCall(AnonymousCall node);
+    public T VisitMethodCall(MethodCall node);
     public T VisitCall(Call node);
 
     public T VisitArrayTypeInfo(ArrayTypeInfo node);
@@ -135,7 +138,7 @@ public interface IAstVisitor<out T> where T : AstNode {
     public T VisitIndexSignatureFieldKey(IndexSignatureTypeFieldKey node);
     public T VisitTypeInfo(TypeInfo node);
     public T VisitUnionTypeInfo(UnionTypeInfo node);
-    
+
     public T VisitVarExpression(VarExpression node);
     public T VisitVarName(VarName node);
 

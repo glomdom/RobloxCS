@@ -62,6 +62,8 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
     public virtual T VisitReturn(Return node) => DefaultVisit(node);
 
     public virtual T VisitAnonymousCall(AnonymousCall node) => DefaultVisit(node);
+    public virtual T VisitMethodCall(MethodCall node) => DefaultVisit(node);
+    
     public virtual T VisitCall(Call node) => DefaultVisit(node);
 
     public virtual T VisitArrayTypeInfo(ArrayTypeInfo node) => DefaultVisit(node);

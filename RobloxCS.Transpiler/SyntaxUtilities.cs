@@ -13,6 +13,15 @@ public static class SyntaxUtilities {
         return hasPublic;
     }
 
+    public static INamedTypeSymbol CheckedGetDeclaredSymbol(this SemanticModel semanticModel, BaseTypeDeclarationSyntax node) {
+        var sym = semanticModel.GetDeclaredSymbol(node);
+        if (sym is null || sym is IErrorTypeSymbol errSym) {
+            throw new Exception($"CheckedGetDeclaredSymbol failed at asking semantic model what type {node.Identifier.ValueText} is");
+        }
+
+        return sym;
+    }
+
     public static BasicTypeInfo BasicFromSymbol(ITypeSymbol symbol) {
         return symbol.SpecialType switch {
             SpecialType.System_Boolean => BasicTypeInfo.Boolean(),
