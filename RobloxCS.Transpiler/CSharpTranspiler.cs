@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -76,7 +77,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
             newField.Key = NameTypeFieldKey.FromString("new");
             if (newField.Value is CallbackTypeInfo { Arguments.Count: > 0 } cb) {
                 cb.Arguments.RemoveAt(0); // remove self
-                cb.ReturnType = BasicTypeInfo.FromString($"_Type{className}");
+                cb.ReturnType = BasicTypeInfo.FromString($"_Instance{className}");
             }
 
             typeTable.Fields.Add(newField);
@@ -156,13 +157,30 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
                 // always parameterless
                 yield return CreateParameterlessNewMethod(classSymbol);
             } else {
-                yield return CreateUserDefinedConstructor(classSymbol, ctor);
+                yield return CreateNewMethod(classSymbol, ctor);
             }
         }
     }
 
+    private FunctionDeclaration CreateNewMethod(INamedTypeSymbol classSymbol, IMethodSymbol ctorSymbol) {
+        var paramNames = ctorSymbol.Parameters.Select(p => p.Name).ToList();
+
+        var functionBlock = CreateNewMethodBlock(classSymbol, new FunctionArgs { Arguments = paramNames.Select(Expression (pn) => SymbolExpression.FromString(pn)).ToList() });
+        var functionNode = new FunctionDeclaration {
+            Name = FunctionName.FromString($"{classSymbol.Name}.new"),
+            Body = new FunctionBody {
+                Parameters = paramNames.Select(Parameter (pn) => NameParameter.FromString(pn)).ToList(),
+                TypeSpecifiers = ctorSymbol.Parameters.Select(p => p.Type).Select(TypeInfo (pt) => SyntaxUtilities.BasicFromSymbol(pt)).ToList(),
+                Body = functionBlock,
+                ReturnType = BasicTypeInfo.FromString($"_Instance{classSymbol.Name}"),
+            },
+        };
+
+        return functionNode;
+    }
+
     private FunctionDeclaration CreateParameterlessNewMethod(INamedTypeSymbol classSymbol) {
-        var functionBlock = CreateNewMethodBlock(classSymbol);
+        var functionBlock = CreateNewMethodBlock(classSymbol, FunctionArgs.Empty());
         var functionNode = new FunctionDeclaration {
             Name = FunctionName.FromString($"{classSymbol.Name}.new"),
             Body = new FunctionBody {
@@ -176,7 +194,7 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         return functionNode;
     }
 
-    private Block CreateNewMethodBlock(INamedTypeSymbol classSymbol) {
+    private Block CreateNewMethodBlock(INamedTypeSymbol classSymbol, FunctionArgs ctorArgs) {
         var block = Block.Empty();
         using (WithBlock(block, $"FunctionBlock_New{classSymbol.Name}")) {
             CurrentBlock.AddStatement(new LocalAssignment {
@@ -184,10 +202,10 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
                 Expressions = [FunctionCall.Basic("setmetatable", TableConstructor.Empty(), SymbolExpression.FromString(classSymbol.Name))],
                 Types = [BasicTypeInfo.FromString($"_Instance{classSymbol.Name}")],
             });
-            
+
             CurrentBlock.AddStatement(new FunctionCallStatement {
                 Prefix = NamePrefix.FromString("self"),
-                Suffixes = [new MethodCall { Name = "constructor", Args = FunctionArgs.Empty() }],
+                Suffixes = [new MethodCall { Name = "constructor", Args = ctorArgs }],
             });
 
             CurrentBlock.AddStatement(new Return { Returns = [SymbolExpression.FromString("self")] });
