@@ -6,7 +6,7 @@ namespace RobloxCS.Transpiler.Scoping;
 
 public sealed class Scope : IDisposable {
     public Block Value { get; }
-    public HashSet<string> Locals { get; } = new();
+    public HashSet<string> Locals { get; } = [];
     public uint NextTempN { get; private set; }
 
     private readonly string? _name;
