@@ -1,8 +1,8 @@
 ﻿// ReSharper disable ClassNeverInstantiated.Global
 
 using System.ComponentModel;
-using RobloxCS.AST;
 using RobloxCS.Common;
+using RobloxCS.Compiler;
 using RobloxCS.Renderer;
 using RobloxCS.Transpiler;
 using Serilog;
@@ -52,10 +52,10 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
         var children = chunk.Children();
 
         Log.Information("Starting to render nodes");
-        
+
         var t = new RendererWalker();
         var output = t.Render(chunk);
-        
+
         Console.WriteLine(output);
 
         return 0;

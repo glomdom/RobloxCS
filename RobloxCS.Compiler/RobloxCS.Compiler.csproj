@@ -11,9 +11,4 @@
       <PackageReference Include="Serilog" Version="4.3.1-dev-02385" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\RobloxCS.AST\RobloxCS.AST.csproj" />
-      <ProjectReference Include="..\RobloxCS.Compiler\RobloxCS.Compiler.csproj" />
-    </ItemGroup>
-
 </Project>
