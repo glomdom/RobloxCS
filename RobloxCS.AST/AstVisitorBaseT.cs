@@ -42,6 +42,7 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
     public virtual T VisitTableField(TableField node) => DefaultVisit(node);
     public virtual T VisitNoKey(NoKey node) => DefaultVisit(node);
     public virtual T VisitNameKey(NameKey node) => DefaultVisit(node);
+    public virtual T VisitTypeAssertionExpression(TypeAssertionExpression node) => DefaultVisit(node);
 
     public virtual T VisitGenericDeclaration(GenericDeclaration node) => DefaultVisit(node);
     public virtual T VisitGenericDeclarationParameter(GenericDeclarationParameter node) => DefaultVisit(node);
@@ -63,7 +64,7 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
 
     public virtual T VisitAnonymousCall(AnonymousCall node) => DefaultVisit(node);
     public virtual T VisitMethodCall(MethodCall node) => DefaultVisit(node);
-    
+
     public virtual T VisitCall(Call node) => DefaultVisit(node);
 
     public virtual T VisitArrayTypeInfo(ArrayTypeInfo node) => DefaultVisit(node);

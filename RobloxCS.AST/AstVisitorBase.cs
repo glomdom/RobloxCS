@@ -40,6 +40,7 @@ public class AstVisitorBase : IAstVisitor {
     public virtual void VisitTableField(TableField node) => DefaultVisit(node);
     public virtual void VisitNoKey(NoKey node) => DefaultVisit(node);
     public virtual void VisitNameKey(NameKey node) => DefaultVisit(node);
+    public virtual void VisitTypeAssertionExpression(TypeAssertionExpression node) => DefaultVisit(node);
 
     public virtual void VisitGenericDeclaration(GenericDeclaration node) => DefaultVisit(node);
     public virtual void VisitGenericDeclarationParameter(GenericDeclarationParameter node) => DefaultVisit(node);

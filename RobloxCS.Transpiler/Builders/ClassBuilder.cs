@@ -28,8 +28,12 @@ internal static class ClassBuilder {
 
         InjectTypeSugar(typeDecl, ctorField, className);
 
-        var both = IntersectionTypeInfo.FromNames(instanceDecl.Name, typeDecl.Name);
-        var bind = LocalAssignment.Naked(className, both);
+        var bind = new LocalAssignment {
+            Names = [SymbolExpression.FromString(className)],
+            Expressions = [TypeAssertionExpression.From(TableConstructor.Empty(), BasicTypeInfo.FromString(typeDecl.Name))],
+            Types = [],
+        };
+
         var classBody = BuildClassBody(ctx, classSymbol, className);
         var doStmt = DoStatement.FromBlock(classBody);
 

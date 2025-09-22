@@ -32,6 +32,7 @@ public interface IAstVisitor {
     public void VisitTableField(TableField node);
     public void VisitNoKey(NoKey node);
     public void VisitNameKey(NameKey node);
+    public void VisitTypeAssertionExpression(TypeAssertionExpression node);
 
     public void VisitGenericDeclaration(GenericDeclaration node);
     public void VisitGenericDeclarationParameter(GenericDeclarationParameter node);
@@ -100,6 +101,7 @@ public interface IAstVisitor<out T> where T : AstNode {
     public T VisitTableConstructor(TableConstructor node);
     public T VisitNoKey(NoKey node);
     public T VisitNameKey(NameKey node);
+    public T VisitTypeAssertionExpression(TypeAssertionExpression node);
 
     public T VisitGenericDeclaration(GenericDeclaration node);
     public T VisitGenericDeclarationParameter(GenericDeclarationParameter node);

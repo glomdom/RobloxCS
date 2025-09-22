@@ -19,6 +19,24 @@ public class RendererWalker : AstVisitorBase {
         return _state.Builder.ToString();
     }
 
+    public override void DefaultVisit(AstNode node) {
+        throw new NotImplementedException($"Node {node.GetType()} does not have a renderer.");
+    }
+
+    public override void VisitChunk(Chunk node) {
+        Visit(node.Block);
+    }
+
+    public override void VisitBlock(Block node) {
+        node.Statements.ForEach(Visit);
+    }
+
+    public override void VisitTypeAssertionExpression(TypeAssertionExpression node) {
+        Visit(node.Expression);
+        _state.Builder.Append(" :: ");
+        Visit(node.AssertTo);
+    }
+
     public override void VisitTypeDeclaration(TypeDeclaration node) {
         _state.AppendIndent();
         _state.Builder.Append("type ");
@@ -92,8 +110,12 @@ public class RendererWalker : AstVisitorBase {
 
         for (var i = 0; i < node.Names.Count; i++) {
             Visit(node.Names[i]);
-            _state.Builder.Append(": ");
-            Visit(node.Types[i]);
+
+            if (node.Types.Count > 0) {
+                _state.Builder.Append(": ");
+
+                Visit(node.Types[i]);
+            }
 
             if (i != node.Names.Count - 1) {
                 _state.Builder.Append(", ");
@@ -146,7 +168,7 @@ public class RendererWalker : AstVisitorBase {
         Visit(node.Arguments);
         _state.Builder.Append(')');
     }
-    
+
     public override void VisitMethodCall(MethodCall node) {
         _state.Builder.Append($":{node.Name}(");
         Visit(node.Args);
