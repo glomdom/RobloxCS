@@ -50,6 +50,7 @@ internal static class ClassBuilder {
                 }
 
                 // TODO: instance methods -> type fields or method tables (future)
+                Log.Warning("TODO: Instance methods -> type fields or method tables");
             }
         }
 
@@ -58,6 +59,7 @@ internal static class ClassBuilder {
         (instanceDecl.DeclareAs as TableTypeInfo)?.Fields.Add(ctorField);
 
         var typeDecl = TypeDeclaration.EmptyTable($"_Type{className}");
+        Log.Warning("TODO: Visit statics");
         // TODO: visit statics and add to typeDecl
 
         return (instanceDecl, typeDecl, ctorField);
