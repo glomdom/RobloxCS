@@ -8,6 +8,6 @@ internal class Program {
     public readonly int ReadonlyNumber = 2;
 
     public Program(string test) {
-        
+        ReadonlyString = test;
     }
 }

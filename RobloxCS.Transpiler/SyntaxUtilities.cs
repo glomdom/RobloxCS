@@ -6,11 +6,12 @@ using RobloxCS.AST.Types;
 namespace RobloxCS.Transpiler;
 
 public static class SyntaxUtilities {
-    public static bool ShouldBeExported(ClassDeclarationSyntax decl) {
-        var modifiers = decl.Modifiers;
-        var hasPublic = modifiers.Any(m => m.IsKind(SyntaxKind.PublicKeyword));
+    public static T GetSyntaxFromSymbol<T>(ISymbol symbol) where T : CSharpSyntaxNode {
+        var syntaxRef = symbol.DeclaringSyntaxReferences.FirstOrDefault();
+        if (syntaxRef is null) throw new Exception("Attempted to get declaring syntax reference but was null.");
+        if (syntaxRef.GetSyntax() is not T syntax) throw new Exception($"Expected syntax to be {typeof(T).Name}, got {syntaxRef.GetSyntax().GetType().Name}");
 
-        return hasPublic;
+        return syntax;
     }
 
     public static INamedTypeSymbol CheckedGetDeclaredSymbol(this SemanticModel semanticModel, BaseTypeDeclarationSyntax node) {

@@ -20,7 +20,7 @@ internal static class ClassBuilder {
 
         var (instanceDecl, typeDecl, ctorField) = BuildTypeDeclarations(node, ctx);
 
-        InjectTypeSugar(typeDecl, ctorField, className);
+        CreateClassFields(typeDecl, ctorField, className);
 
         var bind = new LocalAssignment {
             Names = [SymbolExpression.FromString(className)],
@@ -65,7 +65,7 @@ internal static class ClassBuilder {
         return (instanceDecl, typeDecl, ctorField);
     }
 
-    private static void InjectTypeSugar(TypeDeclaration typeDecl, TypeField ctorField, string className) {
+    private static void CreateClassFields(TypeDeclaration typeDecl, TypeField ctorField, string className) {
         if (typeDecl.DeclareAs is not TableTypeInfo typeTable) return;
 
         var newField = ctorField.DeepClone();

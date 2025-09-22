@@ -20,7 +20,7 @@ public sealed class FunctionName : AstNode {
 
         return new FunctionName {
             Names = names,
-            ColonName = colonName
+            ColonName = colonName,
         };
     }
 

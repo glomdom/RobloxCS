@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
@@ -23,7 +24,7 @@ internal static class FunctionBuilder {
             : ctorSymbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
 
         var body = CreateNewMethodBlock(classSymbol, new FunctionArgs {
-            Arguments = paramNames.Select(SymbolExpression.FromString).Cast<Expression>().ToList()
+            Arguments = paramNames.Select(SymbolExpression.FromString).Cast<Expression>().ToList(),
         });
 
         return new FunctionDeclaration {
@@ -74,6 +75,15 @@ internal static class FunctionBuilder {
         var fields = classSymbol.GetMembers().OfType<IFieldSymbol>();
         foreach (var a in FieldBuilder.CreateFieldAssignmentsFromFields(fields, ctx)) {
             functionBlock.AddStatement(a);
+        }
+
+        // populate function block
+        var ctorSyntax = SyntaxUtilities.GetSyntaxFromSymbol<ConstructorDeclarationSyntax>(ctorSymbol);
+        if (ctorSyntax.Body is { } body) {
+            foreach (var stmt in body.Statements) {
+                var transpiled = StatementBuilder.Transpile(stmt, ctx);
+                functionBlock.AddStatement(transpiled);
+            }
         }
 
         var pars = ctorSymbol.IsImplicitlyDeclared
