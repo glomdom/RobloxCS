@@ -1,17 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
-using RobloxCS.AST.Parameters;
-using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
-using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
 using Serilog;
-using TypeInfo = RobloxCS.AST.Types.TypeInfo;
 
 namespace RobloxCS.Transpiler.Builders;
 
