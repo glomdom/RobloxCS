@@ -14,6 +14,10 @@ public static class SyntaxUtilities {
         return syntax;
     }
 
+    public static ITypeSymbol CheckedGetTypeInfo(this SemanticModel semantics, TypeSyntax syntax) {
+        return semantics.GetTypeInfo(syntax).Type ?? throw new InvalidOperationException($"Could not resolve type for {syntax}");
+    }
+
     public static INamedTypeSymbol CheckedGetDeclaredSymbol(this SemanticModel semanticModel, BaseTypeDeclarationSyntax node) {
         var sym = semanticModel.GetDeclaredSymbol(node);
         if (sym is null || sym is IErrorTypeSymbol errSym) {

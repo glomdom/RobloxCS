@@ -1,6 +1,6 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST.Statements;
-using RobloxCS.AST.Types;
 
 namespace RobloxCS.Transpiler.Builders;
 
@@ -22,7 +22,9 @@ public class StatementBuilder {
         var initExprSyntaxes = vars.Where(v => v.Initializer is not null).Select(v => v.Initializer!.Value);
         var initExprs = initExprSyntaxes.Select(s => ExpressionBuilder.BuildFromSyntax(s, ctx)).ToList();
 
-        return LocalAssignment.OfSingleType(varNames, initExprs, BasicTypeInfo.Boolean());
+        var typeSym = ctx.Semantics.CheckedGetTypeInfo(decl.Type);
+
+        return LocalAssignment.OfSingleType(varNames, initExprs, SyntaxUtilities.BasicFromSymbol(typeSym));
     }
 
     private static Statement BuildFromExprStmt(ExpressionStatementSyntax exprStmt, TranspilationContext ctx) {
