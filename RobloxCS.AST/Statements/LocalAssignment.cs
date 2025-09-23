@@ -16,6 +16,14 @@ public sealed class LocalAssignment : Statement {
         };
     }
 
+    public static LocalAssignment OfSingleType(List<string> names, List<Expression> expressions, TypeInfo type) {
+        return new LocalAssignment {
+            Names = names.Select(SymbolExpression.FromString).ToList(),
+            Expressions = expressions,
+            Types = Enumerable.Repeat(type, names.Count).ToList(),
+        };
+    }
+
     public override LocalAssignment DeepClone() => new() {
         Names = Names.Select(n => n.DeepClone()).ToList(),
         Expressions = Expressions.Select(e => (Expression)e.DeepClone()).ToList(),

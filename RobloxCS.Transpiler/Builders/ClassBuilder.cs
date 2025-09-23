@@ -82,7 +82,6 @@ internal static class ClassBuilder {
         typeTable.Fields.Add(index);
 
         var tostring = TypeField.FromNameAndType("__tostring", new CallbackTypeInfo { Arguments = [], ReturnType = BasicTypeInfo.String() });
-
         typeTable.Fields.Add(tostring);
     }
 

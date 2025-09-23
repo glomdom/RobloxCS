@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST.Statements;
+using RobloxCS.AST.Types;
 
 namespace RobloxCS.Transpiler.Builders;
 
@@ -7,12 +8,24 @@ public class StatementBuilder {
     public static Statement Transpile(StatementSyntax stmt, TranspilationContext ctx) {
         return stmt switch {
             ExpressionStatementSyntax exprStmtSyntax => BuildFromExprStmt(exprStmtSyntax, ctx),
+            LocalDeclarationStatementSyntax localDeclStmtSyntax => BuildFromLocalDeclStmt(localDeclStmtSyntax, ctx),
 
-            _ => throw new NotSupportedException($"Unsupported statement: {stmt.Kind()}")
+            _ => throw new NotSupportedException($"Unsupported statement: {stmt.Kind()}"),
         };
     }
 
-    public static Statement BuildFromExprStmt(ExpressionStatementSyntax exprStmt, TranspilationContext ctx) {
+    private static Statement BuildFromLocalDeclStmt(LocalDeclarationStatementSyntax localDeclStmtSyntax, TranspilationContext ctx) {
+        var decl = localDeclStmtSyntax.Declaration;
+        var vars = decl.Variables;
+
+        var varNames = vars.Select(vds => vds.Identifier.ValueText).ToList();
+        var initExprSyntaxes = vars.Where(v => v.Initializer is not null).Select(v => v.Initializer!.Value);
+        var initExprs = initExprSyntaxes.Select(s => ExpressionBuilder.BuildFromSyntax(s, ctx)).ToList();
+
+        return LocalAssignment.OfSingleType(varNames, initExprs, BasicTypeInfo.Boolean());
+    }
+
+    private static Statement BuildFromExprStmt(ExpressionStatementSyntax exprStmt, TranspilationContext ctx) {
         var expr = exprStmt.Expression;
 
         switch (expr) {
@@ -22,7 +35,7 @@ public class StatementBuilder {
 
                 return new Assignment {
                     Vars = [left],
-                    Expressions = [right]
+                    Expressions = [right],
                 };
             }
         }

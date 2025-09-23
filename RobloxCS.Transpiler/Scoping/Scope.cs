@@ -1,39 +1,25 @@
-﻿using System.Diagnostics;
-using RobloxCS.AST;
-using Serilog;
+﻿using RobloxCS.AST.Types;
 
 namespace RobloxCS.Transpiler.Scoping;
 
-public sealed class Scope : IDisposable {
-    public Block Value { get; }
-    public HashSet<string> Locals { get; } = [];
-    public uint NextTempN { get; private set; }
+public sealed class Scope {
+    private readonly Dictionary<string, VariableSymbol> _variables = new();
+    private readonly Scope? _parent;
 
-    private readonly string? _name;
-    private readonly Stack<Block> _stack;
-
-    public Scope(Stack<Block> stack, Block value, string? name = null) {
-        _name = name;
-        _stack = stack;
-        _stack.Push(value);
-
-        Value = value;
-
-        Log.Debug("Pushed scope {Name}", GetFriendlyName());
+    public Scope(Scope? parent = null) {
+        _parent = parent;
     }
 
-    public bool AddLocal(string name) => Locals.Add(name);
-    public bool HasLocal(string name) => Locals.Contains(name);
-    public string NewTempName(string prefix = "_tmp_") => $"{prefix}{NextTempN++}";
+    public bool TryDeclare(string name, VariableSymbol symbol) => _variables.TryAdd(name, symbol);
+    public VariableSymbol? Resolve(string name) => _variables.TryGetValue(name, out var symbol) ? symbol : _parent?.Resolve(name);
+}
 
-    public void Dispose() {
-        var popped = _stack.Pop();
+public sealed class VariableSymbol {
+    public string Name { get; }
+    public TypeInfo Type { get; }
 
-        Log.Debug("Popped scope {Name}", GetFriendlyName());
-        Debug.Assert(ReferenceEquals(popped, Value), "Scope stack imbalance, please run compiler with verbose input and file an issue.");
-    }
-
-    public string GetFriendlyName() {
-        return _name ?? "unnamed";
+    public VariableSymbol(string name, TypeInfo type) {
+        Name = name;
+        Type = type;
     }
 }

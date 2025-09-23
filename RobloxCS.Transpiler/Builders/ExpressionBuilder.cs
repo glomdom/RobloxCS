@@ -23,9 +23,10 @@ public class ExpressionBuilder {
         if (symbol is null) throw new Exception($"Semantics failed to get symbol info for {nameSyntax.Identifier.ValueText}");
 
         return symbol switch {
-            IParameterSymbol parameterSymbol => SymbolExpression.FromString($"{parameterSymbol.Name}"),
+            IParameterSymbol parameterSymbol => SymbolExpression.FromString(parameterSymbol.Name),
+            ILocalSymbol localSymbol => SymbolExpression.FromString(localSymbol.Name),
 
-            _ => throw new NotSupportedException($"Symbol of tyoe {symbol.GetType().Name} is not supported."),
+            _ => throw new NotSupportedException($"Symbol of type {symbol.GetType().Name} is not supported."),
         };
     }
 }

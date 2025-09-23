@@ -80,9 +80,13 @@ internal static class FunctionBuilder {
         // populate function block
         var ctorSyntax = SyntaxUtilities.GetSyntaxFromSymbol<ConstructorDeclarationSyntax>(ctorSymbol);
         if (ctorSyntax.Body is { } body) {
+            ctx.PushScope();
+
             foreach (var transpiled in body.Statements.Select(stmt => StatementBuilder.Transpile(stmt, ctx))) {
                 functionBlock.AddStatement(transpiled);
             }
+
+            ctx.PopScope();
         }
 
         var pars = ctorSymbol.IsImplicitlyDeclared
