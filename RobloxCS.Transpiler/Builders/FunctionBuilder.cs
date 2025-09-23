@@ -80,8 +80,7 @@ internal static class FunctionBuilder {
         // populate function block
         var ctorSyntax = SyntaxUtilities.GetSyntaxFromSymbol<ConstructorDeclarationSyntax>(ctorSymbol);
         if (ctorSyntax.Body is { } body) {
-            foreach (var stmt in body.Statements) {
-                var transpiled = StatementBuilder.Transpile(stmt, ctx);
+            foreach (var transpiled in body.Statements.Select(stmt => StatementBuilder.Transpile(stmt, ctx))) {
                 functionBlock.AddStatement(transpiled);
             }
         }
