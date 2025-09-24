@@ -80,9 +80,6 @@ internal static class ClassBuilder {
 
         var index = TypeField.FromNameAndType("__index", BasicTypeInfo.FromString(typeDecl.Name));
         typeTable.Fields.Add(index);
-
-        var tostring = TypeField.FromNameAndType("__tostring", new CallbackTypeInfo { Arguments = [], ReturnType = BasicTypeInfo.String() });
-        typeTable.Fields.Add(tostring);
     }
 
     private static TypeField BuildConstructorField(ClassDeclarationSyntax node, string instanceTypeName, TranspilationContext ctx) {
