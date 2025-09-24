@@ -28,7 +28,7 @@ public class ExpressionBuilder {
         };
     }
 
-    private static Expression HandleBinAddExpression(BinaryExpressionSyntax syntax, TranspilationContext ctx) {
+    private static BinaryOperatorExpression HandleBinAddExpression(BinaryExpressionSyntax syntax, TranspilationContext ctx) {
         var left = syntax.Left;
         var right = syntax.Right;
 
