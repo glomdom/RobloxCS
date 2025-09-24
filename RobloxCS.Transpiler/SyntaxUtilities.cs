@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using RobloxCS.AST;
 using RobloxCS.AST.Types;
 
 namespace RobloxCS.Transpiler;
@@ -56,6 +57,15 @@ public static class SyntaxUtilities {
             SpecialType.System_Object => "any",
 
             _ => throw new ArgumentOutOfRangeException(nameof(typeSymbol), typeSymbol.SpecialType, null),
+        };
+    }
+
+    public static BinOp SyntaxTokenToBinOp(SyntaxToken token) {
+        return token.Kind() switch {
+            SyntaxKind.PlusToken => BinOp.Plus,
+            SyntaxKind.MinusToken => BinOp.Minus,
+
+            _ => throw new ArgumentOutOfRangeException(nameof(token), token.Kind(), null),
         };
     }
 

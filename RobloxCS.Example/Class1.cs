@@ -8,7 +8,7 @@ internal class Class1 {
         Name = name;
         A = 10;
 
-        //     var local = A + 5;
+        var local = A + 5;
         //
         //     {
         //         var localShadow = local * 2;

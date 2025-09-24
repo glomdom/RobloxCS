@@ -33,6 +33,7 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
     public virtual T VisitVar(Var node) => DefaultVisit(node);
 
     public virtual T VisitAnonymousFunction(AnonymousFunction node) => DefaultVisit(node);
+    public virtual T VisitBinaryOperatorExpression(BinaryOperatorExpression node) => DefaultVisit(node);
     public virtual T VisitBooleanExpression(BooleanExpression node) => DefaultVisit(node);
     public virtual T VisitFunctionCall(FunctionCall node) => DefaultVisit(node);
     public virtual T VisitNumberExpression(NumberExpression node) => DefaultVisit(node);

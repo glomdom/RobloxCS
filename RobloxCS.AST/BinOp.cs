@@ -1,0 +1,25 @@
+﻿namespace RobloxCS.AST;
+
+public enum BinOp {
+    Caret,
+    Percent,
+    Slash,
+    Star,
+    DoubleSlash,
+    Minus,
+    Plus,
+    TwoDots,
+    DoubleLessThan,
+    DoubleGreaterThan,
+    Ampersand,
+    Tilde,
+    Pipe,
+    GreaterThan,
+    GreaterThanEqual,
+    LessThan,
+    LessThanEqual,
+    TildeEqual,
+    TwoEqual,
+    And,
+    Or,
+}

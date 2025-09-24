@@ -129,6 +129,20 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.AppendLine();
     }
 
+    public override void VisitBinaryOperatorExpression(BinaryOperatorExpression node) {
+        Visit(node.Left);
+
+        switch (node.Op) {
+            case BinOp.Minus: _state.Builder.Append(" - "); break;
+
+            case BinOp.Plus: _state.Builder.Append(" + "); break;
+
+            default: throw new ArgumentOutOfRangeException(nameof(node), node.Op, null);
+        }
+
+        Visit(node.Right);
+    }
+
     public override void VisitDoStatement(DoStatement node) {
         _state.AppendIndentedLine("do");
         _state.PushIndent();

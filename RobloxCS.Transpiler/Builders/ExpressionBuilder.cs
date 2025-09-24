@@ -14,8 +14,32 @@ public class ExpressionBuilder {
         return syntax switch {
             IdentifierNameSyntax nameSyntax => HandleIdentifierNameSyntax(nameSyntax, ctx),
             LiteralExpressionSyntax exprSyntax => HandleLiteralExpressionSyntax(exprSyntax, ctx),
+            BinaryExpressionSyntax binExprSyntax => HandleBinaryExpressionSyntax(binExprSyntax, ctx),
 
             _ => throw new NotSupportedException($"Expression {syntax.Kind()} is not supported. {syntax}"),
+        };
+    }
+
+    private static Expression HandleBinaryExpressionSyntax(BinaryExpressionSyntax syntax, TranspilationContext ctx) {
+        return syntax.Kind() switch {
+            SyntaxKind.AddExpression => HandleBinAddExpression(syntax, ctx),
+
+            _ => throw new NotSupportedException($"BinaryExpressionSyntax {syntax.Kind()} is not supported."),
+        };
+    }
+
+    private static Expression HandleBinAddExpression(BinaryExpressionSyntax syntax, TranspilationContext ctx) {
+        var left = syntax.Left;
+        var right = syntax.Right;
+
+        var tLeft = BuildFromSyntax(left, ctx);
+        var tRight = BuildFromSyntax(right, ctx);
+        var tOp = SyntaxUtilities.SyntaxTokenToBinOp(syntax.OperatorToken);
+
+        return new BinaryOperatorExpression {
+            Left = tLeft,
+            Right = tRight,
+            Op = tOp,
         };
     }
 
@@ -27,21 +51,22 @@ public class ExpressionBuilder {
         };
     }
 
-    private static Expression HandleNumericLiteralExpression(LiteralExpressionSyntax syntax, TranspilationContext ctx) {
+    private static NumberExpression HandleNumericLiteralExpression(LiteralExpressionSyntax syntax, TranspilationContext ctx) {
         var value = syntax.Token.Value!;
 
         return NumberExpression.From(Convert.ToDouble(value));
     }
 
-    private static Expression HandleIdentifierNameSyntax(IdentifierNameSyntax nameSyntax, TranspilationContext ctx) {
-        var symbol = ctx.Semantics.GetSymbolInfo(nameSyntax).Symbol;
-        if (symbol is null) throw new Exception($"Semantics failed to get symbol info for {nameSyntax.Identifier.ValueText}.");
+    private static Expression HandleIdentifierNameSyntax(IdentifierNameSyntax syntax, TranspilationContext ctx) {
+        var symbol = ctx.Semantics.GetSymbolInfo(syntax).Symbol;
+        if (symbol is null) throw new Exception($"Semantics failed to get symbol info for {syntax.Identifier.ValueText}.");
 
         return symbol switch {
             IParameterSymbol parameterSymbol => SymbolExpression.FromString(parameterSymbol.Name),
             ILocalSymbol localSymbol => SymbolExpression.FromString(localSymbol.Name),
+            IFieldSymbol fieldSymbol => SymbolExpression.FromString(fieldSymbol.Name),
 
-            _ => throw new NotSupportedException($"Symbol of type {symbol.GetType().Name} is not supported."),
+            _ => throw new NotSupportedException($"IdentifierNameSyntax {symbol.Kind} is not supported."),
         };
     }
 }
