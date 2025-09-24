@@ -134,7 +134,6 @@ public class RendererWalker : AstVisitorBase {
 
         switch (node.Op) {
             case BinOp.Minus: _state.Builder.Append(" - "); break;
-
             case BinOp.Plus: _state.Builder.Append(" + "); break;
 
             default: throw new ArgumentOutOfRangeException(nameof(node), node.Op, null);
