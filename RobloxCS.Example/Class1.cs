@@ -8,12 +8,12 @@ internal class Class1 {
         Name = name;
         A = 10;
 
-        var local = A + 5;
-        //
-        //     {
-        //         var localShadow = local * 2;
-        //         local = localShadow;
-        //     }
+        var xx = A + 5;
+        
+        {
+            var xxShadow = xx * 2;
+            xx = xxShadow;
+        }
         //
         //     if (local > 10) {
         //         A = local;

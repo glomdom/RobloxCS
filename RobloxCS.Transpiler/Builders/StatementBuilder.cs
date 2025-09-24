@@ -1,17 +1,31 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using RobloxCS.AST;
 using RobloxCS.AST.Statements;
 using RobloxCS.Transpiler.Scoping;
 
 namespace RobloxCS.Transpiler.Builders;
 
 public class StatementBuilder {
-    public static Statement Transpile(StatementSyntax stmt, TranspilationContext ctx) {
+    public static Statement Build(StatementSyntax stmt, TranspilationContext ctx) {
         return stmt switch {
             ExpressionStatementSyntax exprStmtSyntax => BuildFromExprStmt(exprStmtSyntax, ctx),
             LocalDeclarationStatementSyntax localDeclStmtSyntax => BuildFromLocalDeclStmt(localDeclStmtSyntax, ctx),
+            BlockSyntax blockSyntax => BuildFromBlockStmt(blockSyntax, ctx),
 
             _ => throw new NotSupportedException($"Unsupported statement: {stmt.Kind()}"),
         };
+    }
+
+    private static Statement BuildFromBlockStmt(BlockSyntax syntax, TranspilationContext ctx) {
+        var block = Block.Empty();
+
+        ctx.PushScope();
+        var statements = syntax.Statements.Select(statement => Build(statement, ctx)).ToList();
+        ctx.PopScope();
+
+        block.Statements = statements;
+
+        return DoStatement.FromBlock(block);
     }
 
     private static Statement BuildFromLocalDeclStmt(LocalDeclarationStatementSyntax localDeclStmtSyntax, TranspilationContext ctx) {

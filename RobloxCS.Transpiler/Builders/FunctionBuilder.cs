@@ -82,7 +82,7 @@ internal static class FunctionBuilder {
         if (ctorSyntax.Body is { } body) {
             ctx.PushScope();
 
-            foreach (var transpiled in body.Statements.Select(stmt => StatementBuilder.Transpile(stmt, ctx))) {
+            foreach (var transpiled in body.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx))) {
                 functionBlock.AddStatement(transpiled);
             }
 
