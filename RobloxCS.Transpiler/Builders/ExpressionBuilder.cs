@@ -64,7 +64,7 @@ public class ExpressionBuilder {
         return symbol switch {
             IParameterSymbol parameterSymbol => SymbolExpression.FromString(parameterSymbol.Name),
             ILocalSymbol localSymbol => SymbolExpression.FromString(localSymbol.Name),
-            IFieldSymbol fieldSymbol => SymbolExpression.FromString(fieldSymbol.Name),
+            IFieldSymbol fieldSymbol => SymbolExpression.FromString($"self.{fieldSymbol.Name}"),
 
             _ => throw new NotSupportedException($"IdentifierNameSyntax {symbol.Kind} is not supported."),
         };
