@@ -17,14 +17,6 @@ public class ExpressionBuilder {
     }
 
     private static Expression HandleBinaryExpressionSyntax(BinaryExpressionSyntax syntax, TranspilationContext ctx) {
-        return syntax.Kind() switch {
-            SyntaxKind.AddExpression => HandleBinAddExpression(syntax, ctx),
-
-            _ => throw new NotSupportedException($"BinaryExpressionSyntax {syntax.Kind()} is not supported."),
-        };
-    }
-
-    private static BinaryOperatorExpression HandleBinAddExpression(BinaryExpressionSyntax syntax, TranspilationContext ctx) {
         var left = syntax.Left;
         var right = syntax.Right;
 

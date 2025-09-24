@@ -20,8 +20,9 @@ public class VarBuilder {
 
         return symbol switch {
             IFieldSymbol fieldSymbol => VarName.FromString($"self.{fieldSymbol.Name}"),
+            ILocalSymbol localSymbol => VarName.FromString($"self.{localSymbol.Name}"),
 
-            _ => throw new NotSupportedException($"Symbol of tyoe {symbol.GetType().Name} is not supported."),
+            _ => throw new NotSupportedException($"Symbol of type {symbol.GetType().Name} is not supported."),
         };
     }
 }

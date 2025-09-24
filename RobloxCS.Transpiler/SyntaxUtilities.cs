@@ -64,6 +64,7 @@ public static class SyntaxUtilities {
         return token.Kind() switch {
             SyntaxKind.PlusToken => BinOp.Plus,
             SyntaxKind.MinusToken => BinOp.Minus,
+            SyntaxKind.AsteriskToken => BinOp.Star,
 
             _ => throw new ArgumentOutOfRangeException(nameof(token), token.Kind(), null),
         };
