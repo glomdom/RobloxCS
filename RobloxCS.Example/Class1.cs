@@ -9,18 +9,18 @@ internal class Class1 {
         A = 10;
 
         var xx = A + 5;
-        
+
         {
             var xxShadow = xx * 2;
             xx = xxShadow;
         }
-        //
-        //     if (local > 10) {
-        //         A = local;
-        //     } else {
-        //         A = -1;
-        //     }
-        //
+
+        if (xx > 10) {
+            A = xx;
+        } else {
+            A = -1;
+        }
+
         //     while (A < 20) {
         //         A++;
         //     }
