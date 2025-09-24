@@ -138,6 +138,8 @@ public class RendererWalker : AstVisitorBase {
             case BinOp.Plus: _state.Builder.Append(" + "); break;
             case BinOp.Star: _state.Builder.Append(" * "); break;
             case BinOp.GreaterThan: _state.Builder.Append(" > "); break;
+            case BinOp.LessThan: _state.Builder.Append(" < "); break;
+            case BinOp.TwoEqual: _state.Builder.Append(" == "); break;
 
             default: throw new ArgumentOutOfRangeException(nameof(node), node.Op, "Unhandled binary operator in VisitBinaryOperatorExpression");
         }
@@ -174,13 +176,12 @@ public class RendererWalker : AstVisitorBase {
 
         if (node.ElseIf is { } elseIfList) {
             foreach (var elseIf in elseIfList) {
-                _state.PushIndent();
-
                 _state.AppendIndented("elseif ");
                 Visit(elseIf.Condition);
-                _state.AppendIndentedLine(" then");
-                Visit(node.Block);
+                _state.Builder.AppendLine(" then");
 
+                _state.PushIndent();
+                Visit(elseIf.Block);
                 _state.PopIndent();
             }
         }

@@ -1,8 +1,11 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using System.Collections;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.Transpiler.Scoping;
+using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
 
@@ -21,20 +24,32 @@ public class StatementBuilder {
     private static IfStatement BuildFromIfStmt(IfStatementSyntax syntax, TranspilationContext ctx) {
         var condition = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
         var stmt = Build(syntax.Statement, ctx);
-        Block block;
+        var block = stmt is DoStatement doStmt ? doStmt.Block : Block.From(stmt);
 
-        if (stmt is DoStatement doStmt) {
-            block = doStmt.Block;
-        } else {
-            block = Block.From(stmt);
-        }
-
+        var elseIfBlocks = new Queue<ElseIfBlock>();
         Block? elseBlock = null;
-        if (syntax.Else is { } elseClause) {
-            elseBlock = BlockBuilder.BuildFromStatement(elseClause.Statement, ctx);
+
+        var elseClause = syntax.Else;
+        while (elseClause is not null) {
+            if (elseClause.Statement is IfStatementSyntax elseIfSyntax) {
+                var elseIfCondition = ExpressionBuilder.BuildFromSyntax(elseIfSyntax.Condition, ctx);
+                var elseIfStmt = Build(elseIfSyntax.Statement, ctx);
+                var elseIfBlock = elseIfStmt is DoStatement doElseIfStmt ? doElseIfStmt.Block : Block.From(elseIfStmt);
+
+                elseIfBlocks.Enqueue(new ElseIfBlock {
+                    Condition = elseIfCondition,
+                    Block = elseIfBlock,
+                });
+
+                elseClause = elseIfSyntax.Else;
+            } else {
+                elseBlock = BlockBuilder.BuildFromStatement(elseClause.Statement, ctx);
+
+                break;
+            }
         }
 
-        return new IfStatement { Block = block, Condition = condition, Else = elseBlock };
+        return new IfStatement { Block = block, Condition = condition, Else = elseBlock, ElseIf = elseIfBlocks.ToList() };
     }
 
     private static DoStatement BuildFromBlockStmt(BlockSyntax syntax, TranspilationContext ctx) {

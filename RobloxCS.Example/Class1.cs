@@ -17,8 +17,12 @@ internal class Class1 {
 
         if (xx > 10) {
             A = xx;
-        } else {
+        } else if (xx < 10) {
             A = -1;
+        } else if (xx == 12) {
+            A = -2;
+        } else {
+            A = -3;
         }
 
         //     while (A < 20) {

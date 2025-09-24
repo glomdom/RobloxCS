@@ -66,8 +66,10 @@ public static class SyntaxUtilities {
             SyntaxKind.MinusToken => BinOp.Minus,
             SyntaxKind.AsteriskToken => BinOp.Star,
             SyntaxKind.GreaterThanToken => BinOp.GreaterThan,
+            SyntaxKind.LessThanToken => BinOp.LessThan,
+            SyntaxKind.EqualsEqualsToken => BinOp.TwoEqual,
 
-            _ => throw new ArgumentOutOfRangeException(nameof(token), token.Kind(), null),
+            _ => throw new ArgumentOutOfRangeException(nameof(token), token.Kind(), "SyntaxTokenToBinOp unhandled token."),
         };
     }
 
