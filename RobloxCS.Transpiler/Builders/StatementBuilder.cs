@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
+using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.Transpiler.Scoping;
 
@@ -11,24 +12,36 @@ public class StatementBuilder {
             ExpressionStatementSyntax exprStmtSyntax => BuildFromExprStmt(exprStmtSyntax, ctx),
             LocalDeclarationStatementSyntax localDeclStmtSyntax => BuildFromLocalDeclStmt(localDeclStmtSyntax, ctx),
             BlockSyntax blockSyntax => BuildFromBlockStmt(blockSyntax, ctx),
+            IfStatementSyntax ifStatementSyntax => BuildFromIfStmt(ifStatementSyntax, ctx),
 
             _ => throw new NotSupportedException($"Unsupported statement: {stmt.Kind()}"),
         };
     }
 
-    private static Statement BuildFromBlockStmt(BlockSyntax syntax, TranspilationContext ctx) {
-        var block = Block.Empty();
+    private static IfStatement BuildFromIfStmt(IfStatementSyntax syntax, TranspilationContext ctx) {
+        var condition = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
+        var stmt = Build(syntax.Statement, ctx);
+        Block block;
 
-        ctx.PushScope();
-        var statements = syntax.Statements.Select(statement => Build(statement, ctx)).ToList();
-        ctx.PopScope();
+        if (stmt is DoStatement doStmt) {
+            block = doStmt.Block;
+        } else {
+            block = Block.From(stmt);
+        }
 
-        block.Statements = statements;
+        Block? elseBlock = null;
+        if (syntax.Else is { } elseClause) {
+            elseBlock = BlockBuilder.BuildFromStatement(elseClause.Statement, ctx);
+        }
 
-        return DoStatement.FromBlock(block);
+        return new IfStatement { Block = block, Condition = condition, Else = elseBlock };
     }
 
-    private static Statement BuildFromLocalDeclStmt(LocalDeclarationStatementSyntax localDeclStmtSyntax, TranspilationContext ctx) {
+    private static DoStatement BuildFromBlockStmt(BlockSyntax syntax, TranspilationContext ctx) {
+        return DoStatement.FromBlock(BlockBuilder.Build(syntax, ctx));
+    }
+
+    private static LocalAssignmentStatement BuildFromLocalDeclStmt(LocalDeclarationStatementSyntax localDeclStmtSyntax, TranspilationContext ctx) {
         var decl = localDeclStmtSyntax.Declaration;
         var vars = decl.Variables;
 

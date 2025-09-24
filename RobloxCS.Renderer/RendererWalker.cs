@@ -6,6 +6,7 @@ using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
+using Serilog;
 
 namespace RobloxCS.Renderer;
 
@@ -136,11 +137,20 @@ public class RendererWalker : AstVisitorBase {
             case BinOp.Minus: _state.Builder.Append(" - "); break;
             case BinOp.Plus: _state.Builder.Append(" + "); break;
             case BinOp.Star: _state.Builder.Append(" * "); break;
+            case BinOp.GreaterThan: _state.Builder.Append(" > "); break;
 
             default: throw new ArgumentOutOfRangeException(nameof(node), node.Op, "Unhandled binary operator in VisitBinaryOperatorExpression");
         }
 
         Visit(node.Right);
+    }
+
+    public override void VisitUnaryOperatorExpression(UnaryOperatorExpression node) {
+        switch (node.UnOp) {
+            case UnOp.Minus: _state.Builder.Append('-'); break;
+        }
+
+        Visit(node.Expression);
     }
 
     public override void VisitDoStatement(DoStatement node) {
@@ -150,6 +160,39 @@ public class RendererWalker : AstVisitorBase {
         Visit(node.Block);
 
         _state.PopIndent();
+        _state.AppendIndentedLine("end");
+    }
+
+    public override void VisitIfStatement(IfStatement node) {
+        _state.AppendIndented("if ");
+        Visit(node.Condition);
+        _state.Builder.AppendLine(" then");
+
+        _state.PushIndent();
+        Visit(node.Block);
+        _state.PopIndent();
+
+        if (node.ElseIf is { } elseIfList) {
+            foreach (var elseIf in elseIfList) {
+                _state.PushIndent();
+
+                _state.AppendIndented("elseif ");
+                Visit(elseIf.Condition);
+                _state.AppendIndentedLine(" then");
+                Visit(node.Block);
+
+                _state.PopIndent();
+            }
+        }
+
+        if (node.Else is { } @else) {
+            _state.AppendIndentedLine("else");
+
+            _state.PushIndent();
+            Visit(@else);
+            _state.PopIndent();
+        }
+
         _state.AppendIndentedLine("end");
     }
 

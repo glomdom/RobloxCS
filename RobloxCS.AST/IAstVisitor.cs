@@ -34,6 +34,7 @@ public interface IAstVisitor {
     void VisitNoKey(NoKey node);
     void VisitNameKey(NameKey node);
     void VisitTypeAssertionExpression(TypeAssertionExpression node);
+    void VisitUnaryOperatorExpression(UnaryOperatorExpression node);
 
     void VisitGenericDeclaration(GenericDeclaration node);
     void VisitGenericDeclarationParameter(GenericDeclarationParameter node);
@@ -50,6 +51,7 @@ public interface IAstVisitor {
     void VisitAssignment(AssignmentStatement node);
     void VisitDoStatement(DoStatement node);
     void VisitFunctionDeclaration(FunctionDeclarationStatement node);
+    void VisitIfStatement(IfStatement node);
     void VisitLocalAssignment(LocalAssignmentStatement node);
     void VisitFunctionCallStatement(FunctionCallStatement node);
     void VisitReturn(ReturnStatement node);
@@ -104,6 +106,7 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitNoKey(NoKey node);
     T VisitNameKey(NameKey node);
     T VisitTypeAssertionExpression(TypeAssertionExpression node);
+    T VisitUnaryOperatorExpression(UnaryOperatorExpression node);
 
     T VisitGenericDeclaration(GenericDeclaration node);
     T VisitGenericDeclarationParameter(GenericDeclarationParameter node);
@@ -120,6 +123,7 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitAssignment(AssignmentStatement node);
     T VisitDoStatement(DoStatement node);
     T VisitFunctionDeclaration(FunctionDeclarationStatement node);
+    T VisitIfStatement(IfStatement node);
     T VisitLocalAssignment(LocalAssignmentStatement node);
     T VisitReturn(ReturnStatement node);
 

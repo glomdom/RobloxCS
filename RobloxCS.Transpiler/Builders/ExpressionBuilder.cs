@@ -11,9 +11,17 @@ public class ExpressionBuilder {
             IdentifierNameSyntax nameSyntax => HandleIdentifierNameSyntax(nameSyntax, ctx),
             LiteralExpressionSyntax exprSyntax => HandleLiteralExpressionSyntax(exprSyntax, ctx),
             BinaryExpressionSyntax binExprSyntax => HandleBinaryExpressionSyntax(binExprSyntax, ctx),
+            PrefixUnaryExpressionSyntax prefixUnaryExprSyntax => HandleUnaryExpressionSyntax(prefixUnaryExprSyntax, ctx),
 
             _ => throw new NotSupportedException($"Expression {syntax.Kind()} is not supported. {syntax}"),
         };
+    }
+
+    private static Expression HandleUnaryExpressionSyntax(PrefixUnaryExpressionSyntax syntax, TranspilationContext ctx) {
+        var tOp = SyntaxUtilities.SyntaxTokenToUnOp(syntax.OperatorToken);
+        var tOperand = BuildFromSyntax(syntax.Operand, ctx);
+
+        return new UnaryOperatorExpression { UnOp = tOp, Expression = tOperand };
     }
 
     private static Expression HandleBinaryExpressionSyntax(BinaryExpressionSyntax syntax, TranspilationContext ctx) {

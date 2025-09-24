@@ -9,6 +9,10 @@ public sealed class Block : AstNode {
         return new Block { Statements = [] };
     }
 
+    public static Block From(Statement stmt) {
+        return new Block { Statements = [stmt] };
+    }
+
     public void AddStatement(Statement statement) {
         Statements.Add(statement);
     }

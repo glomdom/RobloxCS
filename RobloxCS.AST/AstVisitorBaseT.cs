@@ -44,6 +44,7 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
     public virtual T VisitNoKey(NoKey node) => DefaultVisit(node);
     public virtual T VisitNameKey(NameKey node) => DefaultVisit(node);
     public virtual T VisitTypeAssertionExpression(TypeAssertionExpression node) => DefaultVisit(node);
+    public virtual T VisitUnaryOperatorExpression(UnaryOperatorExpression node) => DefaultVisit(node);
 
     public virtual T VisitGenericDeclaration(GenericDeclaration node) => DefaultVisit(node);
     public virtual T VisitGenericDeclarationParameter(GenericDeclarationParameter node) => DefaultVisit(node);
@@ -60,6 +61,7 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
     public virtual T VisitAssignment(AssignmentStatement node) => DefaultVisit(node);
     public virtual T VisitDoStatement(DoStatement node) => DefaultVisit(node);
     public virtual T VisitFunctionDeclaration(FunctionDeclarationStatement node) => DefaultVisit(node);
+    public virtual T VisitIfStatement(IfStatement node) => DefaultVisit(node);
     public virtual T VisitLocalAssignment(LocalAssignmentStatement node) => DefaultVisit(node);
     public virtual T VisitReturn(ReturnStatement node) => DefaultVisit(node);
 

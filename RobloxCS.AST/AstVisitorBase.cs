@@ -58,6 +58,7 @@ public class AstVisitorBase : IAstVisitor {
     public virtual void VisitAssignment(AssignmentStatement node) => DefaultVisit(node);
     public virtual void VisitDoStatement(DoStatement node) => DefaultVisit(node);
     public virtual void VisitFunctionDeclaration(FunctionDeclarationStatement node) => DefaultVisit(node);
+    public virtual void VisitIfStatement(IfStatement node) => DefaultVisit(node);
     public virtual void VisitLocalAssignment(LocalAssignmentStatement node) => DefaultVisit(node);
     public virtual void VisitFunctionCallStatement(FunctionCallStatement node) => DefaultVisit(node);
     public virtual void VisitReturn(ReturnStatement node) => DefaultVisit(node);
@@ -81,6 +82,7 @@ public class AstVisitorBase : IAstVisitor {
     public virtual void VisitIndexSignatureFieldKey(IndexSignatureTypeFieldKey node) => DefaultVisit(node);
     public virtual void VisitTypeInfo(TypeInfo node) => DefaultVisit(node);
     public virtual void VisitUnionTypeInfo(UnionTypeInfo node) => DefaultVisit(node);
+    public virtual void VisitUnaryOperatorExpression(UnaryOperatorExpression node) => DefaultVisit(node);
 
     public virtual void VisitVarExpression(VarExpression node) => DefaultVisit(node);
     public virtual void VisitVarName(VarName node) => DefaultVisit(node);
