@@ -2,11 +2,11 @@
 
 namespace RobloxCS.AST.Statements;
 
-public sealed class FunctionDeclaration : Statement {
+public sealed class FunctionDeclarationStatement : Statement {
     public required FunctionName Name { get; set; }
     public required FunctionBody Body { get; set; }
 
-    public override FunctionDeclaration DeepClone() => new() { Name = Name, Body = Body.DeepClone() };
+    public override FunctionDeclarationStatement DeepClone() => new() { Name = Name, Body = Body.DeepClone() };
 
     public override void Accept(IAstVisitor v) => v.VisitFunctionDeclaration(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitFunctionDeclaration(this);

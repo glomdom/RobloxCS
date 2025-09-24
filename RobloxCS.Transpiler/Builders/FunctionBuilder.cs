@@ -13,7 +13,7 @@ using TypeInfo = RobloxCS.AST.Types.TypeInfo;
 namespace RobloxCS.Transpiler.Builders;
 
 internal static class FunctionBuilder {
-    public static FunctionDeclaration CreateNewMethod(INamedTypeSymbol classSymbol, IMethodSymbol ctorSymbol) {
+    public static FunctionDeclarationStatement CreateNewMethod(INamedTypeSymbol classSymbol, IMethodSymbol ctorSymbol) {
         var paramNames = ctorSymbol.IsImplicitlyDeclared
             ? []
             : ctorSymbol.Parameters.Select(p => p.Name).ToList();
@@ -27,7 +27,7 @@ internal static class FunctionBuilder {
             Arguments = paramNames.Select(SymbolExpression.FromString).Cast<Expression>().ToList(),
         });
 
-        return new FunctionDeclaration {
+        return new FunctionDeclarationStatement {
             Name = FunctionName.FromString($"{classSymbol.Name}.new"),
             Body = new FunctionBody {
                 Parameters = args,
@@ -42,13 +42,13 @@ internal static class FunctionBuilder {
         var block = Block.Empty();
 
         // local self = setmetatable({}, Class) :: _Instance<Class>
-        block.AddStatement(new LocalAssignment {
+        block.AddStatement(new LocalAssignmentStatement {
             Names = [SymbolExpression.FromString("self")],
             Expressions = [
                 TypeAssertionExpression.From(
-                    FunctionCall.Basic(
+                    FunctionCallExpression.Basic(
                         "setmetatable",
-                        TableConstructor.Empty(),
+                        TableConstructorExpression.Empty(),
                         SymbolExpression.FromString(classSymbol.Name)
                     ),
                     BasicTypeInfo.FromString($"_Instance{classSymbol.Name}")
@@ -64,12 +64,12 @@ internal static class FunctionBuilder {
         });
 
         // return self
-        block.AddStatement(new Return { Returns = [SymbolExpression.FromString("self")] });
+        block.AddStatement(new ReturnStatement { Returns = [SymbolExpression.FromString("self")] });
 
         return block;
     }
 
-    public static FunctionDeclaration CreateConstructor(INamedTypeSymbol classSymbol, IMethodSymbol ctorSymbol, TranspilationContext ctx) {
+    public static FunctionDeclarationStatement CreateConstructor(INamedTypeSymbol classSymbol, IMethodSymbol ctorSymbol, TranspilationContext ctx) {
         var functionBlock = Block.Empty();
 
         var fields = classSymbol.GetMembers().OfType<IFieldSymbol>();
@@ -97,7 +97,7 @@ internal static class FunctionBuilder {
             ? []
             : ctorSymbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
 
-        return new FunctionDeclaration {
+        return new FunctionDeclarationStatement {
             Name = FunctionName.FromString($"{classSymbol.Name}:constructor"),
             Body = new FunctionBody {
                 Body = functionBlock,

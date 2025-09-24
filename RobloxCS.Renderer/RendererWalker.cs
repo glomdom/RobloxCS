@@ -36,7 +36,7 @@ public class RendererWalker : AstVisitorBase {
         Visit(node.AssertTo);
     }
 
-    public override void VisitTypeDeclaration(TypeDeclaration node) {
+    public override void VisitTypeDeclaration(TypeDeclarationStatement node) {
         _state.AppendIndent();
         _state.Builder.Append("type ");
         _state.Builder.Append(node.Name);
@@ -90,7 +90,7 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.Append(node.Name);
     }
 
-    public override void VisitFunctionDeclaration(FunctionDeclaration node) {
+    public override void VisitFunctionDeclaration(FunctionDeclarationStatement node) {
         _state.AppendIndented("function ");
         _state.Builder.Append(node.Name.ToFriendly());
         Visit(node.Body);
@@ -103,7 +103,7 @@ public class RendererWalker : AstVisitorBase {
         Visit(node.TypeInfo);
     }
 
-    public override void VisitLocalAssignment(LocalAssignment node) {
+    public override void VisitLocalAssignment(LocalAssignmentStatement node) {
         _state.AppendIndent();
         _state.Builder.Append("local ");
 
@@ -153,7 +153,7 @@ public class RendererWalker : AstVisitorBase {
         _state.AppendIndentedLine("end");
     }
 
-    public override void VisitAssignment(Assignment node) {
+    public override void VisitAssignment(AssignmentStatement node) {
         _state.AppendIndent();
         RenderDelimited(node.Vars, ", ");
         _state.Builder.Append(" = ");
@@ -161,7 +161,7 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.AppendLine();
     }
 
-    public override void VisitFunctionCall(FunctionCall node) {
+    public override void VisitFunctionCall(FunctionCallExpression node) {
         Visit(node.Prefix);
         RenderList(node.Suffixes);
     }
@@ -193,7 +193,7 @@ public class RendererWalker : AstVisitorBase {
         RenderDelimited(node.Arguments, ", ");
     }
 
-    public override void VisitTableConstructor(TableConstructor node) {
+    public override void VisitTableConstructor(TableConstructorExpression node) {
         if (node.Fields.Count == 0) {
             _state.Builder.Append("{}");
 
@@ -216,7 +216,7 @@ public class RendererWalker : AstVisitorBase {
         Visit(node.Value);
     }
 
-    public override void VisitAnonymousFunction(AnonymousFunction node) {
+    public override void VisitAnonymousFunction(AnonymousFunctionExpression node) {
         _state.Builder.Append("function");
         Visit(node.Body);
         _state.AppendIndented("end");
@@ -245,7 +245,7 @@ public class RendererWalker : AstVisitorBase {
         _state.PopIndent();
     }
 
-    public override void VisitReturn(Return node) {
+    public override void VisitReturn(ReturnStatement node) {
         _state.AppendIndented("return ");
         RenderDelimited(node.Returns, ", ");
         _state.Builder.AppendLine();

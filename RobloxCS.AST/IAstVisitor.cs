@@ -22,14 +22,14 @@ public interface IAstVisitor {
     void VisitSuffix(Suffix node);
     void VisitVar(Var node);
 
-    void VisitAnonymousFunction(AnonymousFunction node);
+    void VisitAnonymousFunction(AnonymousFunctionExpression node);
     void VisitBinaryOperatorExpression(BinaryOperatorExpression node);
     void VisitBooleanExpression(BooleanExpression node);
-    void VisitFunctionCall(FunctionCall node);
+    void VisitFunctionCall(FunctionCallExpression node);
     void VisitNumberExpression(NumberExpression node);
     void VisitStringExpression(StringExpression node);
     void VisitSymbolExpression(SymbolExpression node);
-    void VisitTableConstructor(TableConstructor node);
+    void VisitTableConstructor(TableConstructorExpression node);
     void VisitTableField(TableField node);
     void VisitNoKey(NoKey node);
     void VisitNameKey(NameKey node);
@@ -47,12 +47,12 @@ public interface IAstVisitor {
     void VisitExpressionPrefix(ExpressionPrefix node);
     void VisitNamePrefix(NamePrefix node);
 
-    void VisitAssignment(Assignment node);
+    void VisitAssignment(AssignmentStatement node);
     void VisitDoStatement(DoStatement node);
-    void VisitFunctionDeclaration(FunctionDeclaration node);
-    void VisitLocalAssignment(LocalAssignment node);
+    void VisitFunctionDeclaration(FunctionDeclarationStatement node);
+    void VisitLocalAssignment(LocalAssignmentStatement node);
     void VisitFunctionCallStatement(FunctionCallStatement node);
-    void VisitReturn(Return node);
+    void VisitReturn(ReturnStatement node);
 
     void VisitAnonymousCall(AnonymousCall node);
     void VisitMethodCall(MethodCall node);
@@ -66,7 +66,7 @@ public interface IAstVisitor {
     void VisitStringTypeInfo(StringTypeInfo node);
     void VisitTableTypeInfo(TableTypeInfo node);
     void VisitTypeArgument(TypeArgument node);
-    void VisitTypeDeclaration(TypeDeclaration node);
+    void VisitTypeDeclaration(TypeDeclarationStatement node);
     void VisitTypeField(TypeField node);
     void VisitTypeFieldKey(TypeFieldKey node);
     void VisitNameTypeFieldKey(NameTypeFieldKey node);
@@ -93,14 +93,14 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitSuffix(Suffix node);
     T VisitVar(Var node);
 
-    T VisitAnonymousFunction(AnonymousFunction node);
+    T VisitAnonymousFunction(AnonymousFunctionExpression node);
     T VisitBinaryOperatorExpression(BinaryOperatorExpression node);
     T VisitBooleanExpression(BooleanExpression node);
-    T VisitFunctionCall(FunctionCall node);
+    T VisitFunctionCall(FunctionCallExpression node);
     T VisitNumberExpression(NumberExpression node);
     T VisitStringExpression(StringExpression node);
     T VisitSymbolExpression(SymbolExpression node);
-    T VisitTableConstructor(TableConstructor node);
+    T VisitTableConstructor(TableConstructorExpression node);
     T VisitNoKey(NoKey node);
     T VisitNameKey(NameKey node);
     T VisitTypeAssertionExpression(TypeAssertionExpression node);
@@ -117,11 +117,11 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitExpressionPrefix(ExpressionPrefix node);
     T VisitNamePrefix(NamePrefix node);
 
-    T VisitAssignment(Assignment node);
+    T VisitAssignment(AssignmentStatement node);
     T VisitDoStatement(DoStatement node);
-    T VisitFunctionDeclaration(FunctionDeclaration node);
-    T VisitLocalAssignment(LocalAssignment node);
-    T VisitReturn(Return node);
+    T VisitFunctionDeclaration(FunctionDeclarationStatement node);
+    T VisitLocalAssignment(LocalAssignmentStatement node);
+    T VisitReturn(ReturnStatement node);
 
     T VisitAnonymousCall(AnonymousCall node);
     T VisitMethodCall(MethodCall node);
@@ -135,7 +135,7 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitStringTypeInfo(StringTypeInfo node);
     T VisitTableTypeInfo(TableTypeInfo node);
     T VisitTypeArgument(TypeArgument node);
-    T VisitTypeDeclaration(TypeDeclaration node);
+    T VisitTypeDeclaration(TypeDeclarationStatement node);
     T VisitTypeField(TypeField node);
     T VisitTypeFieldKey(TypeFieldKey node);
     T VisitNameTypeFieldKey(NameTypeFieldKey node);

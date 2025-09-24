@@ -48,7 +48,7 @@ public class StatementBuilder {
             }
         }
 
-        return LocalAssignment.OfSingleType(varNames, initExprs, type);
+        return LocalAssignmentStatement.OfSingleType(varNames, initExprs, type);
     }
 
     private static Statement BuildFromExprStmt(ExpressionStatementSyntax exprStmt, TranspilationContext ctx) {
@@ -59,7 +59,7 @@ public class StatementBuilder {
                 var left = VarBuilder.BuildFromExpressionSyntax(assignExpr.Left, ctx);
                 var right = ExpressionBuilder.BuildFromSyntax(assignExpr.Right, ctx);
 
-                return new Assignment {
+                return new AssignmentStatement {
                     Vars = [left],
                     Expressions = [right],
                 };

@@ -10,7 +10,7 @@ using Serilog;
 namespace RobloxCS.Transpiler.Builders;
 
 internal static class ClassBuilder {
-    private static readonly TypeDeclaration NoTypeSentinel = TypeDeclaration.EmptyTable("__SHOULD_NOT_BE_IN_OUTPUT");
+    private static readonly TypeDeclarationStatement NoTypeSentinel = TypeDeclarationStatement.EmptyTable("__SHOULD_NOT_BE_IN_OUTPUT");
 
     public static IEnumerable<Statement> Build(ClassDeclarationSyntax node, TranspilationContext ctx) {
         var classSymbol = ctx.Semantics.CheckedGetDeclaredSymbol(node);
@@ -22,9 +22,9 @@ internal static class ClassBuilder {
 
         CreateClassFields(typeDecl, ctorField, className);
 
-        var bind = new LocalAssignment {
+        var bind = new LocalAssignmentStatement {
             Names = [SymbolExpression.FromString(className)],
-            Expressions = [TypeAssertionExpression.From(TableConstructor.Empty(), BasicTypeInfo.FromString(typeDecl.Name))],
+            Expressions = [TypeAssertionExpression.From(TableConstructorExpression.Empty(), BasicTypeInfo.FromString(typeDecl.Name))],
             Types = [],
         };
 
@@ -34,12 +34,12 @@ internal static class ClassBuilder {
         return [instanceDecl, typeDecl, bind, doStmt];
     }
 
-    private static (TypeDeclaration instanceDecl, TypeDeclaration typeDecl, TypeField ctorField) BuildTypeDeclarations(
+    private static (TypeDeclarationStatement instanceDecl, TypeDeclarationStatement typeDecl, TypeField ctorField) BuildTypeDeclarations(
         ClassDeclarationSyntax node,
         TranspilationContext ctx
     ) {
         var className = node.Identifier.ValueText;
-        var instanceDecl = TypeDeclaration.EmptyTable($"_Instance{className}");
+        var instanceDecl = TypeDeclarationStatement.EmptyTable($"_Instance{className}");
 
         {
             foreach (var member in node.Members) {
@@ -58,14 +58,14 @@ internal static class ClassBuilder {
 
         (instanceDecl.DeclareAs as TableTypeInfo)?.Fields.Add(ctorField);
 
-        var typeDecl = TypeDeclaration.EmptyTable($"_Type{className}");
+        var typeDecl = TypeDeclarationStatement.EmptyTable($"_Type{className}");
         Log.Warning("TODO: Visit statics");
         // TODO: visit statics and add to typeDecl
 
         return (instanceDecl, typeDecl, ctorField);
     }
 
-    private static void CreateClassFields(TypeDeclaration typeDecl, TypeField ctorField, string className) {
+    private static void CreateClassFields(TypeDeclarationStatement typeDecl, TypeField ctorField, string className) {
         if (typeDecl.DeclareAs is not TableTypeInfo typeTable) return;
 
         var newField = ctorField.DeepClone();
@@ -109,9 +109,9 @@ internal static class ClassBuilder {
         var block = Block.Empty();
 
         var toStringBlock = Block.Empty();
-        toStringBlock.AddStatement(Return.FromExpressions([StringExpression.FromString(className)]));
+        toStringBlock.AddStatement(ReturnStatement.FromExpressions([StringExpression.FromString(className)]));
 
-        var toStringFunction = new AnonymousFunction {
+        var toStringFunction = new AnonymousFunctionExpression {
             Body = new FunctionBody {
                 Body = toStringBlock,
                 Parameters = [],
@@ -120,18 +120,18 @@ internal static class ClassBuilder {
             },
         };
 
-        block.AddStatement(new Assignment {
+        block.AddStatement(new AssignmentStatement {
             Vars = [VarName.FromString(className)],
             Expressions = [
-                FunctionCall.Basic(
+                FunctionCallExpression.Basic(
                     "setmetatable",
-                    TableConstructor.Empty(),
-                    TableConstructor.With(new NameKey { Key = "__tostring", Value = toStringFunction })
+                    TableConstructorExpression.Empty(),
+                    TableConstructorExpression.With(new NameKey { Key = "__tostring", Value = toStringFunction })
                 ),
             ],
         });
 
-        block.AddStatement(Assignment.AssignToSymbol($"{className}.__index", className));
+        block.AddStatement(AssignmentStatement.AssignToSymbol($"{className}.__index", className));
 
         foreach (var ctor in classSymbol.InstanceConstructors) {
             block.AddStatement(FunctionBuilder.CreateNewMethod(classSymbol, ctor));

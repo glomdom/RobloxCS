@@ -30,14 +30,14 @@ public class AstVisitorBase : IAstVisitor {
     public virtual void VisitSuffix(Suffix node) => DefaultVisit(node);
     public virtual void VisitVar(Var node) => DefaultVisit(node);
 
-    public virtual void VisitAnonymousFunction(AnonymousFunction node) => DefaultVisit(node);
+    public virtual void VisitAnonymousFunction(AnonymousFunctionExpression node) => DefaultVisit(node);
     public virtual void VisitBinaryOperatorExpression(BinaryOperatorExpression node) => DefaultVisit(node);
     public virtual void VisitBooleanExpression(BooleanExpression node) => DefaultVisit(node);
-    public virtual void VisitFunctionCall(FunctionCall node) => DefaultVisit(node);
+    public virtual void VisitFunctionCall(FunctionCallExpression node) => DefaultVisit(node);
     public virtual void VisitNumberExpression(NumberExpression node) => DefaultVisit(node);
     public virtual void VisitStringExpression(StringExpression node) => DefaultVisit(node);
     public virtual void VisitSymbolExpression(SymbolExpression node) => DefaultVisit(node);
-    public virtual void VisitTableConstructor(TableConstructor node) => DefaultVisit(node);
+    public virtual void VisitTableConstructor(TableConstructorExpression node) => DefaultVisit(node);
     public virtual void VisitTableField(TableField node) => DefaultVisit(node);
     public virtual void VisitNoKey(NoKey node) => DefaultVisit(node);
     public virtual void VisitNameKey(NameKey node) => DefaultVisit(node);
@@ -55,12 +55,12 @@ public class AstVisitorBase : IAstVisitor {
     public virtual void VisitExpressionPrefix(ExpressionPrefix node) => DefaultVisit(node);
     public virtual void VisitNamePrefix(NamePrefix node) => DefaultVisit(node);
 
-    public virtual void VisitAssignment(Assignment node) => DefaultVisit(node);
+    public virtual void VisitAssignment(AssignmentStatement node) => DefaultVisit(node);
     public virtual void VisitDoStatement(DoStatement node) => DefaultVisit(node);
-    public virtual void VisitFunctionDeclaration(FunctionDeclaration node) => DefaultVisit(node);
-    public virtual void VisitLocalAssignment(LocalAssignment node) => DefaultVisit(node);
+    public virtual void VisitFunctionDeclaration(FunctionDeclarationStatement node) => DefaultVisit(node);
+    public virtual void VisitLocalAssignment(LocalAssignmentStatement node) => DefaultVisit(node);
     public virtual void VisitFunctionCallStatement(FunctionCallStatement node) => DefaultVisit(node);
-    public virtual void VisitReturn(Return node) => DefaultVisit(node);
+    public virtual void VisitReturn(ReturnStatement node) => DefaultVisit(node);
 
     public virtual void VisitAnonymousCall(AnonymousCall node) => DefaultVisit(node);
     public virtual void VisitMethodCall(MethodCall node) => DefaultVisit(node);
@@ -74,7 +74,7 @@ public class AstVisitorBase : IAstVisitor {
     public virtual void VisitStringTypeInfo(StringTypeInfo node) => DefaultVisit(node);
     public virtual void VisitTableTypeInfo(TableTypeInfo node) => DefaultVisit(node);
     public virtual void VisitTypeArgument(TypeArgument node) => DefaultVisit(node);
-    public virtual void VisitTypeDeclaration(TypeDeclaration node) => DefaultVisit(node);
+    public virtual void VisitTypeDeclaration(TypeDeclarationStatement node) => DefaultVisit(node);
     public virtual void VisitTypeField(TypeField node) => DefaultVisit(node);
     public virtual void VisitTypeFieldKey(TypeFieldKey node) => DefaultVisit(node);
     public virtual void VisitNameTypeFieldKey(NameTypeFieldKey node) => DefaultVisit(node);

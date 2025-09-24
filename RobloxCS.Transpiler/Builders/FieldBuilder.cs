@@ -24,7 +24,7 @@ internal static class FieldBuilder {
         }
     }
 
-    public static IEnumerable<Assignment> CreateFieldAssignmentsFromFields(IEnumerable<IFieldSymbol> fields, TranspilationContext ctx) {
+    public static IEnumerable<AssignmentStatement> CreateFieldAssignmentsFromFields(IEnumerable<IFieldSymbol> fields, TranspilationContext ctx) {
         foreach (var field in fields) {
             if (field.IsStatic) {
                 Log.Warning("TODO: Implement static fields");
@@ -40,7 +40,7 @@ internal static class FieldBuilder {
 
                 var rhs = Lowering.ExpressionLowerer.LowerExpr(init.Value);
 
-                yield return new Assignment {
+                yield return new AssignmentStatement {
                     Vars = [VarName.FromString($"self.{field.Name}")],
                     Expressions = [rhs],
                 };

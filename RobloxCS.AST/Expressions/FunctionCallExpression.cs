@@ -4,12 +4,12 @@ using RobloxCS.AST.Suffixes;
 
 namespace RobloxCS.AST.Expressions;
 
-public class FunctionCall : Expression {
+public class FunctionCallExpression : Expression {
     public required Prefix Prefix { get; set; }
     public required List<Suffix> Suffixes { get; set; }
 
-    public static FunctionCall Basic(string name, params Expression[] args) {
-        return new FunctionCall {
+    public static FunctionCallExpression Basic(string name, params Expression[] args) {
+        return new FunctionCallExpression {
             Prefix = new NamePrefix { Name = name },
             Suffixes = [
                 new AnonymousCall {
@@ -21,7 +21,7 @@ public class FunctionCall : Expression {
         };
     }
 
-    public override FunctionCall DeepClone() => new() { Prefix = (Prefix)Prefix.DeepClone(), Suffixes = Suffixes.Select(s => (Suffix)s.DeepClone()).ToList() };
+    public override FunctionCallExpression DeepClone() => new() { Prefix = (Prefix)Prefix.DeepClone(), Suffixes = Suffixes.Select(s => (Suffix)s.DeepClone()).ToList() };
     public override void Accept(IAstVisitor v) => v.VisitFunctionCall(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitFunctionCall(this);
 

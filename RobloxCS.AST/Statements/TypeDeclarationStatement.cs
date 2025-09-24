@@ -3,19 +3,19 @@ using RobloxCS.AST.Types;
 
 namespace RobloxCS.AST.Statements;
 
-public sealed class TypeDeclaration : Statement {
+public sealed class TypeDeclarationStatement : Statement {
     public required string Name { get; set; }
     public List<GenericDeclaration>? Declarations { get; set; }
     public required TypeInfo DeclareAs { get; set; }
 
-    public static TypeDeclaration EmptyTable(string name) {
-        return new TypeDeclaration {
+    public static TypeDeclarationStatement EmptyTable(string name) {
+        return new TypeDeclarationStatement {
             Name = name,
             DeclareAs = TableTypeInfo.Empty(),
         };
     }
 
-    public override TypeDeclaration DeepClone() => new() {
+    public override TypeDeclarationStatement DeepClone() => new() {
         Name = Name,
         Declarations = Declarations?.Select(decl => decl.DeepClone()).ToList(),
         DeclareAs = (TypeInfo)DeclareAs.DeepClone(),

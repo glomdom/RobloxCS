@@ -2,10 +2,10 @@
 
 namespace RobloxCS.AST.Expressions;
 
-public sealed class AnonymousFunction : Expression {
+public sealed class AnonymousFunctionExpression : Expression {
     public required FunctionBody Body { get; set; }
 
-    public override AnonymousFunction DeepClone() => new() { Body = Body.DeepClone() };
+    public override AnonymousFunctionExpression DeepClone() => new() { Body = Body.DeepClone() };
     public override void Accept(IAstVisitor v) => v.VisitAnonymousFunction(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitAnonymousFunction(this);
 

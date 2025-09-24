@@ -1,17 +1,17 @@
 ﻿namespace RobloxCS.AST.Expressions;
 
-public sealed class TableConstructor : Expression {
+public sealed class TableConstructorExpression : Expression {
     public required List<TableField> Fields { get; set; }
 
-    public static TableConstructor Empty() {
-        return new TableConstructor { Fields = [] };
+    public static TableConstructorExpression Empty() {
+        return new TableConstructorExpression { Fields = [] };
     }
 
-    public static TableConstructor With(params List<TableField> fields) {
-        return new TableConstructor { Fields = fields };
+    public static TableConstructorExpression With(params List<TableField> fields) {
+        return new TableConstructorExpression { Fields = fields };
     }
 
-    public override TableConstructor DeepClone() => new() { Fields = Fields.Select(f => (TableField)f.DeepClone()).ToList() };
+    public override TableConstructorExpression DeepClone() => new() { Fields = Fields.Select(f => (TableField)f.DeepClone()).ToList() };
     public override void Accept(IAstVisitor v) => v.VisitTableConstructor(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitTableConstructor(this);
 
