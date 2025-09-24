@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST.Statements;
+using RobloxCS.Transpiler.Scoping;
 
 namespace RobloxCS.Transpiler.Builders;
 
@@ -23,7 +24,17 @@ public class StatementBuilder {
 
         var typeSym = ctx.Semantics.CheckedGetTypeInfo(decl.Type);
 
-        return LocalAssignment.OfSingleType(varNames, initExprs, SyntaxUtilities.BasicFromSymbol(typeSym));
+        var type = SyntaxUtilities.BasicFromSymbol(typeSym);
+        var varSymbols = varNames.Select(vn => new VariableSymbol(vn, type)).ToList();
+
+        for (var i = 0; i < vars.Count; i++) {
+            var success = ctx.CurrentScope.TryDeclare(varNames[i], varSymbols[i]);
+            if (!success) {
+                throw new Exception($"Failed to declare {varNames[i]} in scope.");
+            }
+        }
+
+        return LocalAssignment.OfSingleType(varNames, initExprs, type);
     }
 
     private static Statement BuildFromExprStmt(ExpressionStatementSyntax exprStmt, TranspilationContext ctx) {
