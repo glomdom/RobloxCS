@@ -6,10 +6,6 @@ using RobloxCS.AST.Expressions;
 namespace RobloxCS.Transpiler.Builders;
 
 public class ExpressionBuilder {
-    public static Expression BuildFromExpressionStatement(ExpressionStatementSyntax exprStmtSyntax) {
-        throw new NotImplementedException();
-    }
-
     public static Expression BuildFromSyntax(ExpressionSyntax syntax, TranspilationContext ctx) {
         return syntax switch {
             IdentifierNameSyntax nameSyntax => HandleIdentifierNameSyntax(nameSyntax, ctx),
