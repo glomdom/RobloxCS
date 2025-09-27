@@ -8,6 +8,8 @@ public sealed class LocalAssignmentStatement : Statement {
     public required List<Expression> Expressions { get; set; }
     public required List<TypeInfo> Types { get; set; }
 
+    public static LocalAssignmentStatement Empty() => new() { Expressions = [], Names = [], Types = [] };
+
     public static LocalAssignmentStatement Naked(string name, TypeInfo type) {
         return new LocalAssignmentStatement {
             Names = [SymbolExpression.FromString(name)],
