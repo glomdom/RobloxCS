@@ -36,9 +36,12 @@ public class StatementBuilder {
         var loopVarBinding = BuildVarLoopAssignment(forStatementSyntax, ctx);
         block.AddStatement(loopVarBinding);
 
+        var whileBlock = Block.Empty();
+        var whileLoop = new WhileStatement { Block = whileBlock, Condition = BooleanExpression.True() };
+
+        block.AddStatement(whileLoop);
 
         ctx.PopScope();
-
 
         return doStmt;
     }
