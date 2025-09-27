@@ -28,12 +28,11 @@ internal class Class1 {
         while (A < 20) {
             A++;
         }
-        
-        //     for (var i = 0; i < 3; i++) {
-        //         A += i;
-        //     }
-        // }
-        //
+
+        for (var i = 0; i < 3; i++) {
+            A += i;
+        }
+
         // public int DoubleA() {
         //     var result = A * 2;
         //
