@@ -17,9 +17,48 @@ public class StatementBuilder {
             BlockSyntax blockSyntax => BuildFromBlockStmt(blockSyntax, ctx),
             IfStatementSyntax ifStatementSyntax => BuildFromIfStmt(ifStatementSyntax, ctx),
             WhileStatementSyntax whileStatementSyntax => BuildFromWhileStmt(whileStatementSyntax, ctx),
+            ForStatementSyntax forStatementSyntax => BuildFromForStmt(forStatementSyntax, ctx),
 
             _ => throw new NotSupportedException($"Unsupported statement: {stmt.Kind()}"),
         };
+    }
+
+    // TODO: Do not desugar unless we can prove the following:
+    //       1. initializer is a constant number
+    //       2. the condition is a simple `< constant`
+    //       3. increment is `i++` or `i += constant`
+    private static Statement BuildFromForStmt(ForStatementSyntax forStatementSyntax, TranspilationContext ctx) {
+        var block = Block.Empty();
+        var doStmt = new DoStatement { Block = block };
+
+        ctx.PushScope();
+
+        var loopVarBinding = BuildVarLoopAssignment(forStatementSyntax, ctx);
+        block.AddStatement(loopVarBinding);
+
+
+        ctx.PopScope();
+
+
+        return doStmt;
+    }
+
+    private static LocalAssignmentStatement BuildVarLoopAssignment(ForStatementSyntax syntax, TranspilationContext ctx) {
+        if (syntax.Declaration is null) {
+            throw new NotImplementedException("For loops without variable declarations are not supported yet.");
+        }
+
+        var vars = syntax.Declaration.Variables;
+        var names = vars.Select(vds => vds.Identifier.ValueText).Select(SymbolExpression.FromString).ToList();
+        var initializers = vars
+            .Where(v => v.Initializer is not null)
+            .Select(v => v.Initializer!.Value)
+            .Select(es => ExpressionBuilder.BuildFromSyntax(es, ctx))
+            .ToList();
+
+        var binding = new LocalAssignmentStatement { Expressions = initializers, Names = names, Types = [] };
+
+        return binding;
     }
 
     private static WhileStatement BuildFromWhileStmt(WhileStatementSyntax syntax, TranspilationContext ctx) {
