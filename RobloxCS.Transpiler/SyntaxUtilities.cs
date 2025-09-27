@@ -81,6 +81,14 @@ public static class SyntaxUtilities {
         };
     }
 
+    public static CompoundOp SyntaxTokenToCompoundOp(SyntaxToken token) {
+        return token.Kind() switch {
+            SyntaxKind.PlusPlusToken => CompoundOp.PlusEqual,
+
+            _ => throw new ArgumentOutOfRangeException(nameof(token), token.Kind(), "Unhandled SyntaxKind in SyntaxTokenToCompoundOp"),
+        };
+    }
+
     public static bool IsPrimitive(ITypeSymbol typeSymbol) {
         return typeSymbol.SpecialType switch {
             SpecialType.System_Boolean => true,

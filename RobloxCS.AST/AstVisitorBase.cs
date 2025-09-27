@@ -56,12 +56,14 @@ public class AstVisitorBase : IAstVisitor {
     public virtual void VisitNamePrefix(NamePrefix node) => DefaultVisit(node);
 
     public virtual void VisitAssignment(AssignmentStatement node) => DefaultVisit(node);
+    public virtual void VisitCompoundAssignmentStatement(CompoundAssignmentStatement node) => DefaultVisit(node);
     public virtual void VisitDoStatement(DoStatement node) => DefaultVisit(node);
     public virtual void VisitFunctionDeclaration(FunctionDeclarationStatement node) => DefaultVisit(node);
     public virtual void VisitIfStatement(IfStatement node) => DefaultVisit(node);
     public virtual void VisitLocalAssignment(LocalAssignmentStatement node) => DefaultVisit(node);
     public virtual void VisitFunctionCallStatement(FunctionCallStatement node) => DefaultVisit(node);
     public virtual void VisitReturn(ReturnStatement node) => DefaultVisit(node);
+    public virtual void VisitWhileStatement(WhileStatement node) => DefaultVisit(node);
 
     public virtual void VisitAnonymousCall(AnonymousCall node) => DefaultVisit(node);
     public virtual void VisitMethodCall(MethodCall node) => DefaultVisit(node);

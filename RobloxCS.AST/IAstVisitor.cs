@@ -49,12 +49,14 @@ public interface IAstVisitor {
     void VisitNamePrefix(NamePrefix node);
 
     void VisitAssignment(AssignmentStatement node);
+    void VisitCompoundAssignmentStatement(CompoundAssignmentStatement node);
     void VisitDoStatement(DoStatement node);
     void VisitFunctionDeclaration(FunctionDeclarationStatement node);
     void VisitIfStatement(IfStatement node);
     void VisitLocalAssignment(LocalAssignmentStatement node);
     void VisitFunctionCallStatement(FunctionCallStatement node);
     void VisitReturn(ReturnStatement node);
+    void VisitWhileStatement(WhileStatement node);
 
     void VisitAnonymousCall(AnonymousCall node);
     void VisitMethodCall(MethodCall node);
@@ -121,11 +123,13 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitNamePrefix(NamePrefix node);
 
     T VisitAssignment(AssignmentStatement node);
+    T VisitCompoundAssignmentStatement(CompoundAssignmentStatement node);
     T VisitDoStatement(DoStatement node);
     T VisitFunctionDeclaration(FunctionDeclarationStatement node);
     T VisitIfStatement(IfStatement node);
     T VisitLocalAssignment(LocalAssignmentStatement node);
     T VisitReturn(ReturnStatement node);
+    T VisitWhileStatement(WhileStatement node);
 
     T VisitAnonymousCall(AnonymousCall node);
     T VisitMethodCall(MethodCall node);

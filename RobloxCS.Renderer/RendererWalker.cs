@@ -216,6 +216,32 @@ public class RendererWalker : AstVisitorBase {
         RenderList(node.Suffixes);
     }
 
+    public override void VisitWhileStatement(WhileStatement node) {
+        _state.AppendIndented("while ");
+        Visit(node.Condition);
+        _state.Builder.AppendLine(" do");
+
+        _state.PushIndent();
+        Visit(node.Block);
+        _state.PopIndent();
+
+        _state.AppendIndentedLine("end");
+    }
+
+    public override void VisitCompoundAssignmentStatement(CompoundAssignmentStatement node) {
+        _state.AppendIndent();
+        Visit(node.Left);
+
+        switch (node.Operator) {
+            case CompoundOp.PlusEqual: _state.Builder.Append(" += "); break;
+
+            default: throw new ArgumentOutOfRangeException(nameof(node), node.Operator, "Unhandled compound operator in VisitCompoundAssignmentStatement");
+        }
+
+        Visit(node.Right);
+        _state.Builder.AppendLine();
+    }
+
     public override void VisitNamePrefix(NamePrefix node) {
         _state.Builder.Append(node.Name);
     }
@@ -305,6 +331,10 @@ public class RendererWalker : AstVisitorBase {
 
     public override void VisitEllipsisParameter(EllipsisParameter node) {
         _state.Builder.Append("...");
+    }
+
+    public override void VisitVarExpression(VarExpression node) {
+        Visit(node.Expression);
     }
 
     public override void VisitVarName(VarName node) {

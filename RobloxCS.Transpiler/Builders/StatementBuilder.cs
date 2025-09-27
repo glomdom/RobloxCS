@@ -16,9 +16,18 @@ public class StatementBuilder {
             LocalDeclarationStatementSyntax localDeclStmtSyntax => BuildFromLocalDeclStmt(localDeclStmtSyntax, ctx),
             BlockSyntax blockSyntax => BuildFromBlockStmt(blockSyntax, ctx),
             IfStatementSyntax ifStatementSyntax => BuildFromIfStmt(ifStatementSyntax, ctx),
+            WhileStatementSyntax whileStatementSyntax => BuildFromWhileStmt(whileStatementSyntax, ctx),
 
             _ => throw new NotSupportedException($"Unsupported statement: {stmt.Kind()}"),
         };
+    }
+
+    private static WhileStatement BuildFromWhileStmt(WhileStatementSyntax syntax, TranspilationContext ctx) {
+        var condition = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
+        var stmt = Build(syntax.Statement, ctx);
+        var block = stmt is DoStatement doStmt ? doStmt.Block : Block.From(stmt);
+
+        return new WhileStatement { Condition = condition, Block = block };
     }
 
     private static IfStatement BuildFromIfStmt(IfStatementSyntax syntax, TranspilationContext ctx) {
@@ -91,6 +100,13 @@ public class StatementBuilder {
                     Vars = [left],
                     Expressions = [right],
                 };
+            }
+
+            case PostfixUnaryExpressionSyntax postExpr: {
+                var tOperand = ExpressionBuilder.BuildFromSyntax(postExpr.Operand, ctx);
+                var tOp = SyntaxUtilities.SyntaxTokenToCompoundOp(postExpr.OperatorToken);
+
+                return new CompoundAssignmentStatement { Left = tOperand, Operator = tOp, Right = new VarExpression { Expression = NumberExpression.From(1) } };
             }
         }
 

@@ -25,10 +25,10 @@ internal class Class1 {
             A = -3;
         }
 
-        //     while (A < 20) {
-        //         A++;
-        //     }
-        //
+        while (A < 20) {
+            A++;
+        }
+        
         //     for (var i = 0; i < 3; i++) {
         //         A += i;
         //     }
