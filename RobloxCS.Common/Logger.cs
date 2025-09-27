@@ -10,7 +10,7 @@ public class Logger {
     static Logger() {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.ControlledBy(LevelSwitch)
-            .WriteTo.Console()
+            .WriteTo.Console(standardErrorFromLevel: LogEventLevel.Verbose)
             .CreateLogger();
     }
 
