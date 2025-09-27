@@ -21,7 +21,7 @@ public static class SyntaxUtilities {
 
     public static INamedTypeSymbol CheckedGetDeclaredSymbol(this SemanticModel semanticModel, BaseTypeDeclarationSyntax node) {
         var sym = semanticModel.GetDeclaredSymbol(node);
-        if (sym is null || sym is IErrorTypeSymbol errSym) {
+        if (sym is null || sym is IErrorTypeSymbol) {
             throw new Exception($"CheckedGetDeclaredSymbol failed at asking semantic model what type {node.Identifier.ValueText} is");
         }
 
