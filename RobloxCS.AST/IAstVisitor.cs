@@ -49,6 +49,7 @@ public interface IAstVisitor {
     void VisitNamePrefix(NamePrefix node);
 
     void VisitAssignment(AssignmentStatement node);
+    void VisitBreakStatement(BreakStatement node);
     void VisitCompoundAssignmentStatement(CompoundAssignmentStatement node);
     void VisitDoStatement(DoStatement node);
     void VisitFunctionDeclaration(FunctionDeclarationStatement node);
@@ -123,6 +124,7 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitNamePrefix(NamePrefix node);
 
     T VisitAssignment(AssignmentStatement node);
+    T VisitBreakStatement(BreakStatement node);
     T VisitCompoundAssignmentStatement(CompoundAssignmentStatement node);
     T VisitDoStatement(DoStatement node);
     T VisitFunctionDeclaration(FunctionDeclarationStatement node);

@@ -17,6 +17,13 @@ public class ExpressionBuilder {
         };
     }
 
+    private static Expression HandlePostfixExpressionSyntax(PostfixUnaryExpressionSyntax syntax, TranspilationContext ctx) {
+        var tOp = SyntaxUtilities.SyntaxTokenToUnOp(syntax.OperatorToken);
+        var tOperand = BuildFromSyntax(syntax.Operand, ctx);
+
+        return new UnaryOperatorExpression { UnOp = tOp, Expression = tOperand };
+    }
+
     private static Expression HandleUnaryExpressionSyntax(PrefixUnaryExpressionSyntax syntax, TranspilationContext ctx) {
         var tOp = SyntaxUtilities.SyntaxTokenToUnOp(syntax.OperatorToken);
         var tOperand = BuildFromSyntax(syntax.Operand, ctx);

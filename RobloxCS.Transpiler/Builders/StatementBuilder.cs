@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
@@ -27,26 +26,66 @@ public class StatementBuilder {
     //       1. initializer is a constant number
     //       2. the condition is a simple `< constant`
     //       3. increment is `i++` or `i += constant`
-    private static Statement BuildFromForStmt(ForStatementSyntax forStatementSyntax, TranspilationContext ctx) {
+    private static Statement BuildFromForStmt(ForStatementSyntax syntax, TranspilationContext ctx) {
         var block = Block.Empty();
         var doStmt = new DoStatement { Block = block };
 
         ctx.PushScope();
 
-        var loopVarBinding = BuildVarLoopAssignment(forStatementSyntax, ctx);
+        var loopVarBinding = BuildLoopVarAssignment(syntax, ctx);
         block.AddStatement(loopVarBinding);
 
         var whileBlock = Block.Empty();
         var whileLoop = new WhileStatement { Block = whileBlock, Condition = BooleanExpression.True() };
 
-        block.AddStatement(whileLoop);
+        ctx.PushScope();
 
+        if (syntax.Condition is null) {
+            throw new NotSupportedException("While loops without conditions are not supported.");
+        }
+
+        var rawCond = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
+        var reverseCond = UnaryOperatorExpression.Reversed(rawCond);
+        var ifStmt = new IfStatement { Condition = reverseCond, Block = Block.From(new BreakStatement()) };
+        whileBlock.AddStatement(ifStmt);
+
+        var stmt = Build(syntax.Statement, ctx);
+        var whileBlockStmt = stmt is DoStatement whileDoStmt ? whileDoStmt.Block : Block.From(stmt);
+        whileBlock.AddBlock(whileBlockStmt);
+
+        var lastStmt = syntax.Incrementors.Select(expr => BuildFromExprSyntax(expr, ctx)).ToList();
+        whileBlock.AddStatements(lastStmt);
+
+        ctx.PopScope();
+
+        block.AddStatement(whileLoop);
         ctx.PopScope();
 
         return doStmt;
     }
 
-    private static LocalAssignmentStatement BuildVarLoopAssignment(ForStatementSyntax syntax, TranspilationContext ctx) {
+    private static Statement BuildFromExprSyntax(ExpressionSyntax syntax, TranspilationContext ctx) {
+        Log.Verbose("Building statement from expression syntax of kind {SyntaxKind}", syntax.Kind());
+
+        switch (syntax) {
+            case PostfixUnaryExpressionSyntax postExpr: {
+                var tOperand = ExpressionBuilder.BuildFromSyntax(postExpr.Operand, ctx);
+                var tOp = SyntaxUtilities.SyntaxTokenToCompoundOp(postExpr.OperatorToken);
+
+                return new CompoundAssignmentStatement { Left = tOperand, Operator = tOp, Right = new VarExpression { Expression = NumberExpression.From(1) } };
+            }
+
+            case AssignmentExpressionSyntax assignExpr: {
+                var assignment = BuildFromAssignmentExprSyntax(assignExpr, ctx);
+
+                return assignment;
+            }
+        }
+
+        throw new NotSupportedException($"{syntax.Kind()} is not supported.");
+    }
+
+    private static LocalAssignmentStatement BuildLoopVarAssignment(ForStatementSyntax syntax, TranspilationContext ctx) {
         if (syntax.Declaration is null) {
             throw new NotImplementedException("For loops without variable declarations are not supported yet.");
         }
@@ -133,15 +172,13 @@ public class StatementBuilder {
     private static Statement BuildFromExprStmt(ExpressionStatementSyntax exprStmt, TranspilationContext ctx) {
         var expr = exprStmt.Expression;
 
+        Log.Verbose("Building statement from expression statement of kind {StatementKind}", expr.Kind());
+
         switch (expr) {
             case AssignmentExpressionSyntax assignExpr: {
-                var left = VarBuilder.BuildFromExpressionSyntax(assignExpr.Left, ctx);
-                var right = ExpressionBuilder.BuildFromSyntax(assignExpr.Right, ctx);
+                var assignment = BuildFromAssignmentExprSyntax(assignExpr, ctx);
 
-                return new AssignmentStatement {
-                    Vars = [left],
-                    Expressions = [right],
-                };
+                return assignment;
             }
 
             case PostfixUnaryExpressionSyntax postExpr: {
@@ -153,5 +190,29 @@ public class StatementBuilder {
         }
 
         throw new Exception($"Unhandled expression {expr.Kind()}");
+    }
+
+    private static Statement BuildFromAssignmentExprSyntax(AssignmentExpressionSyntax expr, TranspilationContext ctx) {
+        switch (expr.Kind()) {
+            case SyntaxKind.SimpleAssignmentExpression: {
+                var left = VarBuilder.BuildFromExpressionSyntax(expr.Left, ctx);
+                var right = ExpressionBuilder.BuildFromSyntax(expr.Right, ctx);
+
+                return new AssignmentStatement {
+                    Vars = [left],
+                    Expressions = [right],
+                };
+            }
+
+            case SyntaxKind.AddAssignmentExpression: {
+                var left = ExpressionBuilder.BuildFromSyntax(expr.Left, ctx);
+                var right = ExpressionBuilder.BuildFromSyntax(expr.Right, ctx);
+                var tOp = SyntaxUtilities.SyntaxTokenToCompoundOp(expr.OperatorToken);
+
+                return new CompoundAssignmentStatement { Left = left, Operator = tOp, Right = VarExpression.FromExpression(right) };
+            }
+        }
+
+        throw new NotSupportedException($"{expr.Kind()} is not supported.");
     }
 }

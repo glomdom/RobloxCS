@@ -32,6 +32,10 @@ internal class Class1 {
         for (var i = 0; i < 3; i++) {
             A += i;
         }
+        
+        for (int i = 0, j = 5; i < j; i++, j--) {
+            A += i + j;
+        }
 
         // public int DoubleA() {
         //     var result = A * 2;

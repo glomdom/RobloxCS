@@ -56,6 +56,7 @@ public class AstVisitorBase : IAstVisitor {
     public virtual void VisitNamePrefix(NamePrefix node) => DefaultVisit(node);
 
     public virtual void VisitAssignment(AssignmentStatement node) => DefaultVisit(node);
+    public virtual void VisitBreakStatement(BreakStatement node) => DefaultVisit(node);
     public virtual void VisitCompoundAssignmentStatement(CompoundAssignmentStatement node) => DefaultVisit(node);
     public virtual void VisitDoStatement(DoStatement node) => DefaultVisit(node);
     public virtual void VisitFunctionDeclaration(FunctionDeclarationStatement node) => DefaultVisit(node);

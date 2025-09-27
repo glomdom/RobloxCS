@@ -6,7 +6,6 @@ using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
-using Serilog;
 
 namespace RobloxCS.Renderer;
 
@@ -141,7 +140,7 @@ public class RendererWalker : AstVisitorBase {
             case BinOp.LessThan: _state.Builder.Append(" < "); break;
             case BinOp.TwoEqual: _state.Builder.Append(" == "); break;
 
-            default: throw new ArgumentOutOfRangeException(nameof(node), node.Op, "Unhandled binary operator in VisitBinaryOperatorExpression");
+            default: throw new ArgumentOutOfRangeException(nameof(node.Op), node.Op, "Unhandled binary operator in VisitBinaryOperatorExpression");
         }
 
         Visit(node.Right);
@@ -150,9 +149,22 @@ public class RendererWalker : AstVisitorBase {
     public override void VisitUnaryOperatorExpression(UnaryOperatorExpression node) {
         switch (node.UnOp) {
             case UnOp.Minus: _state.Builder.Append('-'); break;
+            case UnOp.Not: {
+                _state.Builder.Append("not (");
+                Visit(node.Expression);
+                _state.Builder.Append(')');
+
+                return;
+            }
+
+            default: throw new ArgumentOutOfRangeException(nameof(node.UnOp), node.UnOp, "Unhandled unary operator in VisitUnaryOperatorExpression");
         }
 
         Visit(node.Expression);
+    }
+
+    public override void VisitBreakStatement(BreakStatement node) {
+        _state.AppendIndentedLine("break");
     }
 
     public override void VisitDoStatement(DoStatement node) {
@@ -234,6 +246,7 @@ public class RendererWalker : AstVisitorBase {
 
         switch (node.Operator) {
             case CompoundOp.PlusEqual: _state.Builder.Append(" += "); break;
+            case CompoundOp.MinusEqual: _state.Builder.Append(" -= "); break;
 
             default: throw new ArgumentOutOfRangeException(nameof(node), node.Operator, "Unhandled compound operator in VisitCompoundAssignmentStatement");
         }

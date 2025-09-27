@@ -17,6 +17,10 @@ public sealed class Block : AstNode {
         Statements.Add(statement);
     }
 
+    public void AddStatements(List<Statement> stmts) {
+        Statements.AddRange(stmts);
+    }
+
     /// <summary>
     /// Flattens the provided block into the block.
     /// </summary>
@@ -31,4 +35,5 @@ public sealed class Block : AstNode {
     public override IEnumerable<Statement> Children() {
         return Statements;
     }
+
 }
