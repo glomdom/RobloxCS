@@ -345,6 +345,10 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.Append(node.Value);
     }
 
+    public override void VisitBooleanExpression(BooleanExpression node) {
+        _state.Builder.Append(node.Value ? "true" : "false");
+    }
+
     public override void VisitNumberExpression(NumberExpression node) {
         _state.Builder.Append(node.Value);
     }
