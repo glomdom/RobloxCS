@@ -77,8 +77,23 @@ internal static class FunctionBuilder {
             functionBlock.AddStatement(a);
         }
 
+        var ctorStmt = new FunctionDeclarationStatement {
+            Name = FunctionName.FromString($"{classSymbol.Name}:constructor"),
+            Body = new FunctionBody {
+                Body = functionBlock,
+                Parameters = [],
+                TypeSpecifiers = [],
+                ReturnType = BasicTypeInfo.Void(),
+            },
+        };
+
         // populate function block
-        var ctorSyntax = SyntaxUtilities.GetSyntaxFromSymbol<ConstructorDeclarationSyntax>(ctorSymbol);
+        var ctorSyntax = SyntaxUtilities.MaybeGetSyntaxFromSymbol<ConstructorDeclarationSyntax>(ctorSymbol);
+        if (ctorSyntax is null) {
+            // ctor doesnt exist, return just initializers
+            return ctorStmt;
+        }
+
         if (ctorSyntax.Body is { } body) {
             ctx.PushScope();
 
@@ -93,19 +108,15 @@ internal static class FunctionBuilder {
             ? []
             : ctorSymbol.Parameters.Select(p => NameParameter.FromString(p.Name)).Cast<Parameter>().ToList();
 
+        ctorStmt.Body.Parameters = pars;
+
         var specs = ctorSymbol.IsImplicitlyDeclared
             ? []
             : ctorSymbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
 
-        return new FunctionDeclarationStatement {
-            Name = FunctionName.FromString($"{classSymbol.Name}:constructor"),
-            Body = new FunctionBody {
-                Body = functionBlock,
-                Parameters = pars,
-                TypeSpecifiers = specs,
-                ReturnType = BasicTypeInfo.Void(),
-            },
-        };
+        ctorStmt.Body.TypeSpecifiers = specs;
+
+        return ctorStmt;
     }
 
     public static Statement BuildFromMethodSymbol(IMethodSymbol symbol, TranspilationContext ctx) {
