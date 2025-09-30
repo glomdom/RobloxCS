@@ -17,9 +17,20 @@ public class StatementBuilder {
             IfStatementSyntax ifStatementSyntax => BuildFromIfStmt(ifStatementSyntax, ctx),
             WhileStatementSyntax whileStatementSyntax => BuildFromWhileStmt(whileStatementSyntax, ctx),
             ForStatementSyntax forStatementSyntax => BuildFromForStmt(forStatementSyntax, ctx),
+            ReturnStatementSyntax returnStatementSyntax => BuildFromReturnStmt(returnStatementSyntax, ctx),
 
             _ => throw new NotSupportedException($"Unsupported statement: {stmt.Kind()}"),
         };
+    }
+
+    private static ReturnStatement BuildFromReturnStmt(ReturnStatementSyntax syntax, TranspilationContext ctx) {
+        var stmt = new ReturnStatement { Returns = [] };
+
+        if (syntax.Expression is { } expr) {
+            stmt.Returns = [ExpressionBuilder.BuildFromSyntax(expr, ctx)];
+        }
+
+        return stmt;
     }
 
     // TODO: Do not desugar unless we can prove the following:
