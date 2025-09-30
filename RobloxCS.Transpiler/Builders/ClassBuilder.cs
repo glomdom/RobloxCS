@@ -42,15 +42,8 @@ internal static class ClassBuilder {
         var instanceDecl = TypeDeclarationStatement.EmptyTable($"_Instance{className}");
 
         {
-            foreach (var member in node.Members) {
-                if (member is not FieldDeclarationSyntax f) continue;
-
-                foreach (var tf in FieldBuilder.GenerateTypeFieldsFromField(f, ctx)) {
-                    (instanceDecl.DeclareAs as TableTypeInfo)?.Fields.Add(tf);
-                }
-
-                // TODO: instance methods -> type fields or method tables (future)
-                Log.Warning("TODO: Instance methods -> type fields or method tables");
+            foreach (var tf in node.Members.SelectMany(member => FieldBuilder.GenerateTypeFieldsFromMember(member, ctx))) {
+                (instanceDecl.DeclareAs as TableTypeInfo)?.Fields.Add(tf);
             }
         }
 
