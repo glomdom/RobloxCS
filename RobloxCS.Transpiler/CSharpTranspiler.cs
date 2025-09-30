@@ -37,14 +37,6 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
         base.VisitClassDeclaration(node);
     }
 
-    public override void VisitMethodDeclaration(MethodDeclarationSyntax node) {
-        var method = FunctionBuilder.BuildFromMethodSyntax(node, Ctx);
-
-        Ctx.Add(method);
-
-        base.VisitMethodDeclaration(node);
-    }
-
     public override void VisitFieldDeclaration(FieldDeclarationSyntax node) {
         // TODO: idk bro do we do this or not
 
