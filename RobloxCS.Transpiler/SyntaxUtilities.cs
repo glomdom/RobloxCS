@@ -23,19 +23,6 @@ public static class SyntaxUtilities {
     }
 
 
-    public static ITypeSymbol CheckedGetTypeInfo(this SemanticModel semantics, TypeSyntax syntax) {
-        return semantics.GetTypeInfo(syntax).Type ?? throw new InvalidOperationException($"Could not resolve type for {syntax}");
-    }
-
-    public static INamedTypeSymbol CheckedGetDeclaredSymbol(this SemanticModel semanticModel, BaseTypeDeclarationSyntax node) {
-        var sym = semanticModel.GetDeclaredSymbol(node);
-        if (sym is null || sym is IErrorTypeSymbol) {
-            throw new Exception($"CheckedGetDeclaredSymbol failed at asking semantic model what type {node.Identifier.ValueText} is");
-        }
-
-        return sym;
-    }
-
     public static BasicTypeInfo BasicFromSymbol(ITypeSymbol symbol) {
         return symbol.SpecialType switch {
             SpecialType.System_Boolean => BasicTypeInfo.Boolean(),
@@ -128,5 +115,20 @@ public static class SyntaxUtilities {
 
             _ => false,
         };
+    }
+
+    extension(SemanticModel semantics) {
+        public ITypeSymbol CheckedGetTypeInfo(TypeSyntax syntax) {
+            return semantics.GetTypeInfo(syntax).Type ?? throw new InvalidOperationException($"Could not resolve type for {syntax}");
+        }
+
+        public INamedTypeSymbol CheckedGetDeclaredSymbol(BaseTypeDeclarationSyntax node) {
+            var sym = semantics.GetDeclaredSymbol(node);
+            if (sym is null || sym is IErrorTypeSymbol) {
+                throw new Exception($"CheckedGetDeclaredSymbol failed at asking semantic model what type {node.Identifier.ValueText} is");
+            }
+
+            return sym;
+        }
     }
 }
