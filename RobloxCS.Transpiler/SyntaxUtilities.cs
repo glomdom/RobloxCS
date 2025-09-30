@@ -15,6 +15,14 @@ public static class SyntaxUtilities {
         return syntax;
     }
 
+    public static T? MaybeGetSyntaxFromSymbol<T>(ISymbol symbol) where T : CSharpSyntaxNode {
+        var syntaxRef = symbol.DeclaringSyntaxReferences.FirstOrDefault();
+        if (syntaxRef?.GetSyntax() is T syntax) return syntax;
+
+        return null;
+    }
+
+
     public static ITypeSymbol CheckedGetTypeInfo(this SemanticModel semantics, TypeSyntax syntax) {
         return semantics.GetTypeInfo(syntax).Type ?? throw new InvalidOperationException($"Could not resolve type for {syntax}");
     }
