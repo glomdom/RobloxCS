@@ -4,8 +4,12 @@ internal class Class1 {
     public int A = 0;
 
     public int DoubleA() {
-        var result = A * 2;
+        var result = DoubleNum(A);
 
         return result;
+    }
+
+    public int DoubleNum(int a) {
+        return a * 2;
     }
 }

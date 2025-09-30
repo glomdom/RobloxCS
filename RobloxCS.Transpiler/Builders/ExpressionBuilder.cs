@@ -2,6 +2,9 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Functions;
+using RobloxCS.AST.Prefixes;
+using RobloxCS.AST.Suffixes;
 
 namespace RobloxCS.Transpiler.Builders;
 
@@ -12,9 +15,22 @@ public class ExpressionBuilder {
             LiteralExpressionSyntax exprSyntax => HandleLiteralExpressionSyntax(exprSyntax, ctx),
             BinaryExpressionSyntax binExprSyntax => HandleBinaryExpressionSyntax(binExprSyntax, ctx),
             PrefixUnaryExpressionSyntax prefixUnaryExprSyntax => HandleUnaryExpressionSyntax(prefixUnaryExprSyntax, ctx),
+            InvocationExpressionSyntax invocationExpressionSyntax => HandleInvocationExpressionSyntax(invocationExpressionSyntax, ctx),
 
             _ => throw new NotSupportedException($"Expression {syntax.Kind()} is not supported. {syntax}"),
         };
+    }
+
+    private static FunctionCallExpression HandleInvocationExpressionSyntax(InvocationExpressionSyntax syntax, TranspilationContext ctx) {
+        var info = ctx.Semantics.GetSymbolInfo(syntax);
+        if (info.Symbol is not IMethodSymbol methodSymbol) throw new Exception("Invocation expression is not a method.");
+
+        if (methodSymbol.IsStatic) throw new Exception("Static methods are not yet supported.");
+
+        var methodName = $"self:{methodSymbol.Name}";
+        var argExpressions = syntax.ArgumentList.Arguments.Select(ars => BuildFromSyntax(ars.Expression, ctx)).ToList();
+
+        return new FunctionCallExpression { Prefix = NamePrefix.FromString(methodName), Suffixes = [AnonymousCall.FromArgs(FunctionArgs.FromExpressions(argExpressions))] };
     }
 
     private static Expression HandlePostfixExpressionSyntax(PostfixUnaryExpressionSyntax syntax, TranspilationContext ctx) {
