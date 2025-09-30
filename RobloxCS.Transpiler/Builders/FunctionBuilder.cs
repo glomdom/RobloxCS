@@ -109,21 +109,23 @@ internal static class FunctionBuilder {
     }
 
     public static Statement BuildFromMethodSyntax(MethodDeclarationSyntax node, TranspilationContext ctx) {
-        if (ctx.Semantics.GetDeclaredSymbol(node) is not IMethodSymbol methodSymbol) {
-            throw new Exception("Could not resolve symbol for method.");
-        }
+        return ctx.Semantics.GetDeclaredSymbol(node) is not IMethodSymbol methodSymbol
+            ? throw new Exception("Could not resolve symbol for method.")
+            : BuildFromMethodSymbol(methodSymbol, ctx);
+    }
 
-        var pars = methodSymbol.Parameters.Select(p => NameParameter.FromString(p.Name)).Cast<Parameter>().ToList();
-        var specs = methodSymbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
-        var returnType = SyntaxUtilities.BasicFromSymbol(methodSymbol.ReturnType);
+    public static Statement BuildFromMethodSymbol(IMethodSymbol symbol, TranspilationContext ctx) {
+        var pars = symbol.Parameters.Select(p => NameParameter.FromString(p.Name)).Cast<Parameter>().ToList();
+        var specs = symbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
+        var returnType = SyntaxUtilities.BasicFromSymbol(symbol.ReturnType);
 
-        var cls = methodSymbol.ContainingSymbol;
+        var cls = symbol.ContainingSymbol;
         if (cls is null) {
             throw new Exception("Could not find containing class symbol.");
         }
 
         return new FunctionDeclarationStatement {
-            Name = FunctionName.FromString(cls.Name + ":" + methodSymbol.Name),
+            Name = FunctionName.FromString(cls.Name + ":" + symbol.Name),
             Body = new FunctionBody {
                 Body = Block.Empty(),
                 Parameters = pars,

@@ -141,6 +141,14 @@ internal static class ClassBuilder {
             block.AddStatement(FunctionBuilder.CreateConstructor(classSymbol, ctor, ctx));
         }
 
+        foreach (var method in classSymbol.GetMembers().OfType<IMethodSymbol>()) {
+            if (method.MethodKind == MethodKind.Constructor) continue;
+            if (method.IsStatic) continue; // no statics
+
+            var methodStmt = FunctionBuilder.BuildFromMethodSymbol(method, ctx);
+            block.AddStatement(methodStmt);
+        }
+
         return block;
     }
 }
