@@ -33,8 +33,12 @@ internal static class TypeFieldBuilder {
 
         if (symbol.IsStatic) throw new NotSupportedException("Static methods are not supported yet.");
 
-        var names = symbol.Parameters.Select(ps => ps.Name).ToList();
-        var types = symbol.Parameters.Select(ps => SyntaxUtilities.BasicFromSymbol(ps.Type)).ToList();
+        var className = symbol.ContainingType.Name;
+        var classType = BasicTypeInfo.FromString($"_Instance{className}");
+
+        var names = symbol.Parameters.Select(p => p.Name).Prepend("self").ToList();
+        var types = symbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Prepend(classType).ToList();
+
         var args = names.Zip(types, (name, type) => new TypeArgument { Name = name, TypeInfo = type }).ToList();
 
         yield return new TypeField {
