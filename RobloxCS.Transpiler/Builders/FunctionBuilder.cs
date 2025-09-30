@@ -118,14 +118,27 @@ internal static class FunctionBuilder {
             throw new Exception("Could not find containing class symbol.");
         }
 
+        var functionBlock = Block.Empty();
+
+        var syntax = SyntaxUtilities.GetSyntaxFromSymbol<MethodDeclarationSyntax>(symbol);
+        if (syntax.Body is { } body) {
+            ctx.PushScope();
+
+            foreach (var stmt in body.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx))) {
+                functionBlock.AddStatement(stmt);
+            }
+
+            ctx.PopScope();
+        }
+
         return new FunctionDeclarationStatement {
             Name = FunctionName.FromString(cls.Name + ":" + symbol.Name),
             Body = new FunctionBody {
-                Body = Block.Empty(),
+                Body = functionBlock,
                 Parameters = pars,
                 TypeSpecifiers = specs,
                 ReturnType = returnType,
-            }
+            },
         };
     }
 }
