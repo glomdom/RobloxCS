@@ -108,12 +108,6 @@ internal static class FunctionBuilder {
         };
     }
 
-    public static Statement BuildFromMethodSyntax(MethodDeclarationSyntax node, TranspilationContext ctx) {
-        return ctx.Semantics.GetDeclaredSymbol(node) is not IMethodSymbol methodSymbol
-            ? throw new Exception("Could not resolve symbol for method.")
-            : BuildFromMethodSymbol(methodSymbol, ctx);
-    }
-
     public static Statement BuildFromMethodSymbol(IMethodSymbol symbol, TranspilationContext ctx) {
         var pars = symbol.Parameters.Select(p => NameParameter.FromString(p.Name)).Cast<Parameter>().ToList();
         var specs = symbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
