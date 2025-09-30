@@ -71,7 +71,8 @@ internal static class ClassBuilder {
 
         typeTable.Fields.Add(newField);
 
-        var index = TypeField.FromNameAndType("__index", BasicTypeInfo.FromString(typeDecl.Name));
+        var indexType = IntersectionTypeInfo.FromInfos(BasicTypeInfo.FromString(typeDecl.Name), BasicTypeInfo.FromString($"_Instance{className}"));
+        var index = TypeField.FromNameAndType("__index", indexType);
         typeTable.Fields.Add(index);
     }
 
