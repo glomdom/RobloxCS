@@ -107,4 +107,29 @@ internal static class FunctionBuilder {
             },
         };
     }
+
+    public static Statement BuildFromMethodSyntax(MethodDeclarationSyntax node, TranspilationContext ctx) {
+        if (ctx.Semantics.GetDeclaredSymbol(node) is not IMethodSymbol methodSymbol) {
+            throw new Exception("Could not resolve symbol for method.");
+        }
+
+        var pars = methodSymbol.Parameters.Select(p => NameParameter.FromString(p.Name)).Cast<Parameter>().ToList();
+        var specs = methodSymbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
+        var returnType = SyntaxUtilities.BasicFromSymbol(methodSymbol.ReturnType);
+
+        var cls = methodSymbol.ContainingSymbol;
+        if (cls is null) {
+            throw new Exception("Could not find containing class symbol.");
+        }
+
+        return new FunctionDeclarationStatement {
+            Name = FunctionName.FromString(cls.Name + ":" + methodSymbol.Name),
+            Body = new FunctionBody {
+                Body = Block.Empty(),
+                Parameters = pars,
+                TypeSpecifiers = specs,
+                ReturnType = returnType,
+            }
+        };
+    }
 }

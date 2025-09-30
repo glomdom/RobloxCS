@@ -91,6 +91,16 @@ public static class SyntaxUtilities {
         };
     }
 
+    public static ClassDeclarationSyntax? GetDeclaringClass(SyntaxNode node) {
+        var current = node.Parent;
+        while (current != null && current is not ClassDeclarationSyntax) {
+            current = current.Parent;
+        }
+
+        return current as ClassDeclarationSyntax;
+    }
+
+
     public static bool IsPrimitive(ITypeSymbol typeSymbol) {
         return typeSymbol.SpecialType switch {
             SpecialType.System_Boolean => true,
