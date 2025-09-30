@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
-using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
 using Serilog;
