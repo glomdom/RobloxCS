@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
+using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
 using Serilog;
@@ -9,6 +10,44 @@ using Serilog;
 namespace RobloxCS.Transpiler.Builders;
 
 internal static class FieldBuilder {
+    public static IEnumerable<TypeField> GenerateTypeFieldsFromMember(MemberDeclarationSyntax syntax, TranspilationContext ctx) {
+        switch (syntax) {
+            case FieldDeclarationSyntax f: {
+                foreach (var tf in GenerateTypeFieldsFromField(f, ctx)) yield return tf;
+
+                break;
+            }
+
+            case MethodDeclarationSyntax m: {
+                foreach (var tf in GenerateTypeFieldsFromMethod(m, ctx)) yield return tf;
+
+                break;
+            }
+
+            default: throw new ArgumentOutOfRangeException(nameof(syntax), syntax, null);
+        }
+    }
+
+    public static IEnumerable<TypeField> GenerateTypeFieldsFromMethod(MethodDeclarationSyntax syntax, TranspilationContext ctx) {
+        var symbol = ctx.Semantics.GetDeclaredSymbol(syntax);
+        if (symbol is null) throw new Exception("Method declaration symbol is null.");
+
+        if (symbol.IsStatic) throw new NotSupportedException("Static methods are not supported yet.");
+
+        var names = symbol.Parameters.Select(ps => ps.Name).ToList();
+        var types = symbol.Parameters.Select(ps => SyntaxUtilities.BasicFromSymbol(ps.Type)).ToList();
+        var args = names.Zip(types, (name, type) => new TypeArgument { Name = name, TypeInfo = type }).ToList();
+
+        yield return new TypeField {
+            Key = NameTypeFieldKey.FromString(symbol.Name),
+            Access = null,
+            Value = new CallbackTypeInfo {
+                Arguments = args,
+                ReturnType = SyntaxUtilities.BasicFromSymbol(symbol.ReturnType),
+            },
+        };
+    }
+
     public static IEnumerable<TypeField> GenerateTypeFieldsFromField(FieldDeclarationSyntax fieldSyntax, TranspilationContext ctx) {
         var decl = fieldSyntax.Declaration;
         var fieldType = InferNonnull(decl.Type, ctx);
