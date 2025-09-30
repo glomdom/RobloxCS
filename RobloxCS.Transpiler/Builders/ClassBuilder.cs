@@ -42,7 +42,7 @@ internal static class ClassBuilder {
         var instanceDecl = TypeDeclarationStatement.EmptyTable($"_Instance{className}");
 
         {
-            foreach (var tf in node.Members.SelectMany(member => FieldBuilder.GenerateTypeFieldsFromMember(member, ctx))) {
+            foreach (var tf in node.Members.SelectMany(member => TypeFieldBuilder.GenerateTypeFieldsFromMember(member, ctx))) {
                 (instanceDecl.DeclareAs as TableTypeInfo)?.Fields.Add(tf);
             }
         }

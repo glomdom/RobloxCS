@@ -73,7 +73,7 @@ internal static class FunctionBuilder {
         var functionBlock = Block.Empty();
 
         var fields = classSymbol.GetMembers().OfType<IFieldSymbol>();
-        foreach (var a in FieldBuilder.CreateFieldAssignmentsFromFields(fields, ctx)) {
+        foreach (var a in TypeFieldBuilder.CreateFieldAssignmentsFromFields(fields, ctx)) {
             functionBlock.AddStatement(a);
         }
 

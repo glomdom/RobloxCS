@@ -9,7 +9,7 @@ using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
 
-internal static class FieldBuilder {
+internal static class TypeFieldBuilder {
     public static IEnumerable<TypeField> GenerateTypeFieldsFromMember(MemberDeclarationSyntax syntax, TranspilationContext ctx) {
         switch (syntax) {
             case FieldDeclarationSyntax f: {
