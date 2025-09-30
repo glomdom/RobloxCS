@@ -36,10 +36,4 @@ public sealed class CSharpTranspiler : CSharpSyntaxWalker {
 
         base.VisitClassDeclaration(node);
     }
-
-    public override void VisitFieldDeclaration(FieldDeclarationSyntax node) {
-        // TODO: idk bro do we do this or not
-
-        Log.Warning("Skipping emission for field group with {Count} variable(s).", node.Declaration.Variables.Count);
-    }
 }
