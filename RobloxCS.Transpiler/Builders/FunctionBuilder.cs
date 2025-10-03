@@ -98,7 +98,7 @@ internal static class FunctionBuilder {
             ctx.PushScope();
 
             foreach (var transpiled in body.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx))) {
-                functionBlock.AddStatement(transpiled);
+                functionBlock.AddStatements(transpiled.Statements);
             }
 
             ctx.PopScope();
@@ -135,8 +135,8 @@ internal static class FunctionBuilder {
         if (syntax.Body is { } body) {
             ctx.PushScope();
 
-            foreach (var stmt in body.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx))) {
-                functionBlock.AddStatement(stmt);
+            foreach (var result in body.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx))) {
+                functionBlock.AddStatements(result.Statements);
             }
 
             ctx.PopScope();

@@ -8,10 +8,15 @@ public class BlockBuilder {
         var block = Block.Empty();
 
         ctx.PushScope();
-        var statements = syntax.Statements.Select(statement => StatementBuilder.Build(statement, ctx)).ToList();
+        var result = syntax.Statements.Select(statement => StatementBuilder.Build(statement, ctx)).Aggregate((acc, next) => {
+            acc.Add(next);
+
+            return acc;
+        });
+
         ctx.PopScope();
 
-        block.Statements = statements;
+        block.Statements = result.Statements;
 
         return block;
     }
@@ -25,8 +30,12 @@ public class BlockBuilder {
     }
 
     private static Block BuildFromBlockStmt(BlockSyntax syntax, TranspilationContext ctx) {
-        var stmts = syntax.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx)).ToList();
+        var result = syntax.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx)).Aggregate((acc, next) => {
+            acc.Add(next);
 
-        return new Block { Statements = stmts };
+            return acc;
+        });
+
+        return new Block { Statements = result.Statements };
     }
 }

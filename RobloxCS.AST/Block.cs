@@ -12,6 +12,10 @@ public sealed class Block : AstNode {
     public static Block From(Statement stmt) {
         return new Block { Statements = [stmt] };
     }
+    
+    public static Block From(List<Statement> stmts) {
+        return new Block { Statements = stmts };
+    }
 
     public void AddStatement(Statement statement) {
         Statements.Add(statement);

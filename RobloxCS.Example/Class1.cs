@@ -3,8 +3,8 @@
 internal class Class1 {
     public int A = 0;
 
-    public int TernaryTest() {
-        return A > 4 ? 1 : 2;
+    public void TernaryTest() {
+        var v = A > 4 ? 1 : 2;
     }
 
     public int DoubleA() {

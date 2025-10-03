@@ -3,13 +3,14 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
+using RobloxCS.AST.Types;
 using RobloxCS.Transpiler.Scoping;
 using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
 
 public class StatementBuilder {
-    public static Statement Build(StatementSyntax stmt, TranspilationContext ctx) {
+    public static BuilderResult Build(StatementSyntax stmt, TranspilationContext ctx) {
         return stmt switch {
             ExpressionStatementSyntax exprStmtSyntax => BuildFromExprStmt(exprStmtSyntax, ctx),
             LocalDeclarationStatementSyntax localDeclStmtSyntax => BuildFromLocalDeclStmt(localDeclStmtSyntax, ctx),
@@ -23,33 +24,40 @@ public class StatementBuilder {
         };
     }
 
-    private static Statement BuildFromReturnStmt(ReturnStatementSyntax syntax, TranspilationContext ctx) {
+    private static BuilderResult BuildFromReturnStmt(ReturnStatementSyntax syntax, TranspilationContext ctx) {
         return syntax.Expression switch {
             ConditionalExpressionSyntax condExprSyntax => DesugarReturnConditional(condExprSyntax, ctx),
-            { } expr => new ReturnStatement { Returns = [ExpressionBuilder.BuildFromSyntax(expr, ctx)] },
+            { } expr => BuilderResult.FromSingle(new ReturnStatement { Returns = [ExpressionBuilder.BuildFromSyntax(expr, ctx).Expression] }),
 
             _ => throw new ArgumentOutOfRangeException(nameof(syntax), syntax.Expression, null),
         };
     }
 
-    private static Statement DesugarReturnConditional(ConditionalExpressionSyntax syntax, TranspilationContext ctx) {
+    private static BuilderResult DesugarReturnConditional(ConditionalExpressionSyntax syntax, TranspilationContext ctx) {
         var cond = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
+        var tmpName = "__tmp";
 
-        return default;
+        var binding = LocalAssignmentStatement.Single(tmpName, cond.Expression, BasicTypeInfo.Void());
+
+        var result = BuilderResult.Empty();
+        result.AddStatement(binding);
+        result.AddStatements(cond.Statements);
+
+        return result;
     }
 
     // TODO: Do not desugar unless we can prove the following:
     //       1. initializer is a constant number
     //       2. the condition is a simple `< constant`
     //       3. increment is `i++` or `i += constant`
-    private static Statement BuildFromForStmt(ForStatementSyntax syntax, TranspilationContext ctx) {
+    private static BuilderResult BuildFromForStmt(ForStatementSyntax syntax, TranspilationContext ctx) {
         var block = Block.Empty();
         var doStmt = new DoStatement { Block = block };
 
         ctx.PushScope();
 
-        var loopVarBinding = BuildLoopVarAssignment(syntax, ctx);
-        block.AddStatement(loopVarBinding);
+        var loopVarBindingResult = BuildLoopVarAssignment(syntax, ctx);
+        block.AddStatements(loopVarBindingResult.Statements);
 
         var whileBlock = Block.Empty();
         var whileLoop = new WhileStatement { Block = whileBlock, Condition = BooleanExpression.True() };
@@ -61,34 +69,44 @@ public class StatementBuilder {
         }
 
         var rawCond = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
-        var reverseCond = UnaryOperatorExpression.Reversed(rawCond);
+        var reverseCond = UnaryOperatorExpression.Reversed(rawCond.Expression);
         var ifStmt = new IfStatement { Condition = reverseCond, Block = Block.From(new BreakStatement()) };
         whileBlock.AddStatement(ifStmt);
 
         var stmt = Build(syntax.Statement, ctx);
-        var whileBlockStmt = stmt is DoStatement whileDoStmt ? whileDoStmt.Block : Block.From(stmt);
+        var whileBlockStmt = Block.From(stmt.Statements);
         whileBlock.AddBlock(whileBlockStmt);
 
-        var lastStmt = syntax.Incrementors.Select(expr => BuildFromExprSyntax(expr, ctx)).ToList();
-        whileBlock.AddStatements(lastStmt);
+        var lastStmt = syntax.Incrementors.Select(expr => BuildFromExprSyntax(expr, ctx)).Aggregate((acc, next) => {
+            acc.Add(next);
+
+            return acc;
+        });
+
+        whileBlock.AddStatements(lastStmt.Statements);
 
         ctx.PopScope();
 
         block.AddStatement(whileLoop);
         ctx.PopScope();
 
-        return doStmt;
+        return BuilderResult.FromSingle(doStmt);
     }
 
-    private static Statement BuildFromExprSyntax(ExpressionSyntax syntax, TranspilationContext ctx) {
+    private static BuilderResult BuildFromExprSyntax(ExpressionSyntax syntax, TranspilationContext ctx) {
         Log.Verbose("Building statement from expression syntax of kind {SyntaxKind}", syntax.Kind());
 
         switch (syntax) {
             case PostfixUnaryExpressionSyntax postExpr: {
                 var tOperand = ExpressionBuilder.BuildFromSyntax(postExpr.Operand, ctx);
                 var tOp = SyntaxUtilities.SyntaxTokenToCompoundOp(postExpr.OperatorToken);
+                var assignment = new CompoundAssignmentStatement {
+                    Left = tOperand.Expression,
+                    Operator = tOp,
+                    Right = new VarExpression { Expression = NumberExpression.From(1) }
+                };
 
-                return new CompoundAssignmentStatement { Left = tOperand, Operator = tOp, Right = new VarExpression { Expression = NumberExpression.From(1) } };
+                return BuilderResult.FromSingle(assignment);
             }
 
             case AssignmentExpressionSyntax assignExpr: {
@@ -101,7 +119,7 @@ public class StatementBuilder {
         throw new NotSupportedException($"{syntax.Kind()} is not supported.");
     }
 
-    private static LocalAssignmentStatement BuildLoopVarAssignment(ForStatementSyntax syntax, TranspilationContext ctx) {
+    private static BuilderResult BuildLoopVarAssignment(ForStatementSyntax syntax, TranspilationContext ctx) {
         if (syntax.Declaration is null) {
             throw new NotImplementedException("For loops without variable declarations are not supported yet.");
         }
@@ -111,26 +129,29 @@ public class StatementBuilder {
         var initializers = vars
             .Where(v => v.Initializer is not null)
             .Select(v => v.Initializer!.Value)
-            .Select(es => ExpressionBuilder.BuildFromSyntax(es, ctx))
+            .Select(es => ExpressionBuilder.BuildFromSyntax(es, ctx).Expression)
             .ToList();
 
         var binding = new LocalAssignmentStatement { Expressions = initializers, Names = names, Types = [] };
+        var result = BuilderResult.FromSingle(binding);
 
-        return binding;
+        return result;
     }
 
-    private static WhileStatement BuildFromWhileStmt(WhileStatementSyntax syntax, TranspilationContext ctx) {
+    private static BuilderResult BuildFromWhileStmt(WhileStatementSyntax syntax, TranspilationContext ctx) {
         var condition = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
         var stmt = Build(syntax.Statement, ctx);
-        var block = stmt is DoStatement doStmt ? doStmt.Block : Block.From(stmt);
 
-        return new WhileStatement { Condition = condition, Block = block };
+        var block = Block.From(stmt.Statements);
+        var whileStmt = new WhileStatement { Condition = condition.Expression, Block = block };
+
+        return BuilderResult.FromSingle(whileStmt);
     }
 
-    private static IfStatement BuildFromIfStmt(IfStatementSyntax syntax, TranspilationContext ctx) {
+    private static BuilderResult BuildFromIfStmt(IfStatementSyntax syntax, TranspilationContext ctx) {
         var condition = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
         var stmt = Build(syntax.Statement, ctx);
-        var block = stmt is DoStatement doStmt ? doStmt.Block : Block.From(stmt);
+        var block = Block.From(stmt.Statements);
 
         var elseIfBlocks = new Queue<ElseIfBlock>();
         Block? elseBlock = null;
@@ -140,10 +161,10 @@ public class StatementBuilder {
             if (elseClause.Statement is IfStatementSyntax elseIfSyntax) {
                 var elseIfCondition = ExpressionBuilder.BuildFromSyntax(elseIfSyntax.Condition, ctx);
                 var elseIfStmt = Build(elseIfSyntax.Statement, ctx);
-                var elseIfBlock = elseIfStmt is DoStatement doElseIfStmt ? doElseIfStmt.Block : Block.From(elseIfStmt);
+                var elseIfBlock = Block.From(elseIfStmt.Statements);
 
                 elseIfBlocks.Enqueue(new ElseIfBlock {
-                    Condition = elseIfCondition,
+                    Condition = elseIfCondition.Expression,
                     Block = elseIfBlock,
                 });
 
@@ -155,20 +176,23 @@ public class StatementBuilder {
             }
         }
 
-        return new IfStatement { Block = block, Condition = condition, Else = elseBlock, ElseIf = elseIfBlocks.ToList() };
+        var ifStmt = new IfStatement { Block = block, Condition = condition.Expression, Else = elseBlock, ElseIf = elseIfBlocks.ToList() };
+        var result = BuilderResult.FromSingle(ifStmt);
+
+        return result;
     }
 
-    private static DoStatement BuildFromBlockStmt(BlockSyntax syntax, TranspilationContext ctx) {
-        return DoStatement.FromBlock(BlockBuilder.Build(syntax, ctx));
+    private static BuilderResult BuildFromBlockStmt(BlockSyntax syntax, TranspilationContext ctx) {
+        return BuilderResult.FromSingle(DoStatement.FromBlock(BlockBuilder.Build(syntax, ctx)));
     }
 
-    private static LocalAssignmentStatement BuildFromLocalDeclStmt(LocalDeclarationStatementSyntax localDeclStmtSyntax, TranspilationContext ctx) {
+    private static BuilderResult BuildFromLocalDeclStmt(LocalDeclarationStatementSyntax localDeclStmtSyntax, TranspilationContext ctx) {
         var decl = localDeclStmtSyntax.Declaration;
         var vars = decl.Variables;
 
         var varNames = vars.Select(vds => vds.Identifier.ValueText).ToList();
         var initExprSyntaxes = vars.Where(v => v.Initializer is not null).Select(v => v.Initializer!.Value);
-        var initExprs = initExprSyntaxes.Select(s => ExpressionBuilder.BuildFromSyntax(s, ctx)).ToList();
+        var initExprs = initExprSyntaxes.Select(s => ExpressionBuilder.BuildFromSyntax(s, ctx).Expression).ToList();
 
         var typeSym = ctx.Semantics.CheckedGetTypeInfo(decl.Type);
 
@@ -182,10 +206,10 @@ public class StatementBuilder {
             }
         }
 
-        return LocalAssignmentStatement.OfSingleType(varNames, initExprs, type);
+        return BuilderResult.FromSingle(LocalAssignmentStatement.OfSingleType(varNames, initExprs, type));
     }
 
-    private static Statement BuildFromExprStmt(ExpressionStatementSyntax exprStmt, TranspilationContext ctx) {
+    private static BuilderResult BuildFromExprStmt(ExpressionStatementSyntax exprStmt, TranspilationContext ctx) {
         var expr = exprStmt.Expression;
 
         Log.Verbose("Building statement from expression statement of kind {StatementKind}", expr.Kind());
@@ -200,32 +224,39 @@ public class StatementBuilder {
             case PostfixUnaryExpressionSyntax postExpr: {
                 var tOperand = ExpressionBuilder.BuildFromSyntax(postExpr.Operand, ctx);
                 var tOp = SyntaxUtilities.SyntaxTokenToCompoundOp(postExpr.OperatorToken);
+                var assignment = new CompoundAssignmentStatement {
+                    Left = tOperand.Expression,
+                    Operator = tOp,
+                    Right = new VarExpression { Expression = NumberExpression.From(1) }
+                };
 
-                return new CompoundAssignmentStatement { Left = tOperand, Operator = tOp, Right = new VarExpression { Expression = NumberExpression.From(1) } };
+                return BuilderResult.FromSingle(assignment);
             }
         }
 
         throw new Exception($"Unhandled expression {expr.Kind()}");
     }
 
-    private static Statement BuildFromAssignmentExprSyntax(AssignmentExpressionSyntax expr, TranspilationContext ctx) {
+    private static BuilderResult BuildFromAssignmentExprSyntax(AssignmentExpressionSyntax expr, TranspilationContext ctx) {
         switch (expr.Kind()) {
             case SyntaxKind.SimpleAssignmentExpression: {
                 var left = VarBuilder.BuildFromExpressionSyntax(expr.Left, ctx);
                 var right = ExpressionBuilder.BuildFromSyntax(expr.Right, ctx);
-
-                return new AssignmentStatement {
+                var assignment = new AssignmentStatement {
                     Vars = [left],
-                    Expressions = [right],
+                    Expressions = [right.Expression],
                 };
+
+                return BuilderResult.FromSingle(assignment);
             }
 
             case SyntaxKind.AddAssignmentExpression: {
                 var left = ExpressionBuilder.BuildFromSyntax(expr.Left, ctx);
                 var right = ExpressionBuilder.BuildFromSyntax(expr.Right, ctx);
                 var tOp = SyntaxUtilities.SyntaxTokenToCompoundOp(expr.OperatorToken);
+                var assignment = new CompoundAssignmentStatement { Left = left.Expression, Operator = tOp, Right = VarExpression.FromExpression(right.Expression) };
 
-                return new CompoundAssignmentStatement { Left = left, Operator = tOp, Right = VarExpression.FromExpression(right) };
+                return BuilderResult.FromSingle(assignment);
             }
         }
 
