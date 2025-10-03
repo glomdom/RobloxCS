@@ -19,6 +19,6 @@ public record ExpressionBuilderResult {
     }
 
     public void AddStatement(Statement stmt) => Statements.Add(stmt);
-
+    
     public static ExpressionBuilderResult FromSingle(Expression expr) => new([], expr);
 }

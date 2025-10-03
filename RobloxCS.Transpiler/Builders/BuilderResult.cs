@@ -13,6 +13,7 @@ public record BuilderResult {
     public void AddStatements(List<Statement> stmts) => Statements.AddRange(stmts);
 
     public static BuilderResult FromSingle(Statement stmt) => new([stmt]);
+    public static BuilderResult From(List<Statement> stmts) => new(stmts);
     public static BuilderResult Empty() => new([]);
 
     public BuilderResult Add(BuilderResult other) => new([..Statements, ..other.Statements]);

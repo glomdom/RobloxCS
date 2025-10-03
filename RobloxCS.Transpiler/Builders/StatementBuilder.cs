@@ -35,12 +35,8 @@ public class StatementBuilder {
 
     private static BuilderResult DesugarReturnConditional(ConditionalExpressionSyntax syntax, TranspilationContext ctx) {
         var cond = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
-        var tmpName = "__tmp";
-
-        var binding = LocalAssignmentStatement.Single(tmpName, cond.Expression, BasicTypeInfo.Void());
 
         var result = BuilderResult.Empty();
-        result.AddStatement(binding);
         result.AddStatements(cond.Statements);
 
         return result;
@@ -192,7 +188,9 @@ public class StatementBuilder {
 
         var varNames = vars.Select(vds => vds.Identifier.ValueText).ToList();
         var initExprSyntaxes = vars.Where(v => v.Initializer is not null).Select(v => v.Initializer!.Value);
-        var initExprs = initExprSyntaxes.Select(s => ExpressionBuilder.BuildFromSyntax(s, ctx).Expression).ToList();
+        var initExprResults = initExprSyntaxes.Select(s => ExpressionBuilder.BuildFromSyntax(s, ctx)).ToList();
+        var initExprs = initExprResults.Select(r => r.Expression).ToList();
+        var extras = initExprResults.SelectMany(r => r.Statements).ToList();
 
         var typeSym = ctx.Semantics.CheckedGetTypeInfo(decl.Type);
 
@@ -206,7 +204,9 @@ public class StatementBuilder {
             }
         }
 
-        return BuilderResult.FromSingle(LocalAssignmentStatement.OfSingleType(varNames, initExprs, type));
+        var assignment = LocalAssignmentStatement.OfSingleType(varNames, initExprs, type);
+
+        return BuilderResult.From([..extras, assignment]);
     }
 
     private static BuilderResult BuildFromExprStmt(ExpressionStatementSyntax exprStmt, TranspilationContext ctx) {
