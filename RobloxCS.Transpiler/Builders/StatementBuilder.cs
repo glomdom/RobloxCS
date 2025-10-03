@@ -24,21 +24,18 @@ public class StatementBuilder {
     }
 
     private static Statement BuildFromReturnStmt(ReturnStatementSyntax syntax, TranspilationContext ctx) {
-        var stmt = new ReturnStatement { Returns = [] };
+        return syntax.Expression switch {
+            ConditionalExpressionSyntax condExprSyntax => DesugarReturnConditional(condExprSyntax, ctx),
+            { } expr => new ReturnStatement { Returns = [ExpressionBuilder.BuildFromSyntax(expr, ctx)] },
 
-        if (syntax.Expression is ConditionalExpressionSyntax condExprSyntax) {
-            return DesugarReturnConditional(condExprSyntax, ctx);
-        }
-
-        if (syntax.Expression is { } expr) {
-            stmt.Returns = [ExpressionBuilder.BuildFromSyntax(expr, ctx)];
-        }
-
-        return stmt;
+            _ => throw new ArgumentOutOfRangeException(nameof(syntax), syntax.Expression, null),
+        };
     }
 
-    private static Statement DesugarReturnConditional(ConditionalExpressionSyntax condExprSyntax, TranspilationContext ctx) {
-        throw new NotImplementedException();
+    private static Statement DesugarReturnConditional(ConditionalExpressionSyntax syntax, TranspilationContext ctx) {
+        var cond = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
+
+        return default;
     }
 
     // TODO: Do not desugar unless we can prove the following:
