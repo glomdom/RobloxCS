@@ -34,10 +34,12 @@ public class StatementBuilder {
     }
 
     private static BuilderResult DesugarReturnConditional(ConditionalExpressionSyntax syntax, TranspilationContext ctx) {
-        var cond = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
+        var condResult = ExpressionBuilder.BuildFromSyntax(syntax, ctx);
 
+        var returnStmt = new ReturnStatement { Returns = [condResult.Expression] };
         var result = BuilderResult.Empty();
-        result.AddStatements(cond.Statements);
+        result.AddStatements(condResult.Statements);
+        result.AddStatement(returnStmt);
 
         return result;
     }
