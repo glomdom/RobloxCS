@@ -10,6 +10,14 @@ public sealed class LocalAssignmentStatement : Statement {
 
     public static LocalAssignmentStatement Empty() => new() { Expressions = [], Names = [], Types = [] };
 
+    public static LocalAssignmentStatement Single(string name, Expression expr, TypeInfo type) {
+        return new LocalAssignmentStatement {
+            Names = [SymbolExpression.FromString(name)],
+            Expressions = [expr],
+            Types = [type],
+        };
+    }
+
     public static LocalAssignmentStatement Naked(string name, TypeInfo type) {
         return new LocalAssignmentStatement {
             Names = [SymbolExpression.FromString(name)],
