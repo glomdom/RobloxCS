@@ -31,7 +31,7 @@ public class StatementBuilder {
         }
 
         if (syntax.Expression is { } expr) {
-            stmt.Returns = [ExpressionBuilder.BuildFromSyntax(expr, ctx, ExpressionContext.Return)];
+            stmt.Returns = [ExpressionBuilder.BuildFromSyntax(expr, ctx)];
         }
 
         return stmt;
