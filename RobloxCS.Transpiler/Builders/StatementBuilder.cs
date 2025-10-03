@@ -23,14 +23,22 @@ public class StatementBuilder {
         };
     }
 
-    private static ReturnStatement BuildFromReturnStmt(ReturnStatementSyntax syntax, TranspilationContext ctx) {
+    private static Statement BuildFromReturnStmt(ReturnStatementSyntax syntax, TranspilationContext ctx) {
         var stmt = new ReturnStatement { Returns = [] };
 
+        if (syntax.Expression is ConditionalExpressionSyntax condExprSyntax) {
+            return DesugarReturnConditional(condExprSyntax, ctx);
+        }
+
         if (syntax.Expression is { } expr) {
-            stmt.Returns = [ExpressionBuilder.BuildFromSyntax(expr, ctx)];
+            stmt.Returns = [ExpressionBuilder.BuildFromSyntax(expr, ctx, ExpressionContext.Return)];
         }
 
         return stmt;
+    }
+
+    private static Statement DesugarReturnConditional(ConditionalExpressionSyntax condExprSyntax, TranspilationContext ctx) {
+        throw new NotImplementedException();
     }
 
     // TODO: Do not desugar unless we can prove the following:

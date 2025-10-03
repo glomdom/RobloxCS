@@ -9,16 +9,21 @@ using RobloxCS.AST.Suffixes;
 namespace RobloxCS.Transpiler.Builders;
 
 public class ExpressionBuilder {
-    public static Expression BuildFromSyntax(ExpressionSyntax syntax, TranspilationContext ctx) {
+    public static Expression BuildFromSyntax(ExpressionSyntax syntax, TranspilationContext ctx, ExpressionContext exprCtx = ExpressionContext.Default) {
         return syntax switch {
             IdentifierNameSyntax nameSyntax => HandleIdentifierNameSyntax(nameSyntax, ctx),
             LiteralExpressionSyntax exprSyntax => HandleLiteralExpressionSyntax(exprSyntax, ctx),
             BinaryExpressionSyntax binExprSyntax => HandleBinaryExpressionSyntax(binExprSyntax, ctx),
             PrefixUnaryExpressionSyntax prefixUnaryExprSyntax => HandleUnaryExpressionSyntax(prefixUnaryExprSyntax, ctx),
             InvocationExpressionSyntax invocationExpressionSyntax => HandleInvocationExpressionSyntax(invocationExpressionSyntax, ctx),
+            ConditionalExpressionSyntax conditionalExpressionSyntax => HandleConditionalExpressionSyntax(conditionalExpressionSyntax, ctx, exprCtx),
 
             _ => throw new NotSupportedException($"Expression {syntax.Kind()} is not supported. {syntax}"),
         };
+    }
+
+    private static Expression HandleConditionalExpressionSyntax(ConditionalExpressionSyntax syntax, TranspilationContext ctx, ExpressionContext exprCtx) {
+        throw new NotImplementedException();
     }
 
     private static FunctionCallExpression HandleInvocationExpressionSyntax(InvocationExpressionSyntax syntax, TranspilationContext ctx) {
@@ -28,7 +33,7 @@ public class ExpressionBuilder {
         if (methodSymbol.IsStatic) throw new Exception("Static methods are not yet supported.");
 
         var methodName = $"self:{methodSymbol.Name}";
-        var argExpressions = syntax.ArgumentList.Arguments.Select(ars => BuildFromSyntax(ars.Expression, ctx)).ToList();
+        var argExpressions = syntax.ArgumentList.Arguments.Select(ars => BuildFromSyntax(ars.Expression, ctx, ExpressionContext.Argument)).ToList();
 
         return new FunctionCallExpression { Prefix = NamePrefix.FromString(methodName), Suffixes = [AnonymousCall.FromArgs(FunctionArgs.FromExpressions(argExpressions))] };
     }
