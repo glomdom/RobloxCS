@@ -1,11 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
 using RobloxCS.AST.Prefixes;
-using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 
 namespace RobloxCS.Transpiler.Builders;
@@ -25,20 +23,12 @@ public class ExpressionBuilder {
     }
 
     private static ExpressionBuilderResult HandleConditionalExpressionSyntax(ConditionalExpressionSyntax syntax, TranspilationContext ctx) {
-        var tmpName = "__ternary_tmp";
         var condResult = BuildFromSyntax(syntax.Condition, ctx);
+        var whenFalseResult = BuildFromSyntax(syntax.WhenFalse, ctx);
+        var whenTrueResult = BuildFromSyntax(syntax.WhenTrue, ctx);
 
-        var resultType = ctx.Semantics.GetTypeInfo(syntax);
-        var type = SyntaxUtilities.BasicFromSymbol(resultType.ConvertedType!); // TODO: Do not ensure compiler that it is never null.
-        var binding = LocalAssignmentStatement.Naked(tmpName, type);
-
-        var ifFalseAssignment = new AssignmentStatement { Vars = [VarName.FromString(tmpName)], Expressions = [BuildFromSyntax(syntax.WhenFalse, ctx).Expression] };
-        var ifTrueAssignment = new AssignmentStatement { Vars = [VarName.FromString(tmpName)], Expressions = [BuildFromSyntax(syntax.WhenTrue, ctx).Expression] };
-        var ifStmt = new IfStatement { Condition = condResult.Expression, Block = Block.From(ifTrueAssignment), Else = Block.From(ifFalseAssignment) };
-
-        var result = ExpressionBuilderResult.FromSingle(SymbolExpression.FromString(tmpName));
-        result.AddStatement(binding);
-        result.AddStatement(ifStmt);
+        var ifExpr = IfExpression.From(condResult.Expression, whenTrueResult.Expression, whenFalseResult.Expression);
+        var result = ExpressionBuilderResult.FromSingle(ifExpr);
 
         return result;
     }
