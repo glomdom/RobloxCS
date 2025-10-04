@@ -25,7 +25,9 @@ public interface IAstVisitor {
     void VisitAnonymousFunction(AnonymousFunctionExpression node);
     void VisitBinaryOperatorExpression(BinaryOperatorExpression node);
     void VisitBooleanExpression(BooleanExpression node);
+    void VisitElseIfExpression(ElseIfExpression node);
     void VisitFunctionCall(FunctionCallExpression node);
+    void VisitIfExpression(IfExpression node);
     void VisitNumberExpression(NumberExpression node);
     void VisitStringExpression(StringExpression node);
     void VisitSymbolExpression(SymbolExpression node);
@@ -101,7 +103,9 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitAnonymousFunction(AnonymousFunctionExpression node);
     T VisitBinaryOperatorExpression(BinaryOperatorExpression node);
     T VisitBooleanExpression(BooleanExpression node);
+    T VisitElseIfExpression(ElseIfExpression node);
     T VisitFunctionCall(FunctionCallExpression node);
+    T VisitIfExpression(IfExpression node);
     T VisitNumberExpression(NumberExpression node);
     T VisitStringExpression(StringExpression node);
     T VisitSymbolExpression(SymbolExpression node);
