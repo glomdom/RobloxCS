@@ -25,20 +25,13 @@ public class StatementBuilder {
     }
 
     private static BuilderResult BuildFromReturnStmt(ReturnStatementSyntax syntax, TranspilationContext ctx) {
-        return syntax.Expression switch {
-            ConditionalExpressionSyntax condExprSyntax => DesugarReturnConditional(condExprSyntax, ctx),
-            { } expr => BuilderResult.FromSingle(new ReturnStatement { Returns = [ExpressionBuilder.BuildFromSyntax(expr, ctx).Expression] }),
-
-            _ => throw new ArgumentOutOfRangeException(nameof(syntax), syntax.Expression, null),
-        };
-    }
-
-    private static BuilderResult DesugarReturnConditional(ConditionalExpressionSyntax syntax, TranspilationContext ctx) {
-        var condResult = ExpressionBuilder.BuildFromSyntax(syntax, ctx);
-
-        var returnStmt = new ReturnStatement { Returns = [condResult.Expression] };
         var result = BuilderResult.Empty();
-        result.AddStatements(condResult.Statements);
+        var returnStmt = ReturnStatement.Empty();
+
+        if (syntax.Expression is not { } expr) return result;
+
+        var exprResult = ExpressionBuilder.BuildFromSyntax(expr, ctx);
+        returnStmt.Returns = [exprResult.Expression];
         result.AddStatement(returnStmt);
 
         return result;

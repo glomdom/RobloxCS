@@ -255,6 +255,16 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.AppendLine();
     }
 
+    // TODO: Visit if else chains
+    public override void VisitIfExpression(IfExpression node) {
+        _state.Builder.Append("if ");
+        Visit(node.Condition);
+        _state.Builder.Append(" then ");
+        Visit(node.If);
+        _state.Builder.Append(" else ");
+        Visit(node.Else);
+    }
+
     public override void VisitNamePrefix(NamePrefix node) {
         _state.Builder.Append(node.Name);
     }
