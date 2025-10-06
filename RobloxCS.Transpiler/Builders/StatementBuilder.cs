@@ -18,10 +18,15 @@ public class StatementBuilder {
             WhileStatementSyntax whileStatementSyntax => BuildFromWhileStmt(whileStatementSyntax, ctx),
             ForStatementSyntax forStatementSyntax => BuildFromForStmt(forStatementSyntax, ctx),
             ReturnStatementSyntax returnStatementSyntax => BuildFromReturnStmt(returnStatementSyntax, ctx),
+            ContinueStatementSyntax => BuildFromContinueStmt(),
+            BreakStatementSyntax => BuildFromBreakStmt(),
 
             _ => throw new NotSupportedException($"Unsupported statement: {stmt.Kind()}"),
         };
     }
+
+    private static BuilderResult BuildFromBreakStmt() => BuilderResult.FromSingle(new BreakStatement());
+    private static BuilderResult BuildFromContinueStmt() => BuilderResult.FromSingle(new ContinueStatement());
 
     private static BuilderResult BuildFromReturnStmt(ReturnStatementSyntax syntax, TranspilationContext ctx) {
         var result = BuilderResult.Empty();
