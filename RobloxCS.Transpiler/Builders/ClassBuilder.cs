@@ -9,7 +9,7 @@ using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
 
-internal static class ClassBuilder {
+public static class ClassBuilder {
     private static readonly TypeDeclarationStatement NoTypeSentinel = TypeDeclarationStatement.EmptyTable("__SHOULD_NOT_BE_IN_OUTPUT");
 
     public static IEnumerable<Statement> Build(ClassDeclarationSyntax node, TranspilationContext ctx) {

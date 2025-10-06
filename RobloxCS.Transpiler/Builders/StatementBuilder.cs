@@ -8,7 +8,7 @@ using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
 
-public class StatementBuilder {
+public static class StatementBuilder {
     public static BuilderResult Build(StatementSyntax stmt, TranspilationContext ctx) {
         return stmt switch {
             ExpressionStatementSyntax exprStmtSyntax => BuildFromExprStmt(exprStmtSyntax, ctx),

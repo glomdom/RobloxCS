@@ -8,7 +8,7 @@ using RobloxCS.AST.Suffixes;
 
 namespace RobloxCS.Transpiler.Builders;
 
-public class ExpressionBuilder {
+public static class ExpressionBuilder {
     public static ExpressionBuilderResult BuildFromSyntax(ExpressionSyntax syntax, TranspilationContext ctx) {
         return syntax switch {
             IdentifierNameSyntax nameSyntax => HandleIdentifierNameSyntax(nameSyntax, ctx),

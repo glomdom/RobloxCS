@@ -3,7 +3,7 @@ using RobloxCS.AST;
 
 namespace RobloxCS.Transpiler.Builders;
 
-public class BlockBuilder {
+public static class BlockBuilder {
     public static Block Build(BlockSyntax syntax, TranspilationContext ctx) {
         var block = Block.Empty();
 

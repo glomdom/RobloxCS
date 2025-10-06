@@ -12,7 +12,7 @@ using TypeInfo = RobloxCS.AST.Types.TypeInfo;
 
 namespace RobloxCS.Transpiler.Builders;
 
-internal static class FunctionBuilder {
+public static class FunctionBuilder {
     public static FunctionDeclarationStatement CreateNewMethod(INamedTypeSymbol classSymbol, IMethodSymbol ctorSymbol) {
         var paramNames = ctorSymbol.IsImplicitlyDeclared
             ? []

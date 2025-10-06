@@ -5,7 +5,7 @@ using RobloxCS.AST;
 
 namespace RobloxCS.Transpiler.Builders;
 
-public class VarBuilder {
+public static class VarBuilder {
     public static Var BuildFromExpressionSyntax(ExpressionSyntax expr, TranspilationContext ctx) {
         return expr switch {
             IdentifierNameSyntax nameSyntax => HandleIdentifierNameSyntax(nameSyntax, ctx),
