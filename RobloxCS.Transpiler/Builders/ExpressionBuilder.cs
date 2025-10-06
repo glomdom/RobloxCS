@@ -82,6 +82,7 @@ public class ExpressionBuilder {
     private static ExpressionBuilderResult HandleLiteralExpressionSyntax(LiteralExpressionSyntax syntax, TranspilationContext ctx) {
         return syntax.Kind() switch {
             SyntaxKind.NumericLiteralExpression => HandleNumericLiteralExpression(syntax, ctx),
+            SyntaxKind.FalseLiteralExpression => ExpressionBuilderResult.FromSingle(BooleanExpression.False()),
 
             _ => throw new NotSupportedException($"LiteralExpressionSyntax {syntax.Kind()} is not supported."),
         };
