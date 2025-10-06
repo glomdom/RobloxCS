@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
@@ -13,11 +14,12 @@ public static class StatementBuilder {
         return stmt switch {
             ExpressionStatementSyntax exprStmtSyntax => BuildFromExprStmt(exprStmtSyntax, ctx),
             LocalDeclarationStatementSyntax localDeclStmtSyntax => BuildFromLocalDeclStmt(localDeclStmtSyntax, ctx),
-            BlockSyntax blockSyntax => BuildFromBlockStmt(blockSyntax, ctx),
+            BlockSyntax blockSyntax => BuildFromBlock(blockSyntax, ctx),
             IfStatementSyntax ifStatementSyntax => BuildFromIfStmt(ifStatementSyntax, ctx),
             WhileStatementSyntax whileStatementSyntax => BuildFromWhileStmt(whileStatementSyntax, ctx),
             ForStatementSyntax forStatementSyntax => BuildFromForStmt(forStatementSyntax, ctx),
             ReturnStatementSyntax returnStatementSyntax => BuildFromReturnStmt(returnStatementSyntax, ctx),
+            DoStatementSyntax doStatementSyntax => BuildFromDoStmt(doStatementSyntax, ctx),
             ContinueStatementSyntax => BuildFromContinueStmt(),
             BreakStatementSyntax => BuildFromBreakStmt(),
 
@@ -27,6 +29,19 @@ public static class StatementBuilder {
 
     private static BuilderResult BuildFromBreakStmt() => BuilderResult.FromSingle(new BreakStatement());
     private static BuilderResult BuildFromContinueStmt() => BuilderResult.FromSingle(new ContinueStatement());
+
+    private static BuilderResult BuildFromDoStmt(DoStatementSyntax syntax, TranspilationContext ctx) {
+        var condResult = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
+        var stmtResult = Build(syntax.Statement, ctx);
+
+        var block = Block.From(stmtResult.Statements);
+
+        var parenStmt = ParenthesisExpression.From(condResult.Expression);
+        var reversedStmt = UnaryOperatorExpression.Reversed(parenStmt);
+        var repeatUntilStmt = new RepeatStatement { Block = block, Until = reversedStmt };
+
+        return BuilderResult.FromSingle(repeatUntilStmt);
+    }
 
     private static BuilderResult BuildFromReturnStmt(ReturnStatementSyntax syntax, TranspilationContext ctx) {
         var result = BuilderResult.Empty();
@@ -177,8 +192,10 @@ public static class StatementBuilder {
         return result;
     }
 
-    private static BuilderResult BuildFromBlockStmt(BlockSyntax syntax, TranspilationContext ctx) {
-        return BuilderResult.FromSingle(DoStatement.FromBlock(BlockBuilder.Build(syntax, ctx)));
+    private static BuilderResult BuildFromBlock(BlockSyntax syntax, TranspilationContext ctx) {
+        var body = BlockBuilder.Build(syntax, ctx);
+
+        return RequiresDoScope(syntax, ctx) ? BuilderResult.FromSingle(DoStatement.FromBlock(body)) : BuilderResult.From(body.Statements);
     }
 
     private static BuilderResult BuildFromLocalDeclStmt(LocalDeclarationStatementSyntax localDeclStmtSyntax, TranspilationContext ctx) {
@@ -261,4 +278,26 @@ public static class StatementBuilder {
 
         throw new NotSupportedException($"{expr.Kind()} is not supported.");
     }
+
+    private static bool RequiresDoScope(BlockSyntax block, TranspilationContext ctx) {
+        var parentKind = block.Parent?.Kind();
+        var isDirectBody = parentKind is SyntaxKind.IfStatement
+            or SyntaxKind.ElseClause
+            or SyntaxKind.ForStatement
+            or SyntaxKind.WhileStatement
+            or SyntaxKind.DoStatement;
+
+        if (!isDirectBody) return true;
+
+        foreach (var stmt in block.Statements) {
+            if (stmt is not LocalDeclarationStatementSyntax local) continue;
+
+            if (local.Declaration.Variables.Select(v => ctx.Semantics.GetDeclaredSymbol(v)).OfType<ISymbol>().Any(symbol => symbol.ContainingSymbol.Kind == SymbolKind.Method)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

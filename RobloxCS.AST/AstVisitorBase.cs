@@ -37,6 +37,7 @@ public class AstVisitorBase : IAstVisitor {
     public virtual void VisitFunctionCall(FunctionCallExpression node) => DefaultVisit(node);
     public virtual void VisitElseIfExpression(ElseIfExpression node) => DefaultVisit(node);
     public virtual void VisitNumberExpression(NumberExpression node) => DefaultVisit(node);
+    public virtual void VisitParenthesisExpression(ParenthesisExpression node) => DefaultVisit(node);
     public virtual void VisitStringExpression(StringExpression node) => DefaultVisit(node);
     public virtual void VisitSymbolExpression(SymbolExpression node) => DefaultVisit(node);
     public virtual void VisitTableConstructor(TableConstructorExpression node) => DefaultVisit(node);
@@ -65,6 +66,7 @@ public class AstVisitorBase : IAstVisitor {
     public virtual void VisitFunctionDeclaration(FunctionDeclarationStatement node) => DefaultVisit(node);
     public virtual void VisitIfStatement(IfStatement node) => DefaultVisit(node);
     public virtual void VisitLocalAssignment(LocalAssignmentStatement node) => DefaultVisit(node);
+    public virtual void VisitRepeatStatement(RepeatStatement node) => DefaultVisit(node);
     public virtual void VisitFunctionCallStatement(FunctionCallStatement node) => DefaultVisit(node);
     public virtual void VisitReturn(ReturnStatement node) => DefaultVisit(node);
     public virtual void VisitWhileStatement(WhileStatement node) => DefaultVisit(node);

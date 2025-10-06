@@ -129,6 +129,22 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.AppendLine();
     }
 
+    public override void VisitContinueStatement(ContinueStatement node) {
+        _state.AppendIndentedLine("continue");
+    }
+
+    public override void VisitRepeatStatement(RepeatStatement node) {
+        _state.AppendIndentedLine("repeat");
+
+        _state.PushIndent();
+        Visit(node.Block);
+        _state.PopIndent();
+
+        _state.AppendIndented("until ");
+        Visit(node.Until);
+        _state.Builder.AppendLine();
+    }
+
     public override void VisitBinaryOperatorExpression(BinaryOperatorExpression node) {
         Visit(node.Left);
 
@@ -139,8 +155,9 @@ public class RendererWalker : AstVisitorBase {
             case BinOp.GreaterThan: _state.Builder.Append(" > "); break;
             case BinOp.LessThan: _state.Builder.Append(" < "); break;
             case BinOp.TwoEqual: _state.Builder.Append(" == "); break;
+            case BinOp.Percent: _state.Builder.Append(" % "); break;
 
-            default: throw new ArgumentOutOfRangeException(nameof(node.Op), node.Op, "Unhandled binary operator in VisitBinaryOperatorExpression");
+            default: throw new ArgumentOutOfRangeException(nameof(node), node.Op, null);
         }
 
         Visit(node.Right);
@@ -150,17 +167,21 @@ public class RendererWalker : AstVisitorBase {
         switch (node.UnOp) {
             case UnOp.Minus: _state.Builder.Append('-'); break;
             case UnOp.Not: {
-                _state.Builder.Append("not (");
-                Visit(node.Expression);
-                _state.Builder.Append(')');
+                _state.Builder.Append("not ");
 
-                return;
+                break;
             }
 
             default: throw new ArgumentOutOfRangeException(nameof(node.UnOp), node.UnOp, "Unhandled unary operator in VisitUnaryOperatorExpression");
         }
 
         Visit(node.Expression);
+    }
+
+    public override void VisitParenthesisExpression(ParenthesisExpression node) {
+        _state.Builder.Append('(');
+        Visit(node.Expression);
+        _state.Builder.Append(')');
     }
 
     public override void VisitBreakStatement(BreakStatement node) {

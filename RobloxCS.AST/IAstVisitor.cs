@@ -29,6 +29,7 @@ public interface IAstVisitor {
     void VisitFunctionCall(FunctionCallExpression node);
     void VisitIfExpression(IfExpression node);
     void VisitNumberExpression(NumberExpression node);
+    void VisitParenthesisExpression(ParenthesisExpression node);
     void VisitStringExpression(StringExpression node);
     void VisitSymbolExpression(SymbolExpression node);
     void VisitTableConstructor(TableConstructorExpression node);
@@ -58,6 +59,7 @@ public interface IAstVisitor {
     void VisitFunctionDeclaration(FunctionDeclarationStatement node);
     void VisitIfStatement(IfStatement node);
     void VisitLocalAssignment(LocalAssignmentStatement node);
+    void VisitRepeatStatement(RepeatStatement node);
     void VisitFunctionCallStatement(FunctionCallStatement node);
     void VisitReturn(ReturnStatement node);
     void VisitWhileStatement(WhileStatement node);
@@ -108,6 +110,7 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitFunctionCall(FunctionCallExpression node);
     T VisitIfExpression(IfExpression node);
     T VisitNumberExpression(NumberExpression node);
+    T VisitParenthesisExpression(ParenthesisExpression node);
     T VisitStringExpression(StringExpression node);
     T VisitSymbolExpression(SymbolExpression node);
     T VisitTableConstructor(TableConstructorExpression node);
@@ -136,6 +139,7 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitFunctionDeclaration(FunctionDeclarationStatement node);
     T VisitIfStatement(IfStatement node);
     T VisitLocalAssignment(LocalAssignmentStatement node);
+    T VisitRepeatStatement(RepeatStatement node);
     T VisitReturn(ReturnStatement node);
     T VisitWhileStatement(WhileStatement node);
 
