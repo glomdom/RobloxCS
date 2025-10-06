@@ -63,8 +63,9 @@ public static class SyntaxUtilities {
             SyntaxKind.GreaterThanToken => BinOp.GreaterThan,
             SyntaxKind.LessThanToken => BinOp.LessThan,
             SyntaxKind.EqualsEqualsToken => BinOp.TwoEqual,
+            SyntaxKind.PercentToken => BinOp.Percent,
 
-            _ => throw new ArgumentOutOfRangeException(nameof(token), token.Kind(), "SyntaxTokenToBinOp unhandled token."),
+            _ => throw new ArgumentOutOfRangeException(nameof(token), token.Kind(), null),
         };
     }
 
