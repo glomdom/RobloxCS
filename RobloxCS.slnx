@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="RobloxCS.AST\RobloxCS.AST.csproj" Type="Classic C#" />
+  <Project Path="RobloxCS.CLI\RobloxCS.CLI.csproj" Type="Classic C#" />
+  <Project Path="RobloxCS.Common\RobloxCS.Common.csproj" Type="Classic C#" />
+  <Project Path="RobloxCS.Compiler\RobloxCS.Compiler.csproj" Type="Classic C#" />
+  <Project Path="RobloxCS.Example\RobloxCS.Example.csproj" Type="Classic C#" />
+  <Project Path="RobloxCS.Renderer\RobloxCS.Renderer.csproj" Type="Classic C#" />
+  <Project Path="RobloxCS.Transpiler\RobloxCS.Transpiler.csproj" Type="Classic C#" />
+</Solution>
