@@ -66,21 +66,22 @@ public static class ExpressionBuilder {
         var tOp = SyntaxUtilities.SyntaxTokenToUnOp(syntax.OperatorToken);
         var tOperand = BuildFromSyntax(syntax.Operand, ctx);
         var expr = new UnaryOperatorExpression { UnOp = tOp, Expression = tOperand.Expression };
+        var parenExpr = ParenthesisExpression.From(expr);
 
-        return ExpressionBuilderResult.FromSingle(expr);
+        return ExpressionBuilderResult.FromSingle(parenExpr);
     }
 
     private static ExpressionBuilderResult HandleBinaryExpressionSyntax(BinaryExpressionSyntax syntax, TranspilationContext ctx) {
         var left = syntax.Left;
         var right = syntax.Right;
-
-        var tLeft = BuildFromSyntax(left, ctx);
-        var tRight = BuildFromSyntax(right, ctx);
-        var tOp = SyntaxUtilities.SyntaxTokenToBinOp(syntax.OperatorToken);
+        
+        var leftResult = BuildFromSyntax(left, ctx);
+        var rightResult = BuildFromSyntax(right, ctx);
+        var op = SyntaxUtilities.SyntaxTokenToBinOp(syntax.OperatorToken);
         var expr = new BinaryOperatorExpression {
-            Left = tLeft.Expression,
-            Right = tRight.Expression,
-            Op = tOp,
+            Left = leftResult.Expression,
+            Right = rightResult.Expression,
+            Op = op,
         };
 
         return ExpressionBuilderResult.FromSingle(expr);
