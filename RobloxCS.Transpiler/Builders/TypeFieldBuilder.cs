@@ -11,12 +11,6 @@ namespace RobloxCS.Transpiler.Builders;
 public static class TypeFieldBuilder {
     public static IEnumerable<TypeField> GenerateTypeFieldsFromMember(MemberDeclarationSyntax syntax, TranspilationContext ctx) {
         switch (syntax) {
-            case FieldDeclarationSyntax f: {
-                foreach (var tf in GenerateTypeFieldsFromField(f, ctx)) yield return tf;
-
-                break;
-            }
-
             case MethodDeclarationSyntax m: {
                 foreach (var tf in GenerateTypeFieldsFromMethod(m, ctx)) yield return tf;
 
@@ -51,19 +45,17 @@ public static class TypeFieldBuilder {
         };
     }
 
-    public static IEnumerable<TypeField> GenerateTypeFieldsFromField(FieldDeclarationSyntax fieldSyntax, TranspilationContext ctx) {
-        var decl = fieldSyntax.Declaration;
-        var fieldType = InferNonnull(decl.Type, ctx);
-        var primitiveType = BasicTypeInfo.FromString(SyntaxUtilities.MapPrimitive(fieldType));
-        var isReadonly = fieldSyntax.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
+    public static IEnumerable<TypeField> GenerateTypeFieldsFromField(ISymbol symbol, TranspilationContext ctx) {
+        if (symbol is not IFieldSymbol field) yield break;
 
-        foreach (var v in decl.Variables) {
-            yield return new TypeField {
-                Key = NameTypeFieldKey.FromString(v.Identifier.ValueText),
-                Access = isReadonly ? AccessModifier.Read : null,
-                Value = primitiveType,
-            };
-        }
+        var typeName = SyntaxUtilities.BasicFromSymbol(field.Type);
+        var isReadonly = field.IsReadOnly;
+
+        yield return new TypeField {
+            Key = NameTypeFieldKey.FromString(field.Name),
+            Access = isReadonly ? AccessModifier.Read : null,
+            Value = typeName,
+        };
     }
 
     public static IEnumerable<AssignmentStatement> CreateFieldAssignmentsFromFields(IEnumerable<IFieldSymbol> fields, TranspilationContext ctx) {

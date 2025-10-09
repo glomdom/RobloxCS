@@ -42,7 +42,13 @@ public static class ClassBuilder {
         var instanceDecl = TypeDeclarationStatement.EmptyTable($"_Instance{className}");
 
         {
-            foreach (var tf in node.Members.SelectMany(member => TypeFieldBuilder.GenerateTypeFieldsFromMember(member, ctx))) {
+            var members = node.Members
+                .SelectMany(m => GetMemberSymbols(m, ctx))
+                .Where(s => s is IFieldSymbol or IPropertySymbol or IMethodSymbol)
+                .Where(s => !s.IsStatic)
+                .SelectMany(s => TypeFieldBuilder.GenerateTypeFieldsFromField(s, ctx));
+
+            foreach (var tf in members) {
                 (instanceDecl.DeclareAs as TableTypeInfo)?.Fields.Add(tf);
             }
         }
@@ -53,7 +59,6 @@ public static class ClassBuilder {
 
         var typeDecl = TypeDeclarationStatement.EmptyTable($"_Type{className}");
         Log.Warning("TODO: Visit statics");
-        // TODO: visit statics and add to typeDecl
 
         return (instanceDecl, typeDecl, ctorField);
     }
@@ -145,4 +150,21 @@ public static class ClassBuilder {
 
         return block;
     }
+
+    private static IEnumerable<ISymbol> GetMemberSymbols(
+        MemberDeclarationSyntax m,
+        TranspilationContext ctx
+    ) {
+        if (m is FieldDeclarationSyntax f) {
+            foreach (var sym in f.Declaration.Variables.Select(v => ctx.Semantics.GetDeclaredSymbol(v)).OfType<ISymbol>()) {
+                yield return sym;
+            }
+
+            yield break;
+        }
+
+        var s = ctx.Semantics.GetDeclaredSymbol(m);
+        if (s is not null) yield return s;
+    }
+
 }
