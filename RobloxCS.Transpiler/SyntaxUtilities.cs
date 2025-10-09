@@ -64,6 +64,7 @@ public static class SyntaxUtilities {
             SyntaxKind.LessThanToken => BinOp.LessThan,
             SyntaxKind.EqualsEqualsToken => BinOp.TwoEqual,
             SyntaxKind.PercentToken => BinOp.Percent,
+            SyntaxKind.AmpersandAmpersandToken => BinOp.And,
 
             _ => throw new ArgumentOutOfRangeException(nameof(token), token.Kind(), null),
         };
@@ -72,6 +73,7 @@ public static class SyntaxUtilities {
     public static UnOp SyntaxTokenToUnOp(SyntaxToken token) {
         return token.Kind() switch {
             SyntaxKind.MinusToken => UnOp.Minus,
+            SyntaxKind.ExclamationToken => UnOp.Not,
 
             _ => throw new ArgumentOutOfRangeException(nameof(token), token.Kind(), null),
         };
