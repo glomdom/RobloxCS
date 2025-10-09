@@ -329,7 +329,6 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.Append($":{node.Name}(");
         Visit(node.Args);
         _state.Builder.Append(')');
-        _state.Builder.AppendLine();
     }
 
     public override void VisitFunctionArgs(FunctionArgs node) {
