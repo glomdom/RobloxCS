@@ -275,6 +275,7 @@ public class RendererWalker : AstVisitorBase {
         _state.AppendIndent();
         Visit(node.Prefix);
         RenderList(node.Suffixes);
+        _state.Builder.AppendLine();
     }
 
     public override void VisitWhileStatement(WhileStatement node) {
