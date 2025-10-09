@@ -238,6 +238,13 @@ public static class StatementBuilder {
                 return assignment;
             }
 
+            case InvocationExpressionSyntax invocationExpr: {
+                var exprResult = ExpressionBuilder.BuildFromSyntax(invocationExpr, ctx);
+                var stmt = FunctionCallStatement.FromExpression((FunctionCallExpression)exprResult.Expression);
+
+                return BuilderResult.FromSingle(stmt);
+            }
+
             case PostfixUnaryExpressionSyntax postExpr: {
                 var tOperand = ExpressionBuilder.BuildFromSyntax(postExpr.Operand, ctx);
                 var tOp = SyntaxUtilities.SyntaxTokenToCompoundOp(postExpr.OperatorToken);
@@ -251,7 +258,7 @@ public static class StatementBuilder {
             }
         }
 
-        throw new Exception($"Unhandled expression {expr.Kind()}");
+        throw new Exception($"Unhandled expression {expr.Kind()}: {expr}");
     }
 
     private static BuilderResult BuildFromAssignmentExprSyntax(AssignmentExpressionSyntax expr, TranspilationContext ctx) {
@@ -267,7 +274,8 @@ public static class StatementBuilder {
                 return BuilderResult.FromSingle(assignment);
             }
 
-            case SyntaxKind.AddAssignmentExpression: {
+            case SyntaxKind.AddAssignmentExpression:
+            case SyntaxKind.SubtractAssignmentExpression: {
                 var left = ExpressionBuilder.BuildFromSyntax(expr.Left, ctx);
                 var right = ExpressionBuilder.BuildFromSyntax(expr.Right, ctx);
                 var tOp = SyntaxUtilities.SyntaxTokenToCompoundOp(expr.OperatorToken);

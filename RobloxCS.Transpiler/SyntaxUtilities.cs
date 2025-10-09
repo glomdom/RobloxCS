@@ -84,6 +84,7 @@ public static class SyntaxUtilities {
             SyntaxKind.PlusPlusToken => CompoundOp.PlusEqual,
             SyntaxKind.MinusMinusToken => CompoundOp.MinusEqual,
             SyntaxKind.PlusEqualsToken => CompoundOp.PlusEqual,
+            SyntaxKind.MinusEqualsToken => CompoundOp.MinusEqual,
 
             _ => throw new ArgumentOutOfRangeException(nameof(token), token.Kind(), "Unhandled SyntaxKind in SyntaxTokenToCompoundOp"),
         };

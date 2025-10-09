@@ -156,6 +156,7 @@ public class RendererWalker : AstVisitorBase {
             case BinOp.LessThan: _state.Builder.Append(" < "); break;
             case BinOp.TwoEqual: _state.Builder.Append(" == "); break;
             case BinOp.Percent: _state.Builder.Append(" % "); break;
+            case BinOp.And: _state.Builder.Append(" and "); break;
 
             default: throw new ArgumentOutOfRangeException(nameof(node), node.Op, null);
         }
