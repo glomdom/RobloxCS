@@ -11,6 +11,7 @@ namespace RobloxCS.Renderer;
 
 public class RendererWalker : AstVisitorBase {
     private readonly RenderState _state = new();
+    private readonly Stack<int> _precStack = new();
 
     public string Render(Chunk chunk) {
         Visit(chunk);
@@ -146,7 +147,16 @@ public class RendererWalker : AstVisitorBase {
     }
 
     public override void VisitBinaryOperatorExpression(BinaryOperatorExpression node) {
+        var parentPrec = _precStack.Count > 0 ? _precStack.Peek() : int.MaxValue;
+        var prec = Precedence.Get(node.Op);
+        var assocRight = Precedence.IsRightAssociative(node.Op);
+        var needParens = prec < parentPrec;
+
+        if (needParens && parentPrec != int.MaxValue) _state.Builder.Append('(');
+
+        _precStack.Push(prec);
         Visit(node.Left);
+        _precStack.Pop();
 
         switch (node.Op) {
             case BinOp.Minus: _state.Builder.Append(" - "); break;
@@ -161,22 +171,39 @@ public class RendererWalker : AstVisitorBase {
             default: throw new ArgumentOutOfRangeException(nameof(node), node.Op, null);
         }
 
+        _precStack.Push(prec - (assocRight ? 1 : 0));
         Visit(node.Right);
+        _precStack.Pop();
+
+        if (needParens && parentPrec != int.MaxValue) _state.Builder.Append(')');
     }
 
     public override void VisitUnaryOperatorExpression(UnaryOperatorExpression node) {
         switch (node.UnOp) {
-            case UnOp.Minus: _state.Builder.Append('-'); break;
-            case UnOp.Not: {
-                _state.Builder.Append("not ");
+            case UnOp.Minus: {
+                _state.Builder.Append('-');
+                Visit(node.Expression);
 
                 break;
             }
 
-            default: throw new ArgumentOutOfRangeException(nameof(node.UnOp), node.UnOp, "Unhandled unary operator in VisitUnaryOperatorExpression");
-        }
+            case UnOp.Not: {
+                if (node.Expression is ParenthesisExpression) {
+                    _state.Builder.Append("not ");
+                    Visit(node.Expression);
 
-        Visit(node.Expression);
+                    break;
+                }
+
+                _state.Builder.Append("not (");
+                Visit(node.Expression);
+                _state.Builder.Append(')');
+
+                break;
+            }
+
+            default: throw new ArgumentOutOfRangeException(nameof(node), node.UnOp, "Unhandled unary operator in VisitUnaryOperatorExpression");
+        }
     }
 
     public override void VisitParenthesisExpression(ParenthesisExpression node) {
