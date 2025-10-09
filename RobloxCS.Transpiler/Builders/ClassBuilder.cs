@@ -58,7 +58,18 @@ public static class ClassBuilder {
         (instanceDecl.DeclareAs as TableTypeInfo)?.Fields.Add(ctorField);
 
         var typeDecl = TypeDeclarationStatement.EmptyTable($"_Type{className}");
-        Log.Warning("TODO: Visit statics");
+
+        {
+            var members = node.Members
+                .SelectMany(m => GetMemberSymbols(m, ctx))
+                .Where(s => s is IFieldSymbol or IPropertySymbol or IMethodSymbol)
+                .Where(s => s.IsStatic)
+                .SelectMany(s => TypeFieldBuilder.GenerateTypeFieldsFromField(s, ctx));
+
+            foreach (var tf in members) {
+                (typeDecl.DeclareAs as TableTypeInfo)?.Fields.Add(tf);
+            }
+        }
 
         return (instanceDecl, typeDecl, ctorField);
     }
