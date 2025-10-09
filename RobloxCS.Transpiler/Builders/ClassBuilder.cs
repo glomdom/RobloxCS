@@ -143,6 +143,20 @@ public static class ClassBuilder {
 
         block.AddStatement(AssignmentStatement.AssignToSymbol($"{className}.__index", className));
 
+        foreach (var staticField in classSymbol.GetMembers().OfType<IFieldSymbol>().Where(s => s.IsStatic)) {
+            var fieldSyntax = SyntaxUtilities.GetSyntaxFromSymbol<VariableDeclaratorSyntax>(staticField);
+
+            var initializer = fieldSyntax.Initializer?.Value;
+            if (initializer is null) {
+                throw new NotSupportedException("Fields without initializers are not yet supported.");
+            }
+
+            var exprResult = ExpressionBuilder.BuildFromSyntax(initializer, ctx);
+            var staticAssignment = AssignmentStatement.AssignTo($"{staticField.ContainingSymbol.Name}.{staticField.Name}", exprResult.Expression);
+
+            block.AddStatement(staticAssignment);
+        }
+
         foreach (var ctor in classSymbol.InstanceConstructors) {
             block.AddStatement(FunctionBuilder.CreateNewMethod(classSymbol, ctor));
         }
@@ -153,7 +167,7 @@ public static class ClassBuilder {
 
         foreach (var method in classSymbol.GetMembers().OfType<IMethodSymbol>()) {
             if (method.MethodKind == MethodKind.Constructor) continue;
-            if (method.IsStatic) continue; // no statics
+            if (method.MethodKind == MethodKind.StaticConstructor) continue; // TODO: use this instead of generating static fields
 
             var methodStmt = FunctionBuilder.BuildFromMethodSymbol(method, ctx);
             block.AddStatement(methodStmt);

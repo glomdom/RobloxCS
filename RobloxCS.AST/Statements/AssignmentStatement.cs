@@ -13,6 +13,13 @@ public sealed class AssignmentStatement : Statement {
         };
     }
 
+    public static AssignmentStatement AssignTo(string to, Expression value) {
+        return new AssignmentStatement {
+            Vars = [VarName.FromString(to)],
+            Expressions = [value],
+        };
+    }
+
     public override AssignmentStatement DeepClone() => new() {
         Vars = Vars.Select(v => (Var)v.DeepClone()).ToList(),
         Expressions = Expressions.Select(e => (Expression)e.DeepClone()).ToList(),
