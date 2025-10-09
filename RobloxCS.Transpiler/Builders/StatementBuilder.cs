@@ -78,8 +78,9 @@ public static class StatementBuilder {
             throw new NotSupportedException("While loops without conditions are not supported.");
         }
 
-        var rawCond = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
-        var reverseCond = UnaryOperatorExpression.Reversed(rawCond.Expression);
+        var rawCondResult = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
+        var parCond = ParenthesisExpression.From(rawCondResult.Expression);
+        var reverseCond = UnaryOperatorExpression.Reversed(parCond);
         var ifStmt = new IfStatement { Condition = reverseCond, Block = Block.From(new BreakStatement()) };
         whileBlock.AddStatement(ifStmt);
 
