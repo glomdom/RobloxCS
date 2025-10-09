@@ -90,6 +90,7 @@ public static class ExpressionBuilder {
         return syntax.Kind() switch {
             SyntaxKind.NumericLiteralExpression => HandleNumericLiteralExpression(syntax, ctx),
             SyntaxKind.FalseLiteralExpression => ExpressionBuilderResult.FromSingle(BooleanExpression.False()),
+            SyntaxKind.TrueLiteralExpression => ExpressionBuilderResult.FromSingle(BooleanExpression.True()),
 
             _ => throw new NotSupportedException($"LiteralExpressionSyntax {syntax.Kind()} is not supported."),
         };
