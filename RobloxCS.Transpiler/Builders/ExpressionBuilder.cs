@@ -74,7 +74,7 @@ public static class ExpressionBuilder {
     private static ExpressionBuilderResult HandleBinaryExpressionSyntax(BinaryExpressionSyntax syntax, TranspilationContext ctx) {
         var left = syntax.Left;
         var right = syntax.Right;
-        
+
         var leftResult = BuildFromSyntax(left, ctx);
         var rightResult = BuildFromSyntax(right, ctx);
         var op = SyntaxUtilities.SyntaxTokenToBinOp(syntax.OperatorToken);
@@ -110,9 +110,15 @@ public static class ExpressionBuilder {
         return symbol switch {
             IParameterSymbol parameterSymbol => ExpressionBuilderResult.FromSingle(SymbolExpression.FromString(parameterSymbol.Name)),
             ILocalSymbol localSymbol => ExpressionBuilderResult.FromSingle(SymbolExpression.FromString(localSymbol.Name)),
-            IFieldSymbol fieldSymbol => ExpressionBuilderResult.FromSingle(SymbolExpression.FromString($"self.{fieldSymbol.Name}")),
+            IFieldSymbol fieldSymbol => HandleIFieldSymbol(fieldSymbol),
 
             _ => throw new NotSupportedException($"IdentifierNameSyntax {symbol.Kind} is not supported."),
         };
+    }
+
+    private static ExpressionBuilderResult HandleIFieldSymbol(IFieldSymbol fieldSymbol) {
+        var fieldName = fieldSymbol.IsStatic ? $"{fieldSymbol.ContainingSymbol.Name}.{fieldSymbol.Name}" : $"self.{fieldSymbol.Name}";
+
+        return ExpressionBuilderResult.FromSingle(SymbolExpression.FromString(fieldName));
     }
 }
