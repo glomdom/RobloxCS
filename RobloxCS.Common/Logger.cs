@@ -1,4 +1,6 @@
-﻿using Serilog;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -15,4 +17,16 @@ public class Logger {
     }
 
     public static object[] Args(params object[] args) => args;
+
+    [Conditional("DEBUG")]
+    [SuppressMessage("Usage", "CA2254")]
+    public static void Debug(string messageTemplate, params object[] args) {
+        Log.Information(messageTemplate, args);
+    }
+    
+    [Conditional("DEBUG")]
+    [SuppressMessage("Usage", "CA2254")]
+    public static void Verbose(string messageTemplate, params object[] args) {
+        Log.Verbose(messageTemplate, args);
+    }
 }

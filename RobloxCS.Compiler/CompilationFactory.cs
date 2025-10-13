@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Serilog;
+using RobloxCS.Common;
 
 namespace RobloxCS.Compiler;
 
@@ -24,7 +24,7 @@ internal static class CompilationFactory {
         );
 
         watch.Stop();
-        Log.Debug("Created compilation in {Time}ms", watch.ElapsedMilliseconds);
+        Logger.Verbose("Created compilation in {Time}ms", watch.ElapsedMilliseconds);
 
         return compilation;
     }
