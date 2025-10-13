@@ -105,7 +105,7 @@ public static class StatementBuilder {
     }
 
     private static BuilderResult BuildFromExprSyntax(ExpressionSyntax syntax, TranspilationContext ctx) {
-        Log.Verbose("Building statement from expression syntax of kind {SyntaxKind}", syntax.Kind());
+        Log.Verbose("Building statement from {SyntaxKind}", syntax.Kind());
 
         switch (syntax) {
             case PostfixUnaryExpressionSyntax postExpr: {
@@ -231,7 +231,7 @@ public static class StatementBuilder {
     private static BuilderResult BuildFromExprStmt(ExpressionStatementSyntax exprStmt, TranspilationContext ctx) {
         var expr = exprStmt.Expression;
 
-        Log.Verbose("Building statement from expression statement of kind {StatementKind}", expr.Kind());
+        Log.Verbose("Building statement from {StatementKind}", expr.Kind());
 
         switch (expr) {
             case AssignmentExpressionSyntax assignExpr: {
