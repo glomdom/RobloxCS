@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
+using RobloxCS.AST.Types;
 using RobloxCS.Transpiler.Scoping;
 using Serilog;
 
@@ -61,6 +62,10 @@ public static class StatementBuilder {
     //       2. the condition is a simple `< constant`
     //       3. increment is `i++` or `i += constant`
     private static BuilderResult BuildFromForStmt(ForStatementSyntax syntax, TranspilationContext ctx) {
+        if (syntax.Condition is null) {
+            throw new NotSupportedException("For loops without a condition are not supported.");
+        }
+
         var block = Block.Empty();
         var doStmt = new DoStatement { Block = block };
 
@@ -74,8 +79,26 @@ public static class StatementBuilder {
 
         ctx.PushScope();
 
-        if (syntax.Condition is null) {
-            throw new NotSupportedException("While loops without conditions are not supported.");
+        var incrementors = syntax.Incrementors.Select(expr => BuildFromExprSyntax(expr, ctx)).ToList();
+        if (incrementors.Count > 0) {
+            var shouldIncrementVar = SymbolExpression.FromString("_shouldIncrement");
+            block.AddStatement(LocalAssignmentStatement.Single(shouldIncrementVar.Value, BooleanExpression.False(), BasicTypeInfo.Boolean()));
+
+            var incIfBlock = Block.Empty();
+            foreach (var inc in incrementors) {
+                incIfBlock.AddStatements(inc.Statements);
+            }
+
+            var incIfStmt = new IfStatement {
+                Condition = shouldIncrementVar,
+                Block = incIfBlock,
+                Else = Block.From(new AssignmentStatement {
+                    Vars = [VarName.FromSymbol(shouldIncrementVar)],
+                    Expressions = [BooleanExpression.True()],
+                }),
+            };
+
+            whileBlock.AddStatement(incIfStmt);
         }
 
         var rawCondResult = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
@@ -85,19 +108,9 @@ public static class StatementBuilder {
         whileBlock.AddStatement(ifStmt);
 
         var stmt = Build(syntax.Statement, ctx);
-        var whileBlockStmt = Block.From(stmt.Statements);
-        whileBlock.AddBlock(whileBlockStmt);
-
-        var lastStmt = syntax.Incrementors.Select(expr => BuildFromExprSyntax(expr, ctx)).Aggregate((acc, next) => {
-            acc.Add(next);
-
-            return acc;
-        });
-
-        whileBlock.AddStatements(lastStmt.Statements);
+        whileBlock.AddBlock(Block.From(stmt.Statements));
 
         ctx.PopScope();
-
         block.AddStatement(whileLoop);
         ctx.PopScope();
 
