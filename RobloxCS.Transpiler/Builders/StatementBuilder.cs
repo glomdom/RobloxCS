@@ -105,8 +105,6 @@ public static class StatementBuilder {
     }
 
     private static BuilderResult BuildFromExprSyntax(ExpressionSyntax syntax, TranspilationContext ctx) {
-        Log.Verbose("Building statement from {SyntaxKind}", syntax.Kind());
-
         switch (syntax) {
             case PostfixUnaryExpressionSyntax postExpr: {
                 var tOperand = ExpressionBuilder.BuildFromSyntax(postExpr.Operand, ctx);
@@ -167,8 +165,6 @@ public static class StatementBuilder {
         var elseIfBlocks = new Queue<ElseIfBlock>();
         Block? elseBlock = null;
 
-        Log.Debug("Building IfStatement with condition: {Condition}", condition.Expression);
-        
         var elseClause = syntax.Else;
         while (elseClause is not null) {
             if (elseClause.Statement is IfStatementSyntax elseIfSyntax) {
@@ -210,7 +206,6 @@ public static class StatementBuilder {
         var initExprResults = initExprSyntaxes.Select(s => ExpressionBuilder.BuildFromSyntax(s, ctx)).ToList();
         var initExprs = initExprResults.Select(r => r.Expression).ToList();
         var extras = initExprResults.SelectMany(r => r.Statements).ToList();
-
         var typeSym = ctx.Semantics.CheckedGetTypeInfo(decl.Type);
 
         var type = SyntaxUtilities.BasicFromSymbol(typeSym);
@@ -230,8 +225,6 @@ public static class StatementBuilder {
 
     private static BuilderResult BuildFromExprStmt(ExpressionStatementSyntax exprStmt, TranspilationContext ctx) {
         var expr = exprStmt.Expression;
-
-        Log.Verbose("Building statement from {StatementKind}", expr.Kind());
 
         switch (expr) {
             case AssignmentExpressionSyntax assignExpr: {
