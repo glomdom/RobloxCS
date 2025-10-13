@@ -19,42 +19,42 @@ internal class StressTest {
             }
         }
 
-    //     int x = 0;
-    //     do {
-    //         if (x == 2) {
-    //             x++;
-    //             continue;
-    //         }
-    //
-    //         counter += x;
-    //         x++;
-    //     } while (x < 5);
-    //
-    //     int y = 0;
-    //     while (y < 3) {
-    //         counter += Helper(y);
-    //         y++;
-    //     }
-    //
-    //     bool flag = (counter > 10) && !(counter % 2 == 0) ? true : false;
-    //     if (flag) {
-    //         counter += staticValue;
-    //     } else {
-    //         counter -= staticValue;
-    //     }
-    //
-    //     if (false) { }
-    //
-    //     RandomMethod();
-    // }
-    //
-    // private int Helper(int value) {
-    //     return value * 2 + (staticValue - 1);
-    // }
-    //
-    // private void RandomMethod() {
-    //     for (int i = 0; i < counter; i++) {
-    //         if (i > 15) break;
-    //     }
+        int x = 0;
+        do {
+            if (x == 2) {
+                x++;
+                continue;
+            }
+
+            counter += x;
+            x++;
+        } while (x < 5);
+
+        int y = 0;
+        while (y < 3) {
+            counter += Helper(y);
+            y++;
+        }
+
+        bool flag = (counter > 10) && !(counter % 2 == 0) ? true : false;
+        if (flag) {
+            counter += staticValue;
+        } else {
+            counter -= staticValue;
+        }
+
+        if (false) { }
+
+        RandomMethod();
+    }
+
+    private int Helper(int value) {
+        return value * 2 + (staticValue - 1);
+    }
+
+    private void RandomMethod() {
+        for (int i = 0; i < counter; i++) {
+            if (i > 15) break;
+        }
     }
 }
