@@ -8,4 +8,6 @@ public sealed class SymbolExpression : Expression {
     public override SymbolExpression DeepClone() => new() { Value = Value };
     public override void Accept(IAstVisitor v) => v.VisitSymbolExpression(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitSymbolExpression(this);
+
+    public override string ToString() => $"Symbol({Value})";
 }

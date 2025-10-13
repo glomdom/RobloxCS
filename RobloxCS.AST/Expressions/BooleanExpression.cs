@@ -9,4 +9,6 @@ public sealed class BooleanExpression : Expression {
     public override BooleanExpression DeepClone() => new() { Value = Value };
     public override void Accept(IAstVisitor v) => v.VisitBooleanExpression(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitBooleanExpression(this);
+
+    public override string ToString() => $"Boolean({(Value ? "true" : "false")})";
 }
