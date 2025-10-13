@@ -167,6 +167,8 @@ public static class StatementBuilder {
         var elseIfBlocks = new Queue<ElseIfBlock>();
         Block? elseBlock = null;
 
+        Log.Debug("Building IfStatement with condition: {Condition}", condition.Expression);
+        
         var elseClause = syntax.Else;
         while (elseClause is not null) {
             if (elseClause.Statement is IfStatementSyntax elseIfSyntax) {
@@ -308,5 +310,4 @@ public static class StatementBuilder {
 
         return false;
     }
-
 }

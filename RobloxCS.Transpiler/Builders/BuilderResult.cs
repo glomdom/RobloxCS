@@ -16,5 +16,5 @@ public record BuilderResult {
     public static BuilderResult From(List<Statement> stmts) => new(stmts);
     public static BuilderResult Empty() => new([]);
 
-    public BuilderResult Add(BuilderResult other) => new([..Statements, ..other.Statements]);
+    public void Add(BuilderResult other) => Statements.AddRange(other.Statements);
 }

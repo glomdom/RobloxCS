@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
+using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
 
@@ -8,7 +9,11 @@ public static class BlockBuilder {
         var block = Block.Empty();
 
         ctx.PushScope();
-        var result = syntax.Statements.Select(statement => StatementBuilder.Build(statement, ctx)).Flatten();
+        var result = syntax.Statements.Select(statement => {
+            Log.Debug("Visiting statement {Kind} in block", statement.Kind());
+
+            return StatementBuilder.Build(statement, ctx);
+        }).Flatten();
 
         ctx.PopScope();
 

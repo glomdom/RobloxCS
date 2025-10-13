@@ -9,4 +9,9 @@ public class WhileStatement : Statement {
     public override AstNode DeepClone() => throw new NotImplementedException();
     public override void Accept(IAstVisitor v) => v.VisitWhileStatement(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitWhileStatement(this);
+
+    public override IEnumerable<AstNode> Children() {
+        yield return Condition;
+        yield return Block;
+    }
 }

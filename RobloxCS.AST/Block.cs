@@ -15,7 +15,7 @@ public sealed class Block : AstNode {
     /// <summary>
     /// Flattens the provided block into the block.
     /// </summary>
-    public void AddBlock(Block block) => Statements.AddRange(block.Statements);
+    public void AddBlock(Block other) => Statements.AddRange(other.Statements);
 
     public override Block DeepClone() => new() { Statements = Statements.Select(s => (Statement)s.DeepClone()).ToList() };
     public override void Accept(IAstVisitor v) => v.VisitBlock(this);
