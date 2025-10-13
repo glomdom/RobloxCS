@@ -131,6 +131,10 @@ public static class FunctionBuilder {
 
         var functionBlock = Block.Empty();
 
+        var selfType = BasicTypeInfo.FromString($"_Instance{cls.Name}");
+        var selfShadowAssignment = LocalAssignmentStatement.Single("self", SymbolExpression.FromString("self"), selfType);
+        functionBlock.AddStatement(selfShadowAssignment);
+
         var syntax = SyntaxUtilities.GetSyntaxFromSymbol<MethodDeclarationSyntax>(symbol);
         if (syntax.Body is { } body) {
             ctx.PushScope();
