@@ -49,7 +49,6 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
         Log.Information("Creating C# transpiler");
         var transpiler = new CSharpTranspiler(options, compiler);
         var chunk = transpiler.Transpile();
-        chunk.Children();
 
         Log.Information("Starting to render nodes");
 
