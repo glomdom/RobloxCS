@@ -25,27 +25,31 @@ public class Regression {
         luneProc.WaitForExit();
 
         var output = luneProc.StandardOutput.ReadToEnd();
-        
+
         Assert.That(output, Is.EqualTo(expected));
     }
 
     private static void EnsureLuneInstalled() {
-        var luneProc = Process.Start(new ProcessStartInfo {
-            FileName = "lune",
-            Arguments = "--version",
-            RedirectStandardOutput = false,
-            RedirectStandardError = false,
-            RedirectStandardInput = false,
-        });
+        try {
+            var luneProc = Process.Start(new ProcessStartInfo {
+                FileName = "lune",
+                Arguments = "--version",
+                RedirectStandardOutput = false,
+                RedirectStandardError = false,
+                RedirectStandardInput = false,
+            });
 
-        if (luneProc is null) throw new Exception("Lune is not installed or available in PATH.");
+            if (luneProc is null) throw new Exception("Failed to start lune.");
 
-        luneProc.WaitForExit();
+            luneProc.WaitForExit();
+        } catch {
+            throw new Exception("Lune is not installed or available in PATH.");
+        }
     }
 
     private static IEnumerable<TestCaseData> GetFromFiles() {
         GenerateLuauFiles();
-        
+
         var workDir = TestContext.CurrentContext.WorkDirectory;
         var dataDir = Path.Join(workDir, "Data/");
         var outDir = Path.Join(dataDir, "Output/");
@@ -54,7 +58,7 @@ public class Regression {
         if (!Directory.Exists(dataDir)) {
             throw new Exception("Data folder not found. Cannot proceed to generate tests.");
         }
-        
+
         foreach (var path in Directory.GetFiles(outDir)) {
             var fileName = Path.GetFileNameWithoutExtension(path);
             var expectedPath = Path.Join(expectedDir, fileName + ".out");
