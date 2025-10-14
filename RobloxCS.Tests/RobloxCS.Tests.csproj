@@ -21,20 +21,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\RobloxCS.AST\RobloxCS.AST.csproj" />
-      <ProjectReference Include="..\RobloxCS.Renderer\RobloxCS.Renderer.csproj" />
-      <ProjectReference Include="..\RobloxCS.Transpiler\RobloxCS.Transpiler.csproj" />
+        <ProjectReference Include="..\RobloxCS.AST\RobloxCS.AST.csproj"/>
+        <ProjectReference Include="..\RobloxCS.Renderer\RobloxCS.Renderer.csproj"/>
+        <ProjectReference Include="..\RobloxCS.Transpiler\RobloxCS.Transpiler.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="Data\Simple.cs" />
-      <Content Include="Data\Simple.cs">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <None Remove="Data\Output\Simple.out" />
-      <Content Include="Data\Expected\Simple.out">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
+        <None Include="Data\**" CopyToOutputDirectory="Always"/>
     </ItemGroup>
 
 </Project>
