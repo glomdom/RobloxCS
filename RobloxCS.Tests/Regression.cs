@@ -34,6 +34,9 @@ public class Regression {
         var luneProc = Process.Start(new ProcessStartInfo {
             FileName = "lune",
             Arguments = "--version",
+            RedirectStandardOutput = false,
+            RedirectStandardError = false,
+            RedirectStandardInput = false,
         });
 
         if (luneProc is null) throw new Exception("Lune is not installed or available in PATH.");
