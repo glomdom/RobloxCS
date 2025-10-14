@@ -36,7 +36,7 @@ internal class StressTest {
             y++;
         }
 
-        bool flag = (counter > 10) && !(counter % 2 == 0) ? true : false;
+        bool flag = (counter > 10) && counter % 2 != 0;
         if (flag) {
             counter += staticValue;
         } else {

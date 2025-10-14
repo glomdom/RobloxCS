@@ -65,6 +65,7 @@ public static class SyntaxUtilities {
             SyntaxKind.EqualsEqualsToken => BinOp.TwoEqual,
             SyntaxKind.PercentToken => BinOp.Percent,
             SyntaxKind.AmpersandAmpersandToken => BinOp.And,
+            SyntaxKind.ExclamationEqualsToken => BinOp.TildeEqual,
 
             _ => throw new ArgumentOutOfRangeException(nameof(token), token.Kind(), null),
         };
