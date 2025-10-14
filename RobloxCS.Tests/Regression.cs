@@ -7,10 +7,9 @@ namespace RobloxCS.Tests;
 
 [TestFixture]
 public class Regression {
-    [SetUp]
-    public void Setup() {
+    [OneTimeSetUp]
+    public void OneTimeSetup() {
         EnsureLuneInstalled();
-        GenerateLuauFiles();
     }
 
     [Test, TestCaseSource(nameof(GetFromFiles))]
@@ -45,6 +44,8 @@ public class Regression {
     }
 
     private static IEnumerable<TestCaseData> GetFromFiles() {
+        GenerateLuauFiles();
+        
         var workDir = TestContext.CurrentContext.WorkDirectory;
         var dataDir = Path.Join(workDir, "Data/");
         var outDir = Path.Join(dataDir, "Output/");
