@@ -1,12 +1,12 @@
 ﻿namespace RobloxCS.Example;
 
 internal class StressTest {
-    private int counter = 0;
-    private static int staticValue = 2;
+    private int Counter = 0;
+    private static int StaticValue = 2;
 
     internal void Main() {
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 3; j++) {
+        for (var i = 0; i < 4; i++) {
+            for (var j = 0; j < 3; j++) {
                 if ((i + j) % 2 == 0) {
                     continue;
                 }
@@ -15,32 +15,32 @@ internal class StressTest {
                     break;
                 }
 
-                counter += i * j;
+                Counter += i * j;
             }
         }
 
-        int x = 0;
+        var x = 0;
         do {
             if (x == 2) {
                 x++;
                 continue;
             }
 
-            counter += x;
+            Counter += x;
             x++;
         } while (x < 5);
 
-        int y = 0;
+        var y = 0;
         while (y < 3) {
-            counter += Helper(y);
+            Counter += Helper(y);
             y++;
         }
 
-        bool flag = (counter > 10) && counter % 2 != 0;
+        var flag = (Counter > 10) && Counter % 2 != 0;
         if (flag) {
-            counter += staticValue;
+            Counter += StaticValue;
         } else {
-            counter -= staticValue;
+            Counter -= StaticValue;
         }
 
         if (false) { }
@@ -49,11 +49,11 @@ internal class StressTest {
     }
 
     private int Helper(int value) {
-        return value * 2 + (staticValue - 1);
+        return value * 2 + (StaticValue - 1);
     }
 
     private void RandomMethod() {
-        for (int i = 0; i < counter; i++) {
+        for (var i = 0; i < Counter; i++) {
             if (i > 15) break;
         }
     }

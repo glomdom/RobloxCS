@@ -7,44 +7,32 @@ namespace RobloxCS.Tests;
 
 [TestFixture]
 public class Regression {
-    [OneTimeSetUp]
-    public void OneTimeSetup() {
-        EnsureLuneInstalled();
-    }
-
     [Test, TestCaseSource(nameof(GetFromFiles))]
     public void FileTest(string inputPath, string expected) {
-        var luneProc = Process.Start(new ProcessStartInfo {
-            FileName = "lune",
-            Arguments = $"run {inputPath}",
-            RedirectStandardOutput = true,
-        });
-
-        if (luneProc is null) throw new Exception("Lune is not installed or available in PATH.");
-
-        luneProc.WaitForExit();
-
-        var output = luneProc.StandardOutput.ReadToEnd();
+        var output = TryWithLune(inputPath);
 
         Assert.That(output, Is.EqualTo(expected));
     }
 
-    private static void EnsureLuneInstalled() {
+    private static string TryWithLune(string path) {
+        Process? luneProc;
         try {
-            var luneProc = Process.Start(new ProcessStartInfo {
+            luneProc = Process.Start(new ProcessStartInfo {
                 FileName = "lune",
-                Arguments = "--version",
-                RedirectStandardOutput = false,
+                Arguments = $"run {path}",
+                RedirectStandardOutput = true,
                 RedirectStandardError = false,
                 RedirectStandardInput = false,
             });
 
             if (luneProc is null) throw new Exception("Failed to start lune.");
-
-            luneProc.WaitForExit();
-        } catch {
-            throw new Exception("Lune is not installed or available in PATH.");
+        } catch (Exception ex) {
+            throw new Exception("Lune is not installed or available in PATH.", ex);
         }
+
+        luneProc.WaitForExit();
+
+        return luneProc.StandardOutput.ReadToEnd();
     }
 
     private static IEnumerable<TestCaseData> GetFromFiles() {
