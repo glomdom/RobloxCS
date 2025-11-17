@@ -41,17 +41,14 @@ public static class FunctionBuilder {
     private static Block CreateNewMethodBlock(INamedTypeSymbol classSymbol, FunctionArgs ctorArgs) {
         var block = Block.Empty();
 
-        // local self = setmetatable({}, Class) :: _Instance<Class>
+        // local self = setmetatable({}, Class)
         block.AddStatement(new LocalAssignmentStatement {
             Names = [SymbolExpression.FromString("self")],
             Expressions = [
-                TypeAssertionExpression.From(
-                    FunctionCallExpression.Basic(
-                        "setmetatable",
-                        TableConstructorExpression.Empty(),
-                        SymbolExpression.FromString(classSymbol.Name)
-                    ),
-                    BasicTypeInfo.FromString($"_Instance{classSymbol.Name}")
+                FunctionCallExpression.Basic(
+                    "setmetatable",
+                    TableConstructorExpression.Empty(),
+                    SymbolExpression.FromString(classSymbol.Name)
                 ),
             ],
             Types = [],

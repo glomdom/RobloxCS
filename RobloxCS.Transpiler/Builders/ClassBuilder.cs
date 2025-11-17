@@ -24,7 +24,7 @@ public static class ClassBuilder {
 
         var bind = new LocalAssignmentStatement {
             Names = [SymbolExpression.FromString(className)],
-            Expressions = [TypeAssertionExpression.From(TableConstructorExpression.Empty(), BasicTypeInfo.FromString(typeDecl.Name))],
+            Expressions = [TableConstructorExpression.Empty()],
             Types = [],
         };
 
@@ -86,10 +86,6 @@ public static class ClassBuilder {
         }
 
         typeTable.Fields.Add(newField);
-
-        var indexType = IntersectionTypeInfo.FromInfos(BasicTypeInfo.FromString(typeDecl.Name), BasicTypeInfo.FromString($"_Instance{className}"));
-        var index = TypeField.FromNameAndType("__index", indexType);
-        typeTable.Fields.Add(index);
     }
 
     private static TypeField BuildConstructorField(ClassDeclarationSyntax node, string instanceTypeName, TranspilationContext ctx) {
