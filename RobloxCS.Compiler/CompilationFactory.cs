@@ -18,7 +18,7 @@ internal static class CompilationFactory {
 
         var compilation = CSharpCompilation.Create(
             assemblyName: assemblyName,
-            syntaxTrees: new[] { syntaxTree },
+            syntaxTrees: [syntaxTree],
             references: references,
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
         );
