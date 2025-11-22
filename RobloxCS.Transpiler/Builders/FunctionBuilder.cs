@@ -59,38 +59,36 @@ public static class FunctionBuilder {
 
     public static FunctionDeclarationStatement CreateConstructor(INamedTypeSymbol classSymbol, IMethodSymbol ctorSymbol, TranspilationContext ctx) {
         var functionBlock = BlockHelpers.Empty();
-
         var fields = classSymbol.GetMembers().OfType<IFieldSymbol>();
+
         foreach (var a in TypeFieldBuilder.CreateFieldAssignmentsFromFields(fields, ctx)) {
             functionBlock.AddStatement(a);
         }
 
-        var functionBody = new FunctionBody {
-            Body = functionBlock,
-            Parameters = [],
-            TypeSpecifiers = [],
-            ReturnType = BasicTypeInfo.Void(),
-        };
+        var pars = ctorSymbol.IsImplicitlyDeclared
+            ? []
+            : ctorSymbol.Parameters.Select(p => NameParameter.FromString(p.Name)).Cast<Parameter>().ToList();
 
-        functionBlock.Parent = functionBody;
+        var specs = ctorSymbol.IsImplicitlyDeclared
+            ? []
+            : ctorSymbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
 
-        var ctorName = ExpressionHelpers.FunctionNameFromString($"{classSymbol.Name}:constructor");
+        var decl = StatementHelpers.FullFunctionDeclaration(
+            $"{classSymbol.Name}:constructor",
+            pars,
+            specs,
+            functionBlock,
+            BasicTypeInfo.Void()
+        );
 
-        var ctorStmt = new FunctionDeclarationStatement {
-            Name = ctorName,
-            Body = functionBody,
-        };
-
-        ctorName.Parent = ctorStmt;
-        functionBody.Parent = ctorStmt;
-
-        // populate function block
         var ctorSyntax = SyntaxUtilities.MaybeGetSyntaxFromSymbol<ConstructorDeclarationSyntax>(ctorSymbol);
         if (ctorSyntax is null) {
             // ctor doesnt exist, return just initializers
-            return ctorStmt;
+
+            return decl;
         }
 
+        // populate function block
         if (ctorSyntax.Body is { } body) {
             ctx.PushScope();
 
@@ -101,21 +99,7 @@ public static class FunctionBuilder {
             ctx.PopScope();
         }
 
-        var pars = ctorSymbol.IsImplicitlyDeclared
-            ? []
-            : ctorSymbol.Parameters.Select(p => NameParameter.FromString(p.Name)).Cast<Parameter>().ToList();
-
-        ctorStmt.Body.Parameters = pars;
-        pars.ForEach(par => par.Parent = ctorStmt.Body);
-
-        var specs = ctorSymbol.IsImplicitlyDeclared
-            ? []
-            : ctorSymbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
-
-        ctorStmt.Body.TypeSpecifiers = specs;
-        specs.ForEach(par => par.Parent = ctorStmt.Body);
-
-        return ctorStmt;
+        return decl;
     }
 
     public static Statement BuildFromMethodSymbol(IMethodSymbol symbol, TranspilationContext ctx) {
