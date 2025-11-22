@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\RobloxCS.AST\RobloxCS.AST.csproj" />
       <ProjectReference Include="..\RobloxCS.Common\RobloxCS.Common.csproj" />
+      <ProjectReference Include="..\RobloxCS.Transpiler\RobloxCS.Transpiler.csproj" />
     </ItemGroup>
 
 </Project>

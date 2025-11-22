@@ -6,6 +6,7 @@ using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
+using RobloxCS.Transpiler.Extensions;
 using Serilog;
 
 namespace RobloxCS.Renderer;

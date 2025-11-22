@@ -128,7 +128,7 @@ public static class ClassBuilder {
         block.AddStatement(new AssignmentStatement {
             Vars = [VarName.FromString(className)],
             Expressions = [
-                FunctionCallExpression.Basic(
+                ExpressionHelpers.SimpleFunctionCall(
                     "setmetatable",
                     TableConstructorExpression.Empty(),
                     TableConstructorExpression.With(new NameKey { Key = "__tostring", Value = toStringFunction })
