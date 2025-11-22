@@ -21,14 +21,10 @@ public static class ClassBuilder {
 
         CreateClassFields(typeDecl, ctorField, className);
 
-        var bind = new LocalAssignmentStatement {
-            Names = [SymbolExpression.FromString(className)],
-            Expressions = [TableConstructorExpression.Empty()],
-            Types = [],
-        };
+        var bind = StatementHelpers.UntypedLocalAssignment(className, ExpressionHelpers.EmptyTableConstructor());
 
         var classBody = BuildClassBody(ctx, classSymbol, className);
-        var doStmt = DoStatement.FromBlock(classBody);
+        var doStmt = StatementHelpers.DoFromBlock(classBody);
 
         return [instanceDecl, typeDecl, bind, doStmt];
     }

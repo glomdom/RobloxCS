@@ -6,6 +6,8 @@ using RobloxCS.AST.Suffixes;
 namespace RobloxCS.Transpiler.Helpers;
 
 public static class ExpressionHelpers {
+    public static TableConstructorExpression EmptyTableConstructor() => new() { Fields = [] };
+
     /// <summary>
     /// Creates a simple function call in the form of <c>name(...args)</c>.
     /// </summary>

@@ -44,7 +44,6 @@ public class RendererWalker : AstVisitorBase {
     }
 
     public override void VisitStatement(Statement node) {
-        DebugParent(node);
         Visit(node);
     }
 
