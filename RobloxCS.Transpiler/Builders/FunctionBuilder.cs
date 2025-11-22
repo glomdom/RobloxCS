@@ -7,7 +7,7 @@ using RobloxCS.AST.Parameters;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
 using RobloxCS.Transpiler.Helpers;
-using TypeInfo = RobloxCS.AST.Types.TypeInfo;
+using TypeInfo = RobloxCS.AST.Types.TypeInfo; // conflict with `Microsoft.CodeAnalysis.TypeInfo`
 
 namespace RobloxCS.Transpiler.Builders;
 
