@@ -20,13 +20,13 @@ public class Logger {
 
     [Conditional("DEBUG")]
     [SuppressMessage("Usage", "CA2254")]
-    public static void Debug(string messageTemplate, params object[] args) {
-        Log.Information(messageTemplate, args);
+    public static void Debug(string messageTemplate, params object?[] args) {
+        Log.Debug(messageTemplate, args);
     }
     
     [Conditional("DEBUG")]
     [SuppressMessage("Usage", "CA2254")]
-    public static void Verbose(string messageTemplate, params object[] args) {
+    public static void Verbose(string messageTemplate, params object?[] args) {
         Log.Verbose(messageTemplate, args);
     }
 }

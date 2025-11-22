@@ -4,11 +4,10 @@ using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
 using RobloxCS.AST.Parameters;
-using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
-using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
-using TypeInfo = RobloxCS.AST.Types.TypeInfo;
+using RobloxCS.Transpiler.Helpers;
+using TypeInfo = RobloxCS.AST.Types.TypeInfo; // conflict with `Microsoft.CodeAnalysis.TypeInfo`
 
 namespace RobloxCS.Transpiler.Builders;
 
@@ -23,74 +22,73 @@ public static class FunctionBuilder {
             ? []
             : ctorSymbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
 
-        var body = CreateNewMethodBlock(classSymbol, new FunctionArgs {
-            Arguments = paramNames.Select(SymbolExpression.FromString).Cast<Expression>().ToList(),
-        });
+        var bodyArgExprs = paramNames.Select(SymbolExpression.FromString).Cast<Expression>().ToList();
+        var bodyArgs = ExpressionHelpers.FunctionArgsFromExpressions(bodyArgExprs);
+        var body = CreateNewMethodBlock(classSymbol, bodyArgs);
 
-        return new FunctionDeclarationStatement {
-            Name = FunctionName.FromString($"{classSymbol.Name}.new"),
-            Body = new FunctionBody {
-                Parameters = args,
-                TypeSpecifiers = specs,
-                Body = body,
-                ReturnType = BasicTypeInfo.FromString($"_Instance{classSymbol.Name}"),
-            },
-        };
+        // function <class>.new(...)
+        var decl = StatementHelpers.FullFunctionDeclaration(
+            $"{classSymbol.Name}.new",
+            args,
+            specs,
+            body,
+            BasicTypeInfo.FromString($"_Instance{classSymbol.Name}")
+        );
+
+        return decl;
     }
 
     private static Block CreateNewMethodBlock(INamedTypeSymbol classSymbol, FunctionArgs ctorArgs) {
-        var block = Block.Empty();
+        var block = BlockHelpers.Empty();
 
         // local self = setmetatable({}, Class)
-        block.AddStatement(new LocalAssignmentStatement {
-            Names = [SymbolExpression.FromString("self")],
-            Expressions = [
-                FunctionCallExpression.Basic(
-                    "setmetatable",
-                    TableConstructorExpression.Empty(),
-                    SymbolExpression.FromString(classSymbol.Name)
-                ),
-            ],
-            Types = [],
-        });
+        var setmetatableCall = ExpressionHelpers.SimpleFunctionCall("setmetatable", TableConstructorExpression.Empty(), SymbolExpression.FromString(classSymbol.Name));
+        var assignSelfStmt = StatementHelpers.UntypedLocalAssignment("self", setmetatableCall);
+        block.AddStatement(assignSelfStmt);
 
         // self:constructor(...)
-        block.AddStatement(new FunctionCallStatement {
-            Prefix = NamePrefix.FromString("self"),
-            Suffixes = [new MethodCall { Name = "constructor", Args = ctorArgs }],
-        });
+        var constructorCallStmt = StatementHelpers.SimpleMethodCall("self", "constructor", ctorArgs);
+        block.AddStatement(constructorCallStmt);
 
         // return self
-        block.AddStatement(new ReturnStatement { Returns = [SymbolExpression.FromString("self")] });
+        var returnSelf = StatementHelpers.SimpleReturnStatement(SymbolExpression.FromString("self"));
+        block.AddStatement(returnSelf);
 
         return block;
     }
 
     public static FunctionDeclarationStatement CreateConstructor(INamedTypeSymbol classSymbol, IMethodSymbol ctorSymbol, TranspilationContext ctx) {
-        var functionBlock = Block.Empty();
-
+        var functionBlock = BlockHelpers.Empty();
         var fields = classSymbol.GetMembers().OfType<IFieldSymbol>();
+
         foreach (var a in TypeFieldBuilder.CreateFieldAssignmentsFromFields(fields, ctx)) {
             functionBlock.AddStatement(a);
         }
 
-        var ctorStmt = new FunctionDeclarationStatement {
-            Name = FunctionName.FromString($"{classSymbol.Name}:constructor"),
-            Body = new FunctionBody {
-                Body = functionBlock,
-                Parameters = [],
-                TypeSpecifiers = [],
-                ReturnType = BasicTypeInfo.Void(),
-            },
-        };
+        var pars = ctorSymbol.IsImplicitlyDeclared
+            ? []
+            : ctorSymbol.Parameters.Select(p => NameParameter.FromString(p.Name)).Cast<Parameter>().ToList();
 
-        // populate function block
+        var specs = ctorSymbol.IsImplicitlyDeclared
+            ? []
+            : ctorSymbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
+
+        var decl = StatementHelpers.FullFunctionDeclaration(
+            $"{classSymbol.Name}:constructor",
+            pars,
+            specs,
+            functionBlock,
+            BasicTypeInfo.Void()
+        );
+
         var ctorSyntax = SyntaxUtilities.MaybeGetSyntaxFromSymbol<ConstructorDeclarationSyntax>(ctorSymbol);
         if (ctorSyntax is null) {
             // ctor doesnt exist, return just initializers
-            return ctorStmt;
+
+            return decl;
         }
 
+        // populate function block
         if (ctorSyntax.Body is { } body) {
             ctx.PushScope();
 
@@ -101,19 +99,7 @@ public static class FunctionBuilder {
             ctx.PopScope();
         }
 
-        var pars = ctorSymbol.IsImplicitlyDeclared
-            ? []
-            : ctorSymbol.Parameters.Select(p => NameParameter.FromString(p.Name)).Cast<Parameter>().ToList();
-
-        ctorStmt.Body.Parameters = pars;
-
-        var specs = ctorSymbol.IsImplicitlyDeclared
-            ? []
-            : ctorSymbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
-
-        ctorStmt.Body.TypeSpecifiers = specs;
-
-        return ctorStmt;
+        return decl;
     }
 
     public static Statement BuildFromMethodSymbol(IMethodSymbol symbol, TranspilationContext ctx) {
@@ -126,31 +112,27 @@ public static class FunctionBuilder {
             throw new Exception("Could not find containing class symbol.");
         }
 
-        var functionBlock = Block.Empty();
-
-        var selfType = BasicTypeInfo.FromString($"_Instance{cls.Name}");
-        var selfShadowAssignment = LocalAssignmentStatement.Single("self", SymbolExpression.FromString("self"), selfType);
-        functionBlock.AddStatement(selfShadowAssignment);
+        var functionBlock = BlockHelpers.Empty();
 
         var syntax = SyntaxUtilities.GetSyntaxFromSymbol<MethodDeclarationSyntax>(symbol);
-        if (syntax.Body is { } body) {
+        if (syntax.Body is { } block) {
             ctx.PushScope();
 
-            foreach (var result in body.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx))) {
+            foreach (var result in block.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx))) {
                 functionBlock.AddStatements(result.Statements);
             }
 
             ctx.PopScope();
         }
 
-        return new FunctionDeclarationStatement {
-            Name = FunctionName.FromString(cls.Name + ":" + symbol.Name),
-            Body = new FunctionBody {
-                Body = functionBlock,
-                Parameters = pars,
-                TypeSpecifiers = specs,
-                ReturnType = returnType,
-            },
-        };
+        var decl = StatementHelpers.FullFunctionDeclaration(
+            $"{cls.Name}:{symbol.Name}",
+            pars,
+            specs,
+            functionBlock,
+            returnType
+        );
+
+        return decl;
     }
 }

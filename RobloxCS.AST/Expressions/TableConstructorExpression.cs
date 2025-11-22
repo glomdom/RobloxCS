@@ -18,6 +18,8 @@ public sealed class TableConstructorExpression : Expression {
     public override IEnumerable<AstNode> Children() {
         return Fields;
     }
+
+    public override string ToString() => Fields.Count == 0 ? "TableConstructor({})" : $"TableConstructor({{ {string.Join(", ", Fields)} }})";
 }
 
 public abstract class TableField : AstNode;
@@ -32,6 +34,8 @@ public sealed class NoKey : TableField {
     public override IEnumerable<AstNode> Children() {
         yield return Expression;
     }
+
+    public override string ToString() => $"{Expression}";
 }
 
 public sealed class NameKey : TableField {
@@ -45,6 +49,8 @@ public sealed class NameKey : TableField {
     public override IEnumerable<AstNode> Children() {
         yield return Value;
     }
+
+    public override string ToString() => $"{Key}: {Value}";
 }
 
 // TODO: Index signature

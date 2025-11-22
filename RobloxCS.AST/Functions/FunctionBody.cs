@@ -26,4 +26,6 @@ public sealed class FunctionBody : AstNode {
         yield return ReturnType;
         yield return Body;
     }
+
+    public override string ToString() => $"FunctionBody<{string.Join(", ", Generics ?? [])}>({string.Join(", ", Parameters)}) -> {ReturnType}";
 }

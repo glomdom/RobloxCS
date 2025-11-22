@@ -5,13 +5,12 @@ using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
+using RobloxCS.Transpiler.Helpers;
 using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
 
 public static class ClassBuilder {
-    private static readonly TypeDeclarationStatement NoTypeSentinel = TypeDeclarationStatement.EmptyTable("__SHOULD_NOT_BE_IN_OUTPUT");
-
     public static IEnumerable<Statement> Build(ClassDeclarationSyntax node, TranspilationContext ctx) {
         var classSymbol = ctx.Semantics.CheckedGetDeclaredSymbol(node);
         var className = classSymbol.Name;
@@ -22,14 +21,10 @@ public static class ClassBuilder {
 
         CreateClassFields(typeDecl, ctorField, className);
 
-        var bind = new LocalAssignmentStatement {
-            Names = [SymbolExpression.FromString(className)],
-            Expressions = [TableConstructorExpression.Empty()],
-            Types = [],
-        };
+        var bind = StatementHelpers.UntypedLocalAssignment(className, ExpressionHelpers.EmptyTableConstructor());
 
         var classBody = BuildClassBody(ctx, classSymbol, className);
-        var doStmt = DoStatement.FromBlock(classBody);
+        var doStmt = StatementHelpers.DoFromBlock(classBody);
 
         return [instanceDecl, typeDecl, bind, doStmt];
     }
@@ -112,9 +107,9 @@ public static class ClassBuilder {
     }
 
     private static Block BuildClassBody(TranspilationContext ctx, INamedTypeSymbol classSymbol, string className) {
-        var block = Block.Empty();
+        var block = BlockHelpers.Empty();
 
-        var toStringBlock = Block.Empty();
+        var toStringBlock = BlockHelpers.Empty();
         toStringBlock.AddStatement(ReturnStatement.FromExpressions([StringExpression.FromString(className)]));
 
         var toStringFunction = new AnonymousFunctionExpression {
@@ -129,7 +124,7 @@ public static class ClassBuilder {
         block.AddStatement(new AssignmentStatement {
             Vars = [VarName.FromString(className)],
             Expressions = [
-                FunctionCallExpression.Basic(
+                ExpressionHelpers.SimpleFunctionCall(
                     "setmetatable",
                     TableConstructorExpression.Empty(),
                     TableConstructorExpression.With(new NameKey { Key = "__tostring", Value = toStringFunction })

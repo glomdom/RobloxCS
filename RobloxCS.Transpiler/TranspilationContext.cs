@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Statements;
 using RobloxCS.Compiler;
+using RobloxCS.Transpiler.Helpers;
 using RobloxCS.Transpiler.Scoping;
 
 namespace RobloxCS.Transpiler;
@@ -12,7 +13,7 @@ public sealed class TranspilationContext {
     public CSharpCompiler Compiler { get; }
     public SemanticModel Semantics { get; }
     public CompilationUnitSyntax Root { get; }
-    public Block RootBlock { get; } = Block.Empty();
+    public Block RootBlock { get; } = BlockHelpers.Empty();
 
     public Scope CurrentScope => _scopes.Peek();
 

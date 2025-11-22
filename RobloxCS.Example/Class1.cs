@@ -1,7 +1,7 @@
 ﻿namespace RobloxCS.Example;
 
 internal class StressTest {
-    // private int Counter = 0;
+    private int Counter = 0;
     // private static int StaticValue = 2;
     //
     // internal void Main() {

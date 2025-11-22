@@ -5,6 +5,7 @@ using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Suffixes;
+using RobloxCS.Transpiler.Helpers;
 
 namespace RobloxCS.Transpiler.Builders;
 
@@ -49,7 +50,7 @@ public static class ExpressionBuilder {
         var methodName = $"self:{methodSymbol.Name}";
         var argExpressions = syntax.ArgumentList.Arguments.Select(ars => BuildFromSyntax(ars.Expression, ctx).Expression).ToList();
 
-        var call = new FunctionCallExpression { Prefix = NamePrefix.FromString(methodName), Suffixes = [AnonymousCall.FromArgs(FunctionArgs.FromExpressions(argExpressions))] };
+        var call = new FunctionCallExpression { Prefix = NamePrefix.FromString(methodName), Suffixes = [AnonymousCall.FromArgs(ExpressionHelpers.FunctionArgsFromExpressions(argExpressions))] };
 
         return ExpressionBuilderResult.FromSingle(call);
     }
