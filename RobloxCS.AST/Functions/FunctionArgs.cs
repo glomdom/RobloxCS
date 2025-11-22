@@ -10,4 +10,6 @@ public sealed class FunctionArgs : AstNode {
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitFunctionArgs(this);
 
     public override IEnumerable<AstNode> Children() => Arguments;
+
+    public override string ToString() => $"FunctionArgs({string.Join(", ", Arguments)})";
 }
