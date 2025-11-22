@@ -1,7 +1,7 @@
 ﻿namespace RobloxCS.AST;
 
 public abstract class AstNode {
-    public AstNode? Parent;
+    public AstNode? Parent { get; set; }
     
     public abstract AstNode DeepClone();
 
