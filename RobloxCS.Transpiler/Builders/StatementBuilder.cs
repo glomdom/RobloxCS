@@ -208,7 +208,7 @@ public static class StatementBuilder {
     private static BuilderResult BuildFromBlock(BlockSyntax syntax, TranspilationContext ctx) {
         var body = BlockBuilder.Build(syntax, ctx);
 
-        return RequiresDoScope(syntax, ctx) ? BuilderResult.FromSingle(DoStatement.FromBlock(body)) : BuilderResult.From(body.Statements);
+        return RequiresDoScope(syntax, ctx) ? BuilderResult.FromSingle(StatementHelpers.DoFromBlock(body)) : BuilderResult.From(body.Statements);
     }
 
     private static BuilderResult BuildFromLocalDeclStmt(LocalDeclarationStatementSyntax localDeclStmtSyntax, TranspilationContext ctx) {

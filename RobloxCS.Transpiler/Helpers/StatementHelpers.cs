@@ -10,6 +10,13 @@ using RobloxCS.AST.Types;
 namespace RobloxCS.Transpiler.Helpers;
 
 public static class StatementHelpers {
+    public static DoStatement DoFromBlock(Block block) {
+        var stmt = new DoStatement { Block = block };
+        block.Parent = stmt;
+
+        return stmt;
+    }
+
     public static LocalAssignmentStatement UntypedLocalAssignment(string name, Expression expr) {
         var stmtName = SymbolExpression.FromString(name);
 
