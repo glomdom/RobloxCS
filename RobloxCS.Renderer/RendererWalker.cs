@@ -6,6 +6,7 @@ using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
+using RobloxCS.Common;
 
 namespace RobloxCS.Renderer;
 
@@ -28,7 +29,13 @@ public class RendererWalker : AstVisitorBase {
     }
 
     public override void VisitBlock(Block node) {
-        node.Statements.ForEach(Visit);
+        node.Statements.ForEach(VisitStatement);
+    }
+
+    public override void VisitStatement(Statement node) {
+        Logger.Debug("Statement {Statement} has parent {Parent}", node, node.Parent);
+        
+        Visit(node);
     }
 
     public override void VisitTypeAssertionExpression(TypeAssertionExpression node) {
