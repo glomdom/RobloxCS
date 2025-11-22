@@ -1,12 +1,13 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
+using RobloxCS.Transpiler.Helpers;
 using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
 
 public static class BlockBuilder {
     public static Block Build(BlockSyntax syntax, TranspilationContext ctx) {
-        var block = Block.Empty();
+        var block = BlockHelpers.Empty();
 
         ctx.PushScope();
         var result = syntax.Statements.Select(statement => StatementBuilder.Build(statement, ctx)).Flatten();

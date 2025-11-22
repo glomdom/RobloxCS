@@ -8,6 +8,7 @@ using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
+using RobloxCS.Transpiler.Helpers;
 using TypeInfo = RobloxCS.AST.Types.TypeInfo;
 
 namespace RobloxCS.Transpiler.Builders;
@@ -39,7 +40,7 @@ public static class FunctionBuilder {
     }
 
     private static Block CreateNewMethodBlock(INamedTypeSymbol classSymbol, FunctionArgs ctorArgs) {
-        var block = Block.Empty();
+        var block = BlockHelpers.Empty();
 
         // local self = setmetatable({}, Class)
         block.AddStatement(new LocalAssignmentStatement {
@@ -67,7 +68,7 @@ public static class FunctionBuilder {
     }
 
     public static FunctionDeclarationStatement CreateConstructor(INamedTypeSymbol classSymbol, IMethodSymbol ctorSymbol, TranspilationContext ctx) {
-        var functionBlock = Block.Empty();
+        var functionBlock = BlockHelpers.Empty();
 
         var fields = classSymbol.GetMembers().OfType<IFieldSymbol>();
         foreach (var a in TypeFieldBuilder.CreateFieldAssignmentsFromFields(fields, ctx)) {
@@ -126,7 +127,7 @@ public static class FunctionBuilder {
             throw new Exception("Could not find containing class symbol.");
         }
 
-        var functionBlock = Block.Empty();
+        var functionBlock = BlockHelpers.Empty();
 
         var selfType = BasicTypeInfo.FromString($"_Instance{cls.Name}");
         var selfShadowAssignment = LocalAssignmentStatement.Single("self", SymbolExpression.FromString("self"), selfType);
