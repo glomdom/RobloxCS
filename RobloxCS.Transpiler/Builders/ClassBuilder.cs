@@ -11,8 +11,6 @@ using Serilog;
 namespace RobloxCS.Transpiler.Builders;
 
 public static class ClassBuilder {
-    private static readonly TypeDeclarationStatement NoTypeSentinel = TypeDeclarationStatement.EmptyTable("__SHOULD_NOT_BE_IN_OUTPUT");
-
     public static IEnumerable<Statement> Build(ClassDeclarationSyntax node, TranspilationContext ctx) {
         var classSymbol = ctx.Semantics.CheckedGetDeclaredSymbol(node);
         var className = classSymbol.Name;
