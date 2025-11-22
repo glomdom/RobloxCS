@@ -5,6 +5,7 @@ using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
+using RobloxCS.Transpiler.Helpers;
 using RobloxCS.Transpiler.Scoping;
 using Serilog;
 
@@ -35,7 +36,7 @@ public static class StatementBuilder {
         var condResult = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
         var stmtResult = Build(syntax.Statement, ctx);
 
-        var block = Block.From(stmtResult.Statements);
+        var block = BlockHelpers.From(stmtResult.Statements);
 
         var parenStmt = ParenthesisExpression.From(condResult.Expression);
         var reversedStmt = UnaryOperatorExpression.Reversed(parenStmt);
@@ -66,7 +67,7 @@ public static class StatementBuilder {
             throw new NotSupportedException("For loops without a condition are not supported.");
         }
 
-        var block = Block.Empty();
+        var block = BlockHelpers.Empty();
         var doStmt = new DoStatement { Block = block };
 
         ctx.PushScope();
@@ -74,7 +75,7 @@ public static class StatementBuilder {
         var loopVarBindingResult = BuildLoopVarAssignment(syntax, ctx);
         block.AddStatements(loopVarBindingResult.Statements);
 
-        var whileBlock = Block.Empty();
+        var whileBlock = BlockHelpers.Empty();
         var whileLoop = new WhileStatement { Block = whileBlock, Condition = BooleanExpression.True() };
 
         ctx.PushScope();
@@ -84,7 +85,7 @@ public static class StatementBuilder {
             var shouldIncrementVar = SymbolExpression.FromString("_shouldIncrement");
             block.AddStatement(LocalAssignmentStatement.Single(shouldIncrementVar.Value, BooleanExpression.False(), BasicTypeInfo.Boolean()));
 
-            var incIfBlock = Block.Empty();
+            var incIfBlock = BlockHelpers.Empty();
             foreach (var inc in incrementors) {
                 incIfBlock.AddStatements(inc.Statements);
             }
@@ -92,7 +93,7 @@ public static class StatementBuilder {
             var incIfStmt = new IfStatement {
                 Condition = shouldIncrementVar,
                 Block = incIfBlock,
-                Else = Block.From(new AssignmentStatement {
+                Else = BlockHelpers.From(new AssignmentStatement {
                     Vars = [VarName.FromSymbol(shouldIncrementVar)],
                     Expressions = [BooleanExpression.True()],
                 }),
@@ -104,11 +105,11 @@ public static class StatementBuilder {
         var rawCondResult = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
         var parCond = ParenthesisExpression.From(rawCondResult.Expression);
         var reverseCond = UnaryOperatorExpression.Reversed(parCond);
-        var ifStmt = new IfStatement { Condition = reverseCond, Block = Block.From(new BreakStatement()) };
+        var ifStmt = new IfStatement { Condition = reverseCond, Block = BlockHelpers.From(new BreakStatement()) };
         whileBlock.AddStatement(ifStmt);
 
         var stmt = Build(syntax.Statement, ctx);
-        whileBlock.AddBlock(Block.From(stmt.Statements));
+        whileBlock.AddBlock(BlockHelpers.From(stmt.Statements));
 
         ctx.PopScope();
         block.AddStatement(whileLoop);
@@ -164,7 +165,7 @@ public static class StatementBuilder {
         var condition = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
         var stmt = Build(syntax.Statement, ctx);
 
-        var block = Block.From(stmt.Statements);
+        var block = BlockHelpers.From(stmt.Statements);
         var whileStmt = new WhileStatement { Condition = condition.Expression, Block = block };
 
         return BuilderResult.FromSingle(whileStmt);
@@ -173,7 +174,7 @@ public static class StatementBuilder {
     private static BuilderResult BuildFromIfStmt(IfStatementSyntax syntax, TranspilationContext ctx) {
         var condition = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
         var stmt = Build(syntax.Statement, ctx);
-        var block = Block.From(stmt.Statements);
+        var block = BlockHelpers.From(stmt.Statements);
 
         var elseIfBlocks = new Queue<ElseIfBlock>();
         Block? elseBlock = null;
@@ -183,7 +184,7 @@ public static class StatementBuilder {
             if (elseClause.Statement is IfStatementSyntax elseIfSyntax) {
                 var elseIfCondition = ExpressionBuilder.BuildFromSyntax(elseIfSyntax.Condition, ctx);
                 var elseIfStmt = Build(elseIfSyntax.Statement, ctx);
-                var elseIfBlock = Block.From(elseIfStmt.Statements);
+                var elseIfBlock = BlockHelpers.From(elseIfStmt.Statements);
 
                 elseIfBlocks.Enqueue(new ElseIfBlock {
                     Condition = elseIfCondition.Expression,

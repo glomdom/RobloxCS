@@ -5,6 +5,7 @@ using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
+using RobloxCS.Transpiler.Helpers;
 using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
@@ -112,9 +113,9 @@ public static class ClassBuilder {
     }
 
     private static Block BuildClassBody(TranspilationContext ctx, INamedTypeSymbol classSymbol, string className) {
-        var block = Block.Empty();
+        var block = BlockHelpers.Empty();
 
-        var toStringBlock = Block.Empty();
+        var toStringBlock = BlockHelpers.Empty();
         toStringBlock.AddStatement(ReturnStatement.FromExpressions([StringExpression.FromString(className)]));
 
         var toStringFunction = new AnonymousFunctionExpression {
