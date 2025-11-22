@@ -47,20 +47,24 @@ public static class StatementHelpers {
     public static FunctionDeclarationStatement FullFunctionDeclaration(string name, List<Parameter> pars, List<TypeInfo> types, Block body, TypeInfo returnType) {
         var funcName = ExpressionHelpers.FunctionNameFromString(name);
 
-        var decl = new FunctionDeclarationStatement {
-            Name = funcName,
-            Body = new FunctionBody {
-                Parameters = pars,
-                TypeSpecifiers = types,
-                Body = body,
-                ReturnType = returnType,
-            },
+        var funcBody = new FunctionBody {
+            Parameters = pars,
+            TypeSpecifiers = types,
+            Body = body,
+            ReturnType = returnType,
         };
 
-        pars.ForEach(p => p.Parent = decl);
-        types.ForEach(t => t.Parent = decl);
-        body.Parent = decl;
-        returnType.Parent = decl;
+        var decl = new FunctionDeclarationStatement {
+            Name = funcName,
+            Body = funcBody,
+        };
+
+        funcBody.Parent = decl;
+        funcName.Parent = decl;
+        returnType.Parent = funcBody;
+        body.Parent = funcBody;
+        types.ForEach(t => t.Parent = funcBody);
+        pars.ForEach(p => p.Parent = funcBody);
 
         return decl;
     }
