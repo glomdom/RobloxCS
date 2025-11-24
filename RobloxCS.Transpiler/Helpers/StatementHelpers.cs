@@ -17,6 +17,15 @@ public static class StatementHelpers {
         return stmt;
     }
 
+    public static TypeDeclarationStatement EmptyTableTypeDeclarationStatement(string name) {
+        var table = TypeHelpers.EmptyTableType();
+
+        var stmt = new TypeDeclarationStatement { Name = name, DeclareAs = table };
+        table.Parent = stmt;
+
+        return stmt;
+    }
+
     public static LocalAssignmentStatement UntypedLocalAssignment(string name, Expression expr) {
         var stmtName = SymbolExpression.FromString(name);
 
