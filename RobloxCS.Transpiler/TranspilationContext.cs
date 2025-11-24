@@ -34,7 +34,12 @@ public sealed class TranspilationContext {
 
     public void PopScope() => _scopes.Pop();
 
-    public Chunk ToChunk() => new() { Block = RootBlock };
+    public Chunk ToChunk() {
+        var chunk = new Chunk { Block = RootBlock };
+        RootBlock.Parent = chunk;
+
+        return chunk;
+    }
 
     public void Add(params Statement[] statements) {
         foreach (var s in statements) RootBlock.AddStatement(s);
