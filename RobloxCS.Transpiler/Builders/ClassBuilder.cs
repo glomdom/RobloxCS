@@ -34,7 +34,7 @@ public static class ClassBuilder {
         TranspilationContext ctx
     ) {
         var className = node.Identifier.ValueText;
-        var instanceDecl = TypeDeclarationStatement.EmptyTable($"_Instance{className}");
+        var instanceDecl = StatementHelpers.EmptyTableTypeDeclarationStatement($"_Instance{className}");
 
         {
             var members = node.Members
@@ -44,7 +44,7 @@ public static class ClassBuilder {
                 .SelectMany(s => TypeFieldBuilder.GenerateTypeFieldsFromField(s, ctx));
 
             foreach (var tf in members) {
-                (instanceDecl.DeclareAs as TableTypeInfo)?.Fields.Add(tf);
+                TypeHelpers.AddFieldToKnownTableType(instanceDecl, tf);
             }
         }
 

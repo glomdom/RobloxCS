@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
+using RobloxCS.Transpiler.Helpers;
 using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
@@ -46,16 +47,14 @@ public static class TypeFieldBuilder {
     }
 
     public static IEnumerable<TypeField> GenerateTypeFieldsFromField(ISymbol symbol, TranspilationContext ctx) {
-        if (symbol is not IFieldSymbol field) yield break;
+        if (symbol is not IFieldSymbol fieldSymbol) yield break;
 
-        var typeName = SyntaxUtilities.BasicFromSymbol(field.Type);
-        var isReadonly = field.IsReadOnly;
+        var typeName = SyntaxUtilities.BasicFromSymbol(fieldSymbol.Type);
+        var isReadonly = fieldSymbol.IsReadOnly;
 
-        yield return new TypeField {
-            Key = NameTypeFieldKey.FromString(field.Name),
-            Access = isReadonly ? AccessModifier.Read : null,
-            Value = typeName,
-        };
+        var field = TypeHelpers.FullTypeField(fieldSymbol.Name, typeName, isReadonly ? AccessModifier.Read : null);
+
+        yield return field;
     }
 
     public static IEnumerable<AssignmentStatement> CreateFieldAssignmentsFromFields(IEnumerable<IFieldSymbol> fields, TranspilationContext ctx) {
