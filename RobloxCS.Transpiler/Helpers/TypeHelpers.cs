@@ -14,17 +14,13 @@ public static class TypeHelpers {
         var tableInfo = (TableTypeInfo)stmt.DeclareAs;
 
         tableInfo.Fields.Add(field);
-        field.Parent = tableInfo;
     }
 
     public static NameTypeFieldKey NameTypeFieldKeyFromString(string name) => new() { Name = name };
 
     public static TypeField FullTypeField(string keyName, TypeInfo value, AccessModifier? access = null) {
         var key = NameTypeFieldKeyFromString(keyName);
-
         var field = new TypeField { Key = key, Value = value, Access = access };
-        key.Parent = field;
-        value.Parent = field;
 
         return field;
     }
@@ -34,9 +30,7 @@ public static class TypeHelpers {
             Name = name,
             TypeInfo = info,
         };
-
-        info.Parent = type;
-
+        
         return type;
     }
 
@@ -45,9 +39,7 @@ public static class TypeHelpers {
             Arguments = [],
             ReturnType = returnType,
         };
-
-        returnType.Parent = type;
-
+        
         return type;
     }
 
@@ -56,9 +48,6 @@ public static class TypeHelpers {
             Arguments = args,
             ReturnType = returnType,
         };
-
-        args.ForEach(a => a.Parent = type);
-        returnType.Parent = type;
 
         return type;
     }

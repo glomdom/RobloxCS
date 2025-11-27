@@ -19,16 +19,11 @@ public static class ExpressionHelpers {
             Arguments = arguments,
         };
 
-        arguments.Parent = suffix;
-
         var expr = new FunctionCallExpression {
             Prefix = prefix,
             Suffixes = [suffix],
         };
-
-        prefix.Parent = expr;
-        suffix.Parent = expr;
-
+        
         return expr;
     }
 
@@ -40,10 +35,7 @@ public static class ExpressionHelpers {
             Prefix = prefix,
             Suffixes = [suffix],
         };
-
-        prefix.Parent = stmt;
-        suffix.Parent = stmt;
-
+        
         return stmt;
     }
 
@@ -53,9 +45,7 @@ public static class ExpressionHelpers {
 
     public static FunctionArgs FunctionArgsFromExpressions(List<Expression> exprs) {
         var funcArgs = EmptyFunctionArgs();
-
         funcArgs.Arguments = exprs;
-        exprs.ForEach(expr => expr.Parent = funcArgs);
 
         return funcArgs;
     }
@@ -65,7 +55,6 @@ public static class ExpressionHelpers {
         var conv = exprs.ToList();
 
         funcArgs.Arguments = conv;
-        conv.ForEach(expr => expr.Parent = funcArgs);
 
         return funcArgs;
     }

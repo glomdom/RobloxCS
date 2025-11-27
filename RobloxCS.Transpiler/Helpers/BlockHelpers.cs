@@ -13,10 +13,7 @@ public static class BlockHelpers {
         /// Adds a statement to the block, changing the statements parent.
         /// </summary>
         /// <param name="statement">The statement that will be added to the block.</param>
-        public void AddStatement(Statement statement) {
-            block.Statements.Add(statement);
-            statement.Parent = block;
-        }
+        public void AddStatement(Statement statement) => block.Statements.Add(statement);
 
         /// <summary>
         /// Adds each statement to the block, changing their parent.
@@ -31,8 +28,6 @@ public static class BlockHelpers {
         /// <summary>
         /// Flattens the provided block into the block.
         /// </summary>
-        public void AddBlock(Block other) {
-            block.Statements.AddRange(other.Statements);
-        }
+        public void AddBlock(Block other) => block.Statements.AddRange(other.Statements);
     }
 }

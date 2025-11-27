@@ -12,16 +12,13 @@ namespace RobloxCS.Transpiler.Helpers;
 public static class StatementHelpers {
     public static DoStatement DoFromBlock(Block block) {
         var stmt = new DoStatement { Block = block };
-        block.Parent = stmt;
 
         return stmt;
     }
 
     public static TypeDeclarationStatement EmptyTableTypeDeclarationStatement(string name) {
         var table = TypeHelpers.EmptyTableType();
-
         var stmt = new TypeDeclarationStatement { Name = name, DeclareAs = table };
-        table.Parent = stmt;
 
         return stmt;
     }
@@ -34,19 +31,14 @@ public static class StatementHelpers {
             Expressions = [expr],
             Types = [],
         };
-
-        stmtName.Parent = stmt;
-        expr.Parent = stmt;
-
+        
         return stmt;
     }
 
     public static LocalAssignmentStatement SingleTypedLocalAssignment(string name, Expression expr, TypeInfo type) {
         var stmt = UntypedLocalAssignment(name, expr);
         stmt.Types = [type];
-
-        type.Parent = stmt;
-
+        
         return stmt;
     }
 
@@ -54,9 +46,7 @@ public static class StatementHelpers {
 
     public static ReturnStatement SimpleReturnStatement(Expression expr) {
         var stmt = EmptyReturnStatement();
-
-        expr.Parent = stmt;
-
+        
         return stmt;
     }
 
@@ -74,14 +64,7 @@ public static class StatementHelpers {
             Name = funcName,
             Body = funcBody,
         };
-
-        funcBody.Parent = decl;
-        funcName.Parent = decl;
-        returnType.Parent = funcBody;
-        body.Parent = funcBody;
-        types.ForEach(t => t.Parent = funcBody);
-        pars.ForEach(p => p.Parent = funcBody);
-
+        
         return decl;
     }
 
@@ -93,10 +76,7 @@ public static class StatementHelpers {
             Prefix = prefix,
             Suffixes = [suffix],
         };
-
-        prefix.Parent = stmt;
-        suffix.Parent = stmt;
-
+        
         return stmt;
     }
 
@@ -108,9 +88,6 @@ public static class StatementHelpers {
             Prefix = prefix,
             Suffixes = [suffix],
         };
-
-        prefix.Parent = stmt;
-        suffix.Parent = stmt;
 
         return stmt;
     }
