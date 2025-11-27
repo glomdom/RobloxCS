@@ -6,11 +6,7 @@ namespace RobloxCS.Transpiler.Helpers;
 public static class TypeHelpers {
     public static TableTypeInfo EmptyTableType() => new() { Fields = [] };
 
-    public static void AddFieldToTable(TableTypeInfo table, TypeField field) {
-        table.Fields.Add(field);
-        field.Parent = table;
-    }
-
+    public static void AddFieldToTable(TableTypeInfo table, TypeField field) => table.Fields.Add(field);
     public static void AddFieldsToTable(TableTypeInfo table, params TypeField[] fields) => table.Fields.AddRange(fields);
     public static void AddFieldsToTable(TableTypeInfo table, List<TypeField> fields) => table.Fields.AddRange(fields);
 
