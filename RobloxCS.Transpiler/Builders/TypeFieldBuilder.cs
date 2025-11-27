@@ -36,14 +36,11 @@ public static class TypeFieldBuilder {
 
         var args = names.Zip(types, (name, type) => new TypeArgument { Name = name, TypeInfo = type }).ToList();
 
-        yield return new TypeField {
-            Key = NameTypeFieldKey.FromString(symbol.Name),
-            Access = null,
-            Value = new CallbackTypeInfo {
-                Arguments = args,
-                ReturnType = SyntaxUtilities.BasicFromSymbol(symbol.ReturnType),
-            },
-        };
+        var callbackReturnType = SyntaxUtilities.BasicFromSymbol(symbol.ReturnType);
+        var callbackType = TypeHelpers.FullCallbackType(args, callbackReturnType);
+        var field = TypeHelpers.FullTypeField(symbol.Name, callbackType);
+
+        yield return field;
     }
 
     public static IEnumerable<TypeField> GenerateTypeFieldsFromField(ISymbol symbol, TranspilationContext ctx) {

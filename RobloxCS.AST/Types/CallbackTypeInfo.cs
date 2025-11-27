@@ -22,4 +22,6 @@ public sealed class CallbackTypeInfo : TypeInfo {
 
         yield return ReturnType;
     }
+
+    public override string ToString() => $"CallbackTypeInfo(({string.Join(", ", Arguments)}) -> {ReturnType})";
 }

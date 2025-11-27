@@ -28,4 +28,38 @@ public static class TypeHelpers {
 
         return field;
     }
+
+    public static TypeArgument FullTypeArgument(string name, TypeInfo info) {
+        var type = new TypeArgument {
+            Name = name,
+            TypeInfo = info,
+        };
+
+        info.Parent = type;
+
+        return type;
+    }
+
+    public static CallbackTypeInfo NoParamCallbackType(TypeInfo returnType) {
+        var type = new CallbackTypeInfo {
+            Arguments = [],
+            ReturnType = returnType,
+        };
+
+        returnType.Parent = type;
+
+        return type;
+    }
+
+    public static CallbackTypeInfo FullCallbackType(List<TypeArgument> args, TypeInfo returnType) {
+        var type = new CallbackTypeInfo {
+            Arguments = args,
+            ReturnType = returnType,
+        };
+
+        args.ForEach(a => a.Parent = type);
+        returnType.Parent = type;
+
+        return type;
+    }
 }

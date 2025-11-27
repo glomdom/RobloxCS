@@ -10,6 +10,8 @@ public sealed class NameTypeFieldKey : TypeFieldKey {
     public override NameTypeFieldKey DeepClone() => new() { Name = Name };
     public override void Accept(IAstVisitor v) => v.VisitNameTypeFieldKey(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitNameTypeFieldKey(this);
+
+    public override string ToString() => $"NameTypeFieldKey({Name})";
 }
 
 public sealed class IndexSignatureTypeFieldKey : TypeFieldKey {
@@ -24,4 +26,6 @@ public sealed class IndexSignatureTypeFieldKey : TypeFieldKey {
     public override IEnumerable<AstNode> Children() {
         yield return Inner;
     }
+
+    public override string ToString() => $"IndexSignatureTypeFieldKey({Inner})";
 }

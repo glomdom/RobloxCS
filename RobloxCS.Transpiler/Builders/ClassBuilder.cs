@@ -48,9 +48,9 @@ public static class ClassBuilder {
             }
         }
 
-        var ctorField = BuildConstructorField(node, instanceDecl.Name, ctx);
+        var ctorField = BuildConstructorField(node, ctx);
 
-        (instanceDecl.DeclareAs as TableTypeInfo)?.Fields.Add(ctorField);
+        TypeHelpers.AddFieldToKnownTableType(instanceDecl, ctorField);
 
         var typeDecl = TypeDeclarationStatement.EmptyTable($"_Type{className}");
 
@@ -83,26 +83,24 @@ public static class ClassBuilder {
         typeTable.Fields.Add(newField);
     }
 
-    private static TypeField BuildConstructorField(ClassDeclarationSyntax node, string instanceTypeName, TranspilationContext ctx) {
+    private static TypeField BuildConstructorField(ClassDeclarationSyntax node, TranspilationContext ctx) {
         if (ctx.Semantics.GetDeclaredSymbol(node) is not INamedTypeSymbol classSymbol) return DefaultCtor();
 
         var ctorSymbol = classSymbol.InstanceConstructors.FirstOrDefault(c => !c.IsStatic);
         if (ctorSymbol is null) return DefaultCtor();
 
         var parameters = ctorSymbol.Parameters
-            .Select(p => TypeArgument.From(p.Name, SyntaxUtilities.BasicFromSymbol(p.Type)))
+            .Select(p => TypeHelpers.FullTypeArgument(p.Name, SyntaxUtilities.BasicFromSymbol(p.Type)))
             .ToList();
 
-        var ctorType = new CallbackTypeInfo {
-            Arguments = parameters.Prepend(TypeArgument.From("self", BasicTypeInfo.FromString(instanceTypeName))).ToList(),
-            ReturnType = BasicTypeInfo.Void(),
-        };
+        var cbType = TypeHelpers.FullCallbackType(parameters, BasicTypeInfo.Void());
 
-        return TypeField.FromNameAndType("constructor", ctorType);
+        return TypeHelpers.FullTypeField("constructor", cbType);
 
         TypeField DefaultCtor() {
-            var cb = new CallbackTypeInfo { Arguments = [], ReturnType = BasicTypeInfo.Void() };
-            return TypeField.FromNameAndType("constructor", cb);
+            var cb = TypeHelpers.NoParamCallbackType(BasicTypeInfo.Void());
+
+            return TypeHelpers.FullTypeField("constructor", cb);
         }
     }
 
