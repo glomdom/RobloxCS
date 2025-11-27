@@ -74,18 +74,15 @@ public static class ClassBuilder {
         var newKey = NameTypeFieldKey.FromString("new");
         var newField = ctorField.DeepClone();
         newField.Key = newKey;
-        newKey.Parent = newField;
 
         if (newField.Value is CallbackTypeInfo { Arguments.Count: > 0 } cb) {
             var cbReturnType = BasicTypeInfo.FromString($"_Instance{className}");
             
             cb.Arguments.RemoveAt(0); // drop `self`
             cb.ReturnType = cbReturnType;
-            cbReturnType.Parent = cb;
         }
 
         TypeHelpers.AddFieldToTable(typeTable, newField);
-        typeTable.Parent = typeDecl;
     }
 
     private static TypeField BuildConstructorField(ClassDeclarationSyntax node, TranspilationContext ctx) {

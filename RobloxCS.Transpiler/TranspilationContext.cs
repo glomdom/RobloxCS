@@ -36,7 +36,6 @@ public sealed class TranspilationContext {
 
     public Chunk ToChunk() {
         var chunk = new Chunk { Block = RootBlock };
-        RootBlock.Parent = chunk;
 
         return chunk;
     }

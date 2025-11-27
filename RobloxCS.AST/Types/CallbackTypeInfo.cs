@@ -7,23 +7,11 @@ public sealed class CallbackTypeInfo : TypeInfo {
     public required List<TypeArgument> Arguments;
     public required TypeInfo ReturnType;
 
-    public override CallbackTypeInfo DeepClone() {
-        var newGenerics = Generics?.DeepClone();
-        var newArgs = Arguments.Select(arg => arg.DeepClone()).ToList();
-        var newRetType = (TypeInfo)ReturnType.DeepClone();
-
-        var cb = new CallbackTypeInfo {
-            Generics = newGenerics,
-            Arguments = newArgs,
-            ReturnType = newRetType,
-        };
-
-        newGenerics?.Parent = cb;
-        newArgs.ForEach(a => a.Parent = cb);
-        newRetType.Parent = cb;
-
-        return cb;
-    }
+    public override CallbackTypeInfo DeepClone() => new() {
+        Generics = Generics?.DeepClone(),
+        Arguments = Arguments.Select(arg => arg.DeepClone()).ToList(),
+        ReturnType = (TypeInfo)ReturnType.DeepClone(),
+    };
 
     public override void Accept(IAstVisitor v) => v.VisitCallbackTypeInfo(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitCallbackTypeInfo(this);
