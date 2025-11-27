@@ -48,22 +48,21 @@ public static class ClassBuilder {
             }
         }
 
-        var ctorField = BuildConstructorField(node, instanceDecl.Name, ctx);
+        var ctorField = BuildConstructorField(node, ctx);
 
-        (instanceDecl.DeclareAs as TableTypeInfo)?.Fields.Add(ctorField);
+        TypeHelpers.AddFieldToKnownTableType(instanceDecl, ctorField);
 
-        var typeDecl = TypeDeclarationStatement.EmptyTable($"_Type{className}");
+        var typeDecl = StatementHelpers.EmptyTableTypeDeclarationStatement($"_Type{className}");
 
         {
             var members = node.Members
                 .SelectMany(m => GetMemberSymbols(m, ctx))
                 .Where(s => s is IFieldSymbol or IPropertySymbol or IMethodSymbol)
                 .Where(s => s.IsStatic)
-                .SelectMany(s => TypeFieldBuilder.GenerateTypeFieldsFromField(s, ctx));
-
-            foreach (var tf in members) {
-                (typeDecl.DeclareAs as TableTypeInfo)?.Fields.Add(tf);
-            }
+                .SelectMany(s => TypeFieldBuilder.GenerateTypeFieldsFromField(s, ctx))
+                .ToList();
+            
+            members.ForEach(tf => TypeHelpers.AddFieldToKnownTableType(typeDecl, tf));
         }
 
         return (instanceDecl, typeDecl, ctorField);
@@ -72,37 +71,41 @@ public static class ClassBuilder {
     private static void CreateClassFields(TypeDeclarationStatement typeDecl, TypeField ctorField, string className) {
         if (typeDecl.DeclareAs is not TableTypeInfo typeTable) return;
 
+        var newKey = NameTypeFieldKey.FromString("new");
         var newField = ctorField.DeepClone();
-        newField.Key = NameTypeFieldKey.FromString("new");
+        newField.Key = newKey;
+        newKey.Parent = newField;
 
         if (newField.Value is CallbackTypeInfo { Arguments.Count: > 0 } cb) {
+            var cbReturnType = BasicTypeInfo.FromString($"_Instance{className}");
+            
             cb.Arguments.RemoveAt(0); // drop `self`
-            cb.ReturnType = BasicTypeInfo.FromString($"_Instance{className}");
+            cb.ReturnType = cbReturnType;
+            cbReturnType.Parent = cb;
         }
 
-        typeTable.Fields.Add(newField);
+        TypeHelpers.AddFieldToTable(typeTable, newField);
+        typeTable.Parent = typeDecl;
     }
 
-    private static TypeField BuildConstructorField(ClassDeclarationSyntax node, string instanceTypeName, TranspilationContext ctx) {
+    private static TypeField BuildConstructorField(ClassDeclarationSyntax node, TranspilationContext ctx) {
         if (ctx.Semantics.GetDeclaredSymbol(node) is not INamedTypeSymbol classSymbol) return DefaultCtor();
 
         var ctorSymbol = classSymbol.InstanceConstructors.FirstOrDefault(c => !c.IsStatic);
         if (ctorSymbol is null) return DefaultCtor();
 
         var parameters = ctorSymbol.Parameters
-            .Select(p => TypeArgument.From(p.Name, SyntaxUtilities.BasicFromSymbol(p.Type)))
+            .Select(p => TypeHelpers.FullTypeArgument(p.Name, SyntaxUtilities.BasicFromSymbol(p.Type)))
             .ToList();
 
-        var ctorType = new CallbackTypeInfo {
-            Arguments = parameters.Prepend(TypeArgument.From("self", BasicTypeInfo.FromString(instanceTypeName))).ToList(),
-            ReturnType = BasicTypeInfo.Void(),
-        };
+        var cbType = TypeHelpers.FullCallbackType(parameters, BasicTypeInfo.Void());
 
-        return TypeField.FromNameAndType("constructor", ctorType);
+        return TypeHelpers.FullTypeField("constructor", cbType);
 
         TypeField DefaultCtor() {
-            var cb = new CallbackTypeInfo { Arguments = [], ReturnType = BasicTypeInfo.Void() };
-            return TypeField.FromNameAndType("constructor", cb);
+            var cb = TypeHelpers.NoParamCallbackType(BasicTypeInfo.Void());
+
+            return TypeHelpers.FullTypeField("constructor", cb);
         }
     }
 
