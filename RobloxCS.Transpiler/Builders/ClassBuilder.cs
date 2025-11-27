@@ -52,18 +52,17 @@ public static class ClassBuilder {
 
         TypeHelpers.AddFieldToKnownTableType(instanceDecl, ctorField);
 
-        var typeDecl = TypeDeclarationStatement.EmptyTable($"_Type{className}");
+        var typeDecl = StatementHelpers.EmptyTableTypeDeclarationStatement($"_Type{className}");
 
         {
             var members = node.Members
                 .SelectMany(m => GetMemberSymbols(m, ctx))
                 .Where(s => s is IFieldSymbol or IPropertySymbol or IMethodSymbol)
                 .Where(s => s.IsStatic)
-                .SelectMany(s => TypeFieldBuilder.GenerateTypeFieldsFromField(s, ctx));
-
-            foreach (var tf in members) {
-                (typeDecl.DeclareAs as TableTypeInfo)?.Fields.Add(tf);
-            }
+                .SelectMany(s => TypeFieldBuilder.GenerateTypeFieldsFromField(s, ctx))
+                .ToList();
+            
+            members.ForEach(tf => TypeHelpers.AddFieldToKnownTableType(typeDecl, tf));
         }
 
         return (instanceDecl, typeDecl, ctorField);
@@ -72,15 +71,21 @@ public static class ClassBuilder {
     private static void CreateClassFields(TypeDeclarationStatement typeDecl, TypeField ctorField, string className) {
         if (typeDecl.DeclareAs is not TableTypeInfo typeTable) return;
 
+        var newKey = NameTypeFieldKey.FromString("new");
         var newField = ctorField.DeepClone();
-        newField.Key = NameTypeFieldKey.FromString("new");
+        newField.Key = newKey;
+        newKey.Parent = newField;
 
         if (newField.Value is CallbackTypeInfo { Arguments.Count: > 0 } cb) {
+            var cbReturnType = BasicTypeInfo.FromString($"_Instance{className}");
+            
             cb.Arguments.RemoveAt(0); // drop `self`
-            cb.ReturnType = BasicTypeInfo.FromString($"_Instance{className}");
+            cb.ReturnType = cbReturnType;
+            cbReturnType.Parent = cb;
         }
 
-        typeTable.Fields.Add(newField);
+        TypeHelpers.AddFieldToTable(typeTable, newField);
+        typeTable.Parent = typeDecl;
     }
 
     private static TypeField BuildConstructorField(ClassDeclarationSyntax node, TranspilationContext ctx) {
