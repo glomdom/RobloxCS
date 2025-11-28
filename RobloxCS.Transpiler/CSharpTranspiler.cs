@@ -4,36 +4,25 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.Compiler;
 using RobloxCS.Transpiler.Builders;
+using RobloxCS.Transpiler.Passes;
 using Serilog;
 
 namespace RobloxCS.Transpiler;
 
-public sealed class CSharpTranspiler : CSharpSyntaxWalker {
+public sealed class CSharpTranspiler {
     public TranspilationContext Ctx { get; }
+    public PassManager PassManager { get; }
 
     public CSharpTranspiler(TranspilerOptions options, CSharpCompiler compiler) {
         Ctx = new TranspilationContext(options, compiler);
+        PassManager = new PassManager();
+        
+        PassManager.Register(new ConverterPass());
     }
 
     public Chunk Transpile() {
-        Log.Information("Starting to transpile");
-        var watch = Stopwatch.StartNew();
-
-        Visit(Ctx.Root);
-
-        watch.Stop();
-        Log.Information("Finished transpiling in {Elapsed}ms", watch.ElapsedMilliseconds);
+        PassManager.Run(Ctx);
 
         return Ctx.ToChunk();
-    }
-
-    public override void VisitClassDeclaration(ClassDeclarationSyntax node) {
-        var classStatements = ClassBuilder.Build(node, Ctx);
-
-        foreach (var stmt in classStatements) {
-            Ctx.Add(stmt);
-        }
-
-        base.VisitClassDeclaration(node);
     }
 }
