@@ -11,4 +11,9 @@ public class TypeAssertionExpression : Expression {
     public override TypeAssertionExpression DeepClone() => new() { Expression = (Expression)Expression.DeepClone(), AssertTo = (TypeInfo)AssertTo.DeepClone() };
     public override void Accept(IAstVisitor v) => v.VisitTypeAssertionExpression(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitTypeAssertionExpression(this);
+
+    public override IEnumerable<AstNode> Children() {
+        yield return Expression;
+        yield return AssertTo;
+    }
 }

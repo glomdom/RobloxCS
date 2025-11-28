@@ -11,4 +11,15 @@ public sealed class IfStatement : Statement {
     public override AstNode DeepClone() => throw new NotImplementedException();
     public override void Accept(IAstVisitor v) => v.VisitIfStatement(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitIfStatement(this);
+
+    public override IEnumerable<AstNode> Children() {
+        yield return Condition;
+        yield return Block;
+
+        if (ElseIf is not null) {
+            foreach (var elseifs in ElseIf) yield return elseifs;
+        }
+
+        if (Else is not null) yield return Else;
+    }
 }

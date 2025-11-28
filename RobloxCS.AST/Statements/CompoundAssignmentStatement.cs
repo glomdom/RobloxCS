@@ -10,4 +10,9 @@ public sealed class CompoundAssignmentStatement : Statement {
     public override AstNode DeepClone() => throw new NotImplementedException();
     public override void Accept(IAstVisitor v) => v.VisitCompoundAssignmentStatement(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitCompoundAssignmentStatement(this);
+
+    public override IEnumerable<AstNode> Children() {
+        yield return Right;
+        yield return Left;
+    }
 }

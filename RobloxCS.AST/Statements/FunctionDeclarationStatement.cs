@@ -12,6 +12,7 @@ public sealed class FunctionDeclarationStatement : Statement {
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitFunctionDeclaration(this);
 
     public override IEnumerable<AstNode> Children() {
+        yield return Name;
         yield return Body;
     }
 }

@@ -9,4 +9,9 @@ public sealed class RepeatStatement : Statement {
     public override AstNode DeepClone() => throw new NotImplementedException();
     public override void Accept(IAstVisitor v) => v.VisitRepeatStatement(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitRepeatStatement(this);
+
+    public override IEnumerable<AstNode> Children() {
+        yield return Block;
+        yield return Until;
+    }
 }

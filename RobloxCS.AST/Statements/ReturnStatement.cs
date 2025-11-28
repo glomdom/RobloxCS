@@ -12,7 +12,5 @@ public sealed class ReturnStatement : Statement {
     public override void Accept(IAstVisitor v) => v.VisitReturn(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitReturn(this);
 
-    public override IEnumerable<AstNode> Children() {
-        return Returns;
-    }
+    public override IEnumerable<AstNode> Children() => Returns;
 }

@@ -13,4 +13,10 @@ public class FunctionCallStatement : Statement {
     public override FunctionCallStatement DeepClone() => new() { Prefix = (Prefix)Prefix.DeepClone(), Suffixes = Suffixes.Select(s => (Suffix)s.DeepClone()).ToList() };
     public override void Accept(IAstVisitor v) => v.VisitFunctionCallStatement(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.DefaultVisit(this);
+
+    public override IEnumerable<AstNode> Children() {
+        yield return Prefix;
+
+        foreach (var suffix in Suffixes) yield return suffix;
+    }
 }

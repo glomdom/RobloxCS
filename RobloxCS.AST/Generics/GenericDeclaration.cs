@@ -10,7 +10,5 @@ public sealed class GenericDeclaration : AstNode {
     public override void Accept(IAstVisitor v) => v.VisitGenericDeclaration(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitGenericDeclaration(this);
 
-    public override IEnumerable<AstNode> Children() {
-        return Parameters;
-    }
+    public override IEnumerable<AstNode> Children() => Parameters;
 }

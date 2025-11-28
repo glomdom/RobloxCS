@@ -8,4 +8,9 @@ public sealed class BinaryOperatorExpression : Expression {
     public override AstNode DeepClone() => throw new NotImplementedException();
     public override void Accept(IAstVisitor v) => v.VisitBinaryOperatorExpression(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitBinaryOperatorExpression(this);
+
+    public override IEnumerable<AstNode> Children() {
+        yield return Left;
+        yield return Right;
+    }
 }

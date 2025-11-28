@@ -9,4 +9,9 @@ public sealed class ElseIfExpression : Expression {
     public override AstNode DeepClone() => throw new NotImplementedException();
     public override void Accept(IAstVisitor v) => v.VisitElseIfExpression(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitElseIfExpression(this);
+
+    public override IEnumerable<AstNode> Children() {
+        yield return Condition;
+        yield return Expression;
+    }
 }

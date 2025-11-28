@@ -9,4 +9,8 @@ public sealed class MethodCall : Call {
     public override MethodCall DeepClone() => new() { Name = Name, Args = Args.DeepClone() };
     public override void Accept(IAstVisitor v) => v.VisitMethodCall(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitMethodCall(this);
+
+    public override IEnumerable<AstNode> Children() {
+        yield return Args;
+    }
 }
