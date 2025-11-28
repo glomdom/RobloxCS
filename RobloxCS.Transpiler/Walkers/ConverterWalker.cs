@@ -2,12 +2,12 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.Transpiler.Builders;
 
-namespace RobloxCS.Transpiler;
+namespace RobloxCS.Transpiler.Walkers;
 
-public sealed class SyntaxWalker : CSharpSyntaxWalker {
+public sealed class ConverterWalker : CSharpSyntaxWalker {
     public TranspilationContext Ctx { get; }
 
-    public SyntaxWalker(TranspilationContext ctx) {
+    public ConverterWalker(TranspilationContext ctx) {
         Ctx = ctx;
     }
     

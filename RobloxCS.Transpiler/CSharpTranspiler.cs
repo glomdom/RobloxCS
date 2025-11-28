@@ -18,6 +18,7 @@ public sealed class CSharpTranspiler {
         PassManager = new PassManager();
         
         PassManager.Register(new ConverterPass());
+        PassManager.Register(new LinkerPass());
     }
 
     public Chunk Transpile() {

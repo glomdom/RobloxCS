@@ -69,17 +69,13 @@ public static class StatementBuilder {
 
         var block = BlockHelpers.Empty();
         var doStmt = new DoStatement { Block = block };
-
-        ctx.PushScope();
-
+        
         var loopVarBindingResult = BuildLoopVarAssignment(syntax, ctx);
         block.AddStatements(loopVarBindingResult.Statements);
 
         var whileBlock = BlockHelpers.Empty();
         var whileLoop = new WhileStatement { Block = whileBlock, Condition = BooleanExpression.True() };
-
-        ctx.PushScope();
-
+        
         var incrementors = syntax.Incrementors.Select(expr => BuildFromExprSyntax(expr, ctx)).ToList();
         if (incrementors.Count > 0) {
             var shouldIncrementVar = SymbolExpression.FromString("_shouldIncrement");
@@ -111,9 +107,7 @@ public static class StatementBuilder {
         var stmt = Build(syntax.Statement, ctx);
         whileBlock.AddBlock(BlockHelpers.From(stmt.Statements));
 
-        ctx.PopScope();
         block.AddStatement(whileLoop);
-        ctx.PopScope();
 
         return BuilderResult.FromSingle(doStmt);
     }
@@ -208,7 +202,9 @@ public static class StatementBuilder {
     private static BuilderResult BuildFromBlock(BlockSyntax syntax, TranspilationContext ctx) {
         var body = BlockBuilder.Build(syntax, ctx);
 
-        return RequiresDoScope(syntax, ctx) ? BuilderResult.FromSingle(StatementHelpers.DoFromBlock(body)) : BuilderResult.From(body.Statements);
+        return RequiresDoScope(syntax, ctx)
+            ? BuilderResult.FromSingle(StatementHelpers.DoFromBlock(body))
+            : BuilderResult.From(body.Statements);
     }
 
     private static BuilderResult BuildFromLocalDeclStmt(LocalDeclarationStatementSyntax localDeclStmtSyntax, TranspilationContext ctx) {
@@ -223,15 +219,6 @@ public static class StatementBuilder {
         var typeSym = ctx.Semantics.CheckedGetTypeInfo(decl.Type);
 
         var type = SyntaxUtilities.BasicFromSymbol(typeSym);
-        var varSymbols = varNames.Select(vn => new VariableSymbol(vn, type)).ToList();
-
-        for (var i = 0; i < vars.Count; i++) {
-            var success = ctx.CurrentScope.TryDeclare(varNames[i], varSymbols[i]);
-            if (!success) {
-                throw new Exception($"Failed to declare {varNames[i]} in scope.");
-            }
-        }
-
         var assignment = LocalAssignmentStatement.OfSingleType(varNames, initExprs, type);
 
         return BuilderResult.From([..extras, assignment]);
@@ -299,18 +286,15 @@ public static class StatementBuilder {
 
     private static bool RequiresDoScope(BlockSyntax block, TranspilationContext ctx) {
         var parentKind = block.Parent?.Kind();
-        var isDirectBody = parentKind is SyntaxKind.IfStatement
-            or SyntaxKind.ElseClause
-            or SyntaxKind.ForStatement
-            or SyntaxKind.WhileStatement
-            or SyntaxKind.DoStatement;
+        var isDirectBody = parentKind is SyntaxKind.IfStatement or SyntaxKind.ElseClause or SyntaxKind.ForStatement or SyntaxKind.WhileStatement or SyntaxKind.DoStatement;
 
         if (!isDirectBody) return true;
 
         foreach (var stmt in block.Statements) {
             if (stmt is not LocalDeclarationStatementSyntax local) continue;
 
-            if (local.Declaration.Variables.Select(v => ctx.Semantics.GetDeclaredSymbol(v)).OfType<ISymbol>().Any(symbol => symbol.ContainingSymbol.Kind == SymbolKind.Method)) {
+            if (local.Declaration.Variables.Select(v => ctx.Semantics.GetDeclaredSymbol(v)).OfType<ISymbol>()
+                .Any(symbol => symbol.ContainingSymbol.Kind == SymbolKind.Method)) {
                 return true;
             }
         }
