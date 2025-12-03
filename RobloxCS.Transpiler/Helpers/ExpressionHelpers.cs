@@ -8,10 +8,15 @@ namespace RobloxCS.Transpiler.Helpers;
 public static class ExpressionHelpers {
     public static TableConstructorExpression EmptyTableConstructor() => new() { Fields = [] };
 
+    public static ParenthesisExpression ParenthesisFromInner(Expression inner) => new() { Expression = inner };
+
     /// <summary>
     /// Creates a simple function call in the form of <c>name(...args)</c>.
     /// </summary>
-    public static FunctionCallExpression SimpleFunctionCall(string name, params Expression[] args) {
+    public static FunctionCallExpression SimpleFunctionCall(string name, params Expression[] args) => SimpleFunctionCall(name, args.ToList());
+
+    /// <inheritdoc cref="SimpleFunctionCall(string, Expression[])"/>
+    public static FunctionCallExpression SimpleFunctionCall(string name, List<Expression> args) {
         var prefix = NamePrefix.FromString(name);
         var arguments = FunctionArgsFromExpressions(args);
 
@@ -23,7 +28,7 @@ public static class ExpressionHelpers {
             Prefix = prefix,
             Suffixes = [suffix],
         };
-        
+
         return expr;
     }
 
@@ -35,7 +40,7 @@ public static class ExpressionHelpers {
             Prefix = prefix,
             Suffixes = [suffix],
         };
-        
+
         return stmt;
     }
 

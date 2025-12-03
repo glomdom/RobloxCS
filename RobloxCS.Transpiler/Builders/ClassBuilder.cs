@@ -143,7 +143,7 @@ public static class ClassBuilder {
             }
 
             var exprResult = ExpressionBuilder.BuildFromSyntax(initializer, ctx);
-            var staticAssignment = AssignmentStatement.AssignTo($"{staticField.ContainingSymbol.Name}.{staticField.Name}", exprResult.Expression);
+            var staticAssignment = AssignmentStatement.AssignTo($"{staticField.ContainingSymbol.Name}.{staticField.Name}", exprResult);
 
             block.AddStatement(staticAssignment);
         }

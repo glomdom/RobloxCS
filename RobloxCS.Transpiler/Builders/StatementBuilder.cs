@@ -31,10 +31,10 @@ public static class StatementBuilder {
     private static ContinueStatement BuildFromContinueStmt() => new();
 
     private static RepeatStatement BuildFromDoStmt(DoStatementSyntax syntax, TranspilationContext ctx) {
-        var condResult = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
+        var cond = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
         var block = BlockBuilder.BuildFromStatement(syntax.Statement, ctx);
 
-        var parenStmt = ParenthesisExpression.From(condResult.Expression);
+        var parenStmt = ExpressionHelpers.ParenthesisFromInner(cond);
         var reversedStmt = UnaryOperatorExpression.Reversed(parenStmt);
         var repeatUntilStmt = new RepeatStatement { Block = block, Until = reversedStmt };
 
@@ -47,7 +47,7 @@ public static class StatementBuilder {
         if (syntax.Expression is not { } expr) return returnStmt;
 
         var exprResult = ExpressionBuilder.BuildFromSyntax(expr, ctx);
-        returnStmt.Returns = [exprResult.Expression];
+        returnStmt.Returns = [exprResult];
 
         return returnStmt;
     }
@@ -87,7 +87,7 @@ public static class StatementBuilder {
         }
 
         var rawCondResult = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
-        var parCond = ParenthesisExpression.From(rawCondResult.Expression);
+        var parCond = ParenthesisExpression.From(rawCondResult);
         var reverseCond = UnaryOperatorExpression.Reversed(parCond);
         var ifStmt = new IfStatement { Condition = reverseCond, Block = BlockHelpers.From(new BreakStatement()) };
         whileBlock.AddStatement(ifStmt);
@@ -106,7 +106,7 @@ public static class StatementBuilder {
                 var tOperand = ExpressionBuilder.BuildFromSyntax(postExpr.Operand, ctx);
                 var tOp = SyntaxUtilities.SyntaxTokenToCompoundOp(postExpr.OperatorToken);
                 var assignment = new CompoundAssignmentStatement {
-                    Left = tOperand.Expression,
+                    Left = tOperand,
                     Operator = tOp,
                     Right = new VarExpression { Expression = NumberExpression.From(1) }
                 };
@@ -134,7 +134,7 @@ public static class StatementBuilder {
         var initializers = vars
             .Where(v => v.Initializer is not null)
             .Select(v => v.Initializer!.Value)
-            .Select(es => ExpressionBuilder.BuildFromSyntax(es, ctx).Expression)
+            .Select(es => ExpressionBuilder.BuildFromSyntax(es, ctx))
             .ToList();
 
         var binding = new LocalAssignmentStatement { Expressions = initializers, Names = names, Types = [] };
@@ -147,7 +147,7 @@ public static class StatementBuilder {
         var stmt = Build(syntax.Statement, ctx);
 
         var block = BlockHelpers.From(stmt);
-        var whileStmt = new WhileStatement { Condition = condition.Expression, Block = block };
+        var whileStmt = new WhileStatement { Condition = condition, Block = block };
 
         return whileStmt;
     }
@@ -168,7 +168,7 @@ public static class StatementBuilder {
                 var elseIfBlock = BlockHelpers.From(elseIfStmt);
 
                 elseIfBlocks.Enqueue(new ElseIfBlock {
-                    Condition = elseIfCondition.Expression,
+                    Condition = elseIfCondition,
                     Block = elseIfBlock,
                 });
 
@@ -180,7 +180,7 @@ public static class StatementBuilder {
             }
         }
 
-        var ifStmt = new IfStatement { Block = block, Condition = condition.Expression, Else = elseBlock, ElseIf = elseIfBlocks.ToList() };
+        var ifStmt = new IfStatement { Block = block, Condition = condition, Else = elseBlock, ElseIf = elseIfBlocks.ToList() };
 
         return ifStmt;
     }
@@ -197,8 +197,7 @@ public static class StatementBuilder {
 
         var varNames = vars.Select(vds => vds.Identifier.ValueText).ToList();
         var initExprSyntaxes = vars.Where(v => v.Initializer is not null).Select(v => v.Initializer!.Value);
-        var initExprResults = initExprSyntaxes.Select(s => ExpressionBuilder.BuildFromSyntax(s, ctx)).ToList();
-        var initExprs = initExprResults.Select(r => r.Expression).ToList();
+        var initExprs = initExprSyntaxes.Select(s => ExpressionBuilder.BuildFromSyntax(s, ctx)).ToList();
         var typeSym = ctx.Semantics.CheckedGetTypeInfo(decl.Type);
 
         var type = SyntaxUtilities.BasicFromSymbol(typeSym);
@@ -219,7 +218,7 @@ public static class StatementBuilder {
 
             case InvocationExpressionSyntax invocationExpr: {
                 var exprResult = ExpressionBuilder.BuildFromSyntax(invocationExpr, ctx);
-                var stmt = FunctionCallStatement.FromExpression((FunctionCallExpression)exprResult.Expression);
+                var stmt = FunctionCallStatement.FromExpression((FunctionCallExpression)exprResult);
 
                 return stmt;
             }
@@ -228,7 +227,7 @@ public static class StatementBuilder {
                 var tOperand = ExpressionBuilder.BuildFromSyntax(postExpr.Operand, ctx);
                 var tOp = SyntaxUtilities.SyntaxTokenToCompoundOp(postExpr.OperatorToken);
                 var assignment = new CompoundAssignmentStatement {
-                    Left = tOperand.Expression,
+                    Left = tOperand,
                     Operator = tOp,
                     Right = new VarExpression { Expression = NumberExpression.From(1) }
                 };
@@ -247,7 +246,7 @@ public static class StatementBuilder {
                 var right = ExpressionBuilder.BuildFromSyntax(expr.Right, ctx);
                 var assignment = new AssignmentStatement {
                     Vars = [left],
-                    Expressions = [right.Expression],
+                    Expressions = [right],
                 };
 
                 return assignment;
@@ -258,7 +257,7 @@ public static class StatementBuilder {
                 var left = ExpressionBuilder.BuildFromSyntax(expr.Left, ctx);
                 var right = ExpressionBuilder.BuildFromSyntax(expr.Right, ctx);
                 var tOp = SyntaxUtilities.SyntaxTokenToCompoundOp(expr.OperatorToken);
-                var assignment = new CompoundAssignmentStatement { Left = left.Expression, Operator = tOp, Right = VarExpression.FromExpression(right.Expression) };
+                var assignment = new CompoundAssignmentStatement { Left = left, Operator = tOp, Right = VarExpression.FromExpression(right) };
 
                 return assignment;
             }

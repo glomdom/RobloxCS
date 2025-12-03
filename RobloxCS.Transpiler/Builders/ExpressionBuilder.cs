@@ -2,14 +2,12 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST.Expressions;
-using RobloxCS.AST.Prefixes;
-using RobloxCS.AST.Suffixes;
 using RobloxCS.Transpiler.Helpers;
 
 namespace RobloxCS.Transpiler.Builders;
 
 public static class ExpressionBuilder {
-    public static ExpressionBuilderResult BuildFromSyntax(ExpressionSyntax syntax, TranspilationContext ctx) {
+    public static Expression BuildFromSyntax(ExpressionSyntax syntax, TranspilationContext ctx) {
         return syntax switch {
             IdentifierNameSyntax nameSyntax => HandleIdentifierNameSyntax(nameSyntax, ctx),
             LiteralExpressionSyntax exprSyntax => HandleLiteralExpressionSyntax(exprSyntax, ctx),
@@ -23,55 +21,54 @@ public static class ExpressionBuilder {
         };
     }
 
-    private static ExpressionBuilderResult HandleParenthesizedExpressionSyntax(ParenthesizedExpressionSyntax syntax, TranspilationContext ctx) {
-        var exprResult = BuildFromSyntax(syntax.Expression, ctx);
+    private static ParenthesisExpression HandleParenthesizedExpressionSyntax(ParenthesizedExpressionSyntax syntax, TranspilationContext ctx) {
+        var inner = BuildFromSyntax(syntax.Expression, ctx);
 
-        return ExpressionBuilderResult.FromSingle(exprResult.Expression);
+        return ExpressionHelpers.ParenthesisFromInner(inner);
     }
 
-    private static ExpressionBuilderResult HandleConditionalExpressionSyntax(ConditionalExpressionSyntax syntax, TranspilationContext ctx) {
-        var condResult = BuildFromSyntax(syntax.Condition, ctx);
-        var whenFalseResult = BuildFromSyntax(syntax.WhenFalse, ctx);
-        var whenTrueResult = BuildFromSyntax(syntax.WhenTrue, ctx);
+    private static Expression HandleConditionalExpressionSyntax(ConditionalExpressionSyntax syntax, TranspilationContext ctx) {
+        var cond = BuildFromSyntax(syntax.Condition, ctx);
+        var whenFalse = BuildFromSyntax(syntax.WhenFalse, ctx);
+        var whenTrue = BuildFromSyntax(syntax.WhenTrue, ctx);
 
-        var ifExpr = IfExpression.From(condResult.Expression, whenTrueResult.Expression, whenFalseResult.Expression);
-        var result = ExpressionBuilderResult.FromSingle(ifExpr);
+        var ifExpr = IfExpression.From(cond, whenTrue, whenFalse);
 
-        return result;
+        return ifExpr;
     }
 
-    private static ExpressionBuilderResult HandleInvocationExpressionSyntax(InvocationExpressionSyntax syntax, TranspilationContext ctx) {
+    private static Expression HandleInvocationExpressionSyntax(InvocationExpressionSyntax syntax, TranspilationContext ctx) {
         var info = ctx.Semantics.GetSymbolInfo(syntax);
         if (info.Symbol is not IMethodSymbol methodSymbol) throw new Exception("Invocation expression is not a method.");
 
         if (methodSymbol.IsStatic) throw new Exception("Static methods are not yet supported.");
 
         var methodName = $"self:{methodSymbol.Name}";
-        var argExpressions = syntax.ArgumentList.Arguments.Select(ars => BuildFromSyntax(ars.Expression, ctx).Expression).ToList();
+        var args = syntax.ArgumentList.Arguments.Select(ars => BuildFromSyntax(ars.Expression, ctx)).ToList();
 
-        var call = new FunctionCallExpression { Prefix = NamePrefix.FromString(methodName), Suffixes = [AnonymousCall.FromArgs(ExpressionHelpers.FunctionArgsFromExpressions(argExpressions))] };
+        var call = ExpressionHelpers.SimpleFunctionCall(methodName, args);
 
-        return ExpressionBuilderResult.FromSingle(call);
+        return call;
     }
 
-    private static ExpressionBuilderResult HandlePostfixExpressionSyntax(PostfixUnaryExpressionSyntax syntax, TranspilationContext ctx) {
+    private static Expression HandlePostfixExpressionSyntax(PostfixUnaryExpressionSyntax syntax, TranspilationContext ctx) {
         var tOp = SyntaxUtilities.SyntaxTokenToUnOp(syntax.OperatorToken);
         var tOperand = BuildFromSyntax(syntax.Operand, ctx);
-        var expr = new UnaryOperatorExpression { UnOp = tOp, Expression = tOperand.Expression };
+        var expr = new UnaryOperatorExpression { UnOp = tOp, Expression = tOperand };
 
-        return ExpressionBuilderResult.FromSingle(expr);
+        return expr;
     }
 
-    private static ExpressionBuilderResult HandleUnaryExpressionSyntax(PrefixUnaryExpressionSyntax syntax, TranspilationContext ctx) {
+    private static Expression HandleUnaryExpressionSyntax(PrefixUnaryExpressionSyntax syntax, TranspilationContext ctx) {
         var tOp = SyntaxUtilities.SyntaxTokenToUnOp(syntax.OperatorToken);
         var tOperand = BuildFromSyntax(syntax.Operand, ctx);
-        var expr = new UnaryOperatorExpression { UnOp = tOp, Expression = tOperand.Expression };
+        var expr = new UnaryOperatorExpression { UnOp = tOp, Expression = tOperand };
         var parenExpr = ParenthesisExpression.From(expr);
 
-        return ExpressionBuilderResult.FromSingle(parenExpr);
+        return parenExpr;
     }
 
-    private static ExpressionBuilderResult HandleBinaryExpressionSyntax(BinaryExpressionSyntax syntax, TranspilationContext ctx) {
+    private static Expression HandleBinaryExpressionSyntax(BinaryExpressionSyntax syntax, TranspilationContext ctx) {
         var left = syntax.Left;
         var right = syntax.Right;
 
@@ -79,46 +76,46 @@ public static class ExpressionBuilder {
         var rightResult = BuildFromSyntax(right, ctx);
         var op = SyntaxUtilities.SyntaxTokenToBinOp(syntax.OperatorToken);
         var expr = new BinaryOperatorExpression {
-            Left = leftResult.Expression,
-            Right = rightResult.Expression,
+            Left = leftResult,
+            Right = rightResult,
             Op = op,
         };
 
-        return ExpressionBuilderResult.FromSingle(expr);
+        return expr;
     }
 
-    private static ExpressionBuilderResult HandleLiteralExpressionSyntax(LiteralExpressionSyntax syntax, TranspilationContext ctx) {
+    private static Expression HandleLiteralExpressionSyntax(LiteralExpressionSyntax syntax, TranspilationContext ctx) {
         return syntax.Kind() switch {
             SyntaxKind.NumericLiteralExpression => HandleNumericLiteralExpression(syntax, ctx),
-            SyntaxKind.FalseLiteralExpression => ExpressionBuilderResult.FromSingle(BooleanExpression.False()),
-            SyntaxKind.TrueLiteralExpression => ExpressionBuilderResult.FromSingle(BooleanExpression.True()),
+            SyntaxKind.FalseLiteralExpression => BooleanExpression.False(),
+            SyntaxKind.TrueLiteralExpression => BooleanExpression.True(),
 
             _ => throw new NotSupportedException($"LiteralExpressionSyntax {syntax.Kind()} is not supported."),
         };
     }
 
-    private static ExpressionBuilderResult HandleNumericLiteralExpression(LiteralExpressionSyntax syntax, TranspilationContext ctx) {
+    private static Expression HandleNumericLiteralExpression(LiteralExpressionSyntax syntax, TranspilationContext ctx) {
         var value = syntax.Token.Value!;
 
-        return ExpressionBuilderResult.FromSingle(NumberExpression.From(Convert.ToDouble(value)));
+        return NumberExpression.From(Convert.ToDouble(value));
     }
 
-    private static ExpressionBuilderResult HandleIdentifierNameSyntax(IdentifierNameSyntax syntax, TranspilationContext ctx) {
+    private static Expression HandleIdentifierNameSyntax(IdentifierNameSyntax syntax, TranspilationContext ctx) {
         var symbol = ctx.Semantics.GetSymbolInfo(syntax).Symbol;
         if (symbol is null) throw new Exception($"Semantics failed to get symbol info for {syntax.Identifier.ValueText}.");
 
         return symbol switch {
-            IParameterSymbol parameterSymbol => ExpressionBuilderResult.FromSingle(SymbolExpression.FromString(parameterSymbol.Name)),
-            ILocalSymbol localSymbol => ExpressionBuilderResult.FromSingle(SymbolExpression.FromString(localSymbol.Name)),
+            IParameterSymbol parameterSymbol => SymbolExpression.FromString(parameterSymbol.Name),
+            ILocalSymbol localSymbol => SymbolExpression.FromString(localSymbol.Name),
             IFieldSymbol fieldSymbol => HandleIFieldSymbol(fieldSymbol),
 
             _ => throw new NotSupportedException($"IdentifierNameSyntax {symbol.Kind} is not supported."),
         };
     }
 
-    private static ExpressionBuilderResult HandleIFieldSymbol(IFieldSymbol fieldSymbol) {
+    private static Expression HandleIFieldSymbol(IFieldSymbol fieldSymbol) {
         var fieldName = fieldSymbol.IsStatic ? $"{fieldSymbol.ContainingSymbol.Name}.{fieldSymbol.Name}" : $"self.{fieldSymbol.Name}";
 
-        return ExpressionBuilderResult.FromSingle(SymbolExpression.FromString(fieldName));
+        return SymbolExpression.FromString(fieldName);
     }
 }
