@@ -4,11 +4,14 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
-using RobloxCS.AST.Types;
+using RobloxCS.AST.Transient;
 using RobloxCS.Transpiler.Helpers;
 
 namespace RobloxCS.Transpiler.Builders;
 
+/// <summary>
+/// Builds statements. Statement result may be a <see cref="TransientStatement"/>.
+/// </summary>
 public static class StatementBuilder {
     public static Statement Build(StatementSyntax stmt, TranspilationContext ctx) {
         return stmt switch {
@@ -51,53 +54,16 @@ public static class StatementBuilder {
 
         return returnStmt;
     }
-    
-    private static DoStatement BuildFromForStmt(ForStatementSyntax syntax, TranspilationContext ctx) {
-        if (syntax.Condition is null) {
-            throw new NotSupportedException("For loops without a condition are not supported.");
-        }
 
-        var block = BlockHelpers.Empty();
-        var doStmt = new DoStatement { Block = block };
+    private static TransientForLoop BuildFromForStmt(ForStatementSyntax syntax, TranspilationContext ctx) {
+        var transient = new TransientForLoop {
+            Initializers = syntax.Initializers.Select(expr => BuildFromExprSyntax(expr, ctx)).ToList(),
+            Condition = syntax.Condition is not null ? ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx) : null,
+            Incrementors = syntax.Incrementors.Select(expr => BuildFromExprSyntax(expr, ctx)).ToList(),
+            Body = BlockBuilder.BuildFromStatement(syntax.Statement, ctx),
+        };
 
-        var loopVarBindingResult = BuildLoopVarAssignment(syntax, ctx);
-        block.AddStatement(loopVarBindingResult);
-
-        var whileBlock = BlockHelpers.Empty();
-        var whileLoop = new WhileStatement { Block = whileBlock, Condition = BooleanExpression.True() };
-
-        var incrementors = syntax.Incrementors.Select(expr => BuildFromExprSyntax(expr, ctx)).ToList();
-        if (incrementors.Count > 0) {
-            var shouldIncrementVar = SymbolExpression.FromString("_shouldIncrement");
-            block.AddStatement(LocalAssignmentStatement.Single(shouldIncrementVar.Value, BooleanExpression.False(), BasicTypeInfo.Boolean()));
-
-            var incIfBlock = BlockHelpers.Empty();
-            incIfBlock.AddStatements(incrementors);
-
-            var incIfStmt = new IfStatement {
-                Condition = shouldIncrementVar,
-                Block = incIfBlock,
-                Else = BlockHelpers.From(new AssignmentStatement {
-                    Vars = [VarName.FromSymbol(shouldIncrementVar)],
-                    Expressions = [BooleanExpression.True()],
-                }),
-            };
-
-            whileBlock.AddStatement(incIfStmt);
-        }
-
-        var rawCondResult = ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx);
-        var parCond = ParenthesisExpression.From(rawCondResult);
-        var reverseCond = UnaryOperatorExpression.Reversed(parCond);
-        var ifStmt = new IfStatement { Condition = reverseCond, Block = BlockHelpers.From(new BreakStatement()) };
-        whileBlock.AddStatement(ifStmt);
-
-        var stmt = Build(syntax.Statement, ctx);
-        whileBlock.AddBlock(BlockHelpers.From(stmt));
-
-        block.AddStatement(whileLoop);
-
-        return doStmt;
+        return transient;
     }
 
     private static Statement BuildFromExprSyntax(ExpressionSyntax syntax, TranspilationContext ctx) {
