@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using System.Diagnostics;
+using Serilog;
 
 namespace RobloxCS.Transpiler.Passes;
 
@@ -8,14 +9,20 @@ public sealed class PassManager {
     public void Register(IPass pass) => Passes.Add(pass);
 
     public void Run(TranspilationContext ctx) {
+        var passesWatch = Stopwatch.StartNew();
+
         Log.Information("Starting passes");
 
+        var passWatch = new Stopwatch();
         foreach (var pass in Passes) {
-            Log.Debug("Running {Pass}", pass.GetType().Name);
-            
+            passWatch.Restart();
             pass.Run(ctx);
+            passWatch.Stop();
+
+            Log.Debug("{Pass} finished in {ElapsedMs}ms", pass.GetType().Name, passWatch.ElapsedMilliseconds);
         }
-        
-        Log.Information("Finished passes");
+
+        passesWatch.Stop();
+        Log.Information("Finished passes in {ElapsedMs}ms", passesWatch.ElapsedMilliseconds);
     }
 }

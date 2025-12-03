@@ -7,8 +7,8 @@ namespace RobloxCS.Transpiler.Builders;
 public static class BlockBuilder {
     public static Block Build(BlockSyntax syntax, TranspilationContext ctx) {
         var block = BlockHelpers.Empty();
-        var result = syntax.Statements.Select(statement => StatementBuilder.Build(statement, ctx)).Flatten();
-        block.Statements = result.Statements;
+        var result = syntax.Statements.Select(s => StatementBuilder.Build(s, ctx));
+        block.Statements = result.ToList();
 
         return block;
     }
@@ -22,8 +22,8 @@ public static class BlockBuilder {
     }
 
     private static Block BuildFromBlockStmt(BlockSyntax syntax, TranspilationContext ctx) {
-        var result = syntax.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx)).Flatten();
+        var result = syntax.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx));
 
-        return new Block { Statements = result.Statements };
+        return new Block { Statements = result.ToList() };
     }
 }

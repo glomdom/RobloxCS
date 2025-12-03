@@ -91,7 +91,7 @@ public static class FunctionBuilder {
         // populate function block
         if (ctorSyntax.Body is { } body) {
             foreach (var transpiled in body.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx))) {
-                functionBlock.AddStatements(transpiled.Statements);
+                functionBlock.AddStatement(transpiled);
             }
         }
 
@@ -113,7 +113,7 @@ public static class FunctionBuilder {
         var syntax = SyntaxUtilities.GetSyntaxFromSymbol<MethodDeclarationSyntax>(symbol);
         if (syntax.Body is { } block) {
             foreach (var result in block.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx))) {
-                functionBlock.AddStatements(result.Statements);
+                functionBlock.AddStatement(result);
             }
         }
 
