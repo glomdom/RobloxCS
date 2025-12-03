@@ -13,7 +13,7 @@ public sealed class TranspilationContext {
     public CSharpCompiler Compiler { get; }
     public SemanticModel Semantics { get; }
     public CompilationUnitSyntax Root { get; }
-    public Block RootBlock { get; } = BlockHelpers.Empty();
+    public Block RootBlock { get; set; } = BlockHelpers.Empty();
 
     public TranspilationContext(TranspilerOptions options, CSharpCompiler compiler) {
         Options = options;

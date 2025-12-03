@@ -1,6 +1,7 @@
-﻿using RobloxCS.AST.Statements;
+﻿using RobloxCS.AST;
+using RobloxCS.AST.Statements;
 using RobloxCS.AST.Transient;
-using Serilog;
+using RobloxCS.Transpiler.Walkers;
 
 namespace RobloxCS.Transpiler.Passes;
 
@@ -9,6 +10,7 @@ namespace RobloxCS.Transpiler.Passes;
 /// </summary>
 public sealed class LoweringPass : IPass {
     public void Run(TranspilationContext ctx) {
-        Log.Information("Hi, I'm a stub for the lowering pass!");
+        var walker = new LoweringWalker();
+        ctx.RootBlock = (Block)walker.Visit(ctx.RootBlock);
     }
 }
