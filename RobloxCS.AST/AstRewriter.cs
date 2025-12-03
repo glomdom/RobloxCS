@@ -12,7 +12,7 @@ namespace RobloxCS.AST;
 public class AstRewriter : IAstVisitor<AstNode> {
     public virtual AstNode DefaultVisit(AstNode node) => node;
 
-    public virtual AstNode Visit(AstNode node) => node.Accept(this);
+    public AstNode Visit(AstNode node) => node.Accept(this);
 
     public virtual AstNode VisitExpression(Expression node) => node;
     public virtual AstNode VisitStatement(Statement node) => node;
