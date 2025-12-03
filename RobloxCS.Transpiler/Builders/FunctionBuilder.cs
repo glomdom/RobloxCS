@@ -90,13 +90,9 @@ public static class FunctionBuilder {
 
         // populate function block
         if (ctorSyntax.Body is { } body) {
-            ctx.PushScope();
-
             foreach (var transpiled in body.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx))) {
                 functionBlock.AddStatements(transpiled.Statements);
             }
-
-            ctx.PopScope();
         }
 
         return decl;
@@ -116,13 +112,9 @@ public static class FunctionBuilder {
 
         var syntax = SyntaxUtilities.GetSyntaxFromSymbol<MethodDeclarationSyntax>(symbol);
         if (syntax.Body is { } block) {
-            ctx.PushScope();
-
             foreach (var result in block.Statements.Select(stmt => StatementBuilder.Build(stmt, ctx))) {
                 functionBlock.AddStatements(result.Statements);
             }
-
-            ctx.PopScope();
         }
 
         var decl = StatementHelpers.FullFunctionDeclaration(

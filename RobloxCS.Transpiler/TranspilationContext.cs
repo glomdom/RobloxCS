@@ -15,24 +15,12 @@ public sealed class TranspilationContext {
     public CompilationUnitSyntax Root { get; }
     public Block RootBlock { get; } = BlockHelpers.Empty();
 
-    public Scope CurrentScope => _scopes.Peek();
-
-    private readonly Stack<Scope> _scopes = new();
-
     public TranspilationContext(TranspilerOptions options, CSharpCompiler compiler) {
         Options = options;
         Compiler = compiler;
         Root = compiler.Root;
         Semantics = compiler.Compilation.GetSemanticModel(Root.SyntaxTree);
     }
-
-    public void PushScope() {
-        var parent = _scopes.Count > 0 ? _scopes.Peek() : null;
-
-        _scopes.Push(new Scope(parent));
-    }
-
-    public void PopScope() => _scopes.Pop();
 
     public Chunk ToChunk() {
         var chunk = new Chunk { Block = RootBlock };
