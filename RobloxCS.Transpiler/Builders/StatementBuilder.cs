@@ -6,8 +6,6 @@ using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
 using RobloxCS.Transpiler.Helpers;
-using RobloxCS.Transpiler.Scoping;
-using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
 

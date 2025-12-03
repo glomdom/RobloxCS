@@ -1,11 +1,6 @@
-﻿using System.Diagnostics;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using RobloxCS.AST;
+﻿using RobloxCS.AST;
 using RobloxCS.Compiler;
-using RobloxCS.Transpiler.Builders;
 using RobloxCS.Transpiler.Passes;
-using Serilog;
 
 namespace RobloxCS.Transpiler;
 
