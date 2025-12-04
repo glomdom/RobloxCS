@@ -5,7 +5,7 @@ using RobloxCS.Transpiler.Helpers;
 
 namespace RobloxCS.Transpiler.Walkers;
 
-public sealed class LoweringWalker : AstRewriter, IInternalAstVisitor<AstNode> {
+public sealed class TransientLoweringWalker : AstRewriter, IInternalAstVisitor<AstNode> {
     public AstNode VisitTransientForLoop(TransientForLoop node) {
         return new WhileStatement {
             Block = BlockHelpers.Empty(),
