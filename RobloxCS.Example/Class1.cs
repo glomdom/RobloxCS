@@ -5,19 +5,19 @@ internal class StressTest {
     private static int StaticValue = 2;
     
     internal void Main() {
-        // for (var i = 0; i < 4; i++) {
-        //     for (var j = 0; j < 3; j++) {
-        //         if ((i + j) % 2 == 0) {
-        //             continue;
-        //         }
-        //
-        //         if (i == 2 && j == 1) {
-        //             break;
-        //         }
-        //
-        //         Counter += i * j;
-        //     }
-        // }
+        for (var i = 0; i < 4; i++) {
+            for (var j = 0; j < 3; j++) {
+                if ((i + j) % 2 == 0) {
+                    continue;
+                }
+        
+                if (i == 2 && j == 1) {
+                    break;
+                }
+        
+                Counter += i * j;
+            }
+        }
     
         var x = 0;
         do {

@@ -34,7 +34,13 @@ public sealed class TransientLoweringWalker : AstRewriter, IInternalAstVisitor<A
         }
 
         // body
-        loopBlock.AddBlock(node.Body);
+        {
+            foreach (var lowered in node.Body.Statements.Select(stmt => stmt.Accept(this))) {
+                if (lowered is Statement loweredStmt) {
+                    loopBlock.AddStatement(loweredStmt);
+                }
+            }
+        }
 
         // incrementors
         {
