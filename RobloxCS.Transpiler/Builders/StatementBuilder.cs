@@ -6,6 +6,7 @@ using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Transient;
 using RobloxCS.Transpiler.Helpers;
+using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
 
@@ -44,6 +45,19 @@ public static class StatementBuilder {
         return repeatUntilStmt;
     }
 
+    // TODO: Handle default initializers
+    private static LocalAssignmentStatement BuildFromVarDeclaratorSyntax(VariableDeclaratorSyntax syntax, TranspilationContext ctx) {
+        Expression? initExpr = null;
+        if (syntax.Initializer is not null) {
+            initExpr = ExpressionBuilder.BuildFromSyntax(syntax.Initializer.Value, ctx);
+        }
+
+        var symbol = ctx.Semantics.GetDeclaredSymbol(syntax);
+        var type = ((ILocalSymbol)symbol!).Type;
+
+        return StatementHelpers.SingleTypedLocalAssignment(syntax.Identifier.ValueText, initExpr!, SyntaxUtilities.BasicFromSymbol(type));
+    }
+
     private static ReturnStatement BuildFromReturnStmt(ReturnStatementSyntax syntax, TranspilationContext ctx) {
         var returnStmt = ReturnStatement.Empty();
 
@@ -56,8 +70,16 @@ public static class StatementBuilder {
     }
 
     private static TransientForLoop BuildFromForStmt(ForStatementSyntax syntax, TranspilationContext ctx) {
+        var inits = new List<Statement>();
+
+        inits.AddRange(
+            syntax.Declaration is not null
+                ? syntax.Declaration.Variables.Select(stx => BuildFromVarDeclaratorSyntax(stx, ctx))
+                : syntax.Initializers.Select(e => BuildFromExprSyntax(e, ctx))
+        );
+
         var transient = new TransientForLoop {
-            Initializers = syntax.Initializers.Select(expr => BuildFromExprSyntax(expr, ctx)).ToList(),
+            Initializers = inits,
             Condition = syntax.Condition is not null ? ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx) : null,
             Incrementors = syntax.Incrementors.Select(expr => BuildFromExprSyntax(expr, ctx)).ToList(),
             Body = BlockBuilder.BuildFromStatement(syntax.Statement, ctx),

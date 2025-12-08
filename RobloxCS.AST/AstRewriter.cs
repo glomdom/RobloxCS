@@ -252,7 +252,7 @@ public class AstRewriter : IAstVisitor<AstNode> {
     public virtual AstNode VisitVarName(VarName node) => node;
 
     /// <summary>
-    /// Visits every node in the provided list and mutates them.
+    /// Visits every node in the provided list and rewrites them if required.
     /// </summary>
     protected List<T> VisitList<T>(IList<T> list) where T : AstNode {
         for (var i = 0; i < list.Count; i++) {
@@ -271,7 +271,7 @@ public class AstRewriter : IAstVisitor<AstNode> {
             if (newNode is T typedNode) {
                 list[i] = typedNode;
             } else {
-                throw new InvalidOperationException("Type mismatch in list.");
+                throw new InvalidOperationException($"Type mismatch in list expected {typeof(T)} got {newNode.GetType().Name}.");
             }
         }
 
