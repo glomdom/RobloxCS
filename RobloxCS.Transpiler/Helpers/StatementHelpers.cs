@@ -43,7 +43,6 @@ public static class StatementHelpers {
     }
 
     public static ReturnStatement EmptyReturnStatement() => new() { Returns = [] };
-
     public static ReturnStatement SimpleReturnStatement(Expression expr) {
         var stmt = EmptyReturnStatement();
         stmt.Returns = [expr];
