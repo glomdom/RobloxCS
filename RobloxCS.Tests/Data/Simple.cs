@@ -7,13 +7,17 @@ internal class Simple {
     internal void Main() {
         for (var i = 0; i < 4; i++) {
             for (var j = 0; j < 3; j++) {
-                if ((i + j) % 2 == 0) {
-                    continue;
-                }
+                Console.WriteLine(Counter);
+                
+                // if ((i + j) % 2 == 0) {
+                //     continue;
+                // }
 
                 if (i == 2 && j == 1) {
                     break;
                 }
+
+                Console.WriteLine(Counter);
 
                 Counter += i * j;
             }
