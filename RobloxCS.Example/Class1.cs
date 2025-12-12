@@ -16,6 +16,8 @@ internal class StressTest {
                 }
         
                 Counter += i * j;
+                
+                Console.WriteLine(Counter);
             }
         }
     

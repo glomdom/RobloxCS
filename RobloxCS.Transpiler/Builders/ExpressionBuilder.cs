@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST.Expressions;
 using RobloxCS.Transpiler.Helpers;
+using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
 

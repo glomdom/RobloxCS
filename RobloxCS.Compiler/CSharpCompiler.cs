@@ -24,7 +24,7 @@ public sealed class CSharpCompiler {
         Log.Information("Running diagnostics for {File}", path);
         var watch = Stopwatch.StartNew();
 
-        Diagnostics = Compilation.GetDiagnostics();
+        Diagnostics = [..Compilation.GetDiagnostics().Where(d => d.Severity != DiagnosticSeverity.Hidden)];
 
         watch.Stop();
         Log.Information("Ran diagnostics for {File} in {TimeMS}ms", path, watch.ElapsedMilliseconds);

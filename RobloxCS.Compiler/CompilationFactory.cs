@@ -5,20 +5,27 @@ using RobloxCS.Common;
 namespace RobloxCS.Compiler;
 
 internal static class CompilationFactory {
+    private const string GlobalUsingsCode = @"
+        global using System;
+        global using System.Collections.Generic;
+        global using System.Linq;
+        global using System.Text;
+    ";
+
     public static CSharpCompilation Create(string assemblyName, SyntaxTree syntaxTree) {
         var watch = System.Diagnostics.Stopwatch.StartNew();
 
-        var references = AppDomain.CurrentDomain
-            .GetAssemblies()
-            .Where(a => !a.IsDynamic && !string.IsNullOrWhiteSpace(a.Location))
-            .Select(a => MetadataReference.CreateFromFile(a.Location))
-            .Append(MetadataReference.CreateFromFile(typeof(List<>).Assembly.Location))
-            .Distinct()
+        var trustedAssembliesPaths = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!).Split(Path.PathSeparator);
+        var references = trustedAssembliesPaths
+            .Where(p => !string.IsNullOrEmpty(p))
+            .Select(p => MetadataReference.CreateFromFile(p))
             .ToList();
 
+        var globalUsingsTree = CSharpSyntaxTree.ParseText(GlobalUsingsCode);
+
         var compilation = CSharpCompilation.Create(
-            assemblyName: assemblyName,
-            syntaxTrees: [syntaxTree],
+            assemblyName,
+            syntaxTrees: [syntaxTree, globalUsingsTree],
             references: references,
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
         );
