@@ -10,10 +10,18 @@ public delegate TResult MacroHandler<TNode, TResult>(TNode syntax, Transpilation
     where TNode : SyntaxNode;
 
 public static class MacroManager {
-
     private static readonly Dictionary<string, MacroHandler<InvocationExpressionSyntax, Expression>> CorlibMethodMacros = new() {
         { "System.Console.WriteLine", HandleConsoleWrites },
     };
+
+    private static readonly SymbolDisplayFormat MacroKeyFormat = new(
+        typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+        memberOptions: SymbolDisplayMemberOptions.IncludeContainingType
+    );
+
+    public static string GetMacroKey(ISymbol symbol) {
+        return symbol.ToDisplayString(MacroKeyFormat);
+    }
 
     public static bool TryGetMethodMacro(string key, [NotNullWhen(true)] out MacroHandler<InvocationExpressionSyntax, Expression>? handler) {
         return CorlibMethodMacros.TryGetValue(key, out handler);

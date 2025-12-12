@@ -1,7 +1,9 @@
-﻿using RobloxCS.AST.Expressions;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Suffixes;
+using RobloxCS.Transpiler.Builders;
 
 namespace RobloxCS.Transpiler.Helpers;
 
@@ -19,6 +21,23 @@ public static class ExpressionHelpers {
     public static FunctionCallExpression SimpleFunctionCall(string name, List<Expression> args) {
         var prefix = NamePrefix.FromString(name);
         var arguments = FunctionArgsFromExpressions(args);
+
+        var suffix = new AnonymousCall {
+            Arguments = arguments,
+        };
+
+        var expr = new FunctionCallExpression {
+            Prefix = prefix,
+            Suffixes = [suffix],
+        };
+
+        return expr;
+    }
+
+    /// <inheritdoc cref="SimpleFunctionCall(string, Expression[])"/>
+    internal static FunctionCallExpression SimpleFunctionCall(string name, ArgumentListSyntax args, TranspilationContext ctx) {
+        var prefix = NamePrefix.FromString(name);
+        var arguments = new FunctionArgs { Arguments = args.Arguments.Select(a => ExpressionBuilder.BuildFromSyntax(a.Expression, ctx)).ToList() };
 
         var suffix = new AnonymousCall {
             Arguments = arguments,

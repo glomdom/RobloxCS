@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST.Expressions;
 using RobloxCS.Transpiler.Helpers;
+using RobloxCS.Transpiler.Macros;
 using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
@@ -41,7 +42,14 @@ public static class ExpressionBuilder {
     private static Expression HandleInvocationExpressionSyntax(InvocationExpressionSyntax syntax, TranspilationContext ctx) {
         var info = ctx.Semantics.GetSymbolInfo(syntax);
         if (info.Symbol is not IMethodSymbol methodSymbol) throw new Exception("Invocation expression is not a method.");
+        
+        Log.Debug("Querying {SymbolName} inside macro registry", MacroManager.GetMacroKey(methodSymbol));
 
+        var key = MacroManager.GetMacroKey(methodSymbol);
+        if (MacroManager.TryGetMethodMacro(key, out var handler)) {
+            return handler(syntax, ctx);
+        }
+        
         if (methodSymbol.IsStatic) throw new Exception("Static methods are not yet supported.");
 
         var methodName = $"self:{methodSymbol.Name}";

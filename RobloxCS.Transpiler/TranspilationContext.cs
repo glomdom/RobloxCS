@@ -4,7 +4,6 @@ using RobloxCS.AST;
 using RobloxCS.AST.Statements;
 using RobloxCS.Compiler;
 using RobloxCS.Transpiler.Helpers;
-using RobloxCS.Transpiler.Scoping;
 
 namespace RobloxCS.Transpiler;
 
