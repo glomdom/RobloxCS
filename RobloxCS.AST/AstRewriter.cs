@@ -254,7 +254,7 @@ public class AstRewriter : IAstVisitor<AstNode> {
     /// <summary>
     /// Visits every node in the provided list and rewrites them if required.
     /// </summary>
-    protected List<T> VisitList<T>(IList<T> list) where T : AstNode {
+    protected void VisitList<T>(IList<T> list) where T : AstNode {
         for (var i = 0; i < list.Count; i++) {
             var oldNode = list[i];
             var newNode = oldNode.Accept(this);
@@ -274,8 +274,6 @@ public class AstRewriter : IAstVisitor<AstNode> {
                 throw new InvalidOperationException($"Type mismatch in list expected {typeof(T)} got {newNode.GetType().Name}.");
             }
         }
-
-        return (List<T>)list;
     }
 
     private T Visit<T>(T nodeProp) where T : AstNode => (T)nodeProp.Accept(this);
