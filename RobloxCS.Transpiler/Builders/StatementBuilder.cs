@@ -72,9 +72,10 @@ public static class StatementBuilder {
         var inits = new List<Statement>();
 
         inits.AddRange(
-            syntax.Declaration is not null
-                ? syntax.Declaration.Variables.Select(stx => BuildFromVarDeclaratorSyntax(stx, ctx))
-                : syntax.Initializers.Select(e => BuildFromExprSyntax(e, ctx))
+            syntax.Declaration?.Variables
+                .Select(stx => BuildFromVarDeclaratorSyntax(stx, ctx)) ??
+            syntax.Initializers
+                .Select(e => BuildFromExprSyntax(e, ctx))
         );
 
         var transient = new TransientForLoop {
@@ -109,24 +110,6 @@ public static class StatementBuilder {
         }
 
         throw new NotSupportedException($"{syntax.Kind()} is not supported.");
-    }
-
-    private static Statement BuildLoopVarAssignment(ForStatementSyntax syntax, TranspilationContext ctx) {
-        if (syntax.Declaration is null) {
-            throw new NotImplementedException("For loops without variable declarations are not supported yet.");
-        }
-
-        var vars = syntax.Declaration.Variables;
-        var names = vars.Select(vds => vds.Identifier.ValueText).Select(SymbolExpression.FromString).ToList();
-        var initializers = vars
-            .Where(v => v.Initializer is not null)
-            .Select(v => v.Initializer!.Value)
-            .Select(es => ExpressionBuilder.BuildFromSyntax(es, ctx))
-            .ToList();
-
-        var binding = new LocalAssignmentStatement { Expressions = initializers, Names = names, Types = [] };
-
-        return binding;
     }
 
     private static WhileStatement BuildFromWhileStmt(WhileStatementSyntax syntax, TranspilationContext ctx) {
@@ -172,10 +155,10 @@ public static class StatementBuilder {
         return ifStmt;
     }
 
-    private static Statement BuildFromBlock(BlockSyntax syntax, TranspilationContext ctx) {
+    private static TransientBlock BuildFromBlock(BlockSyntax syntax, TranspilationContext ctx) {
         var body = BlockBuilder.Build(syntax, ctx);
 
-        return StatementHelpers.DoFromBlock(body);
+        return new TransientBlock { Statements = body.Statements };
     }
 
     private static Statement BuildFromLocalDeclStmt(LocalDeclarationStatementSyntax localDeclStmtSyntax, TranspilationContext ctx) {

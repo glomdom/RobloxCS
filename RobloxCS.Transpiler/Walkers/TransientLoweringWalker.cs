@@ -62,6 +62,16 @@ public sealed class TransientLoweringWalker : AstRewriter, IInternalAstVisitor<A
         return doStmt;
     }
 
+    public AstNode VisitTransientBlock(TransientBlock node) {
+        var newBlock = BlockHelpers.Empty();
+
+        foreach (var s in node.Statements) {
+            newBlock.AddStatement((Statement)s.Accept(this));
+        }
+
+        return newBlock;
+    }
+
     public override AstNode VisitWhileStatement(WhileStatement node) {
         _incrementorStack.Push(null);
 
