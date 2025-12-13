@@ -12,4 +12,6 @@ public sealed class ParenthesisExpression : Expression {
     public override IEnumerable<AstNode> Children() {
         yield return Expression;
     }
+
+    public override string ToString() => $"Parenthesis({Expression})";
 }
