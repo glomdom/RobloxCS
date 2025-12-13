@@ -2,10 +2,12 @@
 
 namespace RobloxCS.AST;
 
-public interface IInternalAstVisitor {
+internal interface IInternalAstVisitor : IAstVisitor {
     void VisitTransientForLoop(TransientForLoop node);
+    void VisitTransientBlock(TransientBlock node);
 }
 
-public interface IInternalAstVisitor<out T> : IAstVisitor<T> where T : AstNode {
+internal interface IInternalAstVisitor<out T> : IAstVisitor<T> where T : AstNode {
     T VisitTransientForLoop(TransientForLoop node);
+    T VisitTransientBlock(TransientBlock node);
 }
