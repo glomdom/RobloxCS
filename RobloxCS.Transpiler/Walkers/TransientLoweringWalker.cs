@@ -8,8 +8,12 @@ using Serilog;
 namespace RobloxCS.Transpiler.Walkers;
 
 public sealed class TransientLoweringWalker : AstRewriter, IInternalAstVisitor<AstNode> {
+    private readonly Stack<List<Statement>?> _incrementorStack = new();
+
     public AstNode VisitTransientForLoop(TransientForLoop node) {
-        Log.Debug("Lowering transient for loop with {InitializerCount} initializers", node.Initializers.Count);
+        Log.Debug("Lowering transient for loop with {InitializerCount} initializers, {IncrementorCount} incrementors", node.Initializers.Count, node.Incrementors.Count);
+
+        _incrementorStack.Push(node.Incrementors);
 
         var inner = BlockHelpers.Empty();
 
@@ -51,6 +55,46 @@ public sealed class TransientLoweringWalker : AstRewriter, IInternalAstVisitor<A
 
         inner.AddStatement(whileStmt);
 
-        return StatementHelpers.DoFromBlock(inner);
+        var doStmt = StatementHelpers.DoFromBlock(inner);
+
+        _incrementorStack.Pop();
+
+        return doStmt;
+    }
+
+    public override AstNode VisitWhileStatement(WhileStatement node) {
+        _incrementorStack.Push(null);
+
+        var stmt = base.VisitWhileStatement(node);
+
+        _incrementorStack.Pop();
+
+        return stmt;
+    }
+
+    public override AstNode VisitDoStatement(DoStatement node) {
+        _incrementorStack.Push(null);
+
+        var stmt = base.VisitDoStatement(node);
+
+        _incrementorStack.Pop();
+
+        return stmt;
+    }
+
+    public override AstNode VisitContinueStatement(ContinueStatement node) {
+        if (_incrementorStack.Count <= 0) return node;
+
+        var currentIncrementors = _incrementorStack.Peek();
+        if (currentIncrementors is null || currentIncrementors.Count != 0) return node;
+
+        var block = BlockHelpers.Empty();
+        foreach (var inc in currentIncrementors) {
+            block.AddStatement((Statement)inc.DeepClone());
+        }
+
+        block.AddStatement(new ContinueStatement());
+
+        return block;
     }
 }

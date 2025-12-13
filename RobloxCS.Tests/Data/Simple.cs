@@ -9,9 +9,9 @@ internal class Simple {
             for (var j = 0; j < 3; j++) {
                 Console.WriteLine(Counter);
                 
-                // if ((i + j) % 2 == 0) {
-                //     continue;
-                // }
+                if ((i + j) % 2 == 0) {
+                    continue;
+                }
 
                 if (i == 2 && j == 1) {
                     break;
