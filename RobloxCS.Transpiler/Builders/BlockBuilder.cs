@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.Transpiler.Helpers;
+using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
 
@@ -9,7 +10,7 @@ public static class BlockBuilder {
         var block = BlockHelpers.Empty();
         var result = syntax.Statements.Select(s => StatementBuilder.Build(s, ctx));
         block.Statements = result.ToList();
-
+        
         return block;
     }
 

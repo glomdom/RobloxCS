@@ -38,13 +38,7 @@ public sealed class TransientLoweringWalker : AstRewriter, IInternalAstVisitor<A
         }
 
         // body
-        {
-            foreach (var lowered in node.Body.Statements.Select(stmt => stmt.Accept(this))) {
-                if (lowered is Statement loweredStmt) {
-                    loopBlock.AddStatement(loweredStmt);
-                }
-            }
-        }
+        FlattenAndAdd(node.Body.Statements, loopBlock);
 
         // incrementors
         {
@@ -64,22 +58,41 @@ public sealed class TransientLoweringWalker : AstRewriter, IInternalAstVisitor<A
 
     public AstNode VisitTransientBlock(TransientBlock node) {
         var newBlock = BlockHelpers.Empty();
+        FlattenAndAdd(node.Statements, newBlock);
 
-        foreach (var s in node.Statements) {
-            newBlock.AddStatement((Statement)s.Accept(this));
-        }
+        return StatementHelpers.DoFromBlock(newBlock);
+    }
 
-        return newBlock;
+    public override AstNode VisitIfStatement(IfStatement node) {
+        var cond = (Expression)Visit(node.Condition);
+        var final = BlockHelpers.Empty();
+
+        FlattenAndAdd(node.Block.Statements, final);
+
+        var elseBlock = (Block?)node.Else?.Accept(this);
+        var elseifBlocks = node.ElseIf?.Select(ei => (ElseIfBlock)ei.Accept(this)).ToList();
+
+        return new IfStatement {
+            Condition = cond,
+            Block = final,
+            Else = elseBlock,
+            ElseIf = elseifBlocks,
+        };
     }
 
     public override AstNode VisitWhileStatement(WhileStatement node) {
         _incrementorStack.Push(null);
 
-        var stmt = base.VisitWhileStatement(node);
+        var cond = (Expression)Visit(node.Condition);
+        var final = BlockHelpers.Empty();
+        FlattenAndAdd(node.Block.Statements, final);
 
         _incrementorStack.Pop();
 
-        return stmt;
+        return new WhileStatement {
+            Condition = cond,
+            Block = final,
+        };
     }
 
     public override AstNode VisitDoStatement(DoStatement node) {
@@ -96,7 +109,7 @@ public sealed class TransientLoweringWalker : AstRewriter, IInternalAstVisitor<A
         if (_incrementorStack.Count <= 0) return node;
 
         var currentIncrementors = _incrementorStack.Peek();
-        if (currentIncrementors is null || currentIncrementors.Count != 0) return node;
+        if (currentIncrementors is null || currentIncrementors.Count == 0) return node;
 
         var block = BlockHelpers.Empty();
         foreach (var inc in currentIncrementors) {
@@ -106,5 +119,26 @@ public sealed class TransientLoweringWalker : AstRewriter, IInternalAstVisitor<A
         block.AddStatement(new ContinueStatement());
 
         return block;
+    }
+
+    public override AstNode VisitBlock(Block node) {
+        var newBlock = BlockHelpers.Empty();
+        FlattenAndAdd(node.Statements, newBlock);
+
+        return newBlock;
+    }
+
+    private void FlattenAndAdd(IList<Statement> statements, Block targetBlock) {
+        foreach (var stmt in statements) {
+            if (stmt is TransientBlock transient) {
+                FlattenAndAdd(transient.Statements, targetBlock);
+            } else {
+                var visited = stmt.Accept(this);
+                switch (visited) {
+                    case Block b: targetBlock.AddBlock(b); break;
+                    case Statement s: targetBlock.AddStatement(s); break;
+                }
+            }
+        }
     }
 }

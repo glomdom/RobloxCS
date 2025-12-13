@@ -7,7 +7,12 @@ public sealed class CompoundAssignmentStatement : Statement {
     public required CompoundOp Operator { get; set; }
     public required Expression Left { get; set; }
 
-    public override AstNode DeepClone() => throw new NotImplementedException();
+    public override CompoundAssignmentStatement DeepClone() => new() {
+        Right = (Var)Right.DeepClone(),
+        Operator = Operator,
+        Left = (Expression)Left.DeepClone(),
+    };
+    
     public override void Accept(IAstVisitor v) => v.VisitCompoundAssignmentStatement(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitCompoundAssignmentStatement(this);
 
