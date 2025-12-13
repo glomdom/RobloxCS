@@ -7,6 +7,7 @@ using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
 using RobloxCS.Transpiler.Extensions;
+using Serilog;
 
 namespace RobloxCS.Renderer;
 
@@ -156,7 +157,7 @@ public class RendererWalker : AstVisitorBase {
         var prec = Precedence.Get(node.Op);
         var assocRight = Precedence.IsRightAssociative(node.Op);
         var needParens = prec < parentPrec;
-
+        
         if (needParens && parentPrec != int.MaxValue) _state.Builder.Append('(');
 
         _precStack.Push(prec);
@@ -214,7 +215,9 @@ public class RendererWalker : AstVisitorBase {
 
     public override void VisitParenthesisExpression(ParenthesisExpression node) {
         _state.Builder.Append('(');
+        _precStack.Push(int.MaxValue);
         Visit(node.Expression);
+        _precStack.Pop();
         _state.Builder.Append(')');
     }
 
