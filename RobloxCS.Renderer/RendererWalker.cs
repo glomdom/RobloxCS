@@ -7,7 +7,6 @@ using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
 using RobloxCS.Transpiler.Extensions;
-using Serilog;
 
 namespace RobloxCS.Renderer;
 
@@ -152,6 +151,7 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.AppendLine();
     }
 
+    // TODO: Move precedence out of renderer and into a pass
     public override void VisitBinaryOperatorExpression(BinaryOperatorExpression node) {
         var parentPrec = _precStack.Count > 0 ? _precStack.Peek() : int.MaxValue;
         var prec = Precedence.Get(node.Op);
