@@ -144,13 +144,14 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitIfStatement(IfStatement node);
     T VisitLocalAssignment(LocalAssignmentStatement node);
     T VisitRepeatStatement(RepeatStatement node);
+    T VisitFunctionCallStatement(FunctionCallStatement node);
     T VisitReturn(ReturnStatement node);
     T VisitWhileStatement(WhileStatement node);
 
     T VisitAnonymousCall(AnonymousCall node);
     T VisitMethodCall(MethodCall node);
     T VisitCall(Call node);
-    
+
     T VisitDot(Dot node);
     T VisitIndex(Index node);
 

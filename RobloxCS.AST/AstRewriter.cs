@@ -179,6 +179,13 @@ public class AstRewriter : IAstVisitor<AstNode> {
         return node;
     }
 
+    public virtual AstNode VisitFunctionCallStatement(FunctionCallStatement node) {
+        node.Prefix = Visit(node.Prefix);
+        VisitList(node.Suffixes);
+
+        return node;
+    }
+
     public virtual AstNode VisitReturn(ReturnStatement node) {
         VisitList(node.Returns);
 

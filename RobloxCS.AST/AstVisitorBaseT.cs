@@ -70,6 +70,7 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
     public virtual T VisitFunctionDeclaration(FunctionDeclarationStatement node) => DefaultVisit(node);
     public virtual T VisitIfStatement(IfStatement node) => DefaultVisit(node);
     public virtual T VisitLocalAssignment(LocalAssignmentStatement node) => DefaultVisit(node);
+    public virtual T VisitFunctionCallStatement(FunctionCallStatement node) => DefaultVisit(node);
     public virtual T VisitRepeatStatement(RepeatStatement node) => DefaultVisit(node);
     public virtual T VisitReturn(ReturnStatement node) => DefaultVisit(node);
     public virtual T VisitWhileStatement(WhileStatement node) => DefaultVisit(node);
