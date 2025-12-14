@@ -6,6 +6,7 @@ using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
+using Index = RobloxCS.AST.Suffixes.Index;
 
 namespace RobloxCS.AST;
 
@@ -199,6 +200,15 @@ public class AstRewriter : IAstVisitor<AstNode> {
 
     public virtual AstNode VisitMethodCall(MethodCall node) => throw new NotImplementedException();
     public virtual AstNode VisitCall(Call node) => throw new NotImplementedException();
+
+    public virtual AstNode VisitDot(Dot node) {
+        node.Name = Visit(node.Name);
+
+        return node;
+    }
+
+    public virtual AstNode VisitIndex(Index node) => node;
+
     public virtual AstNode VisitArrayTypeInfo(ArrayTypeInfo node) => throw new NotImplementedException();
     public virtual AstNode VisitBasicTypeInfo(BasicTypeInfo node) => node;
     public virtual AstNode VisitBooleanTypeInfo(BooleanTypeInfo node) => throw new NotImplementedException();
