@@ -1,6 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Types;
 
@@ -129,6 +131,24 @@ public static class SyntaxUtilities {
 
             _ => false,
         };
+    }
+
+    public static bool IsInvokedOnExternalObject(
+        InvocationExpressionSyntax invocation,
+        SemanticModel semanticModel,
+        [NotNullWhen(true)] out IOperation? external
+    ) {
+        external = null;
+
+        if (semanticModel.GetOperation(invocation) is not IInvocationOperation operation) return false;
+        if (operation.TargetMethod.IsStatic) return false;
+
+        var receiver = operation.Instance;
+        if (receiver is IInstanceReferenceOperation) return false;
+
+        external = receiver!;
+
+        return true;
     }
 
     extension(SemanticModel semantics) {

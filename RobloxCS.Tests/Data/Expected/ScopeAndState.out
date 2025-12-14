@@ -1,0 +1,5 @@
+﻿id: 10
+global: 2
+id: 20
+global: 2
+local shadow id: 999

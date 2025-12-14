@@ -17,10 +17,8 @@ internal class ScopeAndState {
         instanceA.PrintStatus(); // ID: 10 | Global: 2
         instanceB.PrintStatus(); // ID: 20 | Global: 2
 
-        var ID = 999; 
-        Console.WriteLine("local shadow id: " + ID); 
-
-        instanceA.PrintStatus();
+        var ID = 999;
+        Console.WriteLine("local shadow id: " + ID);
     }
 
     private void SetID(int val) {

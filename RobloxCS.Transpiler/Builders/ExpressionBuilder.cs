@@ -58,8 +58,13 @@ public static class ExpressionBuilder {
         if (methodSymbol.IsStatic) throw new Exception("Static methods are not yet supported.");
 
         var methodName = $"self:{methodSymbol.Name}";
-        var args = syntax.ArgumentList.Arguments.Select(ars => BuildFromSyntax(ars.Expression, ctx)).ToList();
+        if (SyntaxUtilities.IsInvokedOnExternalObject(syntax, ctx.Semantics, out var receiver)) {
+            var obj = BuildFromSyntax((ExpressionSyntax)receiver.Syntax, ctx);
 
+            methodName = $"{obj}:{methodSymbol.Name}";
+        }
+
+        var args = syntax.ArgumentList.Arguments.Select(ars => BuildFromSyntax(ars.Expression, ctx)).ToList();
         var call = ExpressionHelpers.SimpleFunctionCall(methodName, args);
 
         return call;
@@ -91,7 +96,7 @@ public static class ExpressionBuilder {
         var op = SyntaxUtilities.SyntaxTokenToBinOp(syntax.OperatorToken);
 
         // TODO: Support right being string as well as left and right being string
-        
+
         if (leftResult is StringExpression leftString) {
             return new InterpolatedStringExpression {
                 Segments = [new InterpolatedStringSegment { Literal = leftString.Value, Expression = rightResult }],
