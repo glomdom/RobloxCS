@@ -96,14 +96,21 @@ public static class ExpressionBuilder {
     private static Expression HandleLiteralExpressionSyntax(LiteralExpressionSyntax syntax, TranspilationContext ctx) {
         return syntax.Kind() switch {
             SyntaxKind.NumericLiteralExpression => HandleNumericLiteralExpression(syntax, ctx),
+            SyntaxKind.StringLiteralExpression => HandleStringLiteralExpression(syntax, ctx),
             SyntaxKind.FalseLiteralExpression => BooleanExpression.False(),
             SyntaxKind.TrueLiteralExpression => BooleanExpression.True(),
 
             _ => throw new NotSupportedException($"LiteralExpressionSyntax {syntax.Kind()} is not supported."),
         };
     }
+    
+    private static StringExpression HandleStringLiteralExpression(LiteralExpressionSyntax syntax, TranspilationContext ctx) {
+        var value = (string)syntax.Token.Value!;
 
-    private static Expression HandleNumericLiteralExpression(LiteralExpressionSyntax syntax, TranspilationContext ctx) {
+        return StringExpression.FromString(value);
+    }
+
+    private static NumberExpression HandleNumericLiteralExpression(LiteralExpressionSyntax syntax, TranspilationContext ctx) {
         var value = syntax.Token.Value!;
 
         return NumberExpression.From(Convert.ToDouble(value));
