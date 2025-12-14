@@ -6,6 +6,7 @@ using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
+using Index = RobloxCS.AST.Suffixes.Index;
 
 namespace RobloxCS.AST;
 
@@ -67,6 +68,9 @@ public interface IAstVisitor {
     void VisitAnonymousCall(AnonymousCall node);
     void VisitMethodCall(MethodCall node);
     void VisitCall(Call node);
+
+    void VisitDot(Dot node);
+    void VisitIndex(Index node);
 
     void VisitArrayTypeInfo(ArrayTypeInfo node);
     void VisitBasicTypeInfo(BasicTypeInfo node);
@@ -146,6 +150,9 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitAnonymousCall(AnonymousCall node);
     T VisitMethodCall(MethodCall node);
     T VisitCall(Call node);
+    
+    T VisitDot(Dot node);
+    T VisitIndex(Index node);
 
     T VisitArrayTypeInfo(ArrayTypeInfo node);
     T VisitBasicTypeInfo(BasicTypeInfo node);

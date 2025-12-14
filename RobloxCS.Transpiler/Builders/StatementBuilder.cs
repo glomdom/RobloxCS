@@ -96,7 +96,7 @@ public static class StatementBuilder {
                 var assignment = new CompoundAssignmentStatement {
                     Left = tOperand,
                     Operator = tOp,
-                    Right = new VarExpression { Expression = NumberExpression.From(1) }
+                    Right = new VarExpression { Expression = NumberExpression.From(1) },
                 };
 
                 return assignment;
@@ -199,7 +199,7 @@ public static class StatementBuilder {
                 var assignment = new CompoundAssignmentStatement {
                     Left = tOperand,
                     Operator = tOp,
-                    Right = new VarExpression { Expression = NumberExpression.From(1) }
+                    Right = new VarExpression { Expression = NumberExpression.From(1) },
                 };
 
                 return assignment;

@@ -18,9 +18,14 @@ public static class ExpressionBuilder {
             InvocationExpressionSyntax invocationExpressionSyntax => HandleInvocationExpressionSyntax(invocationExpressionSyntax, ctx),
             ConditionalExpressionSyntax conditionalExpressionSyntax => HandleConditionalExpressionSyntax(conditionalExpressionSyntax, ctx),
             ParenthesizedExpressionSyntax parenthesizedExpressionSyntax => HandleParenthesizedExpressionSyntax(parenthesizedExpressionSyntax, ctx),
+            ObjectCreationExpressionSyntax objectCreationExpressionSyntax => HandleObjectCreationExpressionSyntax(objectCreationExpressionSyntax, ctx),
 
             _ => throw new NotSupportedException($"Expression {syntax.Kind()} is not supported. {syntax}"),
         };
+    }
+
+    private static Expression HandleObjectCreationExpressionSyntax(ObjectCreationExpressionSyntax syntax, TranspilationContext ctx) {
+        return ExpressionHelpers.DirectFunctionCall(syntax.Type.ToString(), "new", SymbolExpression.FromString("wasd"));
     }
 
     private static ParenthesisExpression HandleParenthesizedExpressionSyntax(ParenthesizedExpressionSyntax syntax, TranspilationContext ctx) {
@@ -42,14 +47,14 @@ public static class ExpressionBuilder {
     private static Expression HandleInvocationExpressionSyntax(InvocationExpressionSyntax syntax, TranspilationContext ctx) {
         var info = ctx.Semantics.GetSymbolInfo(syntax);
         if (info.Symbol is not IMethodSymbol methodSymbol) throw new Exception("Invocation expression is not a method.");
-        
+
         Log.Debug("Querying {SymbolName} inside macro registry", MacroManager.GetMacroKey(methodSymbol));
 
         var key = MacroManager.GetMacroKey(methodSymbol);
         if (MacroManager.TryGetMethodMacro(key, out var handler)) {
             return handler(syntax, ctx);
         }
-        
+
         if (methodSymbol.IsStatic) throw new Exception("Static methods are not yet supported.");
 
         var methodName = $"self:{methodSymbol.Name}";
@@ -103,7 +108,7 @@ public static class ExpressionBuilder {
             _ => throw new NotSupportedException($"LiteralExpressionSyntax {syntax.Kind()} is not supported."),
         };
     }
-    
+
     private static StringExpression HandleStringLiteralExpression(LiteralExpressionSyntax syntax, TranspilationContext ctx) {
         var value = (string)syntax.Token.Value!;
 

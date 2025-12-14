@@ -29,6 +29,7 @@ public static class SyntaxUtilities {
             SpecialType.System_Int32 => BasicTypeInfo.Number(),
             SpecialType.System_Void => BasicTypeInfo.Void(),
             SpecialType.System_String => BasicTypeInfo.String(),
+            SpecialType.None => BasicTypeInfo.Void(), // TODO: Delegate this to proper type inference as this is incorrect
 
             _ => throw new ArgumentOutOfRangeException(nameof(symbol), symbol.SpecialType, null),
         };

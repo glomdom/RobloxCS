@@ -13,7 +13,7 @@ public static class ExpressionHelpers {
     public static ParenthesisExpression ParenthesisFromInner(Expression inner) => new() { Expression = inner };
 
     /// <summary>
-    /// Creates a simple function call in the form of <c>name(...args)</c>.
+    /// Creates a simple function call in the form of <c>name(..args)</c>.
     /// </summary>
     public static FunctionCallExpression SimpleFunctionCall(string name, params Expression[] args) => SimpleFunctionCall(name, args.ToList());
 
@@ -34,18 +34,28 @@ public static class ExpressionHelpers {
         return expr;
     }
 
-    /// <inheritdoc cref="SimpleFunctionCall(string, Expression[])"/>
-    internal static FunctionCallExpression SimpleFunctionCall(string name, ArgumentListSyntax args, TranspilationContext ctx) {
-        var prefix = NamePrefix.FromString(name);
-        var arguments = new FunctionArgs { Arguments = args.Arguments.Select(a => ExpressionBuilder.BuildFromSyntax(a.Expression, ctx)).ToList() };
+    /// <summary>
+    /// Creates a direct function call in the form of <c>objName.funcName(..args)</c>.
+    /// </summary>
+    public static FunctionCallExpression DirectFunctionCall(string objName, string funcName, params Expression[] args) => DirectFunctionCall(objName, funcName, args.ToList());
 
-        var suffix = new AnonymousCall {
+    /// <inheritdoc cref="DirectFunctionCall(string, string, Expression[])"/>
+    public static FunctionCallExpression DirectFunctionCall(string objName, string funcName, List<Expression> args) {
+        var prefix = NamePrefix.FromString(objName);
+        var arguments = FunctionArgsFromExpressions(args);
+
+        var suffixIndex = new Dot {
+            Name = SymbolFromString(funcName),
+        };
+
+        var suffixCall = new AnonymousCall {
             Arguments = arguments,
         };
 
+
         var expr = new FunctionCallExpression {
             Prefix = prefix,
-            Suffixes = [suffix],
+            Suffixes = [suffixIndex, suffixCall],
         };
 
         return expr;
@@ -101,5 +111,22 @@ public static class ExpressionHelpers {
             Names = names,
             ColonName = colonName,
         };
+    }
+
+    /// <inheritdoc cref="SimpleFunctionCall(string, Expression[])"/>
+    internal static FunctionCallExpression SimpleFunctionCall(string name, ArgumentListSyntax args, TranspilationContext ctx) {
+        var prefix = NamePrefix.FromString(name);
+        var arguments = new FunctionArgs { Arguments = args.Arguments.Select(a => ExpressionBuilder.BuildFromSyntax(a.Expression, ctx)).ToList() };
+
+        var suffix = new AnonymousCall {
+            Arguments = arguments,
+        };
+
+        var expr = new FunctionCallExpression {
+            Prefix = prefix,
+            Suffixes = [suffix],
+        };
+
+        return expr;
     }
 }
