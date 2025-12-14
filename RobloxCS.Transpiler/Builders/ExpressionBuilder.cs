@@ -25,7 +25,7 @@ public static class ExpressionBuilder {
     }
 
     private static Expression HandleObjectCreationExpressionSyntax(ObjectCreationExpressionSyntax syntax, TranspilationContext ctx) {
-        return ExpressionHelpers.DirectFunctionCall(syntax.Type.ToString(), "new", SymbolExpression.FromString("wasd"));
+        return ExpressionHelpers.DirectFunctionCall(syntax.Type.ToString(), "new");
     }
 
     private static ParenthesisExpression HandleParenthesizedExpressionSyntax(ParenthesizedExpressionSyntax syntax, TranspilationContext ctx) {
