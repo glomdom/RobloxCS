@@ -340,6 +340,11 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.Append(')');
     }
 
+    public override void VisitDot(Dot node) {
+        _state.Builder.Append('.');
+        Visit(node.Name);
+    }
+
     public override void VisitFunctionArgs(FunctionArgs node) {
         RenderDelimited(node.Arguments, ", ");
     }
