@@ -205,7 +205,12 @@ public class AstRewriter : IAstVisitor<AstNode> {
         return node;
     }
 
-    public virtual AstNode VisitMethodCall(MethodCall node) => throw new NotImplementedException();
+    public virtual AstNode VisitMethodCall(MethodCall node) {
+        node.Args = Visit(node.Args);
+
+        return node;
+    }
+    
     public virtual AstNode VisitCall(Call node) => throw new NotImplementedException();
 
     public virtual AstNode VisitDot(Dot node) {
