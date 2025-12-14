@@ -18,11 +18,9 @@ internal class ScopeAndState {
         instanceB.PrintStatus(); // ID: 20 | Global: 2
 
         var ID = 999; 
-        Console.WriteLine("Local Shadow ID: " + ID); 
+        Console.WriteLine("local shadow id: " + ID); 
 
-        instanceA.PrintStatus(); 
-
-        Console.WriteLine("--- End Scope Test ---");
+        instanceA.PrintStatus();
     }
 
     private void SetID(int val) {
@@ -34,7 +32,7 @@ internal class ScopeAndState {
     }
 
     private void PrintStatus() {
-        Console.WriteLine("ID: " + ID);
-        Console.WriteLine("Global: " + GlobalCounter);
+        Console.WriteLine("id: " + ID);
+        Console.WriteLine("global: " + GlobalCounter);
     }
 }
