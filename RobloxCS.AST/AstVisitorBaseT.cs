@@ -37,6 +37,8 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
     public virtual T VisitBinaryOperatorExpression(BinaryOperatorExpression node) => DefaultVisit(node);
     public virtual T VisitBooleanExpression(BooleanExpression node) => DefaultVisit(node);
     public virtual T VisitIfExpression(IfExpression node) => DefaultVisit(node);
+    public virtual T VisitInterpolatedStringExpression(InterpolatedStringExpression node) => DefaultVisit(node);
+    public virtual T VisitInterpolatedStringSegment(InterpolatedStringSegment node) => DefaultVisit(node);
     public virtual T VisitFunctionCall(FunctionCallExpression node) => DefaultVisit(node);
     public virtual T VisitElseIfExpression(ElseIfExpression node) => DefaultVisit(node);
     public virtual T VisitNumberExpression(NumberExpression node) => DefaultVisit(node);

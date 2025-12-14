@@ -89,6 +89,16 @@ public static class ExpressionBuilder {
         var leftResult = BuildFromSyntax(left, ctx);
         var rightResult = BuildFromSyntax(right, ctx);
         var op = SyntaxUtilities.SyntaxTokenToBinOp(syntax.OperatorToken);
+
+        // TODO: Support right being string as well as left and right being string
+        
+        if (leftResult is StringExpression leftString) {
+            return new InterpolatedStringExpression {
+                Segments = [new InterpolatedStringSegment { Literal = leftString.Value, Expression = rightResult }],
+                LastString = string.Empty,
+            };
+        }
+
         var expr = new BinaryOperatorExpression {
             Left = leftResult,
             Right = rightResult,

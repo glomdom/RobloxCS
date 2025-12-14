@@ -164,6 +164,18 @@ public class AstRewriter : IAstVisitor<AstNode> {
         return node;
     }
 
+    public virtual AstNode VisitInterpolatedStringExpression(InterpolatedStringExpression node) {
+        VisitList(node.Segments);
+
+        return node;
+    }
+
+    public virtual AstNode VisitInterpolatedStringSegment(InterpolatedStringSegment node) {
+        node.Expression = Visit(node.Expression);
+        
+        return node;
+    }
+
     public virtual AstNode VisitLocalAssignment(LocalAssignmentStatement node) {
         VisitList(node.Names);
         VisitList(node.Expressions);

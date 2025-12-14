@@ -59,6 +59,8 @@ public interface IAstVisitor {
     void VisitDoStatement(DoStatement node);
     void VisitFunctionDeclaration(FunctionDeclarationStatement node);
     void VisitIfStatement(IfStatement node);
+    void VisitInterpolatedStringExpression(InterpolatedStringExpression node);
+    void VisitInterpolatedStringSegment(InterpolatedStringSegment node);
     void VisitLocalAssignment(LocalAssignmentStatement node);
     void VisitRepeatStatement(RepeatStatement node);
     void VisitFunctionCallStatement(FunctionCallStatement node);
@@ -113,6 +115,8 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitElseIfExpression(ElseIfExpression node);
     T VisitFunctionCall(FunctionCallExpression node);
     T VisitIfExpression(IfExpression node);
+    T VisitInterpolatedStringExpression(InterpolatedStringExpression node);
+    T VisitInterpolatedStringSegment(InterpolatedStringSegment node);
     T VisitNumberExpression(NumberExpression node);
     T VisitParenthesisExpression(ParenthesisExpression node);
     T VisitStringExpression(StringExpression node);

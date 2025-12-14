@@ -324,6 +324,20 @@ public class RendererWalker : AstVisitorBase {
         Visit(node.Else);
     }
 
+    public override void VisitInterpolatedStringExpression(InterpolatedStringExpression node) {
+        _state.Builder.Append('`');
+        RenderList(node.Segments);
+        _state.Builder.Append(node.LastString);
+        _state.Builder.Append('`');
+    }
+
+    public override void VisitInterpolatedStringSegment(InterpolatedStringSegment node) {
+        _state.Builder.Append(node.Literal);
+        _state.Builder.Append('{');
+        Visit(node.Expression);
+        _state.Builder.Append('}');
+    }
+
     public override void VisitNamePrefix(NamePrefix node) {
         _state.Builder.Append(node.Name);
     }
