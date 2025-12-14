@@ -40,7 +40,7 @@ internal class Simple {
             y++;
         }
 
-        var flag = (Counter > 10) && Counter % 2 != 0;
+        var flag = Counter > 10 && Counter % 2 != 0;
         if (flag) {
             Counter += StaticValue;
         } else {
