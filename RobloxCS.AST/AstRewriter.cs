@@ -172,7 +172,7 @@ public class AstRewriter : IAstVisitor<AstNode> {
 
     public virtual AstNode VisitInterpolatedStringSegment(InterpolatedStringSegment node) {
         node.Expression = Visit(node.Expression);
-        
+
         return node;
     }
 
@@ -222,7 +222,7 @@ public class AstRewriter : IAstVisitor<AstNode> {
 
         return node;
     }
-    
+
     public virtual AstNode VisitCall(Call node) => throw new NotImplementedException();
 
     public virtual AstNode VisitDot(Dot node) {
@@ -255,7 +255,11 @@ public class AstRewriter : IAstVisitor<AstNode> {
         return node;
     }
 
-    public virtual AstNode VisitTypeArgument(TypeArgument node) => throw new NotImplementedException();
+    public virtual AstNode VisitTypeArgument(TypeArgument node) {
+        node.TypeInfo = Visit(node.TypeInfo);
+
+        return node;
+    }
 
     public virtual AstNode VisitTypeDeclaration(TypeDeclarationStatement node) {
         if (node.Declarations is not null) VisitList(node.Declarations);
@@ -278,7 +282,8 @@ public class AstRewriter : IAstVisitor<AstNode> {
     public virtual AstNode VisitUnionTypeInfo(UnionTypeInfo node) => throw new NotImplementedException();
 
     public virtual AstNode VisitVarExpression(VarExpression node) {
-        node.Expression = Visit(node.Expression);
+        node.Prefix = Visit(node.Prefix);
+        VisitList(node.Suffixes);
 
         return node;
     }

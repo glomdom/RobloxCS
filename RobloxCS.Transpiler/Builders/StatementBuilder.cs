@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Transient;
 using RobloxCS.Transpiler.Helpers;
@@ -96,7 +97,7 @@ public static class StatementBuilder {
                 var assignment = new CompoundAssignmentStatement {
                     Left = tOperand,
                     Operator = tOp,
-                    Right = new VarExpression { Expression = NumberExpression.From(1) },
+                    Right = new VarExpression { Prefix = new ExpressionPrefix { Expression = NumberExpression.From(1) } },
                 };
 
                 return assignment;
@@ -199,7 +200,7 @@ public static class StatementBuilder {
                 var assignment = new CompoundAssignmentStatement {
                     Left = tOperand,
                     Operator = tOp,
-                    Right = new VarExpression { Expression = NumberExpression.From(1) },
+                    Right = new VarExpression { Prefix = new ExpressionPrefix { Expression = NumberExpression.From(1) } },
                 };
 
                 return assignment;
@@ -227,7 +228,11 @@ public static class StatementBuilder {
                 var left = ExpressionBuilder.BuildFromSyntax(expr.Left, ctx);
                 var right = ExpressionBuilder.BuildFromSyntax(expr.Right, ctx);
                 var tOp = SyntaxUtilities.SyntaxTokenToCompoundOp(expr.OperatorToken);
-                var assignment = new CompoundAssignmentStatement { Left = left, Operator = tOp, Right = VarExpression.FromExpression(right) };
+                var assignment = new CompoundAssignmentStatement {
+                    Left = left,
+                    Operator = tOp,
+                    Right = new VarExpression { Prefix = new ExpressionPrefix { Expression = right } }
+                };
 
                 return assignment;
             }

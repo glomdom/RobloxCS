@@ -1,22 +1,27 @@
 ﻿using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Prefixes;
+using RobloxCS.AST.Suffixes;
 
 namespace RobloxCS.AST;
 
-public abstract class Var : AstNode;
+public abstract class Var : Expression;
 
 public sealed class VarExpression : Var {
-    public required Expression Expression { get; set; }
+    public required Prefix Prefix { get; set; }
+    public List<Suffix> Suffixes { get; set; } = [];
 
     public Var? ParentVar => Parent as Var;
 
-    public static VarExpression FromExpression(Expression expr) => new() { Expression = expr };
-
-    public override VarExpression DeepClone() => new() { Expression = (Expression)Expression.DeepClone() };
+    public override VarExpression DeepClone() => new() { Prefix = (Prefix)Prefix.DeepClone(), Suffixes = Suffixes.Select(s => (Suffix)s.DeepClone()).ToList() };
     public override void Accept(IAstVisitor v) => v.VisitVarExpression(this);
     public override T Accept<T>(IAstVisitor<T> v) => v.VisitVarExpression(this);
 
     public override IEnumerable<AstNode> Children() {
-        yield return Expression;
+        yield return Prefix;
+
+        foreach (var suffix in Suffixes) {
+            yield return suffix;
+        }
     }
 }
 

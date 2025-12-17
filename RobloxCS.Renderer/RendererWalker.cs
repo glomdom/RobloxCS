@@ -157,7 +157,7 @@ public class RendererWalker : AstVisitorBase {
         var prec = Precedence.Get(node.Op);
         var assocRight = Precedence.IsRightAssociative(node.Op);
         var needParens = prec < parentPrec;
-        
+
         if (needParens && parentPrec != int.MaxValue) _state.Builder.Append('(');
 
         _precStack.Push(prec);
@@ -434,7 +434,8 @@ public class RendererWalker : AstVisitorBase {
     }
 
     public override void VisitVarExpression(VarExpression node) {
-        Visit(node.Expression);
+        Visit(node.Prefix);
+        RenderList(node.Suffixes);
     }
 
     public override void VisitVarName(VarName node) {
