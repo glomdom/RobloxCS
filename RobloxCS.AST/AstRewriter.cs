@@ -120,7 +120,12 @@ public class AstRewriter : IAstVisitor<AstNode> {
 
     public virtual AstNode VisitNameParameter(NameParameter node) => node;
 
-    public virtual AstNode VisitExpressionPrefix(ExpressionPrefix node) => throw new NotImplementedException();
+    public virtual AstNode VisitExpressionPrefix(ExpressionPrefix node) {
+        node.Expression = Visit(node.Expression);
+
+        return node;
+    }
+
     public virtual AstNode VisitNamePrefix(NamePrefix node) => node;
 
     public virtual AstNode VisitAssignment(AssignmentStatement node) {

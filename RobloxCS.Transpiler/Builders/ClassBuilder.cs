@@ -61,7 +61,7 @@ public static class ClassBuilder {
                 .Where(s => s.IsStatic)
                 .SelectMany(s => TypeFieldBuilder.GenerateTypeFieldsFromField(s, ctx))
                 .ToList();
-            
+
             members.ForEach(tf => TypeHelpers.AddFieldToKnownTableType(typeDecl, tf));
         }
 
@@ -77,8 +77,8 @@ public static class ClassBuilder {
 
         if (newField.Value is CallbackTypeInfo { Arguments.Count: > 0 } cb) {
             var cbReturnType = BasicTypeInfo.FromString($"_Instance{className}");
-            
-            cb.Arguments.RemoveAt(0); // drop `self`
+
+            cb.Arguments.RemoveAt(0);
             cb.ReturnType = cbReturnType;
         }
 
@@ -93,6 +93,7 @@ public static class ClassBuilder {
 
         var parameters = ctorSymbol.Parameters
             .Select(p => TypeHelpers.FullTypeArgument(p.Name, SyntaxUtilities.BasicFromSymbol(p.Type)))
+            .Prepend(TypeHelpers.FullTypeArgument("self", BasicTypeInfo.FromString($"_Instance{node.Identifier.ValueText}")))
             .ToList();
 
         var cbType = TypeHelpers.FullCallbackType(parameters, BasicTypeInfo.Void());

@@ -164,5 +164,20 @@ public static class SyntaxUtilities {
 
             return sym;
         }
+
+        public T GetSymbol<T>(CSharpSyntaxNode node) where T : ISymbol {
+            var symbol = semantics.GetSymbolInfo(node).Symbol;
+            if (symbol is null) {
+                throw new Exception("Attempted to get symbol from MemberAccessExpressionSyntax but got null.");
+            }
+
+            return (T)symbol;
+        }
+
+        public ISymbol GetSymbol(CSharpSyntaxNode node) {
+            var symbol = semantics.GetSymbolInfo(node).Symbol;
+
+            return symbol ?? throw new Exception("Attempted to get symbol from MemberAccessExpressionSyntax but got null.");
+        }
     }
 }

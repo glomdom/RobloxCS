@@ -1,7 +1,11 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Functions;
+using RobloxCS.AST.Prefixes;
+using RobloxCS.AST.Suffixes;
 using RobloxCS.Transpiler.Helpers;
 using RobloxCS.Transpiler.Macros;
 using Serilog;
@@ -17,6 +21,7 @@ public static class ExpressionBuilder {
             PrefixUnaryExpressionSyntax prefixUnaryExprSyntax => HandleUnaryExpressionSyntax(prefixUnaryExprSyntax, ctx),
             InvocationExpressionSyntax invocationExpressionSyntax => HandleInvocationExpressionSyntax(invocationExpressionSyntax, ctx),
             ConditionalExpressionSyntax conditionalExpressionSyntax => HandleConditionalExpressionSyntax(conditionalExpressionSyntax, ctx),
+            MemberAccessExpressionSyntax memberAccessExpressionSyntax => HandleMemberAccessExpressionSyntax(memberAccessExpressionSyntax, ctx),
             ParenthesizedExpressionSyntax parenthesizedExpressionSyntax => HandleParenthesizedExpressionSyntax(parenthesizedExpressionSyntax, ctx),
             ObjectCreationExpressionSyntax objectCreationExpressionSyntax => HandleObjectCreationExpressionSyntax(objectCreationExpressionSyntax, ctx),
 
@@ -24,8 +29,30 @@ public static class ExpressionBuilder {
         };
     }
 
+    private static VarExpression HandleMemberAccessExpressionSyntax(MemberAccessExpressionSyntax syntax, TranspilationContext ctx) {
+        var symbol = ctx.Semantics.GetSymbol(syntax);
+
+        if (symbol is IFieldSymbol fieldSymbol) {
+            return new VarExpression {
+                Prefix = new ExpressionPrefix { Expression = BuildFromSyntax(syntax.Expression, ctx) },
+                Suffixes = [
+                    new Dot {
+                        Name = SymbolExpression.FromString(fieldSymbol.Name),
+                    },
+                ],
+            };
+        }
+
+        throw new NotSupportedException($"Unsupported member access: {symbol.GetType().Name}");
+    }
+
     private static Expression HandleObjectCreationExpressionSyntax(ObjectCreationExpressionSyntax syntax, TranspilationContext ctx) {
-        return ExpressionHelpers.DirectFunctionCall(syntax.Type.ToString(), "new");
+        List<Expression> exprs = [];
+        if (syntax.ArgumentList is not null) {
+            exprs = syntax.ArgumentList.Arguments.Select(a => BuildFromSyntax(a.Expression, ctx)).ToList();
+        }
+
+        return ExpressionHelpers.DirectFunctionCall(syntax.Type.ToString(), "new", exprs);
     }
 
     private static ParenthesisExpression HandleParenthesizedExpressionSyntax(ParenthesizedExpressionSyntax syntax, TranspilationContext ctx) {

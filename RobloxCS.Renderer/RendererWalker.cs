@@ -342,6 +342,10 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.Append(node.Name);
     }
 
+    public override void VisitExpressionPrefix(ExpressionPrefix node) {
+        Visit(node.Expression);
+    }
+
     public override void VisitAnonymousCall(AnonymousCall node) {
         _state.Builder.Append('(');
         Visit(node.Arguments);
