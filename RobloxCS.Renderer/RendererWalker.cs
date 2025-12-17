@@ -403,6 +403,10 @@ public class RendererWalker : AstVisitorBase {
             Visit(node.Parameters[i]);
             _state.Builder.Append(": ");
             Visit(node.TypeSpecifiers[i]);
+
+            if (i < node.Parameters.Count - 1) {
+                _state.Builder.Append(", ");
+            }
         }
 
         _state.Builder.Append("): ");
