@@ -7,6 +7,6 @@
   <Project Path="RobloxCS.Renderer\RobloxCS.Renderer.csproj" Type="C#" />
   <Project Path="RobloxCS.Tests\RobloxCS.Tests.csproj" Type="C#" />
   <Project Path="RobloxCS.Transpiler\RobloxCS.Transpiler.csproj" Type="C#" />
-  <Project Path="RobloxCS.TypeGenerator/RobloxCS.TypeGenerator.csproj" />
-  <Project Path="RobloxCS.Types/RobloxCS.Types.csproj" />
+  <Project Path="RobloxCS.TypeGenerator\RobloxCS.TypeGenerator.csproj" Type="C#" />
+  <Project Path="RobloxCS.Types\RobloxCS.Types.csproj" Type="C#" />
 </Solution>
