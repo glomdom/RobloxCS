@@ -75,11 +75,15 @@ public static class ExpressionBuilder {
         var info = ctx.Semantics.GetSymbolInfo(syntax);
         if (info.Symbol is not IMethodSymbol methodSymbol) throw new Exception("Invocation expression is not a method.");
 
-        Log.Debug("Querying {SymbolName} inside macro registry", MacroManager.GetMacroKey(methodSymbol));
-
         var key = MacroManager.GetMacroKey(methodSymbol);
-        if (MacroManager.TryGetMethodMacro(key, out var handler)) {
-            return handler(syntax, ctx);
+        var got = MacroManager.TryGetMethodMacro(key, out var handler);
+
+        if (got) {
+            Log.Debug("Querying {SymbolName} inside macro registry {Got}", key, got);
+
+            return handler!(syntax, ctx);
+        } else {
+            Log.Debug("Querying {SymbolName} inside macro registry {Got}", key, got);
         }
 
         if (methodSymbol.IsStatic) throw new Exception("Static methods are not yet supported.");

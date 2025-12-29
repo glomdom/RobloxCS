@@ -6,12 +6,13 @@ using RobloxCS.Transpiler.Helpers;
 
 namespace RobloxCS.Transpiler.Macros;
 
-public delegate TResult MacroHandler<TNode, TResult>(TNode syntax, TranspilationContext ctx)
+public delegate TResult MacroHandler<in TNode, out TResult>(TNode syntax, TranspilationContext ctx)
     where TNode : SyntaxNode;
 
 public static class MacroManager {
     private static readonly Dictionary<string, MacroHandler<InvocationExpressionSyntax, Expression>> CorlibMethodMacros = new() {
         { "System.Console.WriteLine", HandleConsoleWrites },
+        { "System.Console.Write", HandleConsoleWrites },
     };
 
     private static readonly SymbolDisplayFormat MacroKeyFormat = new(

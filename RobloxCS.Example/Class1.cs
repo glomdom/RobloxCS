@@ -23,5 +23,6 @@ internal class Program {
         h.Heal(50);
 
         Console.WriteLine("Health: " + h.Health);
+        Console.Write("how do i map this to luau");
     }
 }
