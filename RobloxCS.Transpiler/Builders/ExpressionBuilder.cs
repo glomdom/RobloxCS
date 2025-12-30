@@ -3,7 +3,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
-using RobloxCS.AST.Functions;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.Transpiler.Helpers;
