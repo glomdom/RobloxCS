@@ -13,6 +13,11 @@ public class RobloxFunction : RobloxMember {
     public required RobloxSecurity Security { get; set; }
 
     public required RobloxThreadSafety ThreadSafety { get; set; }
+    public List<RobloxTagKind>? Tags { get; set; }
 
-    public override string ToString() => $"{Name}({string.Join(", ", Parameters)}) -> {ReturnType.Name} [read={Security.Read}, write={Security.Write}]";
+    public override string ToString() {
+        var tagsString = Tags is not null ? $" [{string.Join(", ", Tags)}]" : string.Empty;
+        
+        return $"{Name}({string.Join(", ", Parameters)}) -> {ReturnType.Name} [read={Security.Read}, write={Security.Write}]{tagsString}";
+    }
 }
