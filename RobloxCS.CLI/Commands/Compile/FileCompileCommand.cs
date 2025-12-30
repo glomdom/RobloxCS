@@ -1,6 +1,5 @@
-﻿// ReSharper disable ClassNeverInstantiated.Global
-
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using JetBrains.Annotations;
 using RobloxCS.Common;
 using RobloxCS.Compiler;
 using RobloxCS.Renderer;
@@ -13,6 +12,7 @@ using Spectre.Console.Cli;
 namespace RobloxCS.CLI.Commands.Compile;
 
 [Description("Compile a C# file's source into Luau code.")]
+[UsedImplicitly]
 public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
     private readonly IAnsiConsole _console;
 
