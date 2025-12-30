@@ -6,8 +6,8 @@ namespace RobloxCS.TypeGenerator.Models;
 [JsonConverter(typeof(RobloxMemberConverter))]
 public abstract class RobloxMember {
     public abstract RobloxMemberType MemberType { get; }
-    public required string Name { get; set; }
+    public required string Name { get; init; }
     
     [JsonExtensionData]
-    public Dictionary<string, object> UnmappedData { get; set; } = [];
+    public Dictionary<string, object> UnmappedData { get; init; } = [];
 }

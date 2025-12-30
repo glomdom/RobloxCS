@@ -6,14 +6,14 @@ namespace RobloxCS.TypeGenerator.Models;
 public class RobloxFunction : RobloxMember {
     public override RobloxMemberType MemberType => RobloxMemberType.Function;
 
-    public required List<RobloxFunctionParameter> Parameters { get; set; }
-    public required RobloxType ReturnType { get; set; }
+    public required List<RobloxFunctionParameter> Parameters { get; init; }
+    public required RobloxType ReturnType { get; init; }
 
     [JsonConverter(typeof(RobloxSecurityConverter))]
-    public required RobloxSecurity Security { get; set; }
+    public required RobloxSecurity Security { get; init; }
 
-    public required RobloxThreadSafety ThreadSafety { get; set; }
-    public List<RobloxTagKind>? Tags { get; set; }
+    public required RobloxThreadSafety ThreadSafety { get; init; }
+    public List<RobloxTagKind>? Tags { get; init; }
 
     public override string ToString() {
         var tagsString = Tags is not null ? $" [{string.Join(", ", Tags)}]" : string.Empty;

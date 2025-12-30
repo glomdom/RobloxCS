@@ -14,10 +14,10 @@ public class RobloxSecurityConverter : JsonConverter<RobloxSecurity> {
 
                 var enumVal = ParseEnum(val);
 
-                return new RobloxSecurity {
-                    Read = enumVal,
-                    Write = enumVal,
-                };
+                return new RobloxSecurity(
+                    enumVal,
+                    enumVal
+                );
             }
 
             case JsonTokenType.StartObject: {
@@ -28,10 +28,10 @@ public class RobloxSecurityConverter : JsonConverter<RobloxSecurity> {
                     switch (reader.TokenType) {
                         case JsonTokenType.EndObject when !read.HasValue || !write.HasValue: throw new JsonException("Missing Read/Write keys in Security object.");
                         case JsonTokenType.EndObject:
-                            return new RobloxSecurity {
-                                Read = read.Value,
-                                Write = write.Value,
-                            };
+                            return new RobloxSecurity(
+                                read.Value,
+                                write.Value
+                            );
 
                         case JsonTokenType.PropertyName: {
                             var propName = ReadString(ref reader);

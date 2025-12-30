@@ -3,9 +3,9 @@
 namespace RobloxCS.TypeGenerator.Models;
 
 public class RobloxClass {
-    public required string Name { get; set; }
-    public required List<RobloxMember> Members { get; set; }
+    public required string Name { get; init; }
+    public required List<RobloxMember> Members { get; init; }
 
     [JsonExtensionData]
-    public Dictionary<string, object> UnmappedData { get; set; } = [];
+    public Dictionary<string, object> UnmappedData { get; init; } = [];
 }

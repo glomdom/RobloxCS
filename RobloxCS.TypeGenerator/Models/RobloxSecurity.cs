@@ -1,6 +1,3 @@
 ﻿namespace RobloxCS.TypeGenerator.Models;
 
-public class RobloxSecurity {
-    public required RobloxSecurityType Read { get; set; }
-    public required RobloxSecurityType Write { get; set; }
-}
+public record RobloxSecurity(RobloxSecurityType Read, RobloxSecurityType Write);
