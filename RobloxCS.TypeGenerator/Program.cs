@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using RobloxCS.Common;
 using RobloxCS.TypeGenerator.Models;
 using Serilog;
@@ -10,6 +11,10 @@ namespace RobloxCS.TypeGenerator;
 internal static class Program {
     private const string BaseUrl = "https://setup.rbxcdn.com";
     private const string VersionHashUrl = $"{BaseUrl}/versionQTStudio";
+
+    private static readonly JsonSerializerOptions Options = new() {
+        Converters = { new JsonStringEnumConverter() },
+    };
 
     internal static async Task Main(string[] args) {
         LoggerSetup.LevelSwitch.MinimumLevel = LogEventLevel.Verbose;
@@ -29,17 +34,18 @@ internal static class Program {
 
         await File.WriteAllTextAsync("out.json", apiDumpJson);
 
-        var output = await JsonSerializer.DeserializeAsync<RobloxApiDump>(stream);
+        var output = await JsonSerializer.DeserializeAsync<RobloxApiDump>(stream, Options);
         if (output is null) throw new Exception("Failed to deserialize API dump");
 
         Log.Information("Done! {ClassCount} classes", output.Classes.Count);
+
         foreach (var cls in output.Classes.Where(cls => cls.Name == "Instance")) {
             Log.Information("Class {ClassName} has {MemberCount} members", cls.Name, cls.Members.Count);
 
             foreach (var mem in cls.Members) {
                 if (mem is null) continue;
 
-                Log.Information("Member {MemberName}[{Category}]", mem.Name, mem.UnmappedData);
+                Log.Information("Member {Member} [{Unmapped}]", mem, mem.UnmappedData);
             }
         }
     }

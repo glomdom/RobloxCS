@@ -2,6 +2,7 @@
 
 public class RobloxFunctionParameter {
     public required string Name { get; set; }
-    
-    // TODO: Type
+    public required RobloxType Type { get; set; }
+
+    public override string ToString() => $"{Name}: {Type.Name}";
 }

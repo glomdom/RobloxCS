@@ -1,5 +1,18 @@
-﻿namespace RobloxCS.TypeGenerator.Models;
+﻿using System.Text.Json.Serialization;
+using RobloxCS.TypeGenerator.Converters;
 
-public class RobloxFunction {
-    
+namespace RobloxCS.TypeGenerator.Models;
+
+public class RobloxFunction : RobloxMember {
+    public override RobloxMemberType MemberType => RobloxMemberType.Function;
+
+    public required List<RobloxFunctionParameter> Parameters { get; set; }
+    public required RobloxType ReturnType { get; set; }
+
+    [JsonConverter(typeof(RobloxSecurityConverter))]
+    public required RobloxSecurity Security { get; set; }
+
+    public required RobloxThreadSafety ThreadSafety { get; set; }
+
+    public override string ToString() => $"{Name}({string.Join(", ", Parameters)}) -> {ReturnType.Name} [read={Security.Read}, write={Security.Write}]";
 }

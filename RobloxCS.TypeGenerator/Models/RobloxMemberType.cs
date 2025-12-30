@@ -2,4 +2,5 @@
 
 public enum RobloxMemberType {
     Property,
+    Function
 }

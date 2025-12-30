@@ -14,6 +14,7 @@ public class RobloxMemberConverter : JsonConverter<RobloxMember> {
 
         return typeVal switch {
             "Property" => node.Deserialize<RobloxProperty>(options),
+            "Function" => node.Deserialize<RobloxFunction>(options),
             
             _ => null,
         };
