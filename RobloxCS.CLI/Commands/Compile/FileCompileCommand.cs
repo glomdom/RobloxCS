@@ -27,7 +27,7 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
     }
 
     protected override int Execute(CommandContext context, Settings settings, CancellationToken cancellation) {
-        Logger.LevelSwitch.MinimumLevel = settings.Verbosity ? LogEventLevel.Verbose : LogEventLevel.Warning;
+        LoggerSetup.LevelSwitch.MinimumLevel = settings.Verbosity ? LogEventLevel.Verbose : LogEventLevel.Warning;
 
         Log.Information("Creating C# compiler");
         var compiler = new CSharpCompiler(settings.Path);

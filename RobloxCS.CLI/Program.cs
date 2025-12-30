@@ -1,10 +1,13 @@
 ﻿using RobloxCS.CLI.Commands.Compile;
+using RobloxCS.Common;
 using Spectre.Console.Cli;
 
 namespace RobloxCS.CLI;
 
 internal static class Program {
     private static int Main(string[] args) {
+        LoggerSetup.Configure();
+        
         var app = new CommandApp();
         app.Configure(config => {
             config.SetApplicationName("rbxcsc");
