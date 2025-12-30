@@ -16,5 +16,10 @@ internal static class Program {
         var versionHash = await http.GetStringAsync(VERSION_HASH_URL);
             
         Log.Information("Generating API dump for {VersionHash}", versionHash);
+
+        var apiDumpUrl = $"{BASE_URL}/{versionHash}-Full-API-Dump.json";
+        var apiDumpJson = await http.GetStringAsync(apiDumpUrl);
+        
+        Log.Information("Received api dump {JSON}", apiDumpJson);
     }
 }
