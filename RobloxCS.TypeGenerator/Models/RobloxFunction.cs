@@ -18,6 +18,6 @@ public class RobloxFunction : RobloxMember {
     public override string ToString() {
         var tagsString = Tags is not null ? $" [{string.Join(", ", Tags)}]" : string.Empty;
         
-        return $"{Name}({string.Join(", ", Parameters)}) -> {ReturnType.Name} [read={Security.Read}, write={Security.Write}]{tagsString}";
+        return $"{Name}({string.Join(", ", Parameters)}) -> {ReturnType.Name} [threadSafety={ThreadSafety}] [read={Security.Read}, write={Security.Write}]{tagsString}";
     }
 }
