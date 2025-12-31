@@ -50,8 +50,8 @@ internal static class Program {
         Log.Information("Starting enum generation");
 
         foreach (var enumDef in api.Enums) {
+            builder.AppendLine("namespace RobloxCS.Types;");
             builder.AppendLine("public static partial class Enums {");
-            
             builder.AppendLine($"    public enum {enumDef.Name} {{");
 
             foreach (var item in enumDef.Items) {
@@ -81,8 +81,9 @@ internal static class Program {
         foreach (var classDef in api.Classes) {
             if (classDef.Tags is null) continue;
 
+            builder.AppendLine("namespace RobloxCS.Types;");
             builder.AppendLine($"public class {classDef.Name} {{}}");
-            
+
             if (classDef.Tags.Contains(RobloxTagKind.Service)) {
                 Log.Information("Have service: {ClassName} {Tags}", classDef.Name, classDef.Tags);
             }
@@ -103,13 +104,13 @@ internal static class Program {
 
         return cls.Tags.Contains(RobloxTagKind.Service);
     }
-    
+
     private static bool IsCreatable(RobloxClass cls) {
         if (cls.Tags is null) return true;
 
         return !cls.Tags.Contains(RobloxTagKind.NotCreatable);
     }
-    
+
     private static async Task<RobloxApiDump> DownloadAndDeserializeAsync() {
         using var http = new HttpClient();
         var versionHash = await http.GetStringAsync(VersionHashUrl);
