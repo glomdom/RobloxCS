@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using RobloxCS.Common;
@@ -28,20 +29,16 @@ internal static class Program {
         var apiDumpUrl = $"{BaseUrl}/{versionHash}-API-Dump.json";
         var apiDumpJson = await http.GetStringAsync(apiDumpUrl);
 
+        var watch = Stopwatch.StartNew();
         Log.Information("Starting deserialization");
 
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(apiDumpJson));
 
-        await File.WriteAllTextAsync("out.json", apiDumpJson);
-
         var output = await JsonSerializer.DeserializeAsync<RobloxApiDump>(stream, Options);
         if (output is null) throw new Exception("Failed to deserialize API dump");
 
-        Log.Information("Done! {ClassCount} classes, {EnumCount} enums", output.Classes.Count, output.Enums.Count);
-        Log.Information("Unmapped: {UM}", output.UnmappedData);
+        watch.Stop();
 
-        foreach (var cls in output.Classes) {
-            Log.Debug("{Unmapped}", cls.MemoryCategory);
-        }
+        Log.Information("Done! {ClassCount} classes, {EnumCount} enums in {ElapsedMS}ms", output.Classes.Count, output.Enums.Count, watch.ElapsedMilliseconds);
     }
 }
