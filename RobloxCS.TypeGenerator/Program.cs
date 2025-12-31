@@ -17,7 +17,7 @@ internal static class Program {
         Converters = { new JsonStringEnumConverter() },
     };
 
-    internal static async Task Main(string[] args) {
+    internal static async Task Main() {
         LoggerSetup.LevelSwitch.MinimumLevel = LogEventLevel.Verbose;
         LoggerSetup.Configure();
 
