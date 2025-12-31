@@ -37,14 +37,11 @@ internal static class Program {
         var output = await JsonSerializer.DeserializeAsync<RobloxApiDump>(stream, Options);
         if (output is null) throw new Exception("Failed to deserialize API dump");
 
-        Log.Information("Done! {ClassCount} classes", output.Classes.Count);
+        Log.Information("Done! {ClassCount} classes, {EnumCount} enums", output.Classes.Count, output.Enums.Count);
+        Log.Information("Unmapped: {UM}", output.UnmappedData);
 
-        foreach (var cls in output.Classes.Where(cls => cls.Name == "Instance")) {
-            Log.Information("Class {ClassName} has {MemberCount} members", cls.Name, cls.Members.Count);
-
-            foreach (var mem in cls.Members) {
-                Log.Information("Member {Member} [{Unmapped}]", mem, mem.UnmappedData);
-            }
+        foreach (var cls in output.Classes) {
+            Log.Debug("{Unmapped}", cls.MemoryCategory);
         }
     }
 }

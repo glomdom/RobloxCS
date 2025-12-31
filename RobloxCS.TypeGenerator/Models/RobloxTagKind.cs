@@ -1,17 +1,19 @@
 ﻿namespace RobloxCS.TypeGenerator.Models;
 
 public enum RobloxTagKind {
-    Deprecated,
-    CanYield,
     CustomLuaState,
+    CanYield,
+    Deprecated,
     Hidden,
     NotReplicated,
+    PlayerReplicated,
     ReadOnly,
     NoYield,
     NotBrowsable,
     NotCreatable,
     Service,
     Settings,
+    UserSettings,
     NotScriptable,
     Yields,
 }
