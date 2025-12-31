@@ -4,3 +4,6 @@ bin/
 obj/
 
 *.DotSettings.*
+
+# generated types
+/RobloxCS.Types/Generated/*cs
