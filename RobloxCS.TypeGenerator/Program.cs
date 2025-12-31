@@ -43,8 +43,6 @@ internal static class Program {
             Log.Information("Class {ClassName} has {MemberCount} members", cls.Name, cls.Members.Count);
 
             foreach (var mem in cls.Members) {
-                if (mem is null) continue;
-
                 Log.Information("Member {Member} [{Unmapped}]", mem, mem.UnmappedData);
             }
         }

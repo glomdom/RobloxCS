@@ -1,6 +1,6 @@
 ﻿namespace RobloxCS.TypeGenerator.Models;
 
-public class RobloxFunctionParameter {
+public class RobloxParameter {
     public required string Name { get; init; }
     public required RobloxType Type { get; init; }
 

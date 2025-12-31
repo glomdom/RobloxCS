@@ -2,5 +2,7 @@
 
 public enum RobloxMemberType {
     Property,
-    Function
+    Function,
+    Event,
+    Callback,
 }

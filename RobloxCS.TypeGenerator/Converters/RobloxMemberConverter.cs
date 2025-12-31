@@ -15,8 +15,10 @@ public class RobloxMemberConverter : JsonConverter<RobloxMember> {
         return typeVal switch {
             "Property" => node.Deserialize<RobloxProperty>(options),
             "Function" => node.Deserialize<RobloxFunction>(options),
+            "Event" => node.Deserialize<RobloxEvent>(options),
+            "Callback" => node.Deserialize<RobloxCallback>(options),
             
-            _ => null,
+            _ => throw new JsonException($"Unknown member type: {typeVal}"),
         };
     }
 
