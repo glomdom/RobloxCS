@@ -12,9 +12,29 @@ namespace RobloxCS.TypeGenerator;
 internal static class Program {
     private const string BaseUrl = "https://setup.rbxcdn.com";
     private const string VersionHashUrl = $"{BaseUrl}/versionQTStudio";
+    private const string ApiDumpUrl = $"https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/refs/heads/roblox/Mini-API-Dump.json";
 
-    private static readonly List<string> SkippedNames = ["Studio"];
+    private static readonly List<string> SkippedNames = ["Studio", "BindableFunction"];
     private static readonly List<string> EnumNames = [];
+
+    // FIXME: im too lazy to do all of these so we hardcode return LuaTuple
+    private static readonly HashSet<string> PatchedMethods = [
+        "AssetService.PromptCreateAssetAsync",
+        "BasePart.CanSetNetworkOwnership",
+        "Camera.WorldToScreenPoint",
+        "Camera.WorldToViewportPoint",
+        "Chat.InvokeChatCallback",
+        "GroupService.GetGroupInfoAsync",
+        "GuiService.GetGuiInset",
+        "HapticService.GetMotor",
+        "HttpService.JSONDecode",
+        "SoundService.GetListener",
+        "TeleportService.GetLocalPlayerTeleportData",
+        "TeleportService.GetTeleportSetting",
+        "TeleportService.GetPlayerPlaceInstanceAsync",
+        "TeleportService.ReserveServer",
+        "UserInputService.GetDeviceRotation",
+    ];
 
     private static readonly JsonSerializerOptions Options = new() {
         Converters = { new JsonStringEnumConverter() },
@@ -82,74 +102,125 @@ internal static class Program {
         var watch = Stopwatch.StartNew();
         Log.Information("Starting class generation");
 
+        var generatedMemberCount = 0;
         foreach (var classDef in api.Classes) {
+            if (!IsClassAllowed(classDef)) continue;
+
+            var shouldAppendService = false;
+
             if (SkippedNames.Contains(classDef.Name)) {
                 Log.Verbose("Skipping class {ClassName} with tags {Tags}", classDef.Name, classDef.Tags);
 
                 continue;
             }
-            
+
+            if (!classDef.Name.EndsWith("Service")) {
+                shouldAppendService = true;
+            }
+
             Log.Verbose("Generating class {ClassName} with tags {Tags}", classDef.Name, classDef.Tags);
 
             var isService = IsService(classDef);
 
             builder.AppendLine("namespace RobloxCS.Types;");
 
-            if (isService) {
+            if (isService && classDef.Name != "Workspace") {
                 builder.AppendLine($"[RobloxNative(\"{classDef.Name}\", RobloxNativeType.Service)]");
-                builder.AppendLine($"public static class {classDef.Name} {{");
+                builder.AppendLine($"public static partial class {classDef.Name}{(shouldAppendService ? "Service" : string.Empty)} {{");
             } else {
                 builder.AppendLine($"[RobloxNative(\"{classDef.Name}\", RobloxNativeType.Instance)]");
-                builder.AppendLine($"public class {classDef.Name} {{");
+                builder.AppendLine($"public partial class {classDef.Name} {{");
             }
 
             foreach (var member in classDef.Members) {
+                if (!IsMemberAllowed(member)) continue;
+
                 if (member.MemberType is RobloxMemberType.Property) {
                     var prop = (RobloxProperty)member;
 
-                    if (IsHidden(prop.Tags)) {
-                        Log.Verbose("Skipping property {PropName} as it is hidden.", prop.Name);
-
-                        continue;
-                    }
-
-                    Log.Verbose("Generating property {PropName} with tags {Tags}", prop.Name, prop.Tags);
+                    Log.Verbose("Generating property {PropName} with tags {Tags} and security {Security}", prop.Name, prop.Tags, prop.Security);
+                    var propType = RobloxTypeToCSharp(prop.ValueType);
 
                     if (isService) {
                         var normalized = prop.Name.Replace(" ", string.Empty);
                         if (prop.Name != normalized) {
                             builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
-                            builder.AppendLine($"    public static {RobloxTypeToCSharp(prop.ValueType)} {normalized} {{ get; }} = default!;");
+                            builder.AppendLine($"    public static {propType} {normalized} {{ get; }} = default!;");
                         } else {
-                            builder.AppendLine($"    public static {RobloxTypeToCSharp(prop.ValueType)} {prop.Name} {{ get; }} = default!;");
+                            builder.AppendLine($"    public static {propType} {prop.Name} {{ get; }} = default!;");
                         }
                     } else {
                         if (prop.Name == classDef.Name) {
                             builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
-                            builder.AppendLine($"    public {RobloxTypeToCSharp(prop.ValueType)} Value {{ get; }} = default!;");
+                            builder.AppendLine($"    public {propType} Value {{ get; }} = default!;");
                         } else {
                             var normalized = prop.Name.Replace(" ", string.Empty);
                             if (prop.Name != normalized) {
                                 builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
-                                builder.AppendLine($"    public {RobloxTypeToCSharp(prop.ValueType)} {normalized} {{ get; }} = default!;");
+                                builder.AppendLine($"    public {propType} {normalized} {{ get; }} = default!;");
                             } else {
-                                builder.AppendLine($"    public {RobloxTypeToCSharp(prop.ValueType)} {prop.Name} {{ get; }} = default!;");
+                                builder.AppendLine($"    public {propType} {prop.Name} {{ get; }} = default!;");
                             }
                         }
                     }
+
+                    generatedMemberCount++;
                 }
+
+                if (member.MemberType is RobloxMemberType.Function) {
+                    if (PatchedMethods.Contains($"{classDef.Name}.{member.Name}")) {
+                        Log.Verbose("Skipping function {FunctionName} as it is patched", member.Name);
+
+                        continue;
+                    }
+
+                    var prop = (RobloxFunction)member;
+                    var returnType = RobloxTypeToCSharp(prop.ReturnType);
+
+                    Log.Verbose("Generating function {FunctionName} with tags {Tags} and security {Security}", prop.Name, prop.Tags, prop.Security);
+
+                    if (isService) {
+                        builder.AppendLine(
+                            $"    public static {returnType} {prop.Name}() => throw new InvalidOperationException(\"Cannot call reserved method for RobloxCS transpiler.\");"
+                        );
+                    } else {
+                        builder.AppendLine(
+                            $"    public {returnType} {prop.Name}() => throw new InvalidOperationException(\"Cannot call reserved method for RobloxCS transpiler.\");"
+                        );
+                    }
+
+                    generatedMemberCount++;
+                }
+            }
+
+            if (generatedMemberCount == 0 && classDef.Members.Count != 0) {
+                builder.Clear();
+                generatedMemberCount = 0;
+
+                continue;
             }
 
             builder.AppendLine("}");
 
-            result[$"Class{classDef.Name}.g.cs"] = builder.ToString();
+            result[$"Class{classDef.Name}{(shouldAppendService ? "Service" : string.Empty)}.g.cs"] = builder.ToString();
             builder.Clear();
+            generatedMemberCount = 0;
         }
 
         watch.Stop();
         Log.Information("Finished class generation in {ElapsedMS}ms", watch.ElapsedMilliseconds);
 
         return result;
+    }
+
+    private static bool IsClassAllowed(RobloxClass member) =>
+        member.Tags == null || member.Tags.Any(t => t.EnumValue is RobloxTagKind.Hidden or RobloxTagKind.NotScriptable or RobloxTagKind.Deprecated);
+
+    private static bool IsMemberAllowed(RobloxMember member) {
+        if (member.Tags == null) return member.Security is not { Read: not RobloxSecurityType.None, Write: not RobloxSecurityType.None };
+        if (member.Tags.Any(t => t.EnumValue is RobloxTagKind.Hidden or RobloxTagKind.NotScriptable or RobloxTagKind.Deprecated)) return false;
+
+        return member.Security is not { Read: not RobloxSecurityType.None, Write: not RobloxSecurityType.None };
     }
 
     private static string RobloxTypeToCSharp(RobloxType type) {
@@ -165,6 +236,11 @@ internal static class Program {
             "Content" => "string",
             "ProtectedString" => "string",
             "BinaryString" => "string",
+            "null" => "void",
+            "Dictionary" => "object",
+            "Objects" => "List<Instance>",
+            "Tuple" => "LuaTuple",
+            "Variant" => "object",
 
             _ => type.Name,
         };
@@ -172,27 +248,13 @@ internal static class Program {
 
     // horribly optimized functions below especially cause its being called in a hot spot but i couldnt care less
     private static bool IsService(RobloxClass cls) {
-        return cls.Tags is not null && cls.Tags.Contains(RobloxTagKind.Service);
-    }
-
-    public static bool IsHidden(List<RobloxTagKind>? tags) {
-        return tags is not null && tags.Contains(RobloxTagKind.Hidden);
-    }
-
-    private static bool IsCreatable(RobloxClass cls) {
-        if (cls.Tags is null) return true;
-
-        return !cls.Tags.Contains(RobloxTagKind.NotCreatable);
+        return cls.Tags is not null && cls.Tags.Any(t => t.EnumValue == RobloxTagKind.Service);
     }
 
     private static async Task<RobloxApiDump> DownloadAndDeserializeAsync() {
         using var http = new HttpClient();
-        var versionHash = await http.GetStringAsync(VersionHashUrl);
-
-        Log.Information("Downloading API dump for {VersionHash}", versionHash);
-
-        var apiDumpUrl = $"{BaseUrl}/{versionHash}-API-Dump.json";
-        var apiDumpJson = await http.GetStringAsync(apiDumpUrl);
+        var apiDumpJson = await http.GetStringAsync(ApiDumpUrl);
+        await File.WriteAllTextAsync("out.json", apiDumpJson);
 
         var watch = Stopwatch.StartNew();
         Log.Information("Starting deserialization");
@@ -201,8 +263,6 @@ internal static class Program {
 
         var output = await JsonSerializer.DeserializeAsync<RobloxApiDump>(stream, Options);
         if (output is null) throw new Exception("Failed to deserialize API dump");
-
-        await File.WriteAllTextAsync("out.json", apiDumpJson);
 
         watch.Stop();
 

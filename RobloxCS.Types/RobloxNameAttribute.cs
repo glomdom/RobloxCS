@@ -1,6 +1,6 @@
 ﻿namespace RobloxCS.Types;
 
-[AttributeUsage(AttributeTargets.Property)]
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
 internal class RobloxNameAttribute : Attribute {
     public string RenameTo { get; set; }
 

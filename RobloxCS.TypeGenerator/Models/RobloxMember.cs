@@ -12,5 +12,5 @@ public abstract class RobloxMember {
     public required RobloxSecurity Security { get; init; }
 
     public required RobloxThreadSafety ThreadSafety { get; init; }
-    public List<RobloxTagKind>? Tags { get; init; }
+    public List<RobloxTag>? Tags { get; init; }
 }

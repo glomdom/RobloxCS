@@ -2,6 +2,7 @@
 
 public enum RobloxThreadSafety {
     Safe,
+    Unknown,
     ReadSafe,
     Unsafe,
 }
