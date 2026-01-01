@@ -7,4 +7,10 @@ namespace RobloxCS.TypeGenerator.Models;
 public abstract class RobloxMember {
     public abstract RobloxMemberType MemberType { get; }
     public required string Name { get; init; }
+
+    [JsonConverter(typeof(RobloxSecurityConverter))]
+    public required RobloxSecurity Security { get; init; }
+
+    public required RobloxThreadSafety ThreadSafety { get; init; }
+    public List<RobloxTagKind>? Tags { get; init; }
 }

@@ -7,12 +7,6 @@ public sealed class RobloxEvent : RobloxMember {
     public override RobloxMemberType MemberType => RobloxMemberType.Event;
 
     public required List<RobloxParameter> Parameters { get; init; }
-    public List<RobloxTagKind>? Tags { get; init; }
-
-    [JsonConverter(typeof(RobloxSecurityConverter))]
-    public required RobloxSecurity Security { get; init; }
-
-    public required RobloxThreadSafety ThreadSafety { get; init; }
 
     public override string ToString() {
         var tagsString = Tags is not null ? $" [{string.Join(", ", Tags)}]" : string.Empty;
