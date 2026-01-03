@@ -11,6 +11,7 @@ namespace RobloxCS.TypeGenerator;
 
 internal static class Program {
     private const string ApiDumpUrl = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/refs/heads/roblox/API-Dump.json";
+    private const string FunctionBody = "throw new InvalidOperationException(\"Cannot call reserved method for RobloxCS transpiler.\");";
 
     private static readonly List<string> SkippedNames = ["Studio", "BindableFunction"];
     private static readonly List<string> EnumNames = [];
@@ -116,76 +117,73 @@ internal static class Program {
             foreach (var member in classDef.Members) {
                 if (!IsMemberAllowed(member)) continue;
 
-                if (member.MemberType is RobloxMemberType.Property) {
-                    var prop = (RobloxProperty)member;
+                switch (member.MemberType) {
+                    case RobloxMemberType.Property: {
+                        var prop = (RobloxProperty)member;
 
-                    Log.Verbose("Generating property {PropName} with tags {Tags} and security {Security}", prop.Name, prop.Tags, prop.Security);
-                    var propType = RobloxTypeToCSharp(prop.ValueType);
+                        Log.Verbose("Generating property {PropName} with tags {Tags} and security {Security}", prop.Name, prop.Tags, prop.Security);
+                        var propType = RobloxTypeToCSharp(prop.ValueType);
 
-                    if (isService) {
-                        var normalized = prop.Name.Replace(" ", string.Empty);
-                        if (prop.Name != normalized) {
-                            builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
-                            builder.AppendLine($"    public static {propType} {normalized} {{ get; }} = default!;");
-                        } else {
-                            builder.AppendLine($"    public static {propType} {prop.Name} {{ get; }} = default!;");
-                        }
-                    } else {
-                        if (prop.Name == classDef.Name) {
-                            builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
-                            builder.AppendLine($"    public {propType} Value {{ get; }} = default!;");
-                        } else {
+                        if (isService) {
                             var normalized = prop.Name.Replace(" ", string.Empty);
                             if (prop.Name != normalized) {
                                 builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
-                                builder.AppendLine($"    public {propType} {normalized} {{ get; }} = default!;");
+                                builder.AppendLine($"    public static {propType} {normalized} {{ get; }} = default!;");
                             } else {
-                                builder.AppendLine($"    public {propType} {prop.Name} {{ get; }} = default!;");
+                                builder.AppendLine($"    public static {propType} {prop.Name} {{ get; }} = default!;");
+                            }
+                        } else {
+                            if (prop.Name == classDef.Name) {
+                                builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
+                                builder.AppendLine($"    public {propType} Value {{ get; }} = default!;");
+                            } else {
+                                var normalized = prop.Name.Replace(" ", string.Empty);
+                                if (prop.Name != normalized) {
+                                    builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
+                                    builder.AppendLine($"    public {propType} {normalized} {{ get; }} = default!;");
+                                } else {
+                                    builder.AppendLine($"    public {propType} {prop.Name} {{ get; }} = default!;");
+                                }
                             }
                         }
+
+                        break;
                     }
-                }
 
-                if (member.MemberType is RobloxMemberType.Function) {
-                    var prop = (RobloxFunction)member;
+                    case RobloxMemberType.Function: {
+                        var prop = (RobloxFunction)member;
 
-                    var isTupleReturn = prop.ReturnType.Count > 1;
-                    string returnType;
-                    if (!isTupleReturn) {
-                        if (prop.ReturnType.Count == 0) {
-                            returnType = "void";
+                        var isTupleReturn = prop.ReturnType.Count > 1;
+                        string returnType;
+                        if (!isTupleReturn) {
+                            if (prop.ReturnType.Count == 0) {
+                                returnType = "void";
+                            } else {
+                                var stringifiedType = RobloxTypeToCSharp(prop.ReturnType[0]);
+                                returnType = stringifiedType;
+                            }
                         } else {
-                            var stringifiedType = RobloxTypeToCSharp(prop.ReturnType[0]);
-                            returnType = stringifiedType;
+                            var strings = prop.ReturnType.Select(RobloxTypeToCSharp);
+
+                            returnType = $"({string.Join(", ", strings)})";
                         }
-                    } else {
-                        var strings = prop.ReturnType.Select(RobloxTypeToCSharp);
 
-                        returnType = $"({string.Join(", ", strings)})";
-                    }
+                        Log.Verbose("Generating function {FunctionName} with tags {Tags} and security {Security}", prop.Name, prop.Tags, prop.Security);
 
-                    var functionBody = "throw new InvalidOperationException(\"Cannot call reserved method for RobloxCS transpiler.\");";
+                        if (isService) {
+                            builder.AppendLine(
+                                $"    public static {returnType} {prop.Name}() => {FunctionBody}"
+                            );
+                        } else {
+                            builder.AppendLine(
+                                $"    public {returnType} {prop.Name}() => {FunctionBody}"
+                            );
+                        }
 
-                    Log.Verbose("Generating function {FunctionName} with tags {Tags} and security {Security}", prop.Name, prop.Tags, prop.Security);
-
-                    if (isService) {
-                        builder.AppendLine(
-                            $"    public static {returnType} {prop.Name}() => {functionBody}"
-                        );
-                    } else {
-                        builder.AppendLine(
-                            $"    public {returnType} {prop.Name}() => {functionBody}"
-                        );
+                        break;
                     }
                 }
             }
-
-            // if (generatedMemberCount == 0 && classDef.Members.Count != 0) {
-            //     builder.Clear();
-            //     generatedMemberCount = 0;
-            //
-            //     continue;
-            // }
 
             builder.AppendLine("}");
 
