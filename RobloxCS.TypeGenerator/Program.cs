@@ -100,6 +100,7 @@ internal static class Program {
             }
 
             var outPath = $"Class{classDef.Name}{(shouldAppendService ? "Service" : string.Empty)}.g.cs";
+            var superclass = classDef.Superclass == "<<<ROOT>>>" ? null : $" : {classDef.Superclass} ";
 
             Log.Verbose("Generating class {ClassName} with tags {Tags} to {OutputPath}", classDef.Name, classDef.Tags, outPath);
 
@@ -111,7 +112,7 @@ internal static class Program {
                 builder.AppendLine($"public static partial class {classDef.Name}{(shouldAppendService ? "Service" : string.Empty)} {{");
             } else {
                 builder.AppendLine($"[RobloxNative(\"{classDef.Name}\", RobloxNativeType.Instance)]");
-                builder.AppendLine($"public partial class {classDef.Name} {{");
+                builder.AppendLine($"public partial class {classDef.Name}{superclass} {{");
             }
 
             foreach (var member in classDef.Members) {
@@ -120,30 +121,21 @@ internal static class Program {
                 switch (member.MemberType) {
                     case RobloxMemberType.Property: {
                         var prop = (RobloxProperty)member;
+                        var normalized = prop.Name.Replace(" ", string.Empty);
 
                         Log.Verbose("Generating property {PropName} with tags {Tags} and security {Security}", prop.Name, prop.Tags, prop.Security);
                         var propType = RobloxTypeToCSharp(prop.ValueType);
 
+                        if (classDef.Name == "BasePart" && prop.Name == "PivotOffset") continue; // dont ask me, ask roblox why their type dump is inconsistent
+
                         if (isService) {
-                            var normalized = prop.Name.Replace(" ", string.Empty);
-                            if (prop.Name != normalized) {
-                                builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
-                                builder.AppendLine($"    public static {propType} {normalized} {{ get; }} = default!;");
-                            } else {
-                                builder.AppendLine($"    public static {propType} {prop.Name} {{ get; }} = default!;");
-                            }
+                            builder.AppendLine($"    public static {propType} {normalized} {{ get; }} = default!;");
                         } else {
                             if (prop.Name == classDef.Name) {
                                 builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
                                 builder.AppendLine($"    public {propType} Value {{ get; }} = default!;");
                             } else {
-                                var normalized = prop.Name.Replace(" ", string.Empty);
-                                if (prop.Name != normalized) {
-                                    builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
-                                    builder.AppendLine($"    public {propType} {normalized} {{ get; }} = default!;");
-                                } else {
-                                    builder.AppendLine($"    public {propType} {prop.Name} {{ get; }} = default!;");
-                                }
+                                builder.AppendLine($"    public {propType} {normalized} {{ get; }} = default!;");
                             }
                         }
 
