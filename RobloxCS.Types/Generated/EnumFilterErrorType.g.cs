@@ -1,0 +1,24 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum FilterErrorType {
+        BackslashNotEscapingAnything = 0,
+        BadBespokeFilter = 1,
+        BadName = 2,
+        IncompleteOr = 3,
+        IncompleteParenthesis = 4,
+        InvalidDoubleStar = 5,
+        InvalidTilde = 6,
+        PropertyBadOperator = 7,
+        PropertyDoesNotExist = 8,
+        PropertyInvalidField = 9,
+        PropertyInvalidValue = 10,
+        PropertyUnsupportedFields = 11,
+        PropertyUnsupportedProperty = 12,
+        UnexpectedNameIndex = 13,
+        UnexpectedToken = 14,
+        UnfinishedBinaryOperator = 15,
+        UnfinishedQuote = 16,
+        UnknownBespokeFilter = 17,
+        WildcardInProperty = 18,
+    }
+}

@@ -1,0 +1,20 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum WrapLayerDebugMode {
+        None = 0,
+        BoundCage = 1,
+        LayerCage = 2,
+        BoundCageAndLinks = 3,
+        Reference = 4,
+        Rbf = 5,
+        OuterCage = 6,
+        ReferenceMeshAfterMorph = 7,
+        HSROuterDetail = 8,
+        HSROuter = 9,
+        HSRInner = 10,
+        HSRInnerReverse = 11,
+        LayerCageFittedToBase = 12,
+        LayerCageFittedToPrev = 13,
+        PreWrapDeformerOuterCage = 14,
+    }
+}

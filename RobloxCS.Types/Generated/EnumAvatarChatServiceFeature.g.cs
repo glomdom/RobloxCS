@@ -1,0 +1,16 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum AvatarChatServiceFeature {
+        None = 0,
+        UniverseAudio = 1,
+        UniverseVideo = 2,
+        PlaceAudio = 4,
+        PlaceVideo = 8,
+        UserAudioEligible = 16,
+        UserAudio = 32,
+        UserVideoEligible = 64,
+        UserVideo = 128,
+        UserBanned = 256,
+        UserVerifiedForVoice = 512,
+    }
+}

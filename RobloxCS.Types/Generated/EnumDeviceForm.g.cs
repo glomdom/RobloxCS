@@ -1,0 +1,10 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum DeviceForm {
+        Console = 0,
+        Phone = 1,
+        Tablet = 2,
+        Desktop = 3,
+        VR = 4,
+    }
+}

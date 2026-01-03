@@ -1,0 +1,10 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum TeleportState {
+        RequestedFromServer = 0,
+        Started = 1,
+        WaitingForServer = 2,
+        Failed = 3,
+        InProgress = 4,
+    }
+}

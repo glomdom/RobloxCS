@@ -1,0 +1,10 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum AnnotationRequestStatus {
+        Success = 0,
+        Loading = 1,
+        ErrorInternalFailure = 2,
+        ErrorNotFound = 3,
+        ErrorModerated = 4,
+    }
+}

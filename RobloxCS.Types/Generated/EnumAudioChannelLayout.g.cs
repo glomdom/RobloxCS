@@ -1,0 +1,12 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum AudioChannelLayout {
+        Mono = 0,
+        Stereo = 1,
+        Quad = 2,
+        Surround_5 = 3,
+        Surround_5_1 = 4,
+        Surround_7_1 = 5,
+        Surround_7_1_4 = 6,
+    }
+}

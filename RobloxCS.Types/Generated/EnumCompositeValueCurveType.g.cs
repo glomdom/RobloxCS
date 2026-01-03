@@ -1,0 +1,13 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum CompositeValueCurveType {
+        ColorRGB = 0,
+        ColorHSV = 1,
+        NumberRange = 2,
+        Rect = 3,
+        UDim = 4,
+        UDim2 = 5,
+        Vector2 = 6,
+        Vector3 = 7,
+    }
+}

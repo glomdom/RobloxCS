@@ -1,0 +1,58 @@
+#nullable enable
+namespace RobloxCS.Types;
+[RobloxNative("Humanoid", RobloxNativeType.Instance)]
+public partial class Humanoid : Instance  {
+    public bool AutoJumpEnabled { get; } = default!;
+    public bool AutoRotate { get; } = default!;
+    public bool AutomaticScalingEnabled { get; } = default!;
+    public bool BreakJointsOnDeath { get; } = default!;
+    public Vector3 CameraOffset { get; } = default!;
+    public Enums.HumanoidDisplayDistanceType DisplayDistanceType { get; } = default!;
+    public string DisplayName { get; } = default!;
+    public bool EvaluateStateMachine { get; } = default!;
+    public Enums.Material FloorMaterial { get; } = default!;
+    public float Health { get; } = default!;
+    public float HealthDisplayDistance { get; } = default!;
+    public Enums.HumanoidHealthDisplayType HealthDisplayType { get; } = default!;
+    public float HipHeight { get; } = default!;
+    public bool Jump { get; } = default!;
+    public float JumpHeight { get; } = default!;
+    public float JumpPower { get; } = default!;
+    public float MaxHealth { get; } = default!;
+    public float MaxSlopeAngle { get; } = default!;
+    public Vector3 MoveDirection { get; } = default!;
+    public float NameDisplayDistance { get; } = default!;
+    public Enums.NameOcclusion NameOcclusion { get; } = default!;
+    public bool PlatformStand { get; } = default!;
+    public bool RequiresNeck { get; } = default!;
+    public Enums.HumanoidRigType RigType { get; } = default!;
+    public BasePart RootPart { get; } = default!;
+    public BasePart SeatPart { get; } = default!;
+    public bool Sit { get; } = default!;
+    public Vector3 TargetPoint { get; } = default!;
+    public bool UseJumpPower { get; } = default!;
+    public float WalkSpeed { get; } = default!;
+    public BasePart WalkToPart { get; } = default!;
+    public Vector3 WalkToPoint { get; } = default!;
+    public void AddAccessory() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void BuildRigFromAttachments() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void ChangeState() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void EquipTool() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public List<object> GetAccessories() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public HumanoidDescription GetAppliedDescription() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Enums.BodyPartR15 GetBodyPartR15() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Enums.Limb GetLimb() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Vector3 GetMoveVelocity() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Enums.HumanoidStateType GetState() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public bool GetStateEnabled() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void Move() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void MoveTo() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void RemoveAccessories() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public bool ReplaceBodyPartR15() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void SetStateEnabled() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void TakeDamage() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void UnequipTools() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void ApplyDescriptionAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void ApplyDescriptionResetAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public bool PlayEmoteAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+}

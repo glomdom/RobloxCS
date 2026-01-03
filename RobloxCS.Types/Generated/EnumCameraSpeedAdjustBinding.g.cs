@@ -1,0 +1,8 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum CameraSpeedAdjustBinding {
+        None = 0,
+        RmbScroll = 1,
+        AltScroll = 2,
+    }
+}

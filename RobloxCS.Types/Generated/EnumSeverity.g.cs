@@ -1,0 +1,9 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum Severity {
+        Error = 1,
+        Warning = 2,
+        Information = 3,
+        Hint = 4,
+    }
+}

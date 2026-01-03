@@ -1,0 +1,11 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum ReturnKeyType {
+        Default = 0,
+        Done = 1,
+        Go = 2,
+        Next = 3,
+        Search = 4,
+        Send = 5,
+    }
+}

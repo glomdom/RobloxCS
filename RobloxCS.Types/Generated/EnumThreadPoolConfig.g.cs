@@ -1,0 +1,16 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum ThreadPoolConfig {
+        PerCore4 = 104,
+        PerCore3 = 103,
+        PerCore2 = 102,
+        PerCore1 = 101,
+        Auto = 0,
+        Threads1 = 1,
+        Threads2 = 2,
+        Threads3 = 3,
+        Threads4 = 4,
+        Threads8 = 8,
+        Threads16 = 16,
+    }
+}

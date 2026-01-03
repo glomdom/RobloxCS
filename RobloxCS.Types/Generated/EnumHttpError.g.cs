@@ -1,0 +1,21 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum HttpError {
+        OK = 0,
+        InvalidUrl = 1,
+        DnsResolve = 2,
+        ConnectFail = 3,
+        OutOfMemory = 4,
+        TimedOut = 5,
+        TooManyRedirects = 6,
+        InvalidRedirect = 7,
+        NetFail = 8,
+        Aborted = 9,
+        SslConnectFail = 10,
+        SslVerificationFail = 11,
+        Unknown = 12,
+        ConnectionClosed = 13,
+        ServerProtocolError = 14,
+        CreatorEnvironmentsNotSupportedByService = 15,
+    }
+}

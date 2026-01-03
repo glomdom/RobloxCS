@@ -1,0 +1,12 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum HttpRequestType {
+        Default = 0,
+        MarketplaceService = 2,
+        Players = 7,
+        Chat = 15,
+        Avatar = 16,
+        Analytics = 23,
+        Localization = 25,
+    }
+}

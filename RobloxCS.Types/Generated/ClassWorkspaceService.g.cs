@@ -1,0 +1,52 @@
+#nullable enable
+namespace RobloxCS.Types;
+[RobloxNative("Workspace", RobloxNativeType.Instance)]
+public partial class Workspace : WorldRoot  {
+    public static float AirDensity { get; } = default!;
+    public static float AirTurbulenceIntensity { get; } = default!;
+    public static bool AllowThirdPartySales { get; } = default!;
+    public static Enums.AvatarUnificationMode AvatarUnificationMode { get; } = default!;
+    public static Enums.ClientAnimatorThrottlingMode ClientAnimatorThrottling { get; } = default!;
+    public static Camera CurrentCamera { get; } = default!;
+    public static double DistributedGameTime { get; } = default!;
+    public static bool FallHeightEnabled { get; } = default!;
+    public static float FallenPartsDestroyHeight { get; } = default!;
+    public static Enums.FluidForces FluidForces { get; } = default!;
+    public static Vector3 GlobalWind { get; } = default!;
+    public static float Gravity { get; } = default!;
+    public static Enums.IKControlConstraintSupport IKControlConstraintSupport { get; } = default!;
+    public static Vector3 InsertPoint { get; } = default!;
+    public static Enums.MeshPartHeadsAndAccessories MeshPartHeadsAndAccessories { get; } = default!;
+    public static Enums.ModelStreamingBehavior ModelStreamingBehavior { get; } = default!;
+    public static Enums.MoverConstraintRootBehaviorMode MoverConstraintRootBehavior { get; } = default!;
+    public static Enums.RolloutState NextGenerationReplication { get; } = default!;
+    public static Enums.PathfindingUseImprovedSearch PathfindingUseImprovedSearch { get; } = default!;
+    public static Enums.RolloutState PhysicsImprovedSleep { get; } = default!;
+    public static Enums.PhysicsSteppingMethod PhysicsSteppingMethod { get; } = default!;
+    public static Enums.PlayerCharacterDestroyBehavior PlayerCharacterDestroyBehavior { get; } = default!;
+    public static Enums.RolloutState PlayerScriptsUseInputActionSystem { get; } = default!;
+    public static Enums.PrimalPhysicsSolver PrimalPhysicsSolver { get; } = default!;
+    public static Enums.RejectCharacterDeletions RejectCharacterDeletions { get; } = default!;
+    public static Enums.RenderingCacheOptimizationMode RenderingCacheOptimizations { get; } = default!;
+    public static Enums.ReplicateInstanceDestroySetting ReplicateInstanceDestroySetting { get; } = default!;
+    public static Enums.AnimatorRetargetingMode Retargeting { get; } = default!;
+    public static Enums.SandboxedInstanceMode SandboxedInstanceMode { get; } = default!;
+    public static Enums.SignalBehavior SignalBehavior { get; } = default!;
+    public static Enums.StreamOutBehavior StreamOutBehavior { get; } = default!;
+    public static bool StreamingEnabled { get; } = default!;
+    public static Enums.StreamingIntegrityMode StreamingIntegrityMode { get; } = default!;
+    public static int StreamingMinRadius { get; } = default!;
+    public static int StreamingTargetRadius { get; } = default!;
+    public static Terrain Terrain { get; } = default!;
+    public static Enums.RolloutState TouchEventsUseCollisionGroups { get; } = default!;
+    public static bool TouchesUseCollisionGroups { get; } = default!;
+    public static Enums.RolloutState UseFixedSimulation { get; } = default!;
+    public static Enums.RolloutState UseNewLuauTypeSolver { get; } = default!;
+    public static int GetNumAwakeParts() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static int GetPhysicsThrottling() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static double GetRealPhysicsFPS() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static double GetServerTimeNow() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static void JoinToOutsiders() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static bool PGSIsEnabled() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static void UnjoinFromOutsiders() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+}

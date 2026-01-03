@@ -1,0 +1,14 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum AdUIEventType {
+        AdLabelClicked = 0,
+        VolumeButtonClicked = 1,
+        FullscreenButtonClicked = 2,
+        PlayButtonClicked = 3,
+        PauseButtonClicked = 4,
+        CloseButtonClicked = 5,
+        WhyThisAdClicked = 6,
+        PlayEventTriggered = 7,
+        PauseEventTriggered = 8,
+    }
+}

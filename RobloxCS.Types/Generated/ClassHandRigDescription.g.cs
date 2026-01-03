@@ -1,0 +1,50 @@
+#nullable enable
+namespace RobloxCS.Types;
+[RobloxNative("HandRigDescription", RobloxNativeType.Instance)]
+public partial class HandRigDescription : Instance  {
+    public Instance Index1 { get; } = default!;
+    public CFrame Index1TposeAdjustment { get; } = default!;
+    public Instance Index2 { get; } = default!;
+    public CFrame Index2TposeAdjustment { get; } = default!;
+    public Instance Index3 { get; } = default!;
+    public CFrame Index3TposeAdjustment { get; } = default!;
+    public Vector3 IndexRange { get; } = default!;
+    public float IndexSize { get; } = default!;
+    public Instance Middle1 { get; } = default!;
+    public CFrame Middle1TposeAdjustment { get; } = default!;
+    public Instance Middle2 { get; } = default!;
+    public CFrame Middle2TposeAdjustment { get; } = default!;
+    public Instance Middle3 { get; } = default!;
+    public CFrame Middle3TposeAdjustment { get; } = default!;
+    public Vector3 MiddleRange { get; } = default!;
+    public float MiddleSize { get; } = default!;
+    public Instance Pinky1 { get; } = default!;
+    public CFrame Pinky1TposeAdjustment { get; } = default!;
+    public Instance Pinky2 { get; } = default!;
+    public CFrame Pinky2TposeAdjustment { get; } = default!;
+    public Instance Pinky3 { get; } = default!;
+    public CFrame Pinky3TposeAdjustment { get; } = default!;
+    public Vector3 PinkyRange { get; } = default!;
+    public float PinkySize { get; } = default!;
+    public Instance Ring1 { get; } = default!;
+    public CFrame Ring1TposeAdjustment { get; } = default!;
+    public Instance Ring2 { get; } = default!;
+    public CFrame Ring2TposeAdjustment { get; } = default!;
+    public Instance Ring3 { get; } = default!;
+    public CFrame Ring3TposeAdjustment { get; } = default!;
+    public Vector3 RingRange { get; } = default!;
+    public float RingSize { get; } = default!;
+    public Enums.HandRigDescriptionSide Side { get; } = default!;
+    public Instance Thumb1 { get; } = default!;
+    public CFrame Thumb1TposeAdjustment { get; } = default!;
+    public Instance Thumb2 { get; } = default!;
+    public CFrame Thumb2TposeAdjustment { get; } = default!;
+    public Instance Thumb3 { get; } = default!;
+    public CFrame Thumb3TposeAdjustment { get; } = default!;
+    public Vector3 ThumbRange { get; } = default!;
+    public float ThumbSize { get; } = default!;
+    public Vector3 GetFingerControl() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Vector3 GetFingerTip() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void SetFingerControl() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void SetFingerTip() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+}

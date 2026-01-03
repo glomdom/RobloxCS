@@ -1,0 +1,51 @@
+#nullable enable
+namespace RobloxCS.Types;
+[RobloxNative("Player", RobloxNativeType.Instance)]
+public partial class Player : Instance  {
+    public int AccountAge { get; } = default!;
+    public bool AutoJumpEnabled { get; } = default!;
+    public float CameraMaxZoomDistance { get; } = default!;
+    public float CameraMinZoomDistance { get; } = default!;
+    public Enums.CameraMode CameraMode { get; } = default!;
+    public bool CanLoadCharacterAppearance { get; } = default!;
+    public Model Character { get; } = default!;
+    public int CharacterAppearanceId { get; } = default!;
+    public Enums.DevCameraOcclusionMode DevCameraOcclusionMode { get; } = default!;
+    public Enums.DevComputerCameraMovementMode DevComputerCameraMode { get; } = default!;
+    public Enums.DevComputerMovementMode DevComputerMovementMode { get; } = default!;
+    public bool DevEnableMouseLock { get; } = default!;
+    public Enums.DevTouchCameraMovementMode DevTouchCameraMode { get; } = default!;
+    public Enums.DevTouchMovementMode DevTouchMovementMode { get; } = default!;
+    public string DisplayName { get; } = default!;
+    public int FollowUserId { get; } = default!;
+    public bool HasVerifiedBadge { get; } = default!;
+    public float HealthDisplayDistance { get; } = default!;
+    public Enums.MembershipType MembershipType { get; } = default!;
+    public float NameDisplayDistance { get; } = default!;
+    public bool Neutral { get; } = default!;
+    public Instance ReplicationFocus { get; } = default!;
+    public SpawnLocation RespawnLocation { get; } = default!;
+    public Team Team { get; } = default!;
+    public BrickColor TeamColor { get; } = default!;
+    public int UserId { get; } = default!;
+    public void AddReplicationFocus() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void ClearCharacterAppearance() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public float DistanceFromCharacter() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public PlayerData GetData() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Dictionary<string, object> GetJoinData() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Mouse GetMouse() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public float GetNetworkPing() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public bool HasAppearanceLoaded() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public bool IsVerified() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void Kick() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void Move() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void RemoveReplicationFocus() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public List<object> GetFriendsOnlineAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public int GetRankInGroupAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public string GetRoleInGroupAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public bool IsFriendsWithAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public bool IsInGroupAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void LoadCharacterAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void LoadCharacterWithHumanoidDescriptionAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void RequestStreamAroundAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+}

@@ -1,0 +1,13 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum TelemetryBackend {
+        UNSPECIFIED = 0,
+        EventIngest = 1,
+        Points = 2,
+        Teletune = 3,
+        EphemeralCounter = 4,
+        EphemeralStat = 5,
+        Counter = 6,
+        Stat = 7,
+    }
+}

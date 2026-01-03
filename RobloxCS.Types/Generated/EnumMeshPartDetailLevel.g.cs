@@ -1,0 +1,11 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum MeshPartDetailLevel {
+        DistanceBased = 0,
+        Level00 = 1,
+        Level01 = 2,
+        Level02 = 3,
+        Level03 = 4,
+        Level04 = 5,
+    }
+}

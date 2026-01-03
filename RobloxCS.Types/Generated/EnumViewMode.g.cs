@@ -1,0 +1,9 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum ViewMode {
+        None = 0,
+        GeometryComplexity = 1,
+        Transparent = 2,
+        Decal = 3,
+    }
+}

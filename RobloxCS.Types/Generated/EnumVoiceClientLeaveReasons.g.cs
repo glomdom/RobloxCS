@@ -1,0 +1,14 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum VoiceClientLeaveReasons {
+        Unknown = 0,
+        ClientNetworkDisconnected = 1,
+        PlayerLeft = 2,
+        ClientShutdown = 3,
+        PublishFailed = 4,
+        RejoinReceived = 5,
+        VoiceReboot = 6,
+        ImguiDebugLeave = 7,
+        LuaInitiated = 8,
+    }
+}

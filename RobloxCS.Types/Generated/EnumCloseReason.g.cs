@@ -1,0 +1,11 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum CloseReason {
+        Unknown = 0,
+        RobloxMaintenance = 1,
+        DeveloperShutdown = 2,
+        DeveloperUpdate = 3,
+        ServerEmpty = 4,
+        OutOfMemory = 5,
+    }
+}

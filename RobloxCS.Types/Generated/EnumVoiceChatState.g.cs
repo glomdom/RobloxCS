@@ -1,0 +1,12 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum VoiceChatState {
+        Idle = 0,
+        Joining = 1,
+        JoiningRetry = 2,
+        Joined = 3,
+        Leaving = 4,
+        Ended = 5,
+        Failed = 6,
+    }
+}

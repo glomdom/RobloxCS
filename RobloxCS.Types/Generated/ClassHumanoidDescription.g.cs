@@ -1,0 +1,53 @@
+#nullable enable
+namespace RobloxCS.Types;
+[RobloxNative("HumanoidDescription", RobloxNativeType.Instance)]
+public partial class HumanoidDescription : Instance  {
+    public string AccessoryBlob { get; } = default!;
+    public string BackAccessory { get; } = default!;
+    public float BodyTypeScale { get; } = default!;
+    public int ClimbAnimation { get; } = default!;
+    public float DepthScale { get; } = default!;
+    public int Face { get; } = default!;
+    public string FaceAccessory { get; } = default!;
+    public int FallAnimation { get; } = default!;
+    public string FrontAccessory { get; } = default!;
+    public int GraphicTShirt { get; } = default!;
+    public string HairAccessory { get; } = default!;
+    public string HatAccessory { get; } = default!;
+    public int Head { get; } = default!;
+    public Color3 HeadColor { get; } = default!;
+    public float HeadScale { get; } = default!;
+    public float HeightScale { get; } = default!;
+    public int IdleAnimation { get; } = default!;
+    public int JumpAnimation { get; } = default!;
+    public int LeftArm { get; } = default!;
+    public Color3 LeftArmColor { get; } = default!;
+    public int LeftLeg { get; } = default!;
+    public Color3 LeftLegColor { get; } = default!;
+    public int MoodAnimation { get; } = default!;
+    public string NeckAccessory { get; } = default!;
+    public int Pants { get; } = default!;
+    public float ProportionScale { get; } = default!;
+    public int RightArm { get; } = default!;
+    public Color3 RightArmColor { get; } = default!;
+    public int RightLeg { get; } = default!;
+    public Color3 RightLegColor { get; } = default!;
+    public int RunAnimation { get; } = default!;
+    public int Shirt { get; } = default!;
+    public string ShouldersAccessory { get; } = default!;
+    public int SwimAnimation { get; } = default!;
+    public int Torso { get; } = default!;
+    public Color3 TorsoColor { get; } = default!;
+    public bool UseAvatarSettings { get; } = default!;
+    public string WaistAccessory { get; } = default!;
+    public int WalkAnimation { get; } = default!;
+    public float WidthScale { get; } = default!;
+    public void AddEmote() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public List<object> GetAccessories() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Dictionary<string, object> GetEmotes() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public List<object> GetEquippedEmotes() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void RemoveEmote() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void SetAccessories() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void SetEmotes() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void SetEquippedEmotes() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+}

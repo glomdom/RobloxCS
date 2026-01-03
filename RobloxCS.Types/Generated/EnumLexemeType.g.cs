@@ -1,0 +1,24 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum LexemeType {
+        Eof = 0,
+        Name = 1,
+        QuotedString = 2,
+        Number = 3,
+        And = 4,
+        Or = 5,
+        Equal = 6,
+        TildeEqual = 7,
+        GreaterThan = 8,
+        GreaterThanEqual = 9,
+        LessThan = 10,
+        LessThanEqual = 11,
+        Colon = 12,
+        Dot = 13,
+        LeftParenthesis = 14,
+        RightParenthesis = 15,
+        Star = 16,
+        DoubleStar = 17,
+        ReservedSpecial = 18,
+    }
+}

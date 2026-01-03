@@ -1,0 +1,7 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum AvatarSettingsCustomClothingMode {
+        PlayerChoice = 0,
+        CustomClothing = 1,
+    }
+}

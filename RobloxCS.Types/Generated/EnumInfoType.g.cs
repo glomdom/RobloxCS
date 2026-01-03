@@ -1,0 +1,10 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum InfoType {
+        Asset = 0,
+        Product = 1,
+        GamePass = 2,
+        Subscription = 3,
+        Bundle = 4,
+    }
+}

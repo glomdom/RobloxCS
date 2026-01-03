@@ -1,0 +1,9 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum ParticleEmitterShape {
+        Box = 0,
+        Sphere = 1,
+        Cylinder = 2,
+        Disc = 3,
+    }
+}

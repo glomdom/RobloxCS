@@ -1,0 +1,10 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum FriendStatus {
+        Unknown = 0,
+        NotFriend = 1,
+        Friend = 2,
+        FriendRequestSent = 3,
+        FriendRequestReceived = 4,
+    }
+}

@@ -1,0 +1,12 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum AppUpdateStatus {
+        Unknown = 0,
+        NotSupported = 1,
+        Failed = 2,
+        NotAvailable = 3,
+        Available = 4,
+        AvailableBoundChannel = 5,
+        AvailableBetaProgram = 6,
+    }
+}

@@ -1,0 +1,9 @@
+namespace RobloxCS.Types;
+public static partial class Enums {
+    public enum FormFactor {
+        Symmetric = 0,
+        Brick = 1,
+        Plate = 2,
+        Custom = 3,
+    }
+}
