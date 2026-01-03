@@ -10,4 +10,11 @@ public class RobloxTag {
 
     public bool IsEnum => EnumValue.HasValue;
     public bool IsComplex => ComplexValue is not null;
+
+    public override string ToString() {
+        if (IsEnum) return $"{EnumValue}";
+        if (IsComplex) return $"preferredDescriptor={ComplexValue!.PreferredDescriptorName}, threadSafety={ComplexValue!.ThreadSafety}";
+
+        return null!; // will not happen
+    }
 }

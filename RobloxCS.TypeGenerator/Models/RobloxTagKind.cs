@@ -8,6 +8,7 @@ public enum RobloxTagKind {
     NotReplicated,
     PlayerReplicated,
     ReadOnly,
+    WriteOnly,
     NoYield,
     NotBrowsable,
     NotCreatable,

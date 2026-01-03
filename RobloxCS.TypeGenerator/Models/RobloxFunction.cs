@@ -7,11 +7,13 @@ public class RobloxFunction : RobloxMember {
     public override RobloxMemberType MemberType => RobloxMemberType.Function;
 
     public required List<RobloxParameter> Parameters { get; init; }
-    public required RobloxType ReturnType { get; init; }
+
+    [JsonConverter(typeof(SingleOrListConverter<RobloxType>))]
+    public required List<RobloxType> ReturnType { get; init; }
 
     public override string ToString() {
         var tagsString = Tags is not null ? $" [{string.Join(", ", Tags)}]" : string.Empty;
-        
-        return $"{Name}({string.Join(", ", Parameters)}) -> {ReturnType.Name} [threadSafety={ThreadSafety}] [read={Security.Read}, write={Security.Write}]{tagsString}";
+
+        return $"{Name}({string.Join(", ", Parameters)}) -> {ReturnType} [threadSafety={ThreadSafety}] [read={Security.Read}, write={Security.Write}]{tagsString}";
     }
 }

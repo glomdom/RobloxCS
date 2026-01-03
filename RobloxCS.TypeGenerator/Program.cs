@@ -10,38 +10,17 @@ using Serilog.Events;
 namespace RobloxCS.TypeGenerator;
 
 internal static class Program {
-    private const string BaseUrl = "https://setup.rbxcdn.com";
-    private const string VersionHashUrl = $"{BaseUrl}/versionQTStudio";
-    private const string ApiDumpUrl = $"https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/refs/heads/roblox/Mini-API-Dump.json";
+    private const string ApiDumpUrl = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/refs/heads/roblox/API-Dump.json";
 
     private static readonly List<string> SkippedNames = ["Studio", "BindableFunction"];
     private static readonly List<string> EnumNames = [];
-
-    // FIXME: im too lazy to do all of these so we hardcode return LuaTuple
-    private static readonly HashSet<string> PatchedMethods = [
-        "AssetService.PromptCreateAssetAsync",
-        "BasePart.CanSetNetworkOwnership",
-        "Camera.WorldToScreenPoint",
-        "Camera.WorldToViewportPoint",
-        "Chat.InvokeChatCallback",
-        "GroupService.GetGroupInfoAsync",
-        "GuiService.GetGuiInset",
-        "HapticService.GetMotor",
-        "HttpService.JSONDecode",
-        "SoundService.GetListener",
-        "TeleportService.GetLocalPlayerTeleportData",
-        "TeleportService.GetTeleportSetting",
-        "TeleportService.GetPlayerPlaceInstanceAsync",
-        "TeleportService.ReserveServer",
-        "UserInputService.GetDeviceRotation",
-    ];
 
     private static readonly JsonSerializerOptions Options = new() {
         Converters = { new JsonStringEnumConverter() },
     };
 
     internal static async Task Main() {
-        LoggerSetup.LevelSwitch.MinimumLevel = LogEventLevel.Verbose;
+        LoggerSetup.LevelSwitch.MinimumLevel = LogEventLevel.Information;
         LoggerSetup.Configure();
 
         var api = await DownloadAndDeserializeAsync();
@@ -102,11 +81,8 @@ internal static class Program {
         var watch = Stopwatch.StartNew();
         Log.Information("Starting class generation");
 
-        var generatedMemberCount = 0;
         foreach (var classDef in api.Classes) {
             if (!IsClassAllowed(classDef)) continue;
-
-            var shouldAppendService = false;
 
             if (SkippedNames.Contains(classDef.Name)) {
                 Log.Verbose("Skipping class {ClassName} with tags {Tags}", classDef.Name, classDef.Tags);
@@ -114,14 +90,19 @@ internal static class Program {
                 continue;
             }
 
-            if (!classDef.Name.EndsWith("Service")) {
+            var isService = IsService(classDef);
+            var shouldAppendService = false;
+            if (isService && !classDef.Name.EndsWith("Service")) {
+                Log.Verbose("Will append Service to name for {ClassName}", classDef.Name);
+
                 shouldAppendService = true;
             }
 
-            Log.Verbose("Generating class {ClassName} with tags {Tags}", classDef.Name, classDef.Tags);
+            var outPath = $"Class{classDef.Name}{(shouldAppendService ? "Service" : string.Empty)}.g.cs";
 
-            var isService = IsService(classDef);
+            Log.Verbose("Generating class {ClassName} with tags {Tags} to {OutputPath}", classDef.Name, classDef.Tags, outPath);
 
+            builder.AppendLine("#nullable enable");
             builder.AppendLine("namespace RobloxCS.Types;");
 
             if (isService && classDef.Name != "Workspace") {
@@ -163,48 +144,53 @@ internal static class Program {
                             }
                         }
                     }
-
-                    generatedMemberCount++;
                 }
 
                 if (member.MemberType is RobloxMemberType.Function) {
-                    if (PatchedMethods.Contains($"{classDef.Name}.{member.Name}")) {
-                        Log.Verbose("Skipping function {FunctionName} as it is patched", member.Name);
+                    var prop = (RobloxFunction)member;
 
-                        continue;
+                    var isTupleReturn = prop.ReturnType.Count > 1;
+                    string returnType;
+                    if (!isTupleReturn) {
+                        if (prop.ReturnType.Count == 0) {
+                            returnType = "void";
+                        } else {
+                            var stringifiedType = RobloxTypeToCSharp(prop.ReturnType[0]);
+                            returnType = stringifiedType;
+                        }
+                    } else {
+                        var strings = prop.ReturnType.Select(RobloxTypeToCSharp);
+
+                        returnType = $"({string.Join(", ", strings)})";
                     }
 
-                    var prop = (RobloxFunction)member;
-                    var returnType = RobloxTypeToCSharp(prop.ReturnType);
+                    var functionBody = "throw new InvalidOperationException(\"Cannot call reserved method for RobloxCS transpiler.\");";
 
                     Log.Verbose("Generating function {FunctionName} with tags {Tags} and security {Security}", prop.Name, prop.Tags, prop.Security);
 
                     if (isService) {
                         builder.AppendLine(
-                            $"    public static {returnType} {prop.Name}() => throw new InvalidOperationException(\"Cannot call reserved method for RobloxCS transpiler.\");"
+                            $"    public static {returnType} {prop.Name}() => {functionBody}"
                         );
                     } else {
                         builder.AppendLine(
-                            $"    public {returnType} {prop.Name}() => throw new InvalidOperationException(\"Cannot call reserved method for RobloxCS transpiler.\");"
+                            $"    public {returnType} {prop.Name}() => {functionBody}"
                         );
                     }
-
-                    generatedMemberCount++;
                 }
             }
 
-            if (generatedMemberCount == 0 && classDef.Members.Count != 0) {
-                builder.Clear();
-                generatedMemberCount = 0;
-
-                continue;
-            }
+            // if (generatedMemberCount == 0 && classDef.Members.Count != 0) {
+            //     builder.Clear();
+            //     generatedMemberCount = 0;
+            //
+            //     continue;
+            // }
 
             builder.AppendLine("}");
 
-            result[$"Class{classDef.Name}{(shouldAppendService ? "Service" : string.Empty)}.g.cs"] = builder.ToString();
+            result[outPath] = builder.ToString();
             builder.Clear();
-            generatedMemberCount = 0;
         }
 
         watch.Stop();
@@ -214,11 +200,11 @@ internal static class Program {
     }
 
     private static bool IsClassAllowed(RobloxClass member) =>
-        member.Tags == null || member.Tags.Any(t => t.EnumValue is RobloxTagKind.Hidden or RobloxTagKind.NotScriptable or RobloxTagKind.Deprecated);
+        member.Tags == null || !member.Tags.Any(t => t.EnumValue is RobloxTagKind.Hidden or RobloxTagKind.Deprecated);
 
     private static bool IsMemberAllowed(RobloxMember member) {
         if (member.Tags == null) return member.Security is not { Read: not RobloxSecurityType.None, Write: not RobloxSecurityType.None };
-        if (member.Tags.Any(t => t.EnumValue is RobloxTagKind.Hidden or RobloxTagKind.NotScriptable or RobloxTagKind.Deprecated)) return false;
+        if (member.Tags.Any(t => t.EnumValue is RobloxTagKind.Hidden or RobloxTagKind.Deprecated)) return false;
 
         return member.Security is not { Read: not RobloxSecurityType.None, Write: not RobloxSecurityType.None };
     }
@@ -228,22 +214,41 @@ internal static class Program {
             return $"Enums.{type.Name}";
         }
 
-        return type.Name switch {
+        var csharpType = type.Name switch {
+            "Array" => "List<object>", // this is so fucking chudded
+            "Dictionary" => "Dictionary<string, object>", // chudded
+            "Map" => "Dictionary<object, object>", // rofl
+            "AdReward" => "Instance",
+            "SecurityCapabilities" => "List<Enums.SecurityCapability>",
+            "CoordinateFrame" => "CFrame",
+            "CoordinateFrame?" => "CFrame?",
+            "ClipEvaluator" => "Instance",
             "string" => "string",
             "int" => "int",
+            "buffer" => "Buffer",
             "int64" => "int",
             "bool" => "bool",
+            "ContentId" => "string",
             "Content" => "string",
+            "Instances" => "List<Instance>",
+            "Objects" => "List<Instance>",
             "ProtectedString" => "string",
             "BinaryString" => "string",
             "null" => "void",
-            "Dictionary" => "object",
-            "Objects" => "List<Instance>",
             "Tuple" => "LuaTuple",
             "Variant" => "object",
+            "Variant?" => "object?",
+            "Map?" => "Dictionary<string, object>?",
+            "Dictionary?" => "Dictionary<string, object>?", // chudded
 
             _ => type.Name,
         };
+
+        if (csharpType.StartsWith("Dictionary") || csharpType.StartsWith("List")) {
+            Log.Warning("Unmapped container type {Type}. TODO: Manually patch.", csharpType);
+        }
+
+        return csharpType;
     }
 
     // horribly optimized functions below especially cause its being called in a hot spot but i couldnt care less
