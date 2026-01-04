@@ -7,7 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Patched\" />
+        <Folder Include="Patched\"/>
     </ItemGroup>
+
+    <Target Name="GeneratePhantomTypes" BeforeTargets="Build">
+        <Exec Command="dotnet run --project ../RobloxCS.TypeGenerator" WorkingDirectory="$(ProjectDir)" />
+        
+        <ItemGroup>
+            <Compile Include="Generated\*.g.cs" /> <!-- may not be necessary? idk -->
+        </ItemGroup>
+    </Target>
 
 </Project>
