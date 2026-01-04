@@ -11,7 +11,7 @@ namespace RobloxCS.TypeGenerator;
 
 internal static class Program {
     private const string ApiDumpUrl = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/refs/heads/roblox/API-Dump.json";
-    private const string FunctionBody = "throw new InvalidOperationException(\"Cannot call reserved method for RobloxCS transpiler.\");";
+    private const string FunctionBody = "throw new InvalidOperationException(\"Cannot call reserved method for RobloxCS transpiler.\");"; // im lazy
 
     private static readonly List<string> SkippedNames = ["Studio", "BindableFunction"];
     private static readonly List<string> EnumNames = [];
@@ -174,6 +174,31 @@ internal static class Program {
 
                         break;
                     }
+
+                    case RobloxMemberType.Event: {
+                        var prop = (RobloxEvent)member;
+
+                        Log.Verbose("Generating event {EventName} with tags {Tags} and security {Security}", prop.Name, prop.Tags, prop.Security);
+
+                        var parameters = prop.Parameters.Select(p => $"{RobloxTypeToCSharp(p.Type)}").ToList();
+                        var eventType = "RBXScriptSignal";
+                        var modifier = "public";
+                        if (parameters.Count > 0) {
+                            eventType += $"<{string.Join(", ", parameters)}>";
+                        }
+
+                        if (prop.Name == "Changed" && classDef.Name != "Object") {
+                            modifier = "new public";
+                        }
+
+                        if (isService) {
+                            builder.AppendLine($"    {modifier} static {eventType} {prop.Name} {{ get; private set; }} = null!;");
+                        } else {
+                            builder.AppendLine($"    {modifier} {eventType} {prop.Name} {{ get; private set; }} = null!;");
+                        }
+
+                        break;
+                    }
                 }
             }
 
@@ -230,6 +255,7 @@ internal static class Program {
             "Variant?" => "object?",
             "Map?" => "Dictionary<string, object>?",
             "Dictionary?" => "Dictionary<string, object>?", // chudded
+            "OptionalCoordinateFrame" => "CFrame?",
 
             _ => type.Name,
         };

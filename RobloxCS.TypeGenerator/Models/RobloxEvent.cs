@@ -1,7 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using RobloxCS.TypeGenerator.Converters;
-
-namespace RobloxCS.TypeGenerator.Models;
+﻿namespace RobloxCS.TypeGenerator.Models;
 
 public sealed class RobloxEvent : RobloxMember {
     public override RobloxMemberType MemberType => RobloxMemberType.Event;
@@ -11,6 +8,6 @@ public sealed class RobloxEvent : RobloxMember {
     public override string ToString() {
         var tagsString = Tags is not null ? $" [{string.Join(", ", Tags)}]" : string.Empty;
 
-        return $"{Name}({string.Join(", ", Parameters)}) -> [threadSafety={ThreadSafety}] [read={Security.Read}, write={Security.Write}]{tagsString}";
+        return $"::{Name}({string.Join(", ", Parameters)}) [threadSafety={ThreadSafety}] [read={Security.Read}, write={Security.Write}]{tagsString}";
     }
 }
