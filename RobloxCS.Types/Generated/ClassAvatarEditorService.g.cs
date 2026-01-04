@@ -22,4 +22,11 @@ public static partial class AvatarEditorService {
     public static List<object> GetRecommendedAssetsAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static List<object> GetRecommendedBundlesAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static CatalogPages SearchCatalogAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<Enums.AvatarPromptResult> PromptAllowInventoryReadAccessCompleted { get; private set; } = null!;
+    public static RBXScriptSignal<Enums.AvatarPromptResult, object> PromptCreateOutfitCompleted { get; private set; } = null!;
+    public static RBXScriptSignal<Enums.AvatarPromptResult> PromptDeleteOutfitCompleted { get; private set; } = null!;
+    public static RBXScriptSignal<Enums.AvatarPromptResult> PromptRenameOutfitCompleted { get; private set; } = null!;
+    public static RBXScriptSignal<Enums.AvatarPromptResult, HumanoidDescription> PromptSaveAvatarCompleted { get; private set; } = null!;
+    public static RBXScriptSignal<Enums.AvatarPromptResult> PromptSetFavoriteCompleted { get; private set; } = null!;
+    public static RBXScriptSignal<Enums.AvatarPromptResult> PromptUpdateOutfitCompleted { get; private set; } = null!;
 }

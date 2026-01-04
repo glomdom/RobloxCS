@@ -22,4 +22,6 @@ public static partial class UserGameSettingsService {
     public static void SetCameraYInvertVisible() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void SetGamepadCameraSensitivityVisible() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void SetOnboardingCompleted() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<bool> FullscreenChanged { get; private set; } = null!;
+    public static RBXScriptSignal<bool> StudioModeChanged { get; private set; } = null!;
 }

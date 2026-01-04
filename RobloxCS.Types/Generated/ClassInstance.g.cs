@@ -38,4 +38,12 @@ public partial class Instance : Object  {
     public void ResetPropertyToDefault() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetAttribute() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public Instance WaitForChild() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<Instance, Instance> AncestryChanged { get; private set; } = null!;
+    public RBXScriptSignal<string> AttributeChanged { get; private set; } = null!;
+    public RBXScriptSignal<Instance> ChildAdded { get; private set; } = null!;
+    public RBXScriptSignal<Instance> ChildRemoved { get; private set; } = null!;
+    public RBXScriptSignal<Instance> DescendantAdded { get; private set; } = null!;
+    public RBXScriptSignal<Instance> DescendantRemoving { get; private set; } = null!;
+    public RBXScriptSignal Destroying { get; private set; } = null!;
+    public RBXScriptSignal StyledPropertiesChanged { get; private set; } = null!;
 }

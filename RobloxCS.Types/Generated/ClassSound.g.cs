@@ -24,4 +24,11 @@ public partial class Sound : Instance  {
     public void Play() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Resume() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Stop() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<string, int> DidLoop { get; private set; } = null!;
+    public RBXScriptSignal<string> Ended { get; private set; } = null!;
+    public RBXScriptSignal<string> Loaded { get; private set; } = null!;
+    public RBXScriptSignal<string> Paused { get; private set; } = null!;
+    public RBXScriptSignal<string> Played { get; private set; } = null!;
+    public RBXScriptSignal<string> Resumed { get; private set; } = null!;
+    public RBXScriptSignal<string> Stopped { get; private set; } = null!;
 }

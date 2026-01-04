@@ -28,4 +28,7 @@ public partial class UIDragDetector : UIComponent  {
     public UDim2 GetReferencePosition() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public float GetReferenceRotation() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetDragStyleFunction() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<Vector2> DragContinue { get; private set; } = null!;
+    public RBXScriptSignal<Vector2> DragEnd { get; private set; } = null!;
+    public RBXScriptSignal<Vector2> DragStart { get; private set; } = null!;
 }

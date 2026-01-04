@@ -30,4 +30,20 @@ public partial class GuiObject : GuiBase2d  {
     public bool TweenPosition() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public bool TweenSize() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public bool TweenSizeAndPosition() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<InputObject> InputBegan { get; private set; } = null!;
+    public RBXScriptSignal<InputObject> InputChanged { get; private set; } = null!;
+    public RBXScriptSignal<InputObject> InputEnded { get; private set; } = null!;
+    public RBXScriptSignal<int, int> MouseEnter { get; private set; } = null!;
+    public RBXScriptSignal<int, int> MouseLeave { get; private set; } = null!;
+    public RBXScriptSignal<int, int> MouseMoved { get; private set; } = null!;
+    public RBXScriptSignal<int, int> MouseWheelBackward { get; private set; } = null!;
+    public RBXScriptSignal<int, int> MouseWheelForward { get; private set; } = null!;
+    public RBXScriptSignal SelectionGained { get; private set; } = null!;
+    public RBXScriptSignal SelectionLost { get; private set; } = null!;
+    public RBXScriptSignal<List<object>, Enums.UserInputState> TouchLongPress { get; private set; } = null!;
+    public RBXScriptSignal<List<object>, Vector2, Vector2, Enums.UserInputState> TouchPan { get; private set; } = null!;
+    public RBXScriptSignal<List<object>, float, float, Enums.UserInputState> TouchPinch { get; private set; } = null!;
+    public RBXScriptSignal<List<object>, float, float, Enums.UserInputState> TouchRotate { get; private set; } = null!;
+    public RBXScriptSignal<Enums.SwipeDirection, int> TouchSwipe { get; private set; } = null!;
+    public RBXScriptSignal<List<object>> TouchTap { get; private set; } = null!;
 }

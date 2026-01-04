@@ -7,4 +7,5 @@ public partial class ConfigSnapshot : Object  {
     public object GetValue() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public RBXScriptSignal GetValueChangedSignal() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Refresh() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal UpdateAvailable { get; private set; } = null!;
 }

@@ -13,4 +13,5 @@ public partial class Dialog : Instance  {
     public float TriggerDistance { get; } = default!;
     public Vector3 TriggerOffset { get; } = default!;
     public List<Instance> GetCurrentPlayers() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<Instance, Instance> DialogChoiceSelected { get; private set; } = null!;
 }

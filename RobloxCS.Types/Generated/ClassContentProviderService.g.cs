@@ -14,4 +14,5 @@ public static partial class ContentProviderService {
     public static void UnregisterDefaultEncryptionKey() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void UnregisterEncryptedAsset() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void PreloadAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<string> AssetFetchFailed { get; private set; } = null!;
 }

@@ -20,4 +20,8 @@ public partial class VideoPlayer : Instance  {
     public void Play() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Unload() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public Enums.AssetFetchStatus LoadAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal DidEnd { get; private set; } = null!;
+    public RBXScriptSignal DidLoop { get; private set; } = null!;
+    public RBXScriptSignal<Enums.AssetFetchStatus> PlayFailed { get; private set; } = null!;
+    public RBXScriptSignal<bool, string, Wire, Instance> WiringChanged { get; private set; } = null!;
 }

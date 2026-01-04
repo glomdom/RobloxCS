@@ -16,4 +16,6 @@ public static partial class TeleportService {
     public static LuaTuple ReserveServerAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static Instance TeleportAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static string TeleportPartyAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<Instance, object> LocalPlayerArrivedFromTeleport { get; private set; } = null!;
+    public static RBXScriptSignal<Instance, Enums.TeleportResult, string, int, Instance> TeleportInitFailed { get; private set; } = null!;
 }

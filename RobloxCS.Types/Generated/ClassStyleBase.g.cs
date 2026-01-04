@@ -5,4 +5,5 @@ public partial class StyleBase : Instance  {
     public List<Instance> GetStyleRules() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void InsertStyleRule() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetStyleRules() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal StyleRulesChanged { get; private set; } = null!;
 }

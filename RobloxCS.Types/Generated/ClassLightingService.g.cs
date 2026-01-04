@@ -26,4 +26,5 @@ public static partial class LightingService {
     public static float GetMoonPhase() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static Vector3 GetSunDirection() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void SetMinutesAfterMidnight() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<bool> LightingChanged { get; private set; } = null!;
 }

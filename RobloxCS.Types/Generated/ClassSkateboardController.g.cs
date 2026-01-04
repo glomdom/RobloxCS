@@ -4,4 +4,5 @@ namespace RobloxCS.Types;
 public partial class SkateboardController : Controller  {
     public float Steer { get; } = default!;
     public float Throttle { get; } = default!;
+    public RBXScriptSignal<string> AxisChanged { get; private set; } = null!;
 }

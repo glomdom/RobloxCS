@@ -18,4 +18,6 @@ public static partial class AvatarCreationService {
     public static LuaTuple ValidateUGCAccessoryAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static LuaTuple ValidateUGCBodyPartAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static LuaTuple ValidateUGCFullBodyAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<int, Enums.ModerationStatus> AvatarAssetModerationCompleted { get; private set; } = null!;
+    public static RBXScriptSignal<int, Enums.ModerationStatus> AvatarModerationCompleted { get; private set; } = null!;
 }

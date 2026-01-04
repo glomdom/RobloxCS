@@ -13,4 +13,9 @@ public partial class VideoFrame : GuiObject  {
     public float Volume { get; } = default!;
     public void Pause() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Play() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<string> DidLoop { get; private set; } = null!;
+    public RBXScriptSignal<string> Ended { get; private set; } = null!;
+    public RBXScriptSignal<string> Loaded { get; private set; } = null!;
+    public RBXScriptSignal<string> Paused { get; private set; } = null!;
+    public RBXScriptSignal<string> Played { get; private set; } = null!;
 }

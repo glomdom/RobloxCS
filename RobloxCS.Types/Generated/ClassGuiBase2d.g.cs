@@ -12,4 +12,5 @@ public partial class GuiBase2d : GuiBase  {
     public Enums.SelectionBehavior SelectionBehaviorRight { get; } = default!;
     public Enums.SelectionBehavior SelectionBehaviorUp { get; } = default!;
     public bool SelectionGroup { get; } = default!;
+    public RBXScriptSignal<bool, GuiObject, GuiObject> SelectionChanged { get; private set; } = null!;
 }

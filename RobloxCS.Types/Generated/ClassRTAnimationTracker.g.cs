@@ -2,4 +2,6 @@
 namespace RobloxCS.Types;
 [RobloxNative("RTAnimationTracker", RobloxNativeType.Instance)]
 public partial class RTAnimationTracker : Instance  {
+    public RBXScriptSignal<Enums.TrackerError, string> TrackerError { get; private set; } = null!;
+    public RBXScriptSignal<Enums.TrackerPromptEvent> TrackerPrompt { get; private set; } = null!;
 }

@@ -13,4 +13,5 @@ public partial class AudioListener : Instance  {
     public List<object> GetOutputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetAngleAttenuation() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetDistanceAttenuation() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<bool, string, Wire, Instance> WiringChanged { get; private set; } = null!;
 }

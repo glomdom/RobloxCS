@@ -48,4 +48,10 @@ public partial class Player : Instance  {
     public void LoadCharacterAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void LoadCharacterWithHumanoidDescriptionAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void RequestStreamAroundAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<Model> CharacterAdded { get; private set; } = null!;
+    public RBXScriptSignal<Model> CharacterAppearanceLoaded { get; private set; } = null!;
+    public RBXScriptSignal<Model> CharacterRemoving { get; private set; } = null!;
+    public RBXScriptSignal<string, Player> Chatted { get; private set; } = null!;
+    public RBXScriptSignal<double> Idled { get; private set; } = null!;
+    public RBXScriptSignal<Enums.TeleportState, int, string> OnTeleport { get; private set; } = null!;
 }

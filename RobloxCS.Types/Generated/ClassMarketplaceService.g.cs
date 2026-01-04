@@ -22,4 +22,11 @@ public static partial class MarketplaceService {
     public static List<object> RankProductsAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static List<object> RecommendTopProductsAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static bool UserOwnsGamePassAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<Instance, Enums.MarketplaceBulkPurchasePromptStatus, Dictionary<string, object>> PromptBulkPurchaseFinished { get; private set; } = null!;
+    public static RBXScriptSignal<Instance, int, bool> PromptBundlePurchaseFinished { get; private set; } = null!;
+    public static RBXScriptSignal<Instance, int, bool> PromptGamePassPurchaseFinished { get; private set; } = null!;
+    public static RBXScriptSignal PromptPremiumPurchaseFinished { get; private set; } = null!;
+    public static RBXScriptSignal<int, int, bool> PromptProductPurchaseFinished { get; private set; } = null!;
+    public static RBXScriptSignal<Instance, int, bool> PromptPurchaseFinished { get; private set; } = null!;
+    public static RBXScriptSignal<Player, string, bool> PromptSubscriptionPurchaseFinished { get; private set; } = null!;
 }

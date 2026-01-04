@@ -16,4 +16,8 @@ public static partial class VRService {
     public static void RecenterUserHeadCFrame() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void RequestNavigation() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void SetTouchpadMode() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<CFrame, Enums.UserCFrame> NavigationRequested { get; private set; } = null!;
+    public static RBXScriptSignal<Enums.VRTouchpad, Enums.VRTouchpadMode> TouchpadModeChanged { get; private set; } = null!;
+    public static RBXScriptSignal<Enums.UserCFrame, CFrame> UserCFrameChanged { get; private set; } = null!;
+    public static RBXScriptSignal<Enums.UserCFrame, bool> UserCFrameEnabled { get; private set; } = null!;
 }

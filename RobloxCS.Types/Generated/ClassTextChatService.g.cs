@@ -10,4 +10,7 @@ public static partial class TextChatService {
     public static bool CanUserChatAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static bool CanUsersChatAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static List<object> CanUsersDirectChatAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<Instance, TextChatMessage> BubbleDisplayed { get; private set; } = null!;
+    public static RBXScriptSignal<TextChatMessage> MessageReceived { get; private set; } = null!;
+    public static RBXScriptSignal<TextChatMessage> SendingMessage { get; private set; } = null!;
 }

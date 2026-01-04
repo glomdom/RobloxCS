@@ -6,4 +6,5 @@ public partial class AudioSpeechToText : Instance  {
     public string Text { get; } = default!;
     public bool VoiceDetected { get; } = default!;
     public List<Instance> GetConnectedWires() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<bool, string, Wire, Instance> WiringChanged { get; private set; } = null!;
 }

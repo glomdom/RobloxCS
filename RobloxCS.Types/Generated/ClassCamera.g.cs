@@ -24,4 +24,5 @@ public partial class Camera : PVInstance  {
     public LuaTuple WorldToScreenPoint() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public LuaTuple WorldToViewportPoint() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void ZoomToExtents() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal InterpolationFinished { get; private set; } = null!;
 }

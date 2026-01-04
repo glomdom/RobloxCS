@@ -16,4 +16,6 @@ public static partial class ContextActionService {
     public static void UnbindActivate() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void UnbindAllActions() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static Instance GetButton() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<Instance> LocalToolEquipped { get; private set; } = null!;
+    public static RBXScriptSignal<Instance> LocalToolUnequipped { get; private set; } = null!;
 }

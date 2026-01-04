@@ -13,4 +13,12 @@ public static partial class RunService {
     public static bool IsStudio() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void SetPredictionMode() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void UnbindFromRenderStep() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<double> Heartbeat { get; private set; } = null!;
+    public static RBXScriptSignal<int, List<object>> Misprediction { get; private set; } = null!;
+    public static RBXScriptSignal<double> PostSimulation { get; private set; } = null!;
+    public static RBXScriptSignal<double> PreAnimation { get; private set; } = null!;
+    public static RBXScriptSignal<double> PreRender { get; private set; } = null!;
+    public static RBXScriptSignal<double> PreSimulation { get; private set; } = null!;
+    public static RBXScriptSignal<double> RenderStepped { get; private set; } = null!;
+    public static RBXScriptSignal<double, double> Stepped { get; private set; } = null!;
 }

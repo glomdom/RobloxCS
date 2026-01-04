@@ -9,4 +9,5 @@ public partial class Explosion : Instance  {
     public Vector3 Position { get; } = default!;
     public float TimeScale { get; } = default!;
     public bool Visible { get; } = default!;
+    public RBXScriptSignal<BasePart, float> Hit { get; private set; } = null!;
 }

@@ -20,4 +20,7 @@ public partial class PlayerDataRecord : Instance  {
     public void SetValue() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void ReleaseAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void RequestFlushAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    new public RBXScriptSignal<string, object> Changed { get; private set; } = null!;
+    public RBXScriptSignal<bool, string?> Flushed { get; private set; } = null!;
+    public RBXScriptSignal<bool, string?> Loaded { get; private set; } = null!;
 }

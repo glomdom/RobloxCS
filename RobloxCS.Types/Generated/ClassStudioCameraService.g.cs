@@ -4,4 +4,5 @@ namespace RobloxCS.Types;
 public static partial class StudioCameraService {
     public static bool LockCameraSpeed { get; } = default!;
     public static bool LoggingEnabled { get; } = default!;
+    public static RBXScriptSignal<float> ShowCameraSpeed { get; private set; } = null!;
 }

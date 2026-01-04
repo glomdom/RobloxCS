@@ -34,4 +34,7 @@ public partial class TextBox : GuiObject  {
     public void CaptureFocus() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public bool IsFocused() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void ReleaseFocus() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<bool, InputObject> FocusLost { get; private set; } = null!;
+    public RBXScriptSignal Focused { get; private set; } = null!;
+    public RBXScriptSignal ReturnPressedFromOnScreenKeyboard { get; private set; } = null!;
 }

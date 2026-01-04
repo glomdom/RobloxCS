@@ -49,4 +49,5 @@ public partial class Workspace : WorldRoot  {
     public static void JoinToOutsiders() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static bool PGSIsEnabled() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void UnjoinFromOutsiders() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<Player> PersistentLoaded { get; private set; } = null!;
 }

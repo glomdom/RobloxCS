@@ -13,4 +13,5 @@ public partial class AudioRecorder : Instance  {
     public bool CanRecordAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<Instance> GetUnrecordableInstancesAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void RecordAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<bool, string, Wire, Instance> WiringChanged { get; private set; } = null!;
 }

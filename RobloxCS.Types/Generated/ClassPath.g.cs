@@ -6,4 +6,6 @@ public partial class Path : Instance  {
     public List<object> GetWaypoints() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public int CheckOcclusionAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void ComputeAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<int> Blocked { get; private set; } = null!;
+    public RBXScriptSignal<int> Unblocked { get; private set; } = null!;
 }

@@ -50,4 +50,6 @@ public partial class HumanoidDescription : Instance  {
     public void SetAccessories() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetEmotes() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetEquippedEmotes() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<Dictionary<string, object>> EmotesChanged { get; private set; } = null!;
+    public RBXScriptSignal<List<object>> EquippedEmotesChanged { get; private set; } = null!;
 }

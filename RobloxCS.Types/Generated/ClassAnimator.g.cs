@@ -10,4 +10,5 @@ public partial class Animator : Instance  {
     public List<object> GetPlayingAnimationTracks() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public AnimationTrack LoadAnimation() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void RegisterEvaluationParallelCallback() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<AnimationTrack> AnimationPlayed { get; private set; } = null!;
 }

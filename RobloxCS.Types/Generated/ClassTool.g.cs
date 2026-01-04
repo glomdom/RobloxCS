@@ -10,4 +10,8 @@ public partial class Tool : BackpackItem  {
     public string ToolTip { get; } = default!;
     public void Activate() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Deactivate() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal Activated { get; private set; } = null!;
+    public RBXScriptSignal Deactivated { get; private set; } = null!;
+    public RBXScriptSignal<Mouse> Equipped { get; private set; } = null!;
+    public RBXScriptSignal Unequipped { get; private set; } = null!;
 }

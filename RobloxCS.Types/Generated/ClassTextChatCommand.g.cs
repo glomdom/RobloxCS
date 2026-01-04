@@ -6,4 +6,5 @@ public partial class TextChatCommand : Instance  {
     public bool Enabled { get; } = default!;
     public string PrimaryAlias { get; } = default!;
     public string SecondaryAlias { get; } = default!;
+    public RBXScriptSignal<TextSource, string> Triggered { get; private set; } = null!;
 }

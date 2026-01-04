@@ -23,4 +23,8 @@ public partial class AnimationTrack : Instance  {
     public void SetParameter() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetTargetInstance() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Stop() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal DidLoop { get; private set; } = null!;
+    public RBXScriptSignal Ended { get; private set; } = null!;
+    public RBXScriptSignal<string> KeyframeReached { get; private set; } = null!;
+    public RBXScriptSignal Stopped { get; private set; } = null!;
 }

@@ -25,4 +25,6 @@ public static partial class TestService {
     public static void TakeSnapshot() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void Warn() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static bool isFeatureEnabled() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<bool, string, Instance, int> ServerCollectConditionalResult { get; private set; } = null!;
+    public static RBXScriptSignal<string, Instance, int> ServerCollectResult { get; private set; } = null!;
 }

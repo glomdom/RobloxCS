@@ -55,4 +55,22 @@ public partial class Humanoid : Instance  {
     public void ApplyDescriptionAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void ApplyDescriptionResetAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public bool PlayEmoteAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<HumanoidDescription> ApplyDescriptionFinished { get; private set; } = null!;
+    public RBXScriptSignal<float> Climbing { get; private set; } = null!;
+    public RBXScriptSignal Died { get; private set; } = null!;
+    public RBXScriptSignal<bool> FallingDown { get; private set; } = null!;
+    public RBXScriptSignal<bool> FreeFalling { get; private set; } = null!;
+    public RBXScriptSignal<bool> GettingUp { get; private set; } = null!;
+    public RBXScriptSignal<float> HealthChanged { get; private set; } = null!;
+    public RBXScriptSignal<bool> Jumping { get; private set; } = null!;
+    public RBXScriptSignal<bool> MoveToFinished { get; private set; } = null!;
+    public RBXScriptSignal<bool> PlatformStanding { get; private set; } = null!;
+    public RBXScriptSignal<bool> Ragdoll { get; private set; } = null!;
+    public RBXScriptSignal<float> Running { get; private set; } = null!;
+    public RBXScriptSignal<bool, BasePart> Seated { get; private set; } = null!;
+    public RBXScriptSignal<Enums.HumanoidStateType, Enums.HumanoidStateType> StateChanged { get; private set; } = null!;
+    public RBXScriptSignal<Enums.HumanoidStateType, bool> StateEnabledChanged { get; private set; } = null!;
+    public RBXScriptSignal<bool> Strafing { get; private set; } = null!;
+    public RBXScriptSignal<float> Swimming { get; private set; } = null!;
+    public RBXScriptSignal<BasePart, BasePart> Touched { get; private set; } = null!;
 }

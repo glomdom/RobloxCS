@@ -18,4 +18,10 @@ public partial class ScriptDebugger : Instance  {
     public void SetGlobal() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetLocal() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetUpvalue() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<Instance> BreakpointAdded { get; private set; } = null!;
+    public RBXScriptSignal<Instance> BreakpointRemoved { get; private set; } = null!;
+    public RBXScriptSignal<int, Enums.BreakReason> EncounteredBreak { get; private set; } = null!;
+    public RBXScriptSignal Resuming { get; private set; } = null!;
+    public RBXScriptSignal<Instance> WatchAdded { get; private set; } = null!;
+    public RBXScriptSignal<Instance> WatchRemoved { get; private set; } = null!;
 }

@@ -64,4 +64,6 @@ public partial class BasePart : PVInstance  {
     public Instance IntersectAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public Instance SubtractAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public Instance UnionAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<BasePart> TouchEnded { get; private set; } = null!;
+    public RBXScriptSignal<BasePart> Touched { get; private set; } = null!;
 }

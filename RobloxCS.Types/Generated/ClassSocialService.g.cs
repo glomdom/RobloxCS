@@ -16,4 +16,8 @@ public static partial class SocialService {
     public static void PromptFeedbackSubmissionAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static LuaTuple PromptLinkSharingAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static Enums.RsvpStatus PromptRsvpToEventAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<Instance, Enums.InviteState> CallInviteStateChanged { get; private set; } = null!;
+    public static RBXScriptSignal<Instance, List<object>> GameInvitePromptClosed { get; private set; } = null!;
+    public static RBXScriptSignal<Instance> PhoneBookPromptClosed { get; private set; } = null!;
+    public static RBXScriptSignal<Player> ShareSheetClosed { get; private set; } = null!;
 }

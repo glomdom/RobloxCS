@@ -19,4 +19,12 @@ public partial class ProximityPrompt : Instance  {
     public Vector2 UIOffset { get; } = default!;
     public void InputHoldBegin() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void InputHoldEnd() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal IndicatorHidden { get; private set; } = null!;
+    public RBXScriptSignal IndicatorShown { get; private set; } = null!;
+    public RBXScriptSignal<Player> PromptButtonHoldBegan { get; private set; } = null!;
+    public RBXScriptSignal<Player> PromptButtonHoldEnded { get; private set; } = null!;
+    public RBXScriptSignal PromptHidden { get; private set; } = null!;
+    public RBXScriptSignal<Enums.ProximityPromptInputType> PromptShown { get; private set; } = null!;
+    public RBXScriptSignal<Player> TriggerEnded { get; private set; } = null!;
+    public RBXScriptSignal<Player> Triggered { get; private set; } = null!;
 }

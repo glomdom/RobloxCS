@@ -20,4 +20,5 @@ public partial class Path2D : GuiBase  {
     public void RemoveControlPoint() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetControlPoints() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void UpdateControlPoint() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal ControlPointChanged { get; private set; } = null!;
 }

@@ -4,4 +4,5 @@ namespace RobloxCS.Types;
 public static partial class LogService {
     public static void ClearOutput() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static List<object> GetLogHistory() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<string, Enums.MessageType> MessageOut { get; private set; } = null!;
 }

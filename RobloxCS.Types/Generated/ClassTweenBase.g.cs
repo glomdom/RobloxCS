@@ -6,4 +6,5 @@ public partial class TweenBase : Instance  {
     public void Cancel() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Pause() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Play() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<Enums.PlaybackState> Completed { get; private set; } = null!;
 }

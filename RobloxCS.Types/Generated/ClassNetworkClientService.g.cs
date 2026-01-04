@@ -2,4 +2,6 @@
 namespace RobloxCS.Types;
 [RobloxNative("NetworkClient", RobloxNativeType.Service)]
 public static partial class NetworkClientService {
+    public static RBXScriptSignal<string, Instance> ConnectionAccepted { get; private set; } = null!;
+    public static RBXScriptSignal<string, int, string> ConnectionFailed { get; private set; } = null!;
 }

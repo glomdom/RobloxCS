@@ -9,4 +9,5 @@ public partial class HapticEffect : Instance  {
     public void Play() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetWaveformKeys() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Stop() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal Ended { get; private set; } = null!;
 }

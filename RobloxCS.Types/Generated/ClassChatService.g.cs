@@ -12,4 +12,5 @@ public static partial class ChatService {
     public static bool CanUsersChatAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static string FilterStringAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static string FilterStringForBroadcast() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<Instance, string, Enums.ChatColor> Chatted { get; private set; } = null!;
 }

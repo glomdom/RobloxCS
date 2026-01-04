@@ -26,4 +26,8 @@ public static partial class PlayersService {
     public static int GetUserIdFromNameAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static LuaTuple GetUserThumbnailAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void UnbanAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<Player> PlayerAdded { get; private set; } = null!;
+    public static RBXScriptSignal<Player> PlayerMembershipChanged { get; private set; } = null!;
+    public static RBXScriptSignal<Player, Enums.PlayerExitReason> PlayerRemoving { get; private set; } = null!;
+    public static RBXScriptSignal<Player, string> UserSubscriptionStatusChanged { get; private set; } = null!;
 }

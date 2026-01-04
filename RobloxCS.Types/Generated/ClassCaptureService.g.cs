@@ -14,4 +14,7 @@ public static partial class CaptureService {
     public static LuaTuple ReadCapturesFromGalleryAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static Enums.VideoCaptureStartedResult StartVideoCaptureAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static LuaTuple UploadCaptureAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal<Enums.CaptureType> CaptureBegan { get; private set; } = null!;
+    public static RBXScriptSignal<Enums.CaptureType> CaptureEnded { get; private set; } = null!;
+    public static RBXScriptSignal<string> UserCaptureSaved { get; private set; } = null!;
 }

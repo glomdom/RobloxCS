@@ -34,4 +34,7 @@ public partial class DragDetector : ClickDetector  {
     public void RestartDrag() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetDragStyleFunction() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void SetPermissionPolicyFunction() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<Player, Ray, CFrame, CFrame?, bool> DragContinue { get; private set; } = null!;
+    public RBXScriptSignal<Player> DragEnd { get; private set; } = null!;
+    public RBXScriptSignal<Player, Ray, CFrame, CFrame, BasePart, CFrame?, bool> DragStart { get; private set; } = null!;
 }

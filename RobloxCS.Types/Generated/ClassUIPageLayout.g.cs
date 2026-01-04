@@ -16,4 +16,7 @@ public partial class UIPageLayout : UIGridStyleLayout  {
     public void JumpToIndex() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Next() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Previous() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptSignal<Instance> PageEnter { get; private set; } = null!;
+    public RBXScriptSignal<Instance> PageLeave { get; private set; } = null!;
+    public RBXScriptSignal<Instance> Stopped { get; private set; } = null!;
 }

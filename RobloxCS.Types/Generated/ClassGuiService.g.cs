@@ -24,4 +24,6 @@ public static partial class GuiService {
     public static void SetEmotesMenuOpen() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void SetGameplayPausedNotificationEnabled() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void SetInspectMenuEnabled() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static RBXScriptSignal MenuClosed { get; private set; } = null!;
+    public static RBXScriptSignal MenuOpened { get; private set; } = null!;
 }
