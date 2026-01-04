@@ -1,5 +1,5 @@
 ﻿namespace RobloxCS.Types;
 
-public readonly record struct RBXScriptConnection {
+public class RBXScriptConnection {
     
 }
