@@ -275,7 +275,6 @@ internal static class Program {
     private static async Task<RobloxApiDump> DownloadAndDeserializeAsync() {
         using var http = new HttpClient();
         var apiDumpJson = await http.GetStringAsync(ApiDumpUrl);
-        await File.WriteAllTextAsync("out.json", apiDumpJson);
 
         var watch = Stopwatch.StartNew();
         Log.Information("Starting deserialization");
