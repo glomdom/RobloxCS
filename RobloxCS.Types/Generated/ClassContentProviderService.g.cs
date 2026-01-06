@@ -2,8 +2,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("ContentProvider", RobloxNativeType.Service)]
 public static partial class ContentProviderService {
-    public static string BaseUrl { get; } = default!;
-    public static int RequestQueueSize { get; } = default!;
+    public static string BaseUrl { get; set; } = default!;
+    public static int RequestQueueSize { get; set; } = default!;
     public static Enums.AssetFetchStatus GetAssetFetchStatus() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static RBXScriptSignal GetAssetFetchStatusChangedSignal() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static List<object> ListEncryptedAssets() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

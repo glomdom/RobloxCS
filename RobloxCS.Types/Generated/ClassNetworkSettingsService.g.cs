@@ -4,11 +4,11 @@ namespace RobloxCS.Types;
 public static partial class NetworkSettingsService {
     public static bool HttpProxyEnabled { get; } = default!;
     public static string HttpProxyURL { get; } = default!;
-    public static double IncomingReplicationLag { get; } = default!;
-    public static bool PrintJoinSizeBreakdown { get; } = default!;
-    public static bool PrintPhysicsErrors { get; } = default!;
-    public static bool PrintStreamInstanceQuota { get; } = default!;
-    public static bool RandomizeJoinInstanceOrder { get; } = default!;
-    public static bool RenderStreamedRegions { get; } = default!;
-    public static bool ShowActiveAnimationAsset { get; } = default!;
+    public static double IncomingReplicationLag { get; set; } = default!;
+    public static bool PrintJoinSizeBreakdown { get; set; } = default!;
+    public static bool PrintPhysicsErrors { get; set; } = default!;
+    public static bool PrintStreamInstanceQuota { get; set; } = default!;
+    public static bool RandomizeJoinInstanceOrder { get; set; } = default!;
+    public static bool RenderStreamedRegions { get; set; } = default!;
+    public static bool ShowActiveAnimationAsset { get; set; } = default!;
 }

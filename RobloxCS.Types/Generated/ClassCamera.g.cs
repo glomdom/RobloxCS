@@ -2,19 +2,19 @@
 namespace RobloxCS.Types;
 [RobloxNative("Camera", RobloxNativeType.Instance)]
 public partial class Camera : PVInstance  {
-    public CFrame CFrame { get; } = default!;
-    public Instance CameraSubject { get; } = default!;
-    public Enums.CameraType CameraType { get; } = default!;
-    public float DiagonalFieldOfView { get; } = default!;
-    public float FieldOfView { get; } = default!;
-    public Enums.FieldOfViewMode FieldOfViewMode { get; } = default!;
-    public CFrame Focus { get; } = default!;
-    public bool HeadLocked { get; } = default!;
-    public float HeadScale { get; } = default!;
-    public float MaxAxisFieldOfView { get; } = default!;
-    public float NearPlaneZ { get; } = default!;
-    public bool VRTiltAndRollEnabled { get; } = default!;
-    public Vector2 ViewportSize { get; } = default!;
+    public CFrame CFrame { get; set; } = default!;
+    public Instance CameraSubject { get; set; } = default!;
+    public Enums.CameraType CameraType { get; set; } = default!;
+    public float DiagonalFieldOfView { get; set; } = default!;
+    public float FieldOfView { get; set; } = default!;
+    public Enums.FieldOfViewMode FieldOfViewMode { get; set; } = default!;
+    public CFrame Focus { get; set; } = default!;
+    public bool HeadLocked { get; set; } = default!;
+    public float HeadScale { get; set; } = default!;
+    public float MaxAxisFieldOfView { get; set; } = default!;
+    public float NearPlaneZ { get; set; } = default!;
+    public bool VRTiltAndRollEnabled { get; set; } = default!;
+    public Vector2 ViewportSize { get; set; } = default!;
     public List<Instance> GetPartsObscuringTarget() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public CFrame GetRenderCFrame() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public float GetRoll() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

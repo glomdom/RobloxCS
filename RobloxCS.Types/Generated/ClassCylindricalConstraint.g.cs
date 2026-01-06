@@ -2,20 +2,20 @@
 namespace RobloxCS.Types;
 [RobloxNative("CylindricalConstraint", RobloxNativeType.Instance)]
 public partial class CylindricalConstraint : SlidingBallConstraint  {
-    public Enums.ActuatorType AngularActuatorType { get; } = default!;
-    public bool AngularLimitsEnabled { get; } = default!;
-    public float AngularResponsiveness { get; } = default!;
-    public float AngularRestitution { get; } = default!;
-    public float AngularSpeed { get; } = default!;
-    public float AngularVelocity { get; } = default!;
-    public float CurrentAngle { get; } = default!;
-    public float InclinationAngle { get; } = default!;
-    public float LowerAngle { get; } = default!;
-    public float MotorMaxAngularAcceleration { get; } = default!;
-    public float MotorMaxTorque { get; } = default!;
-    public bool RotationAxisVisible { get; } = default!;
-    public float ServoMaxTorque { get; } = default!;
-    public float TargetAngle { get; } = default!;
-    public float UpperAngle { get; } = default!;
-    public Vector3 WorldRotationAxis { get; } = default!;
+    public Enums.ActuatorType AngularActuatorType { get; set; } = default!;
+    public bool AngularLimitsEnabled { get; set; } = default!;
+    public float AngularResponsiveness { get; set; } = default!;
+    public float AngularRestitution { get; set; } = default!;
+    public float AngularSpeed { get; set; } = default!;
+    public float AngularVelocity { get; set; } = default!;
+    public float CurrentAngle { get; set; } = default!;
+    public float InclinationAngle { get; set; } = default!;
+    public float LowerAngle { get; set; } = default!;
+    public float MotorMaxAngularAcceleration { get; set; } = default!;
+    public float MotorMaxTorque { get; set; } = default!;
+    public bool RotationAxisVisible { get; set; } = default!;
+    public float ServoMaxTorque { get; set; } = default!;
+    public float TargetAngle { get; set; } = default!;
+    public float UpperAngle { get; set; } = default!;
+    public Vector3 WorldRotationAxis { get; set; } = default!;
 }

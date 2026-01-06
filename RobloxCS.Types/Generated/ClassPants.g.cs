@@ -2,5 +2,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("Pants", RobloxNativeType.Instance)]
 public partial class Pants : Clothing  {
-    public string PantsTemplate { get; } = default!;
+    public string PantsTemplate { get; set; } = default!;
 }

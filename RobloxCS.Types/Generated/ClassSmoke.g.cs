@@ -2,10 +2,10 @@
 namespace RobloxCS.Types;
 [RobloxNative("Smoke", RobloxNativeType.Instance)]
 public partial class Smoke : Instance  {
-    public Color3 Color { get; } = default!;
-    public bool Enabled { get; } = default!;
-    public float Opacity { get; } = default!;
-    public float RiseVelocity { get; } = default!;
-    public float Size { get; } = default!;
-    public float TimeScale { get; } = default!;
+    public Color3 Color { get; set; } = default!;
+    public bool Enabled { get; set; } = default!;
+    public float Opacity { get; set; } = default!;
+    public float RiseVelocity { get; set; } = default!;
+    public float Size { get; set; } = default!;
+    public float TimeScale { get; set; } = default!;
 }

@@ -2,7 +2,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("RunService", RobloxNativeType.Service)]
 public static partial class RunService {
-    public static int FrameNumber { get; } = default!;
+    public static int FrameNumber { get; set; } = default!;
     public static void BindToRenderStep() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static RBXScriptConnection BindToSimulation() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static Enums.PredictionStatus GetPredictionStatus() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

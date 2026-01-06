@@ -2,9 +2,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("ControllerPartSensor", RobloxNativeType.Instance)]
 public partial class ControllerPartSensor : ControllerSensor  {
-    public CFrame HitFrame { get; } = default!;
-    public Vector3 HitNormal { get; } = default!;
-    public float SearchDistance { get; } = default!;
-    public BasePart SensedPart { get; } = default!;
-    public Enums.SensorMode SensorMode { get; } = default!;
+    public CFrame HitFrame { get; set; } = default!;
+    public Vector3 HitNormal { get; set; } = default!;
+    public float SearchDistance { get; set; } = default!;
+    public BasePart SensedPart { get; set; } = default!;
+    public Enums.SensorMode SensorMode { get; set; } = default!;
 }

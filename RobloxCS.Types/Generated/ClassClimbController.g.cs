@@ -2,8 +2,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("ClimbController", RobloxNativeType.Instance)]
 public partial class ClimbController : ControllerBase  {
-    public float AccelerationTime { get; } = default!;
-    public float BalanceMaxTorque { get; } = default!;
-    public float BalanceSpeed { get; } = default!;
-    public float MoveMaxForce { get; } = default!;
+    public float AccelerationTime { get; set; } = default!;
+    public float BalanceMaxTorque { get; set; } = default!;
+    public float BalanceSpeed { get; set; } = default!;
+    public float MoveMaxForce { get; set; } = default!;
 }

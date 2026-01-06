@@ -2,5 +2,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("ForceField", RobloxNativeType.Instance)]
 public partial class ForceField : Instance  {
-    public bool Visible { get; } = default!;
+    public bool Visible { get; set; } = default!;
 }

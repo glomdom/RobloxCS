@@ -2,9 +2,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("MakeupDescription", RobloxNativeType.Instance)]
 public partial class MakeupDescription : Instance  {
-    public int AssetId { get; } = default!;
-    public Instance Instance { get; } = default!;
-    public Enums.MakeupType MakeupType { get; } = default!;
-    public int Order { get; } = default!;
+    public int AssetId { get; set; } = default!;
+    public Instance Instance { get; set; } = default!;
+    public Enums.MakeupType MakeupType { get; set; } = default!;
+    public int Order { get; set; } = default!;
     public Instance GetAppliedInstance() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
 }

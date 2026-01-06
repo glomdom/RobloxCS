@@ -2,6 +2,6 @@
 namespace RobloxCS.Types;
 [RobloxNative("SphereHandleAdornment", RobloxNativeType.Instance)]
 public partial class SphereHandleAdornment : HandleAdornment  {
-    public float Radius { get; } = default!;
-    public Enums.AdornShading Shading { get; } = default!;
+    public float Radius { get; set; } = default!;
+    public Enums.AdornShading Shading { get; set; } = default!;
 }

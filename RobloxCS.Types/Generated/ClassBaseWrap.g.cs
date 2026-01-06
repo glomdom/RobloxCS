@@ -5,7 +5,7 @@ public partial class BaseWrap : Instance  {
     public string CageMeshContent { get; } = default!;
     public string CageMeshId { get; } = default!;
     public CFrame CageOrigin { get; } = default!;
-    public CFrame CageOriginWorld { get; } = default!;
+    public CFrame CageOriginWorld { get; set; } = default!;
     public CFrame ImportOrigin { get; } = default!;
-    public CFrame ImportOriginWorld { get; } = default!;
+    public CFrame ImportOriginWorld { get; set; } = default!;
 }

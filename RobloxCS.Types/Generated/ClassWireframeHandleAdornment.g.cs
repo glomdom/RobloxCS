@@ -2,8 +2,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("WireframeHandleAdornment", RobloxNativeType.Instance)]
 public partial class WireframeHandleAdornment : HandleAdornment  {
-    public Vector3 Scale { get; } = default!;
-    public float Thickness { get; } = default!;
+    public Vector3 Scale { get; set; } = default!;
+    public float Thickness { get; set; } = default!;
     public void AddLine() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void AddLines() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void AddPath() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

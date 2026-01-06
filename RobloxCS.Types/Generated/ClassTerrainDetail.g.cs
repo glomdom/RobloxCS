@@ -2,9 +2,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("TerrainDetail", RobloxNativeType.Instance)]
 public partial class TerrainDetail : Instance  {
-    public float EmissiveStrength { get; } = default!;
-    public Color3 EmissiveTint { get; } = default!;
-    public Enums.TerrainFace Face { get; } = default!;
-    public Enums.MaterialPattern MaterialPattern { get; } = default!;
-    public float StudsPerTile { get; } = default!;
+    public float EmissiveStrength { get; set; } = default!;
+    public Color3 EmissiveTint { get; set; } = default!;
+    public Enums.TerrainFace Face { get; set; } = default!;
+    public Enums.MaterialPattern MaterialPattern { get; set; } = default!;
+    public float StudsPerTile { get; set; } = default!;
 }

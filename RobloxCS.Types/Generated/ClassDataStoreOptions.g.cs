@@ -2,6 +2,6 @@
 namespace RobloxCS.Types;
 [RobloxNative("DataStoreOptions", RobloxNativeType.Instance)]
 public partial class DataStoreOptions : Instance  {
-    public bool AllScopes { get; } = default!;
+    public bool AllScopes { get; set; } = default!;
     public void SetExperimentalFeatures() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
 }

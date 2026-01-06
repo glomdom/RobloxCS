@@ -2,10 +2,10 @@
 namespace RobloxCS.Types;
 [RobloxNative("DebuggerBreakpoint", RobloxNativeType.Instance)]
 public partial class DebuggerBreakpoint : Instance  {
-    public string Condition { get; } = default!;
-    public bool ContinueExecution { get; } = default!;
-    public bool IsEnabled { get; } = default!;
-    public int Line { get; } = default!;
-    public string LogExpression { get; } = default!;
-    public bool isContextDependentBreakpoint { get; } = default!;
+    public string Condition { get; set; } = default!;
+    public bool ContinueExecution { get; set; } = default!;
+    public bool IsEnabled { get; set; } = default!;
+    public int Line { get; set; } = default!;
+    public string LogExpression { get; set; } = default!;
+    public bool isContextDependentBreakpoint { get; set; } = default!;
 }

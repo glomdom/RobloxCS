@@ -2,9 +2,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("BaseImportData", RobloxNativeType.Instance)]
 public partial class BaseImportData : Instance  {
-    public string Id { get; } = default!;
-    public string ImportName { get; } = default!;
-    public bool ShouldImport { get; } = default!;
+    public string Id { get; set; } = default!;
+    public string ImportName { get; set; } = default!;
+    public bool ShouldImport { get; set; } = default!;
     public RBXScriptSignal<Dictionary<string, object>> StatusRemoved { get; private set; } = null!;
     public RBXScriptSignal<Dictionary<string, object>> StatusReported { get; private set; } = null!;
 }

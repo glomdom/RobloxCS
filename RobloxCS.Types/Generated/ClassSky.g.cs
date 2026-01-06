@@ -2,25 +2,25 @@
 namespace RobloxCS.Types;
 [RobloxNative("Sky", RobloxNativeType.Instance)]
 public partial class Sky : Instance  {
-    public bool CelestialBodiesShown { get; } = default!;
-    public float MoonAngularSize { get; } = default!;
-    public string MoonTextureContent { get; } = default!;
-    public string MoonTextureId { get; } = default!;
-    public string SkyboxBackContent { get; } = default!;
-    public string SkyboxBk { get; } = default!;
-    public string SkyboxDn { get; } = default!;
-    public string SkyboxDownContent { get; } = default!;
-    public string SkyboxFrontContent { get; } = default!;
-    public string SkyboxFt { get; } = default!;
-    public string SkyboxLeftContent { get; } = default!;
-    public string SkyboxLf { get; } = default!;
-    public Vector3 SkyboxOrientation { get; } = default!;
-    public string SkyboxRightContent { get; } = default!;
-    public string SkyboxRt { get; } = default!;
-    public string SkyboxUp { get; } = default!;
-    public string SkyboxUpContent { get; } = default!;
-    public int StarCount { get; } = default!;
-    public float SunAngularSize { get; } = default!;
-    public string SunTextureContent { get; } = default!;
-    public string SunTextureId { get; } = default!;
+    public bool CelestialBodiesShown { get; set; } = default!;
+    public float MoonAngularSize { get; set; } = default!;
+    public string MoonTextureContent { get; set; } = default!;
+    public string MoonTextureId { get; set; } = default!;
+    public string SkyboxBackContent { get; set; } = default!;
+    public string SkyboxBk { get; set; } = default!;
+    public string SkyboxDn { get; set; } = default!;
+    public string SkyboxDownContent { get; set; } = default!;
+    public string SkyboxFrontContent { get; set; } = default!;
+    public string SkyboxFt { get; set; } = default!;
+    public string SkyboxLeftContent { get; set; } = default!;
+    public string SkyboxLf { get; set; } = default!;
+    public Vector3 SkyboxOrientation { get; set; } = default!;
+    public string SkyboxRightContent { get; set; } = default!;
+    public string SkyboxRt { get; set; } = default!;
+    public string SkyboxUp { get; set; } = default!;
+    public string SkyboxUpContent { get; set; } = default!;
+    public int StarCount { get; set; } = default!;
+    public float SunAngularSize { get; set; } = default!;
+    public string SunTextureContent { get; set; } = default!;
+    public string SunTextureId { get; set; } = default!;
 }

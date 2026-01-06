@@ -2,15 +2,15 @@
 namespace RobloxCS.Types;
 [RobloxNative("Players", RobloxNativeType.Service)]
 public static partial class PlayersService {
-    public static bool BanningEnabled { get; } = default!;
-    public static bool BubbleChat { get; } = default!;
-    public static bool CharacterAutoLoads { get; } = default!;
-    public static bool ClassicChat { get; } = default!;
-    public static Player LocalPlayer { get; } = default!;
-    public static int MaxPlayers { get; } = default!;
-    public static int PreferredPlayers { get; } = default!;
-    public static float RespawnTime { get; } = default!;
-    public static bool UseStrafingAnimations { get; } = default!;
+    public static bool BanningEnabled { get; set; } = default!;
+    public static bool BubbleChat { get; set; } = default!;
+    public static bool CharacterAutoLoads { get; set; } = default!;
+    public static bool ClassicChat { get; set; } = default!;
+    public static Player LocalPlayer { get; set; } = default!;
+    public static int MaxPlayers { get; set; } = default!;
+    public static int PreferredPlayers { get; set; } = default!;
+    public static float RespawnTime { get; set; } = default!;
+    public static bool UseStrafingAnimations { get; set; } = default!;
     public static Player GetPlayerByUserId() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static Player GetPlayerFromCharacter() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static List<Instance> GetPlayers() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

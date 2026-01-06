@@ -2,7 +2,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("RotationCurve", RobloxNativeType.Instance)]
 public partial class RotationCurve : Instance  {
-    public int Length { get; } = default!;
+    public int Length { get; set; } = default!;
     public RotationCurveKey GetKeyAtIndex() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetKeyIndicesAtTime() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetKeys() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

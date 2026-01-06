@@ -2,7 +2,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("ArcHandles", RobloxNativeType.Instance)]
 public partial class ArcHandles : HandlesBase  {
-    public Axes Axes { get; } = default!;
+    public Axes Axes { get; set; } = default!;
     public RBXScriptSignal<Enums.Axis> MouseButton1Down { get; private set; } = null!;
     public RBXScriptSignal<Enums.Axis> MouseButton1Up { get; private set; } = null!;
     public RBXScriptSignal<Enums.Axis, float, float> MouseDrag { get; private set; } = null!;

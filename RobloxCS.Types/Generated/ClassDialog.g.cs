@@ -2,16 +2,16 @@
 namespace RobloxCS.Types;
 [RobloxNative("Dialog", RobloxNativeType.Instance)]
 public partial class Dialog : Instance  {
-    public Enums.DialogBehaviorType BehaviorType { get; } = default!;
-    public float ConversationDistance { get; } = default!;
-    public bool GoodbyeChoiceActive { get; } = default!;
-    public string GoodbyeDialog { get; } = default!;
-    public bool InUse { get; } = default!;
-    public string InitialPrompt { get; } = default!;
-    public Enums.DialogPurpose Purpose { get; } = default!;
-    public Enums.DialogTone Tone { get; } = default!;
-    public float TriggerDistance { get; } = default!;
-    public Vector3 TriggerOffset { get; } = default!;
+    public Enums.DialogBehaviorType BehaviorType { get; set; } = default!;
+    public float ConversationDistance { get; set; } = default!;
+    public bool GoodbyeChoiceActive { get; set; } = default!;
+    public string GoodbyeDialog { get; set; } = default!;
+    public bool InUse { get; set; } = default!;
+    public string InitialPrompt { get; set; } = default!;
+    public Enums.DialogPurpose Purpose { get; set; } = default!;
+    public Enums.DialogTone Tone { get; set; } = default!;
+    public float TriggerDistance { get; set; } = default!;
+    public Vector3 TriggerOffset { get; set; } = default!;
     public List<Instance> GetCurrentPlayers() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public RBXScriptSignal<Instance, Instance> DialogChoiceSelected { get; private set; } = null!;
 }

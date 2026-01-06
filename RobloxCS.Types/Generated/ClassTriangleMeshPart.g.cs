@@ -4,5 +4,5 @@ namespace RobloxCS.Types;
 public partial class TriangleMeshPart : BasePart  {
     public Enums.CollisionFidelity CollisionFidelity { get; } = default!;
     public Enums.FluidFidelity FluidFidelity { get; } = default!;
-    public Vector3 MeshSize { get; } = default!;
+    public Vector3 MeshSize { get; set; } = default!;
 }

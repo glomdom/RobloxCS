@@ -2,7 +2,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("LocalizationTable", RobloxNativeType.Instance)]
 public partial class LocalizationTable : Instance  {
-    public string SourceLocaleId { get; } = default!;
+    public string SourceLocaleId { get; set; } = default!;
     public List<object> GetEntries() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public Instance GetTranslator() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void RemoveEntry() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

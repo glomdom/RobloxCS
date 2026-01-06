@@ -2,5 +2,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("DataStoreListingPages", RobloxNativeType.Instance)]
 public partial class DataStoreListingPages : Pages  {
-    public string Cursor { get; } = default!;
+    public string Cursor { get; set; } = default!;
 }

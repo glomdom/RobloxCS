@@ -2,12 +2,12 @@
 namespace RobloxCS.Types;
 [RobloxNative("BallSocketConstraint", RobloxNativeType.Instance)]
 public partial class BallSocketConstraint : Constraint  {
-    public bool LimitsEnabled { get; } = default!;
-    public float MaxFrictionTorque { get; } = default!;
-    public float Radius { get; } = default!;
-    public float Restitution { get; } = default!;
-    public bool TwistLimitsEnabled { get; } = default!;
-    public float TwistLowerAngle { get; } = default!;
-    public float TwistUpperAngle { get; } = default!;
-    public float UpperAngle { get; } = default!;
+    public bool LimitsEnabled { get; set; } = default!;
+    public float MaxFrictionTorque { get; set; } = default!;
+    public float Radius { get; set; } = default!;
+    public float Restitution { get; set; } = default!;
+    public bool TwistLimitsEnabled { get; set; } = default!;
+    public float TwistLowerAngle { get; set; } = default!;
+    public float TwistUpperAngle { get; set; } = default!;
+    public float UpperAngle { get; set; } = default!;
 }

@@ -2,11 +2,11 @@
 namespace RobloxCS.Types;
 [RobloxNative("StudioService", RobloxNativeType.Service)]
 public static partial class StudioService {
-    public static Instance ActiveScript { get; } = default!;
-    public static bool DraggerSolveConstraints { get; } = default!;
-    public static float GridSize { get; } = default!;
-    public static float RotateIncrement { get; } = default!;
-    public static bool ShowConstraintDetails { get; } = default!;
-    public static string StudioLocaleId { get; } = default!;
-    public static bool UseLocalSpace { get; } = default!;
+    public static Instance ActiveScript { get; set; } = default!;
+    public static bool DraggerSolveConstraints { get; set; } = default!;
+    public static float GridSize { get; set; } = default!;
+    public static float RotateIncrement { get; set; } = default!;
+    public static bool ShowConstraintDetails { get; set; } = default!;
+    public static string StudioLocaleId { get; set; } = default!;
+    public static bool UseLocalSpace { get; set; } = default!;
 }

@@ -2,15 +2,15 @@
 namespace RobloxCS.Types;
 [RobloxNative("Terrain", RobloxNativeType.Instance)]
 public partial class Terrain : BasePart  {
-    public bool Decoration { get; } = default!;
-    public float GrassLength { get; } = default!;
-    public string MaterialColors { get; } = default!;
-    public Region3int16 MaxExtents { get; } = default!;
-    public Color3 WaterColor { get; } = default!;
-    public float WaterReflectance { get; } = default!;
-    public float WaterTransparency { get; } = default!;
-    public float WaterWaveSize { get; } = default!;
-    public float WaterWaveSpeed { get; } = default!;
+    public bool Decoration { get; set; } = default!;
+    public float GrassLength { get; set; } = default!;
+    public string MaterialColors { get; set; } = default!;
+    public Region3int16 MaxExtents { get; set; } = default!;
+    public Color3 WaterColor { get; set; } = default!;
+    public float WaterReflectance { get; set; } = default!;
+    public float WaterTransparency { get; set; } = default!;
+    public float WaterWaveSize { get; set; } = default!;
+    public float WaterWaveSpeed { get; set; } = default!;
     public Vector3 CellCenterToWorld() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public Vector3 CellCornerToWorld() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Clear() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

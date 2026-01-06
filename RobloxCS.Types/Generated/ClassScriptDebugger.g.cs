@@ -2,10 +2,10 @@
 namespace RobloxCS.Types;
 [RobloxNative("ScriptDebugger", RobloxNativeType.Instance)]
 public partial class ScriptDebugger : Instance  {
-    public int CurrentLine { get; } = default!;
-    public bool IsDebugging { get; } = default!;
-    public bool IsPaused { get; } = default!;
-    public Instance Script { get; } = default!;
+    public int CurrentLine { get; set; } = default!;
+    public bool IsDebugging { get; set; } = default!;
+    public bool IsPaused { get; set; } = default!;
+    public Instance Script { get; set; } = default!;
     public Instance AddWatch() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<Instance> GetBreakpoints() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public Dictionary<object, object> GetGlobals() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

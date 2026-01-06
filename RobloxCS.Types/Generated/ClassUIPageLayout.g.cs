@@ -2,16 +2,16 @@
 namespace RobloxCS.Types;
 [RobloxNative("UIPageLayout", RobloxNativeType.Instance)]
 public partial class UIPageLayout : UIGridStyleLayout  {
-    public bool Animated { get; } = default!;
-    public bool Circular { get; } = default!;
-    public GuiObject CurrentPage { get; } = default!;
-    public Enums.EasingDirection EasingDirection { get; } = default!;
-    public Enums.EasingStyle EasingStyle { get; } = default!;
-    public bool GamepadInputEnabled { get; } = default!;
-    public UDim Padding { get; } = default!;
-    public bool ScrollWheelInputEnabled { get; } = default!;
-    public bool TouchInputEnabled { get; } = default!;
-    public float TweenTime { get; } = default!;
+    public bool Animated { get; set; } = default!;
+    public bool Circular { get; set; } = default!;
+    public GuiObject CurrentPage { get; set; } = default!;
+    public Enums.EasingDirection EasingDirection { get; set; } = default!;
+    public Enums.EasingStyle EasingStyle { get; set; } = default!;
+    public bool GamepadInputEnabled { get; set; } = default!;
+    public UDim Padding { get; set; } = default!;
+    public bool ScrollWheelInputEnabled { get; set; } = default!;
+    public bool TouchInputEnabled { get; set; } = default!;
+    public float TweenTime { get; set; } = default!;
     public void JumpTo() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void JumpToIndex() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void Next() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

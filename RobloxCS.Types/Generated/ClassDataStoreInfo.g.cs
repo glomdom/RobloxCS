@@ -2,7 +2,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("DataStoreInfo", RobloxNativeType.Instance)]
 public partial class DataStoreInfo : Instance  {
-    public int CreatedTime { get; } = default!;
-    public string DataStoreName { get; } = default!;
-    public int UpdatedTime { get; } = default!;
+    public int CreatedTime { get; set; } = default!;
+    public string DataStoreName { get; set; } = default!;
+    public int UpdatedTime { get; set; } = default!;
 }

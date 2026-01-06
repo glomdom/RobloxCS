@@ -2,7 +2,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("EditableImage", RobloxNativeType.Instance)]
 public partial class EditableImage : Object  {
-    public Vector2 Size { get; } = default!;
+    public Vector2 Size { get; set; } = default!;
     public void Destroy() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void DrawCircle() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void DrawImage() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

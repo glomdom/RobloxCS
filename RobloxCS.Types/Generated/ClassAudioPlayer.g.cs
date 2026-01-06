@@ -2,19 +2,19 @@
 namespace RobloxCS.Types;
 [RobloxNative("AudioPlayer", RobloxNativeType.Instance)]
 public partial class AudioPlayer : Instance  {
-    public string Asset { get; } = default!;
-    public string AudioContent { get; } = default!;
-    public bool AutoLoad { get; } = default!;
-    public bool AutoPlay { get; } = default!;
+    public string Asset { get; set; } = default!;
+    public string AudioContent { get; set; } = default!;
+    public bool AutoLoad { get; set; } = default!;
+    public bool AutoPlay { get; set; } = default!;
     public bool IsPlaying { get; } = default!;
-    public bool IsReady { get; } = default!;
-    public NumberRange LoopRegion { get; } = default!;
-    public bool Looping { get; } = default!;
-    public NumberRange PlaybackRegion { get; } = default!;
-    public double PlaybackSpeed { get; } = default!;
-    public double TimeLength { get; } = default!;
-    public double TimePosition { get; } = default!;
-    public float Volume { get; } = default!;
+    public bool IsReady { get; set; } = default!;
+    public NumberRange LoopRegion { get; set; } = default!;
+    public bool Looping { get; set; } = default!;
+    public NumberRange PlaybackRegion { get; set; } = default!;
+    public double PlaybackSpeed { get; set; } = default!;
+    public double TimeLength { get; set; } = default!;
+    public double TimePosition { get; set; } = default!;
+    public float Volume { get; set; } = default!;
     public List<Instance> GetConnectedWires() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetInputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetOutputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

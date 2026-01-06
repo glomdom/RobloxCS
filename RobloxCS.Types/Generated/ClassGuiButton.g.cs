@@ -2,12 +2,12 @@
 namespace RobloxCS.Types;
 [RobloxNative("GuiButton", RobloxNativeType.Instance)]
 public partial class GuiButton : GuiObject  {
-    public bool AutoButtonColor { get; } = default!;
-    public HapticEffect HoverHapticEffect { get; } = default!;
-    public bool Modal { get; } = default!;
-    public HapticEffect PressHapticEffect { get; } = default!;
-    public bool Selected { get; } = default!;
-    public Enums.ButtonStyle Style { get; } = default!;
+    public bool AutoButtonColor { get; set; } = default!;
+    public HapticEffect HoverHapticEffect { get; set; } = default!;
+    public bool Modal { get; set; } = default!;
+    public HapticEffect PressHapticEffect { get; set; } = default!;
+    public bool Selected { get; set; } = default!;
+    public Enums.ButtonStyle Style { get; set; } = default!;
     public RBXScriptSignal<InputObject, int> Activated { get; private set; } = null!;
     public RBXScriptSignal MouseButton1Click { get; private set; } = null!;
     public RBXScriptSignal<int, int> MouseButton1Down { get; private set; } = null!;

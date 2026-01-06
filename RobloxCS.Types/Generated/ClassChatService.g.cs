@@ -2,7 +2,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("Chat", RobloxNativeType.Service)]
 public static partial class ChatService {
-    public static bool BubbleChatEnabled { get; } = default!;
+    public static bool BubbleChatEnabled { get; set; } = default!;
     public static bool LoadDefaultChat { get; } = default!;
     public static void Chat() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static LuaTuple InvokeChatCallback() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

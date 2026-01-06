@@ -2,11 +2,11 @@
 namespace RobloxCS.Types;
 [RobloxNative("Path2D", RobloxNativeType.Instance)]
 public partial class Path2D : GuiBase  {
-    public bool Closed { get; } = default!;
-    public Color3 Color3 { get; } = default!;
-    public float Thickness { get; } = default!;
-    public bool Visible { get; } = default!;
-    public int ZIndex { get; } = default!;
+    public bool Closed { get; set; } = default!;
+    public Color3 Color3 { get; set; } = default!;
+    public float Thickness { get; set; } = default!;
+    public bool Visible { get; set; } = default!;
+    public int ZIndex { get; set; } = default!;
     public Rect GetBoundingRect() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public Path2DControlPoint GetControlPoint() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetControlPoints() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

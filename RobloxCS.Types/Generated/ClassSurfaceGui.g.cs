@@ -2,14 +2,14 @@
 namespace RobloxCS.Types;
 [RobloxNative("SurfaceGui", RobloxNativeType.Instance)]
 public partial class SurfaceGui : SurfaceGuiBase  {
-    public bool AlwaysOnTop { get; } = default!;
-    public float Brightness { get; } = default!;
-    public Vector2 CanvasSize { get; } = default!;
-    public bool ClipsDescendants { get; } = default!;
-    public float LightInfluence { get; } = default!;
-    public float MaxDistance { get; } = default!;
-    public float PixelsPerStud { get; } = default!;
-    public Enums.SurfaceGuiSizingMode SizingMode { get; } = default!;
-    public float ToolPunchThroughDistance { get; } = default!;
-    public float ZOffset { get; } = default!;
+    public bool AlwaysOnTop { get; set; } = default!;
+    public float Brightness { get; set; } = default!;
+    public Vector2 CanvasSize { get; set; } = default!;
+    public bool ClipsDescendants { get; set; } = default!;
+    public float LightInfluence { get; set; } = default!;
+    public float MaxDistance { get; set; } = default!;
+    public float PixelsPerStud { get; set; } = default!;
+    public Enums.SurfaceGuiSizingMode SizingMode { get; set; } = default!;
+    public float ToolPunchThroughDistance { get; set; } = default!;
+    public float ZOffset { get; set; } = default!;
 }

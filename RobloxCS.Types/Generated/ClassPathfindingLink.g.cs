@@ -2,8 +2,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("PathfindingLink", RobloxNativeType.Instance)]
 public partial class PathfindingLink : Instance  {
-    public Attachment Attachment0 { get; } = default!;
-    public Attachment Attachment1 { get; } = default!;
-    public bool IsBidirectional { get; } = default!;
-    public string Label { get; } = default!;
+    public Attachment Attachment0 { get; set; } = default!;
+    public Attachment Attachment1 { get; set; } = default!;
+    public bool IsBidirectional { get; set; } = default!;
+    public string Label { get; set; } = default!;
 }

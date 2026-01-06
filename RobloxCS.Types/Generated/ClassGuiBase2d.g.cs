@@ -2,15 +2,15 @@
 namespace RobloxCS.Types;
 [RobloxNative("GuiBase2d", RobloxNativeType.Instance)]
 public partial class GuiBase2d : GuiBase  {
-    public Vector2 AbsolutePosition { get; } = default!;
-    public float AbsoluteRotation { get; } = default!;
-    public Vector2 AbsoluteSize { get; } = default!;
-    public bool AutoLocalize { get; } = default!;
-    public LocalizationTable RootLocalizationTable { get; } = default!;
-    public Enums.SelectionBehavior SelectionBehaviorDown { get; } = default!;
-    public Enums.SelectionBehavior SelectionBehaviorLeft { get; } = default!;
-    public Enums.SelectionBehavior SelectionBehaviorRight { get; } = default!;
-    public Enums.SelectionBehavior SelectionBehaviorUp { get; } = default!;
-    public bool SelectionGroup { get; } = default!;
+    public Vector2 AbsolutePosition { get; set; } = default!;
+    public float AbsoluteRotation { get; set; } = default!;
+    public Vector2 AbsoluteSize { get; set; } = default!;
+    public bool AutoLocalize { get; set; } = default!;
+    public LocalizationTable RootLocalizationTable { get; set; } = default!;
+    public Enums.SelectionBehavior SelectionBehaviorDown { get; set; } = default!;
+    public Enums.SelectionBehavior SelectionBehaviorLeft { get; set; } = default!;
+    public Enums.SelectionBehavior SelectionBehaviorRight { get; set; } = default!;
+    public Enums.SelectionBehavior SelectionBehaviorUp { get; set; } = default!;
+    public bool SelectionGroup { get; set; } = default!;
     public RBXScriptSignal<bool, GuiObject, GuiObject> SelectionChanged { get; private set; } = null!;
 }

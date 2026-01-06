@@ -2,7 +2,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("SurfaceLight", RobloxNativeType.Instance)]
 public partial class SurfaceLight : Light  {
-    public float Angle { get; } = default!;
-    public Enums.NormalId Face { get; } = default!;
-    public float Range { get; } = default!;
+    public float Angle { get; set; } = default!;
+    public Enums.NormalId Face { get; set; } = default!;
+    public float Range { get; set; } = default!;
 }

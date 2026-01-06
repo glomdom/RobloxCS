@@ -2,10 +2,10 @@
 namespace RobloxCS.Types;
 [RobloxNative("Model", RobloxNativeType.Instance)]
 public partial class Model : PVInstance  {
-    public Enums.ModelStreamingMode ModelStreamingMode { get; } = default!;
-    public BasePart PrimaryPart { get; } = default!;
-    public float Scale { get; } = default!;
-    public CFrame WorldPivot { get; } = default!;
+    public Enums.ModelStreamingMode ModelStreamingMode { get; set; } = default!;
+    public BasePart PrimaryPart { get; set; } = default!;
+    public float Scale { get; set; } = default!;
+    public CFrame WorldPivot { get; set; } = default!;
     public void AddPersistentPlayer() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public (CFrame, Vector3) GetBoundingBox() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public Vector3 GetExtentsSize() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

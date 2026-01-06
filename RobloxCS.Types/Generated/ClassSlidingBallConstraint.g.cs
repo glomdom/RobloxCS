@@ -2,18 +2,18 @@
 namespace RobloxCS.Types;
 [RobloxNative("SlidingBallConstraint", RobloxNativeType.Instance)]
 public partial class SlidingBallConstraint : Constraint  {
-    public Enums.ActuatorType ActuatorType { get; } = default!;
-    public float CurrentPosition { get; } = default!;
-    public bool LimitsEnabled { get; } = default!;
-    public float LinearResponsiveness { get; } = default!;
-    public float LowerLimit { get; } = default!;
-    public float MotorMaxAcceleration { get; } = default!;
-    public float MotorMaxForce { get; } = default!;
-    public float Restitution { get; } = default!;
-    public float ServoMaxForce { get; } = default!;
-    public float Size { get; } = default!;
-    public float Speed { get; } = default!;
-    public float TargetPosition { get; } = default!;
-    public float UpperLimit { get; } = default!;
-    public float Velocity { get; } = default!;
+    public Enums.ActuatorType ActuatorType { get; set; } = default!;
+    public float CurrentPosition { get; set; } = default!;
+    public bool LimitsEnabled { get; set; } = default!;
+    public float LinearResponsiveness { get; set; } = default!;
+    public float LowerLimit { get; set; } = default!;
+    public float MotorMaxAcceleration { get; set; } = default!;
+    public float MotorMaxForce { get; set; } = default!;
+    public float Restitution { get; set; } = default!;
+    public float ServoMaxForce { get; set; } = default!;
+    public float Size { get; set; } = default!;
+    public float Speed { get; set; } = default!;
+    public float TargetPosition { get; set; } = default!;
+    public float UpperLimit { get; set; } = default!;
+    public float Velocity { get; set; } = default!;
 }

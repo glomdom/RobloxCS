@@ -2,15 +2,15 @@
 namespace RobloxCS.Types;
 [RobloxNative("AnimationTrack", RobloxNativeType.Instance)]
 public partial class AnimationTrack : Instance  {
-    public Animation Animation { get; } = default!;
-    public bool IsPlaying { get; } = default!;
-    public float Length { get; } = default!;
-    public bool Looped { get; } = default!;
-    public Enums.AnimationPriority Priority { get; } = default!;
-    public float Speed { get; } = default!;
-    public float TimePosition { get; } = default!;
-    public float WeightCurrent { get; } = default!;
-    public float WeightTarget { get; } = default!;
+    public Animation Animation { get; set; } = default!;
+    public bool IsPlaying { get; set; } = default!;
+    public float Length { get; set; } = default!;
+    public bool Looped { get; set; } = default!;
+    public Enums.AnimationPriority Priority { get; set; } = default!;
+    public float Speed { get; set; } = default!;
+    public float TimePosition { get; set; } = default!;
+    public float WeightCurrent { get; set; } = default!;
+    public float WeightTarget { get; set; } = default!;
     public void AdjustSpeed() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void AdjustWeight() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public RBXScriptSignal GetMarkerReachedSignal() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

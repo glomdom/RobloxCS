@@ -2,5 +2,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("PointLight", RobloxNativeType.Instance)]
 public partial class PointLight : Light  {
-    public float Range { get; } = default!;
+    public float Range { get; set; } = default!;
 }

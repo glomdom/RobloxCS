@@ -2,10 +2,10 @@
 namespace RobloxCS.Types;
 [RobloxNative("MaterialImportData", RobloxNativeType.Instance)]
 public partial class MaterialImportData : BaseImportData  {
-    public string DiffuseFilePath { get; } = default!;
-    public string EmissiveFilePath { get; } = default!;
-    public bool IsPbr { get; } = default!;
-    public string MetalnessFilePath { get; } = default!;
-    public string NormalFilePath { get; } = default!;
-    public string RoughnessFilePath { get; } = default!;
+    public string DiffuseFilePath { get; set; } = default!;
+    public string EmissiveFilePath { get; set; } = default!;
+    public bool IsPbr { get; set; } = default!;
+    public string MetalnessFilePath { get; set; } = default!;
+    public string NormalFilePath { get; set; } = default!;
+    public string RoughnessFilePath { get; set; } = default!;
 }

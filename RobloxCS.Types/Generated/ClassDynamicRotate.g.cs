@@ -2,5 +2,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("DynamicRotate", RobloxNativeType.Instance)]
 public partial class DynamicRotate : JointInstance  {
-    public float BaseAngle { get; } = default!;
+    public float BaseAngle { get; set; } = default!;
 }

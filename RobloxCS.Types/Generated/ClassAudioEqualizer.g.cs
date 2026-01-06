@@ -2,11 +2,11 @@
 namespace RobloxCS.Types;
 [RobloxNative("AudioEqualizer", RobloxNativeType.Instance)]
 public partial class AudioEqualizer : Instance  {
-    public bool Bypass { get; } = default!;
-    public float HighGain { get; } = default!;
-    public float LowGain { get; } = default!;
-    public float MidGain { get; } = default!;
-    public NumberRange MidRange { get; } = default!;
+    public bool Bypass { get; set; } = default!;
+    public float HighGain { get; set; } = default!;
+    public float LowGain { get; set; } = default!;
+    public float MidGain { get; set; } = default!;
+    public NumberRange MidRange { get; set; } = default!;
     public List<Instance> GetConnectedWires() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetInputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetOutputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

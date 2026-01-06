@@ -2,7 +2,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("AudioChannelMixer", RobloxNativeType.Instance)]
 public partial class AudioChannelMixer : Instance  {
-    public Enums.AudioChannelLayout Layout { get; } = default!;
+    public Enums.AudioChannelLayout Layout { get; set; } = default!;
     public List<Instance> GetConnectedWires() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetInputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetOutputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

@@ -2,9 +2,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("Capture", RobloxNativeType.Instance)]
 public partial class Capture : Object  {
-    public DateTime CaptureTime { get; } = default!;
-    public Enums.CaptureType CaptureType { get; } = default!;
-    public string LocalId { get; } = default!;
-    public int SourcePlaceId { get; } = default!;
-    public int SourceUniverseId { get; } = default!;
+    public DateTime CaptureTime { get; set; } = default!;
+    public Enums.CaptureType CaptureType { get; set; } = default!;
+    public string LocalId { get; set; } = default!;
+    public int SourcePlaceId { get; set; } = default!;
+    public int SourceUniverseId { get; set; } = default!;
 }

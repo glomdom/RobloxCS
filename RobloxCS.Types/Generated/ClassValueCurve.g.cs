@@ -2,8 +2,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("ValueCurve", RobloxNativeType.Instance)]
 public partial class ValueCurve : Instance  {
-    public int Length { get; } = default!;
-    public string ValueType { get; } = default!;
+    public int Length { get; set; } = default!;
+    public string ValueType { get; set; } = default!;
     public ValueCurveKey GetKeyAtIndex() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetKeyIndicesAtTime() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetKeys() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

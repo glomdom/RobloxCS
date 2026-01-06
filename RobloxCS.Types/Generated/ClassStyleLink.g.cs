@@ -2,5 +2,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("StyleLink", RobloxNativeType.Instance)]
 public partial class StyleLink : Instance  {
-    public StyleSheet StyleSheet { get; } = default!;
+    public StyleSheet StyleSheet { get; set; } = default!;
 }

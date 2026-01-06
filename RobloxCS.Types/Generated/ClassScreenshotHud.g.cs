@@ -2,11 +2,11 @@
 namespace RobloxCS.Types;
 [RobloxNative("ScreenshotHud", RobloxNativeType.Instance)]
 public partial class ScreenshotHud : Instance  {
-    public string CameraButtonIcon { get; } = default!;
-    public UDim2 CameraButtonPosition { get; } = default!;
-    public UDim2 CloseButtonPosition { get; } = default!;
-    public bool CloseWhenScreenshotTaken { get; } = default!;
-    public bool HideCoreGuiForCaptures { get; } = default!;
-    public bool HidePlayerGuiForCaptures { get; } = default!;
-    public bool Visible { get; } = default!;
+    public string CameraButtonIcon { get; set; } = default!;
+    public UDim2 CameraButtonPosition { get; set; } = default!;
+    public UDim2 CloseButtonPosition { get; set; } = default!;
+    public bool CloseWhenScreenshotTaken { get; set; } = default!;
+    public bool HideCoreGuiForCaptures { get; set; } = default!;
+    public bool HidePlayerGuiForCaptures { get; set; } = default!;
+    public bool Visible { get; set; } = default!;
 }

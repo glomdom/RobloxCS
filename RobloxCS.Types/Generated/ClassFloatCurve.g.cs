@@ -2,7 +2,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("FloatCurve", RobloxNativeType.Instance)]
 public partial class FloatCurve : Instance  {
-    public int Length { get; } = default!;
+    public int Length { get; set; } = default!;
     public FloatCurveKey GetKeyAtIndex() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetKeyIndicesAtTime() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetKeys() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

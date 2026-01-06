@@ -2,9 +2,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("ProximityPromptService", RobloxNativeType.Service)]
 public static partial class ProximityPromptService {
-    public static bool Enabled { get; } = default!;
-    public static int MaxIndicatorsVisible { get; } = default!;
-    public static int MaxPromptsVisible { get; } = default!;
+    public static bool Enabled { get; set; } = default!;
+    public static int MaxIndicatorsVisible { get; set; } = default!;
+    public static int MaxPromptsVisible { get; set; } = default!;
     public static RBXScriptSignal<ProximityPrompt> IndicatorHidden { get; private set; } = null!;
     public static RBXScriptSignal<ProximityPrompt> IndicatorShown { get; private set; } = null!;
     public static RBXScriptSignal<ProximityPrompt, Player> PromptButtonHoldBegan { get; private set; } = null!;

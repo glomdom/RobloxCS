@@ -3,7 +3,7 @@ namespace RobloxCS.Types;
 [RobloxNative("AudioRecorder", RobloxNativeType.Instance)]
 public partial class AudioRecorder : Instance  {
     public bool IsRecording { get; } = default!;
-    public double TimeLength { get; } = default!;
+    public double TimeLength { get; set; } = default!;
     public void Clear() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<Instance> GetConnectedWires() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public List<object> GetInputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

@@ -2,18 +2,18 @@
 namespace RobloxCS.Types;
 [RobloxNative("HingeConstraint", RobloxNativeType.Instance)]
 public partial class HingeConstraint : Constraint  {
-    public Enums.ActuatorType ActuatorType { get; } = default!;
-    public float AngularResponsiveness { get; } = default!;
-    public float AngularSpeed { get; } = default!;
-    public float AngularVelocity { get; } = default!;
-    public float CurrentAngle { get; } = default!;
-    public bool LimitsEnabled { get; } = default!;
-    public float LowerAngle { get; } = default!;
-    public float MotorMaxAcceleration { get; } = default!;
-    public float MotorMaxTorque { get; } = default!;
-    public float Radius { get; } = default!;
-    public float Restitution { get; } = default!;
-    public float ServoMaxTorque { get; } = default!;
-    public float TargetAngle { get; } = default!;
-    public float UpperAngle { get; } = default!;
+    public Enums.ActuatorType ActuatorType { get; set; } = default!;
+    public float AngularResponsiveness { get; set; } = default!;
+    public float AngularSpeed { get; set; } = default!;
+    public float AngularVelocity { get; set; } = default!;
+    public float CurrentAngle { get; set; } = default!;
+    public bool LimitsEnabled { get; set; } = default!;
+    public float LowerAngle { get; set; } = default!;
+    public float MotorMaxAcceleration { get; set; } = default!;
+    public float MotorMaxTorque { get; set; } = default!;
+    public float Radius { get; set; } = default!;
+    public float Restitution { get; set; } = default!;
+    public float ServoMaxTorque { get; set; } = default!;
+    public float TargetAngle { get; set; } = default!;
+    public float UpperAngle { get; set; } = default!;
 }

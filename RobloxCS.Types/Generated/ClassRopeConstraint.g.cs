@@ -2,13 +2,13 @@
 namespace RobloxCS.Types;
 [RobloxNative("RopeConstraint", RobloxNativeType.Instance)]
 public partial class RopeConstraint : Constraint  {
-    public float CurrentDistance { get; } = default!;
-    public float Length { get; } = default!;
-    public float Restitution { get; } = default!;
-    public float Thickness { get; } = default!;
-    public bool WinchEnabled { get; } = default!;
-    public float WinchForce { get; } = default!;
-    public float WinchResponsiveness { get; } = default!;
-    public float WinchSpeed { get; } = default!;
-    public float WinchTarget { get; } = default!;
+    public float CurrentDistance { get; set; } = default!;
+    public float Length { get; set; } = default!;
+    public float Restitution { get; set; } = default!;
+    public float Thickness { get; set; } = default!;
+    public bool WinchEnabled { get; set; } = default!;
+    public float WinchForce { get; set; } = default!;
+    public float WinchResponsiveness { get; set; } = default!;
+    public float WinchSpeed { get; set; } = default!;
+    public float WinchTarget { get; set; } = default!;
 }

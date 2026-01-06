@@ -4,7 +4,7 @@ namespace RobloxCS.Types;
 public partial class PartOperation : TriangleMeshPart  {
     public Enums.RenderFidelity RenderFidelity { get; } = default!;
     public float SmoothingAngle { get; } = default!;
-    public int TriangleCount { get; } = default!;
-    public bool UsePartColor { get; } = default!;
+    public int TriangleCount { get; set; } = default!;
+    public bool UsePartColor { get; set; } = default!;
     public void SubstituteGeometry() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
 }

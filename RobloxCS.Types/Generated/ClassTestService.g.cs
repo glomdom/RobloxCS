@@ -2,18 +2,18 @@
 namespace RobloxCS.Types;
 [RobloxNative("TestService", RobloxNativeType.Service)]
 public static partial class TestService {
-    public static bool AutoRuns { get; } = default!;
-    public static string Description { get; } = default!;
-    public static int ErrorCount { get; } = default!;
-    public static bool ExecuteWithStudioRun { get; } = default!;
-    public static bool IsPhysicsEnvironmentalThrottled { get; } = default!;
-    public static bool IsSleepAllowed { get; } = default!;
-    public static int NumberOfPlayers { get; } = default!;
-    public static double SimulateSecondsLag { get; } = default!;
-    public static int TestCount { get; } = default!;
-    public static bool ThrottlePhysicsToRealtime { get; } = default!;
-    public static double Timeout { get; } = default!;
-    public static int WarnCount { get; } = default!;
+    public static bool AutoRuns { get; set; } = default!;
+    public static string Description { get; set; } = default!;
+    public static int ErrorCount { get; set; } = default!;
+    public static bool ExecuteWithStudioRun { get; set; } = default!;
+    public static bool IsPhysicsEnvironmentalThrottled { get; set; } = default!;
+    public static bool IsSleepAllowed { get; set; } = default!;
+    public static int NumberOfPlayers { get; set; } = default!;
+    public static double SimulateSecondsLag { get; set; } = default!;
+    public static int TestCount { get; set; } = default!;
+    public static bool ThrottlePhysicsToRealtime { get; set; } = default!;
+    public static double Timeout { get; set; } = default!;
+    public static int WarnCount { get; set; } = default!;
     public static void Check() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void Checkpoint() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void Done() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

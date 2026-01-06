@@ -2,12 +2,12 @@
 namespace RobloxCS.Types;
 [RobloxNative("Instance", RobloxNativeType.Instance)]
 public partial class Instance : Object  {
-    public bool Archivable { get; } = default!;
-    public List<Enums.SecurityCapability> Capabilities { get; } = default!;
-    public string Name { get; } = default!;
-    public Instance Parent { get; } = default!;
-    public Enums.PredictionMode PredictionMode { get; } = default!;
-    public bool Sandboxed { get; } = default!;
+    public bool Archivable { get; set; } = default!;
+    public List<Enums.SecurityCapability> Capabilities { get; set; } = default!;
+    public string Name { get; set; } = default!;
+    public Instance Parent { get; set; } = default!;
+    public Enums.PredictionMode PredictionMode { get; set; } = default!;
+    public bool Sandboxed { get; set; } = default!;
     public void AddTag() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void ClearAllChildren() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public Instance Clone() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

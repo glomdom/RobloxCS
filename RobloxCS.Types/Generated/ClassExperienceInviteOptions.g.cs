@@ -2,8 +2,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("ExperienceInviteOptions", RobloxNativeType.Instance)]
 public partial class ExperienceInviteOptions : Instance  {
-    public string InviteMessageId { get; } = default!;
-    public int InviteUser { get; } = default!;
-    public string LaunchData { get; } = default!;
-    public string PromptMessage { get; } = default!;
+    public string InviteMessageId { get; set; } = default!;
+    public int InviteUser { get; set; } = default!;
+    public string LaunchData { get; set; } = default!;
+    public string PromptMessage { get; set; } = default!;
 }

@@ -2,9 +2,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("AudioSpeechToText", RobloxNativeType.Instance)]
 public partial class AudioSpeechToText : Instance  {
-    public bool Enabled { get; } = default!;
-    public string Text { get; } = default!;
-    public bool VoiceDetected { get; } = default!;
+    public bool Enabled { get; set; } = default!;
+    public string Text { get; set; } = default!;
+    public bool VoiceDetected { get; set; } = default!;
     public List<Instance> GetConnectedWires() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public RBXScriptSignal<bool, string, Wire, Instance> WiringChanged { get; private set; } = null!;
 }

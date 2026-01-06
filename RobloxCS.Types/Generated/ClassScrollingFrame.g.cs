@@ -2,24 +2,24 @@
 namespace RobloxCS.Types;
 [RobloxNative("ScrollingFrame", RobloxNativeType.Instance)]
 public partial class ScrollingFrame : GuiObject  {
-    public Vector2 AbsoluteCanvasSize { get; } = default!;
-    public Vector2 AbsoluteWindowSize { get; } = default!;
-    public Enums.AutomaticSize AutomaticCanvasSize { get; } = default!;
-    public string BottomImage { get; } = default!;
-    public string BottomImageContent { get; } = default!;
-    public Vector2 CanvasPosition { get; } = default!;
-    public UDim2 CanvasSize { get; } = default!;
-    public Enums.ElasticBehavior ElasticBehavior { get; } = default!;
-    public Enums.ScrollBarInset HorizontalScrollBarInset { get; } = default!;
-    public string MidImage { get; } = default!;
-    public string MidImageContent { get; } = default!;
-    public Color3 ScrollBarImageColor3 { get; } = default!;
-    public float ScrollBarImageTransparency { get; } = default!;
-    public int ScrollBarThickness { get; } = default!;
-    public Enums.ScrollingDirection ScrollingDirection { get; } = default!;
-    public bool ScrollingEnabled { get; } = default!;
-    public string TopImage { get; } = default!;
-    public string TopImageContent { get; } = default!;
-    public Enums.ScrollBarInset VerticalScrollBarInset { get; } = default!;
-    public Enums.VerticalScrollBarPosition VerticalScrollBarPosition { get; } = default!;
+    public Vector2 AbsoluteCanvasSize { get; set; } = default!;
+    public Vector2 AbsoluteWindowSize { get; set; } = default!;
+    public Enums.AutomaticSize AutomaticCanvasSize { get; set; } = default!;
+    public string BottomImage { get; set; } = default!;
+    public string BottomImageContent { get; set; } = default!;
+    public Vector2 CanvasPosition { get; set; } = default!;
+    public UDim2 CanvasSize { get; set; } = default!;
+    public Enums.ElasticBehavior ElasticBehavior { get; set; } = default!;
+    public Enums.ScrollBarInset HorizontalScrollBarInset { get; set; } = default!;
+    public string MidImage { get; set; } = default!;
+    public string MidImageContent { get; set; } = default!;
+    public Color3 ScrollBarImageColor3 { get; set; } = default!;
+    public float ScrollBarImageTransparency { get; set; } = default!;
+    public int ScrollBarThickness { get; set; } = default!;
+    public Enums.ScrollingDirection ScrollingDirection { get; set; } = default!;
+    public bool ScrollingEnabled { get; set; } = default!;
+    public string TopImage { get; set; } = default!;
+    public string TopImageContent { get; set; } = default!;
+    public Enums.ScrollBarInset VerticalScrollBarInset { get; set; } = default!;
+    public Enums.VerticalScrollBarPosition VerticalScrollBarPosition { get; set; } = default!;
 }

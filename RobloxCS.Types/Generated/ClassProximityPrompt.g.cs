@@ -2,21 +2,21 @@
 namespace RobloxCS.Types;
 [RobloxNative("ProximityPrompt", RobloxNativeType.Instance)]
 public partial class ProximityPrompt : Instance  {
-    public string ActionText { get; } = default!;
-    public bool AutoLocalize { get; } = default!;
-    public bool ClickablePrompt { get; } = default!;
-    public bool Enabled { get; } = default!;
-    public Enums.ProximityPromptExclusivity Exclusivity { get; } = default!;
-    public Enums.KeyCode GamepadKeyCode { get; } = default!;
-    public float HoldDuration { get; } = default!;
-    public Enums.KeyCode KeyboardKeyCode { get; } = default!;
-    public float MaxActivationDistance { get; } = default!;
-    public float MaxIndicatorDistance { get; } = default!;
-    public string ObjectText { get; } = default!;
-    public bool RequiresLineOfSight { get; } = default!;
-    public LocalizationTable RootLocalizationTable { get; } = default!;
-    public Enums.ProximityPromptStyle Style { get; } = default!;
-    public Vector2 UIOffset { get; } = default!;
+    public string ActionText { get; set; } = default!;
+    public bool AutoLocalize { get; set; } = default!;
+    public bool ClickablePrompt { get; set; } = default!;
+    public bool Enabled { get; set; } = default!;
+    public Enums.ProximityPromptExclusivity Exclusivity { get; set; } = default!;
+    public Enums.KeyCode GamepadKeyCode { get; set; } = default!;
+    public float HoldDuration { get; set; } = default!;
+    public Enums.KeyCode KeyboardKeyCode { get; set; } = default!;
+    public float MaxActivationDistance { get; set; } = default!;
+    public float MaxIndicatorDistance { get; set; } = default!;
+    public string ObjectText { get; set; } = default!;
+    public bool RequiresLineOfSight { get; set; } = default!;
+    public LocalizationTable RootLocalizationTable { get; set; } = default!;
+    public Enums.ProximityPromptStyle Style { get; set; } = default!;
+    public Vector2 UIOffset { get; set; } = default!;
     public void InputHoldBegin() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public void InputHoldEnd() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public RBXScriptSignal IndicatorHidden { get; private set; } = null!;

@@ -2,16 +2,16 @@
 namespace RobloxCS.Types;
 [RobloxNative("VehicleSeat", RobloxNativeType.Instance)]
 public partial class VehicleSeat : BasePart  {
-    public int AreHingesDetected { get; } = default!;
-    public bool Disabled { get; } = default!;
-    public bool HeadsUpDisplay { get; } = default!;
-    public float MaxSpeed { get; } = default!;
-    public Humanoid Occupant { get; } = default!;
-    public int Steer { get; } = default!;
-    public float SteerFloat { get; } = default!;
-    public int Throttle { get; } = default!;
-    public float ThrottleFloat { get; } = default!;
-    public float Torque { get; } = default!;
-    public float TurnSpeed { get; } = default!;
+    public int AreHingesDetected { get; set; } = default!;
+    public bool Disabled { get; set; } = default!;
+    public bool HeadsUpDisplay { get; set; } = default!;
+    public float MaxSpeed { get; set; } = default!;
+    public Humanoid Occupant { get; set; } = default!;
+    public int Steer { get; set; } = default!;
+    public float SteerFloat { get; set; } = default!;
+    public int Throttle { get; set; } = default!;
+    public float ThrottleFloat { get; set; } = default!;
+    public float Torque { get; set; } = default!;
+    public float TurnSpeed { get; set; } = default!;
     public void Sit() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
 }

@@ -2,5 +2,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("NumberPose", RobloxNativeType.Instance)]
 public partial class NumberPose : PoseBase  {
-    public double Value { get; } = default!;
+    public double Value { get; set; } = default!;
 }

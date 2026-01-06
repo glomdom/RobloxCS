@@ -2,22 +2,22 @@
 namespace RobloxCS.Types;
 [RobloxNative("UserInputService", RobloxNativeType.Service)]
 public static partial class UserInputService {
-    public static bool AccelerometerEnabled { get; } = default!;
-    public static bool GamepadEnabled { get; } = default!;
-    public static bool GyroscopeEnabled { get; } = default!;
-    public static bool KeyboardEnabled { get; } = default!;
-    public static Enums.MouseBehavior MouseBehavior { get; } = default!;
-    public static float MouseDeltaSensitivity { get; } = default!;
-    public static bool MouseEnabled { get; } = default!;
-    public static string MouseIcon { get; } = default!;
-    public static string MouseIconContent { get; } = default!;
-    public static bool MouseIconEnabled { get; } = default!;
-    public static Vector2 OnScreenKeyboardPosition { get; } = default!;
-    public static Vector2 OnScreenKeyboardSize { get; } = default!;
-    public static bool OnScreenKeyboardVisible { get; } = default!;
-    public static Enums.PreferredInput PreferredInput { get; } = default!;
-    public static bool TouchEnabled { get; } = default!;
-    public static bool VREnabled { get; } = default!;
+    public static bool AccelerometerEnabled { get; set; } = default!;
+    public static bool GamepadEnabled { get; set; } = default!;
+    public static bool GyroscopeEnabled { get; set; } = default!;
+    public static bool KeyboardEnabled { get; set; } = default!;
+    public static Enums.MouseBehavior MouseBehavior { get; set; } = default!;
+    public static float MouseDeltaSensitivity { get; set; } = default!;
+    public static bool MouseEnabled { get; set; } = default!;
+    public static string MouseIcon { get; set; } = default!;
+    public static string MouseIconContent { get; set; } = default!;
+    public static bool MouseIconEnabled { get; set; } = default!;
+    public static Vector2 OnScreenKeyboardPosition { get; set; } = default!;
+    public static Vector2 OnScreenKeyboardSize { get; set; } = default!;
+    public static bool OnScreenKeyboardVisible { get; set; } = default!;
+    public static Enums.PreferredInput PreferredInput { get; set; } = default!;
+    public static bool TouchEnabled { get; set; } = default!;
+    public static bool VREnabled { get; set; } = default!;
     public static bool GamepadSupports() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static List<object> GetConnectedGamepads() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static InputObject GetDeviceAcceleration() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

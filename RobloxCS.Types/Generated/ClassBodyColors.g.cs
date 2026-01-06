@@ -2,16 +2,16 @@
 namespace RobloxCS.Types;
 [RobloxNative("BodyColors", RobloxNativeType.Instance)]
 public partial class BodyColors : CharacterAppearance  {
-    public BrickColor HeadColor { get; } = default!;
-    public Color3 HeadColor3 { get; } = default!;
-    public BrickColor LeftArmColor { get; } = default!;
-    public Color3 LeftArmColor3 { get; } = default!;
-    public BrickColor LeftLegColor { get; } = default!;
-    public Color3 LeftLegColor3 { get; } = default!;
-    public BrickColor RightArmColor { get; } = default!;
-    public Color3 RightArmColor3 { get; } = default!;
-    public BrickColor RightLegColor { get; } = default!;
-    public Color3 RightLegColor3 { get; } = default!;
-    public BrickColor TorsoColor { get; } = default!;
-    public Color3 TorsoColor3 { get; } = default!;
+    public BrickColor HeadColor { get; set; } = default!;
+    public Color3 HeadColor3 { get; set; } = default!;
+    public BrickColor LeftArmColor { get; set; } = default!;
+    public Color3 LeftArmColor3 { get; set; } = default!;
+    public BrickColor LeftLegColor { get; set; } = default!;
+    public Color3 LeftLegColor3 { get; set; } = default!;
+    public BrickColor RightArmColor { get; set; } = default!;
+    public Color3 RightArmColor3 { get; set; } = default!;
+    public BrickColor RightLegColor { get; set; } = default!;
+    public Color3 RightLegColor3 { get; set; } = default!;
+    public BrickColor TorsoColor { get; set; } = default!;
+    public Color3 TorsoColor3 { get; set; } = default!;
 }

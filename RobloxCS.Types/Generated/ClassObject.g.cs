@@ -2,7 +2,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("Object", RobloxNativeType.Instance)]
 public partial class Object {
-    public string ClassName { get; } = default!;
+    public string ClassName { get; set; } = default!;
     public RBXScriptSignal GetPropertyChangedSignal() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public bool IsA() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public RBXScriptSignal<string> Changed { get; private set; } = null!;

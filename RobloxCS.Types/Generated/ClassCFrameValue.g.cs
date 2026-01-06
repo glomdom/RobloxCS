@@ -2,6 +2,6 @@
 namespace RobloxCS.Types;
 [RobloxNative("CFrameValue", RobloxNativeType.Instance)]
 public partial class CFrameValue : ValueBase  {
-    public CFrame Value { get; } = default!;
+    public CFrame Value { get; set; } = default!;
     new public RBXScriptSignal<CFrame> Changed { get; private set; } = null!;
 }

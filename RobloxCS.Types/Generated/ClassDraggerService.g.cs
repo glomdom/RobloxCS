@@ -2,19 +2,19 @@
 namespace RobloxCS.Types;
 [RobloxNative("DraggerService", RobloxNativeType.Service)]
 public static partial class DraggerService {
-    public static bool AlignDraggedObjects { get; } = default!;
-    public static bool AngleSnapEnabled { get; } = default!;
-    public static float AngleSnapIncrement { get; } = default!;
-    public static bool AnimateHover { get; } = default!;
-    public static bool CollisionsEnabled { get; } = default!;
-    public static Enums.DraggerCoordinateSpace DraggerCoordinateSpace { get; } = default!;
-    public static Enums.DraggerMovementMode DraggerMovementMode { get; } = default!;
-    public static Color3 GeometrySnapColor { get; } = default!;
-    public static float HoverAnimateFrequency { get; } = default!;
-    public static float HoverThickness { get; } = default!;
-    public static bool JointsEnabled { get; } = default!;
-    public static bool LinearSnapEnabled { get; } = default!;
-    public static float LinearSnapIncrement { get; } = default!;
-    public static bool ShowHover { get; } = default!;
-    public static bool ShowPivotIndicator { get; } = default!;
+    public static bool AlignDraggedObjects { get; set; } = default!;
+    public static bool AngleSnapEnabled { get; set; } = default!;
+    public static float AngleSnapIncrement { get; set; } = default!;
+    public static bool AnimateHover { get; set; } = default!;
+    public static bool CollisionsEnabled { get; set; } = default!;
+    public static Enums.DraggerCoordinateSpace DraggerCoordinateSpace { get; set; } = default!;
+    public static Enums.DraggerMovementMode DraggerMovementMode { get; set; } = default!;
+    public static Color3 GeometrySnapColor { get; set; } = default!;
+    public static float HoverAnimateFrequency { get; set; } = default!;
+    public static float HoverThickness { get; set; } = default!;
+    public static bool JointsEnabled { get; set; } = default!;
+    public static bool LinearSnapEnabled { get; set; } = default!;
+    public static float LinearSnapIncrement { get; set; } = default!;
+    public static bool ShowHover { get; set; } = default!;
+    public static bool ShowPivotIndicator { get; set; } = default!;
 }
