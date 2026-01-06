@@ -9,6 +9,8 @@ using Serilog.Events;
 
 namespace RobloxCS.TypeGenerator;
 
+// XXX: lets not do this and split it up across more files, as well as optimize some other stuff
+
 internal static class Program {
     private const string ApiDumpUrl = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/refs/heads/roblox/API-Dump.json";
     private const string FunctionBody = "throw new InvalidOperationException(\"Cannot call reserved method for RobloxCS transpiler.\");"; // im lazy
