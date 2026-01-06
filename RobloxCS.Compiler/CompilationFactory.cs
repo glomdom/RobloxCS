@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Diagnostics;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Serilog;
 
@@ -13,11 +14,12 @@ internal static class CompilationFactory {
     ";
 
     public static CSharpCompilation Create(string assemblyName, SyntaxTree syntaxTree) {
-        var watch = System.Diagnostics.Stopwatch.StartNew();
+        var watch = Stopwatch.StartNew();
 
         var trustedAssembliesPaths = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!).Split(Path.PathSeparator);
         var references = trustedAssembliesPaths
             .Where(p => !string.IsNullOrEmpty(p))
+            .Append(@"RobloxCS.Types\bin\Debug\net10.0\RobloxCS.Types.dll")
             .Select(p => MetadataReference.CreateFromFile(p))
             .ToList();
 

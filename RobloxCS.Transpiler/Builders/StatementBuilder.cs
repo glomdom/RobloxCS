@@ -236,26 +236,8 @@ public static class StatementBuilder {
 
                 return assignment;
             }
+
+            default: throw new ArgumentOutOfRangeException(nameof(expr), expr.Kind(), null);
         }
-
-        throw new NotSupportedException($"{expr.Kind()} is not supported.");
-    }
-
-    private static bool RequiresDoScope(BlockSyntax block, TranspilationContext ctx) {
-        var parentKind = block.Parent?.Kind();
-        var isDirectBody = parentKind is SyntaxKind.IfStatement or SyntaxKind.ElseClause or SyntaxKind.ForStatement or SyntaxKind.WhileStatement or SyntaxKind.DoStatement;
-
-        if (!isDirectBody) return true;
-
-        foreach (var stmt in block.Statements) {
-            if (stmt is not LocalDeclarationStatementSyntax local) continue;
-
-            if (local.Declaration.Variables.Select(v => ctx.Semantics.GetDeclaredSymbol(v)).OfType<ISymbol>()
-                .Any(symbol => symbol.ContainingSymbol.Kind == SymbolKind.Method)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
