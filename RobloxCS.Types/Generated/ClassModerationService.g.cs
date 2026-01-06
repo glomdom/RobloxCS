@@ -7,4 +7,5 @@ public static partial class ModerationService {
     public static string CreateReviewableContentAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static string InternalCreateReviewableContentAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void InternalRequestReviewableContentReviewAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static Func<Dictionary<string, object>> InternalProcessReviewableContentEvent { get; set; } = default!;
 }

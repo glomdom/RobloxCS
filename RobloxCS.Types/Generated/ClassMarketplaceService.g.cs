@@ -29,4 +29,5 @@ public static partial class MarketplaceService {
     public static RBXScriptSignal<int, int, bool> PromptProductPurchaseFinished { get; private set; } = null!;
     public static RBXScriptSignal<Instance, int, bool> PromptPurchaseFinished { get; private set; } = null!;
     public static RBXScriptSignal<Player, string, bool> PromptSubscriptionPurchaseFinished { get; private set; } = null!;
+    public static Func<Dictionary<string, object>> ProcessReceipt { get; set; } = default!;
 }

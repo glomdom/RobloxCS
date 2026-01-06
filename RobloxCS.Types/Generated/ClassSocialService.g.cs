@@ -20,4 +20,5 @@ public static partial class SocialService {
     public static RBXScriptSignal<Instance, List<object>> GameInvitePromptClosed { get; private set; } = null!;
     public static RBXScriptSignal<Instance> PhoneBookPromptClosed { get; private set; } = null!;
     public static RBXScriptSignal<Player> ShareSheetClosed { get; private set; } = null!;
+    public static Func<string, List<object>> OnCallInviteInvoked { get; set; } = default!;
 }

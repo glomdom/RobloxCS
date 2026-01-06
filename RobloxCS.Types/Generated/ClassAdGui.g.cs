@@ -6,4 +6,5 @@ public partial class AdGui : SurfaceGuiBase  {
     public bool EnableVideoAds { get; } = default!;
     public string FallbackImage { get; } = default!;
     public Enums.AdUnitStatus Status { get; } = default!;
+    public Func<Dictionary<string, object>> OnAdEvent { get; set; } = default!;
 }

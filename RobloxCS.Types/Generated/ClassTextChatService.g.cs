@@ -13,4 +13,7 @@ public static partial class TextChatService {
     public static RBXScriptSignal<Instance, TextChatMessage> BubbleDisplayed { get; private set; } = null!;
     public static RBXScriptSignal<TextChatMessage> MessageReceived { get; private set; } = null!;
     public static RBXScriptSignal<TextChatMessage> SendingMessage { get; private set; } = null!;
+    public static Func<TextChatMessage, Instance> OnBubbleAdded { get; set; } = default!;
+    public static Func<TextChatMessage> OnChatWindowAdded { get; set; } = default!;
+    public static Func<TextChatMessage> OnIncomingMessage { get; set; } = default!;
 }
