@@ -199,6 +199,27 @@ internal static class Program {
 
                         break;
                     }
+
+                    case RobloxMemberType.Callback: {
+                        var callback = (RobloxCallback)member;
+
+                        var returnType = RobloxTypeToCSharp(callback.ReturnType);
+                        var isVoid = returnType == "void";
+
+                        var callbackType = isVoid ? "Action" : "Func";
+                        var parameters = callback.Parameters.Select(p => RobloxTypeToCSharp(p.Type)).ToList();
+                        if (parameters.Count > 0) callbackType += $"<{string.Join(", ", parameters)}>";
+
+                        Log.Verbose("Generating event {CallbackName} with tags {Tags} and security {Security}", callback.Name, callback.Tags, callback.Security);
+                        
+                        if (isService) {
+                            builder.AppendLine($"    public static {callbackType} {callback.Name} {{ get; set; }} = default!;");
+                        } else {
+                            builder.AppendLine($"    public {callbackType} {callback.Name} {{ get; set; }} = default!;");
+                        }
+
+                        break;
+                    }
                 }
             }
 
