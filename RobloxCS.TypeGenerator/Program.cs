@@ -130,14 +130,16 @@ internal static class Program {
 
                         if (classDef.Name == "BasePart" && prop.Name == "PivotOffset") continue; // dont ask me, ask roblox why their type dump is inconsistent
 
+                        var setter = prop.Security.Write == RobloxSecurityType.None ? " set;" : string.Empty;
+
                         if (isService) {
-                            builder.AppendLine($"    public static {propType} {normalized} {{ get; }} = default!;");
+                            builder.AppendLine($"    public static {propType} {normalized} {{ get;{setter} }} = default!;");
                         } else {
                             if (prop.Name == classDef.Name) {
                                 builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
-                                builder.AppendLine($"    public {propType} Value {{ get; }} = default!;");
+                                builder.AppendLine($"    public {propType} Value {{ get;{setter} }} = default!;");
                             } else {
-                                builder.AppendLine($"    public {propType} {normalized} {{ get; }} = default!;");
+                                builder.AppendLine($"    public {propType} {normalized} {{ get;{setter} }} = default!;");
                             }
                         }
 
