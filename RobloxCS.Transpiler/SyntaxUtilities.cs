@@ -1,10 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Types;
+using RobloxCS.Transpiler.Helpers;
+using RobloxCS.Types;
 
 namespace RobloxCS.Transpiler;
 
@@ -24,6 +27,32 @@ public static class SyntaxUtilities {
         return null;
     }
 
+    // cursed
+    public static T ExtractAttributeFromAttributes<T>(ImmutableArray<AttributeData> attributes) where T : Attribute {
+        var targetType = typeof(T);
+        var targetName = targetType.FullName;
+
+        var attrData = attributes.FirstOrDefault(ad => ad.AttributeClass?.ToDisplayString() == targetName);
+        if (attrData is null) {
+            throw new Exception($"Failed to find attribute {targetName} when searching inside attributes.");
+        }
+
+        var ctor = targetType.GetConstructors().First(ci => ci.GetParameters().Length == attrData.ConstructorArguments.Length);
+        var ctorArgs = ctor.GetParameters()
+            .Zip(attrData.ConstructorArguments, (pi, tc) => pi.ParameterType.IsEnum ? Enum.ToObject(pi.ParameterType, tc.Value!) : tc.Value).ToArray();
+
+        var instance = (T)Activator.CreateInstance(targetType, ctorArgs)!;
+
+        foreach (var (argName, argVal) in attrData.NamedArguments) {
+            var info = targetType.GetProperty(argName);
+            if (info is null || !info.CanWrite) continue;
+
+            var val = info.PropertyType.IsEnum ? Enum.ToObject(info.PropertyType, argVal.Value!) : argVal.Value;
+            info.SetValue(instance, val);
+        }
+
+        return instance;
+    }
 
     public static BasicTypeInfo BasicFromSymbol(ITypeSymbol symbol) {
         return symbol.SpecialType switch {
@@ -39,6 +68,15 @@ public static class SyntaxUtilities {
 
     private static BasicTypeInfo GetBasicFromNonPrimitive(ITypeSymbol symbol) {
         if (symbol.TypeKind == TypeKind.Class) {
+            var classNs = symbol.ContainingNamespace;
+            var isRobloxType = classNs is not null && classNs.ToDisplayString() == "RobloxCS.Types";
+
+            if (isRobloxType) {
+                var nativeAttribute = ExtractAttributeFromAttributes<RobloxNativeAttribute>(symbol.GetAttributes());
+
+                return BasicTypeInfo.FromString(nativeAttribute.RobloxName);
+            }
+
             return BasicTypeInfo.FromString($"_Instance{symbol.Name}");
         }
 

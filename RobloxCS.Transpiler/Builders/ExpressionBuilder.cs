@@ -7,6 +7,7 @@ using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.Transpiler.Helpers;
 using RobloxCS.Transpiler.Macros;
+using RobloxCS.Types;
 using Serilog;
 
 namespace RobloxCS.Transpiler.Builders;
@@ -46,9 +47,31 @@ public static class ExpressionBuilder {
     }
 
     private static Expression HandleObjectCreationExpressionSyntax(ObjectCreationExpressionSyntax syntax, TranspilationContext ctx) {
+        var symbol = ctx.Semantics.GetSymbolInfo(syntax);
+        if (symbol.Symbol is not IMethodSymbol ctorSymbol) {
+            throw new Exception("Constructor symbol missing from object creation expression.");
+        }
+
         List<Expression> exprs = [];
         if (syntax.ArgumentList is not null) {
+            var args = syntax.ArgumentList.Arguments;
+            foreach (var arg in args) { }
+
             exprs = syntax.ArgumentList.Arguments.Select(a => BuildFromSyntax(a.Expression, ctx)).ToList();
+        }
+
+        var classSymbol = ctorSymbol.ContainingType;
+        var classNs = classSymbol.ContainingNamespace;
+        var isRobloxType = classNs is not null && classNs.ToDisplayString() == "RobloxCS.Types";
+        if (!isRobloxType) return ExpressionHelpers.DirectFunctionCall(syntax.Type.ToString(), "new", exprs);
+
+        var nativeAttribute = SyntaxUtilities.ExtractAttributeFromAttributes<RobloxNativeAttribute>(classSymbol.GetAttributes());
+        if (nativeAttribute.NativeType == RobloxNativeType.Instance) {
+            Log.Verbose("Rewriting object creation to use Instance.new");
+
+            List<Expression> prependedExprs = [StringExpression.FromString(nativeAttribute.RobloxName), ..exprs];
+
+            return ExpressionHelpers.DirectFunctionCall("Instance", "new", prependedExprs);
         }
 
         return ExpressionHelpers.DirectFunctionCall(syntax.Type.ToString(), "new", exprs);
