@@ -12,6 +12,7 @@ public partial class DataModel : ServiceProvider  {
     public int PlaceVersion { get; set; } = default!;
     public string PrivateServerId { get; set; } = default!;
     public int PrivateServerOwnerId { get; set; } = default!;
+    public Instance RunService { get; set; } = default!;
     public Workspace Workspace { get; set; } = default!;
     public void BindToClose() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public bool IsLoaded() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");

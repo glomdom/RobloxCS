@@ -15,6 +15,7 @@ public static partial class GuiService {
     public static bool GetEmotesMenuOpen() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static bool GetGameplayPausedNotificationEnabled() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static LuaTuple GetGuiInset() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static Rect GetInsetArea() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static bool GetInspectMenuEnabled() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void InspectPlayerFromHumanoidDescription() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
     public static void InspectPlayerFromUserId() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
