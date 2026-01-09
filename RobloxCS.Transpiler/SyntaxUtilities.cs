@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Types;
 using RobloxCS.Types;
+using Serilog;
 
 namespace RobloxCS.Transpiler;
 
@@ -66,7 +67,7 @@ public static class SyntaxUtilities {
     }
 
     private static BasicTypeInfo GetBasicFromNonPrimitive(ITypeSymbol symbol) {
-        if (symbol.TypeKind == TypeKind.Class) {
+        if (symbol.TypeKind is TypeKind.Class or TypeKind.Struct) {
             var classNs = symbol.ContainingNamespace;
             var isRobloxType = classNs is not null && classNs.ToDisplayString() == "RobloxCS.Types";
 
@@ -80,27 +81,6 @@ public static class SyntaxUtilities {
         }
 
         throw new NotSupportedException($"Unsupported non-primitive type {symbol} for {symbol.Name}");
-    }
-
-    public static string MapPrimitive(ITypeSymbol typeSymbol) {
-        return typeSymbol.SpecialType switch {
-            SpecialType.System_Boolean => "boolean",
-            SpecialType.System_Byte => "number",
-            SpecialType.System_SByte => "number",
-            SpecialType.System_Int16 => "number",
-            SpecialType.System_UInt16 => "number",
-            SpecialType.System_Int32 => "number",
-            SpecialType.System_UInt32 => "number",
-            SpecialType.System_Int64 => "number",
-            SpecialType.System_UInt64 => "number",
-            SpecialType.System_Single => "number",
-            SpecialType.System_Double => "number",
-            SpecialType.System_Char => "string",
-            SpecialType.System_String => "string",
-            SpecialType.System_Object => "any",
-
-            _ => throw new ArgumentOutOfRangeException(nameof(typeSymbol), typeSymbol.SpecialType, null),
-        };
     }
 
     public static BinOp SyntaxTokenToBinOp(SyntaxToken token) {

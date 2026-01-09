@@ -11,5 +11,7 @@ internal class Program {
         connection.Disconnect();
 
         testPart.Destroy();
+
+        var testVector = new Vector3();
     }
 }

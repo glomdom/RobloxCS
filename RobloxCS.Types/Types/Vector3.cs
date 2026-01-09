@@ -1,5 +1,4 @@
 ﻿namespace RobloxCS.Types;
 
-public readonly record struct Vector3 {
-    
-}
+[RobloxNative("Vector3", RobloxNativeType.DataType)]
+public readonly record struct Vector3 { }
