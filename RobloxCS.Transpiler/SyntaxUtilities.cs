@@ -7,7 +7,6 @@ using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Types;
 using RobloxCS.Types;
-using Serilog;
 
 namespace RobloxCS.Transpiler;
 
