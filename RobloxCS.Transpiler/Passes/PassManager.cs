@@ -17,6 +17,7 @@ public sealed class PassManager {
         foreach (var pass in Passes) {
             passWatch.Restart();
             pass.Run(ctx);
+            pass.PostRun(ctx);
             passWatch.Stop();
 
             Log.Debug("{Pass} finished in {ElapsedMs}ms", pass.GetType().Name, passWatch.ElapsedMilliseconds);

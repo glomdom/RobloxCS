@@ -1,6 +1,8 @@
 ﻿using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
+using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Transient;
 using RobloxCS.Transpiler.Helpers;
 using Serilog;

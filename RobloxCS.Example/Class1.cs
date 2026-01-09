@@ -13,5 +13,6 @@ internal class Program {
         testPart.Destroy();
 
         var testVector = new Vector3();
+        var players = PlayersService.GetPlayers();
     }
 }

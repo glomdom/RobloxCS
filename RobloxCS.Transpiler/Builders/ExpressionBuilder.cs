@@ -5,6 +5,7 @@ using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Suffixes;
+using RobloxCS.AST.Transient;
 using RobloxCS.Transpiler.Helpers;
 using RobloxCS.Transpiler.Macros;
 using RobloxCS.Types;
@@ -134,10 +135,37 @@ public static class ExpressionBuilder {
             Log.Debug("Querying {SymbolName} inside macro registry {Got}", key, got);
         }
 
-        if (methodSymbol.IsStatic) throw new Exception("Static methods are not yet supported.");
-
         var args = syntax.ArgumentList.Arguments.Select(a => BuildFromSyntax(a.Expression, ctx)).ToList();
         var functionArgs = ExpressionHelpers.FunctionArgsFromExpressions(args);
+
+        var methodContainer = methodSymbol.ContainingSymbol;
+        if (methodContainer is not null) {
+            var ns = methodContainer.ContainingNamespace;
+            var isRoblox = ns.ToDisplayString() == "RobloxCS.Types";
+
+            if (isRoblox) {
+                Log.Debug("Class {methodContainer}", methodContainer);
+
+                var nativeAttribute = SyntaxUtilities.ExtractAttributeFromAttributes<RobloxNativeAttribute>(methodContainer.GetAttributes());
+                if (nativeAttribute.NativeType == RobloxNativeType.Service) {
+                    var call = new FunctionCallExpression {
+                        Prefix = new NamePrefix { Name = methodSymbol.Name },
+                        Suffixes = [
+                            new AnonymousCall {
+                                Arguments = functionArgs,
+                            },
+                        ],
+                    };
+
+                    return new TransientServiceUsageExpression {
+                        ServiceName = nativeAttribute.RobloxName,
+                        AccessExpression = call,
+                    };
+                }
+            }
+        }
+
+        if (methodSymbol.IsStatic) throw new Exception("Static methods are not yet supported.");
 
         if (SyntaxUtilities.IsInvokedOnExternalObject(syntax, ctx.Semantics, out var receiver)) {
             var obj = BuildFromSyntax((ExpressionSyntax)receiver.Syntax, ctx);

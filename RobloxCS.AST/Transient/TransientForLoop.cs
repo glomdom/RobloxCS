@@ -19,7 +19,7 @@ public sealed class TransientForLoop : TransientStatement {
             internalVisitor.VisitTransientForLoop(this);
         }
 
-        throw new Exception("Transient for loop must be lowered before lowering.");
+        throw new Exception("Transient for loop must be lowered before visiting.");
     }
 
     public override T Accept<T>(IAstVisitor<T> v) {
@@ -27,6 +27,6 @@ public sealed class TransientForLoop : TransientStatement {
             return internalVisitor.VisitTransientForLoop(this);
         }
 
-        throw new Exception("Transient for loop must be lowered before lowering.");
+        throw new Exception("Transient for loop must be lowered before visiting.");
     }
 }

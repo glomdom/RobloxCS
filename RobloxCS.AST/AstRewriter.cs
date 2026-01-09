@@ -5,12 +5,35 @@ using RobloxCS.AST.Parameters;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
+using RobloxCS.AST.Transient;
 using RobloxCS.AST.Types;
 using Index = RobloxCS.AST.Suffixes.Index;
 
 namespace RobloxCS.AST;
 
-public class AstRewriter : IAstVisitor<AstNode> {
+public class AstRewriter : IAstVisitor<AstNode>, IInternalAstVisitor<AstNode> {
+    AstNode IInternalAstVisitor<AstNode>.VisitTransientServiceUsageExpression(TransientServiceUsageExpression node) {
+        node.AccessExpression = Visit(node.AccessExpression);
+
+        return node;
+    }
+
+    AstNode IInternalAstVisitor<AstNode>.VisitTransientBlock(TransientBlock node) {
+        VisitList(node.Statements);
+
+        return node;
+    }
+
+    AstNode IInternalAstVisitor<AstNode>.VisitTransientForLoop(TransientForLoop node) {
+        VisitList(node.Initializers);
+        if (node.Condition is not null) node.Condition = Visit(node.Condition);
+
+        VisitList(node.Incrementors);
+        node.Body = Visit(node.Body);
+
+        return node;
+    }
+
     public virtual AstNode DefaultVisit(AstNode node) => node;
 
     public AstNode Visit(AstNode node) => node.Accept(this);

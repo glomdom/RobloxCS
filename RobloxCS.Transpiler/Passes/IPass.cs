@@ -2,4 +2,5 @@
 
 public interface IPass {
     void Run(TranspilationContext ctx);
+    void PostRun(TranspilationContext ctx) { }
 }
