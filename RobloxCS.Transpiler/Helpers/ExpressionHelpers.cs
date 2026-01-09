@@ -2,7 +2,9 @@
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
 using RobloxCS.AST.Prefixes;
+using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
+using RobloxCS.AST.Types;
 using RobloxCS.Transpiler.Builders;
 
 namespace RobloxCS.Transpiler.Helpers;
@@ -34,6 +36,17 @@ public static class ExpressionHelpers {
         return expr;
     }
 
+    public static AnonymousFunctionExpression SimpleAnonymousFunction(List<Statement> stmts) {
+        return new AnonymousFunctionExpression {
+            Body = new FunctionBody {
+                Body = BlockHelpers.From(stmts),
+                Parameters = [],
+                ReturnType = BasicTypeInfo.Void(),
+                TypeSpecifiers = [],
+            },
+        };
+    }
+
     /// <summary>
     /// Creates a direct function call in the form of <c>objName.funcName(..args)</c>.
     /// </summary>
@@ -52,13 +65,20 @@ public static class ExpressionHelpers {
             Arguments = arguments,
         };
 
-
         var expr = new FunctionCallExpression {
             Prefix = prefix,
             Suffixes = [suffixIndex, suffixCall],
         };
 
         return expr;
+    }
+
+    public static FunctionCallExpression SimpleMethodCall(string name, string methodName, FunctionArgs args) {
+        return SimpleMethodCall(name, methodName, args.Arguments);
+    }
+
+    public static FunctionCallExpression SimpleMethodCall(string name, string methodName, List<Expression> args) {
+        return SimpleMethodCall(name, methodName, args.ToArray());
     }
 
     public static FunctionCallExpression SimpleMethodCall(string name, string methodName, params Expression[] args) {

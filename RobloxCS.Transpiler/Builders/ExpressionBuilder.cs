@@ -22,28 +22,54 @@ public static class ExpressionBuilder {
             InvocationExpressionSyntax invocationExpressionSyntax => HandleInvocationExpressionSyntax(invocationExpressionSyntax, ctx),
             ConditionalExpressionSyntax conditionalExpressionSyntax => HandleConditionalExpressionSyntax(conditionalExpressionSyntax, ctx),
             MemberAccessExpressionSyntax memberAccessExpressionSyntax => HandleMemberAccessExpressionSyntax(memberAccessExpressionSyntax, ctx),
+            SimpleLambdaExpressionSyntax simpleLambdaExpressionSyntax => HandleSimpleLambdaExpressionSyntax(simpleLambdaExpressionSyntax, ctx),
             ParenthesizedExpressionSyntax parenthesizedExpressionSyntax => HandleParenthesizedExpressionSyntax(parenthesizedExpressionSyntax, ctx),
             ObjectCreationExpressionSyntax objectCreationExpressionSyntax => HandleObjectCreationExpressionSyntax(objectCreationExpressionSyntax, ctx),
+            ParenthesizedLambdaExpressionSyntax parenthesizedLambdaExpressionSyntax => HandleParenthesizedLambdaExpressionSyntax(parenthesizedLambdaExpressionSyntax, ctx),
 
             _ => throw new NotSupportedException($"Expression {syntax.Kind()} is not supported. {syntax}"),
         };
     }
 
+    // TODO: Fixme
+    private static Expression HandleSimpleLambdaExpressionSyntax(SimpleLambdaExpressionSyntax syntax, TranspilationContext ctx) {
+        return ExpressionHelpers.SimpleAnonymousFunction([StatementHelpers.EmptyReturnStatement()]);
+    }
+
+    // TODO: Fixme
+    private static Expression HandleParenthesizedLambdaExpressionSyntax(ParenthesizedLambdaExpressionSyntax syntax, TranspilationContext ctx) {
+        return ExpressionHelpers.SimpleAnonymousFunction([StatementHelpers.EmptyReturnStatement()]);
+    }
+
     private static VarExpression HandleMemberAccessExpressionSyntax(MemberAccessExpressionSyntax syntax, TranspilationContext ctx) {
         var symbol = ctx.Semantics.GetSymbol(syntax);
 
-        if (symbol is IFieldSymbol fieldSymbol) {
-            return new VarExpression {
-                Prefix = new ExpressionPrefix { Expression = BuildFromSyntax(syntax.Expression, ctx) },
+        return symbol switch {
+            IFieldSymbol fieldSymbol => new VarExpression {
+                Prefix = new ExpressionPrefix {
+                    Expression = BuildFromSyntax(syntax.Expression, ctx)
+                },
                 Suffixes = [
                     new Dot {
                         Name = SymbolExpression.FromString(fieldSymbol.Name),
                     },
                 ],
-            };
-        }
+            },
 
-        throw new NotSupportedException($"Unsupported member access: {symbol.GetType().Name}");
+            // TODO: Fixme
+            IPropertySymbol propSymbol => new VarExpression {
+                Prefix = new ExpressionPrefix {
+                    Expression = BuildFromSyntax(syntax.Expression, ctx)
+                },
+                Suffixes = [
+                    new Dot {
+                        Name = SymbolExpression.FromString(propSymbol.Name),
+                    },
+                ],
+            },
+
+            _ => throw new NotSupportedException($"Unsupported member access: {symbol.GetType().Name}")
+        };
     }
 
     private static Expression HandleObjectCreationExpressionSyntax(ObjectCreationExpressionSyntax syntax, TranspilationContext ctx) {
@@ -110,17 +136,28 @@ public static class ExpressionBuilder {
 
         if (methodSymbol.IsStatic) throw new Exception("Static methods are not yet supported.");
 
-        var methodName = $"self:{methodSymbol.Name}";
+        var args = syntax.ArgumentList.Arguments.Select(a => BuildFromSyntax(a.Expression, ctx)).ToList();
+        var functionArgs = ExpressionHelpers.FunctionArgsFromExpressions(args);
+
         if (SyntaxUtilities.IsInvokedOnExternalObject(syntax, ctx.Semantics, out var receiver)) {
             var obj = BuildFromSyntax((ExpressionSyntax)receiver.Syntax, ctx);
 
-            methodName = $"{obj}:{methodSymbol.Name}";
+            var call = new FunctionCallExpression {
+                Prefix = new ExpressionPrefix { Expression = obj },
+                Suffixes = [
+                    new MethodCall {
+                        Name = methodSymbol.Name,
+                        Args = functionArgs,
+                    },
+                ],
+            };
+
+            return call;
         }
 
-        var args = syntax.ArgumentList.Arguments.Select(ars => BuildFromSyntax(ars.Expression, ctx)).ToList();
-        var call = ExpressionHelpers.SimpleFunctionCall(methodName, args);
+        var selfCall = ExpressionHelpers.SimpleMethodCall("self", methodSymbol.Name, functionArgs);
 
-        return call;
+        return selfCall;
     }
 
     private static Expression HandlePostfixExpressionSyntax(PostfixUnaryExpressionSyntax syntax, TranspilationContext ctx) {

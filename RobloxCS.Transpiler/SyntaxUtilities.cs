@@ -6,7 +6,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Types;
-using RobloxCS.Transpiler.Helpers;
 using RobloxCS.Types;
 
 namespace RobloxCS.Transpiler;
