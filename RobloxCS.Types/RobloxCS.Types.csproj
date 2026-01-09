@@ -11,9 +11,5 @@
             <_Parameter1>RobloxCS.Transpiler</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
-
-    <Target Name="GeneratePhantomTypes" BeforeTargets="CoreCompile">
-        <Exec Command="dotnet run --project ../RobloxCS.TypeGenerator" WorkingDirectory="$(ProjectDir)"/>
-    </Target>
-
+    
 </Project>
