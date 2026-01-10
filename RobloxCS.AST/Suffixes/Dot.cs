@@ -2,7 +2,7 @@
 
 namespace RobloxCS.AST.Suffixes;
 
-public sealed class Dot : Index {
+public sealed class Dot : IndexSuffix {
     public required SymbolExpression Name { get; set; }
     
     public override AstNode DeepClone() => throw new NotImplementedException();

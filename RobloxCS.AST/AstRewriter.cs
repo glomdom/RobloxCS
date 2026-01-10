@@ -8,7 +8,6 @@ using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Transient;
 using RobloxCS.AST.Types;
-using Index = RobloxCS.AST.Suffixes.Index;
 
 namespace RobloxCS.AST;
 
@@ -250,6 +249,12 @@ public class AstRewriter : IAstVisitor<AstNode>, IInternalAstVisitor<AstNode> {
         return node;
     }
 
+    public virtual AstNode VisitBracketsIndex(BracketsIndex node) {
+        node.Expression = Visit(node.Expression, node)!;
+
+        return node;
+    }
+
     public virtual AstNode VisitMethodCall(MethodCall node) {
         node.Args = Visit(node.Args, node)!;
 
@@ -264,7 +269,7 @@ public class AstRewriter : IAstVisitor<AstNode>, IInternalAstVisitor<AstNode> {
         return node;
     }
 
-    public virtual AstNode VisitIndex(Index node) => node;
+    public virtual AstNode VisitIndexSuffix(IndexSuffix node) => node;
 
     public virtual AstNode VisitArrayTypeInfo(ArrayTypeInfo node) {
         node.ElementType = Visit(node.ElementType, node)!;

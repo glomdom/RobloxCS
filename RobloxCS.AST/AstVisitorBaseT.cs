@@ -6,7 +6,6 @@ using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
-using Index = RobloxCS.AST.Suffixes.Index;
 
 namespace RobloxCS.AST;
 
@@ -78,11 +77,12 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
     public virtual T VisitWhileStatement(WhileStatement node) => DefaultVisit(node);
 
     public virtual T VisitAnonymousCall(AnonymousCall node) => DefaultVisit(node);
+    public virtual T VisitBracketsIndex(BracketsIndex node) => DefaultVisit(node);
     public virtual T VisitMethodCall(MethodCall node) => DefaultVisit(node);
     public virtual T VisitCall(Call node) => DefaultVisit(node);
 
     public virtual T VisitDot(Dot node) => DefaultVisit(node);
-    public virtual T VisitIndex(Index node) => DefaultVisit(node);
+    public virtual T VisitIndexSuffix(IndexSuffix node) => DefaultVisit(node);
 
     public virtual T VisitArrayTypeInfo(ArrayTypeInfo node) => DefaultVisit(node);
     public virtual T VisitBasicTypeInfo(BasicTypeInfo node) => DefaultVisit(node);

@@ -78,6 +78,11 @@ public class RendererWalker : AstVisitorBase {
         Visit(node.Value);
     }
 
+    public override void VisitNoKey(NoKey node) {
+        _state.AppendIndent();
+        Visit(node.Expression);
+    }
+
     public override void VisitNameTypeFieldKey(NameTypeFieldKey node) {
         _state.Builder.Append(node.Name);
     }
@@ -356,6 +361,12 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.Append('(');
         Visit(node.Arguments);
         _state.Builder.Append(')');
+    }
+
+    public override void VisitBracketsIndex(BracketsIndex node) {
+        _state.Builder.Append('[');
+        Visit(node.Expression);
+        _state.Builder.Append(']');
     }
 
     public override void VisitMethodCall(MethodCall node) {

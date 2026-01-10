@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
+using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
 using RobloxCS.Transpiler.Helpers;
@@ -68,7 +69,7 @@ public static class TypeFieldBuilder {
                 var init = v.Initializer;
                 if (init is null) continue;
 
-                var rhs = Lowering.ExpressionLowerer.LowerExpr(init.Value);
+                var rhs = Lowering.ExpressionLowerer.LowerExpr(init.Value, ctx);
 
                 yield return new AssignmentStatement {
                     Vars = [VarName.FromString($"self.{field.Name}")],
@@ -87,5 +88,9 @@ public static class TypeFieldBuilder {
         Log.Verbose("Inferred type {Type} from {Name}", syntax.ToString(), fieldType.Name);
 
         return fieldType;
+    }
+
+    public static TableField BuildFromSyntax(ExpressionSyntax syntax, TranspilationContext ctx) {
+        return new NoKey { Expression = ExpressionBuilder.BuildFromSyntax(syntax, ctx) };
     }
 }

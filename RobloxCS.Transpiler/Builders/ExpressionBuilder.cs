@@ -24,11 +24,28 @@ public static class ExpressionBuilder {
             ConditionalExpressionSyntax conditionalExpressionSyntax => HandleConditionalExpressionSyntax(conditionalExpressionSyntax, ctx),
             MemberAccessExpressionSyntax memberAccessExpressionSyntax => HandleMemberAccessExpressionSyntax(memberAccessExpressionSyntax, ctx),
             SimpleLambdaExpressionSyntax simpleLambdaExpressionSyntax => HandleSimpleLambdaExpressionSyntax(simpleLambdaExpressionSyntax, ctx),
+            ElementAccessExpressionSyntax elementAccessExpressionSyntax => HandleElementAccessExpressionSyntax(elementAccessExpressionSyntax, ctx),
             ParenthesizedExpressionSyntax parenthesizedExpressionSyntax => HandleParenthesizedExpressionSyntax(parenthesizedExpressionSyntax, ctx),
             ObjectCreationExpressionSyntax objectCreationExpressionSyntax => HandleObjectCreationExpressionSyntax(objectCreationExpressionSyntax, ctx),
             ParenthesizedLambdaExpressionSyntax parenthesizedLambdaExpressionSyntax => HandleParenthesizedLambdaExpressionSyntax(parenthesizedLambdaExpressionSyntax, ctx),
+            PostfixUnaryExpressionSyntax postfixUnaryExpressionSyntax => HandlePostfixUnarySyntax(postfixUnaryExpressionSyntax, ctx),
 
             _ => throw new NotSupportedException($"Expression {syntax.Kind()} is not supported. {syntax}"),
+        };
+    }
+
+    private static Expression HandlePostfixUnarySyntax(PostfixUnaryExpressionSyntax syntax, TranspilationContext ctx) {
+        switch (syntax.Kind()) {
+            case SyntaxKind.SuppressNullableWarningExpression: return SymbolExpression.FromString("nil");
+
+            default: throw new NotSupportedException($"Postfix unary expression {syntax.Kind()} is not supported. {syntax}");
+        }
+    }
+
+    private static Expression HandleElementAccessExpressionSyntax(ElementAccessExpressionSyntax syntax, TranspilationContext ctx) {
+        return new VarExpression {
+            Prefix = new ExpressionPrefix { Expression = BuildFromSyntax(syntax.Expression, ctx) },
+            Suffixes = syntax.ArgumentList.Arguments.Select(a => new BracketsIndex { Expression = BuildFromSyntax(a.Expression, ctx) }).Cast<Suffix>().ToList(),
         };
     }
 
