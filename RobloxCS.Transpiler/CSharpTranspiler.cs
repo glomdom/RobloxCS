@@ -11,11 +11,13 @@ public sealed class CSharpTranspiler {
     public CSharpTranspiler(TranspilerOptions options, CSharpCompiler compiler) {
         Ctx = new TranspilationContext(options, compiler);
         PassManager = new PassManager();
-        
+
+        PassManager.Register(new HeaderCollectorPass());
         PassManager.Register(new ConverterPass());
         PassManager.Register(new LinkerPass());
         PassManager.Register(new TransientLoweringPass());
         PassManager.Register(new ServiceLoweringPass());
+        PassManager.Register(new CollectionsLoweringPass());
     }
 
     public Chunk Transpile() {

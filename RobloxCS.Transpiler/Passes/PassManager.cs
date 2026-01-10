@@ -25,7 +25,7 @@ public sealed class PassManager {
 
             passWatch.Stop();
 
-            Log.Debug("{Pass} finished in {ElapsedMs}ms", pass.GetType().Name, passWatch.ElapsedMilliseconds);
+            Log.Debug("Pass {PassName} finished in {ElapsedMs}ms", pass.Name, passWatch.ElapsedMilliseconds);
         }
 
         passesWatch.Stop();

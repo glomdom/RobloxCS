@@ -283,8 +283,15 @@ public static class ExpressionBuilder {
     }
 
     private static Expression HandleIFieldSymbol(IFieldSymbol fieldSymbol) {
-        var fieldName = fieldSymbol.IsStatic ? $"{fieldSymbol.ContainingSymbol.Name}.{fieldSymbol.Name}" : $"self.{fieldSymbol.Name}";
+        var objectName = fieldSymbol.IsStatic ? fieldSymbol.ContainingSymbol.Name : "self";
 
-        return SymbolExpression.FromString(fieldName);
+        return new VarExpression {
+            Prefix = new NamePrefix { Name = objectName },
+            Suffixes = [
+                new Dot {
+                    Name = SymbolExpression.FromString(fieldSymbol.Name),
+                },
+            ],
+        };
     }
 }
