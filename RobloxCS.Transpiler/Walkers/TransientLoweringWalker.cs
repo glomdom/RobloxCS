@@ -1,8 +1,6 @@
 ﻿using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
-using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
-using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Transient;
 using RobloxCS.Transpiler.Helpers;
 using Serilog;
@@ -20,6 +18,7 @@ public sealed class TransientLoweringWalker : AstRewriter, IInternalAstVisitor<A
         var inner = BlockHelpers.Empty();
 
         foreach (var init in node.Initializers) {
+            var newInit = Visit(init);
             inner.AddStatement(init);
         }
 
@@ -130,12 +129,13 @@ public sealed class TransientLoweringWalker : AstRewriter, IInternalAstVisitor<A
         return newBlock;
     }
 
-    private void FlattenAndAdd(IList<Statement> statements, Block targetBlock) {
+    private void FlattenAndAdd(List<Statement> statements, Block targetBlock) {
         foreach (var stmt in statements) {
             if (stmt is TransientBlock transient) {
                 FlattenAndAdd(transient.Statements, targetBlock);
             } else {
                 var visited = stmt.Accept(this);
+
                 switch (visited) {
                     case Block b: targetBlock.AddBlock(b); break;
                     case Statement s: targetBlock.AddStatement(s); break;
