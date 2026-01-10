@@ -3,16 +3,9 @@
 namespace RobloxCS.Example;
 
 internal class Program {
+    private List<Instance> Pool = [];
+
     internal void Main() {
-        var testPart = new Part();
-        testPart.Name = "hello C#";
-
-        var connection = testPart.Changed.Connect(val => { Console.WriteLine($"Test part changed! {val}"); });
-        connection.Disconnect();
-
-        testPart.Destroy();
-
-        var testVector = new Vector3();
-        var players = PlayersService.GetPlayers();
+        var a = Pool.Count;
     }
 }

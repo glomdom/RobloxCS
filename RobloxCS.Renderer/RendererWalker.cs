@@ -214,6 +214,13 @@ public class RendererWalker : AstVisitorBase {
                 break;
             }
 
+            case UnOp.Hash: {
+                _state.Builder.Append('#');
+                Visit(node.Expression);
+
+                break;
+            }
+
             default: throw new ArgumentOutOfRangeException(nameof(node), node.UnOp, "Unhandled unary operator in VisitUnaryOperatorExpression");
         }
     }

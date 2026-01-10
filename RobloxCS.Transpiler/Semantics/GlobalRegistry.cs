@@ -16,7 +16,7 @@ public sealed class GlobalRegistry {
             Classes[name] = new ClassInfo(name, parentName);
         }
 
-        Log.Verbose("Registered {ClassName} to global registry", name);
+        Log.Verbose("Registered class {ClassName} to global registry", name);
     }
 
     public void RegisterMember(string className, string memberName, TypeInfo type) {
@@ -24,7 +24,7 @@ public sealed class GlobalRegistry {
             classInfo.AddMember(memberName, type);
         }
 
-        Log.Verbose("Registered {MemberName} to class {ClassName} in global registry", className, memberName);
+        Log.Verbose("Registered member {MemberName} to class {ClassName} in global registry", className, memberName);
     }
 
     public TypeInfo? GetMemberType(string className, string memberName) {
