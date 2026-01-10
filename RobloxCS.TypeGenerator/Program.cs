@@ -110,9 +110,7 @@ internal static class Program {
                 builder.AppendLine($"public partial class {classDef.Name}{superclass} {{");
             }
 
-            foreach (var member in classDef.Members) {
-                if (!IsMemberAllowed(member)) continue;
-
+            foreach (var member in classDef.Members.Where(IsMemberAllowed)) {
                 switch (member.MemberType) {
                     case RobloxMemberType.Property: {
                         var prop = (RobloxProperty)member;
