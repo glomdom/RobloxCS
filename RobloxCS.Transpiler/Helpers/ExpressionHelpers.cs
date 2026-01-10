@@ -97,6 +97,13 @@ public static class ExpressionHelpers {
         return new FunctionArgs { Arguments = [] };
     }
 
+    public static FunctionArgs FunctionArgsFromExpression(Expression expr) {
+        var funcArgs = EmptyFunctionArgs();
+        funcArgs.Arguments = [expr];
+
+        return funcArgs;
+    }
+    
     public static FunctionArgs FunctionArgsFromExpressions(List<Expression> exprs) {
         var funcArgs = EmptyFunctionArgs();
         funcArgs.Arguments = exprs;

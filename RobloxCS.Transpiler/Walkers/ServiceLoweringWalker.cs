@@ -29,13 +29,12 @@ public sealed class ServiceLoweringWalker : AstRewriter, IInternalAstVisitor<Ast
                 ],
             };
 
-            List<Expression> exprs = [new StringExpression { Value = node.ServiceName }];
             _serviceUsageMap[node.ServiceName] = new FunctionCallExpression {
                 Prefix = NamePrefix.FromString("game"),
                 Suffixes = [
                     new MethodCall {
                         Name = "GetService",
-                        Args = ExpressionHelpers.FunctionArgsFromExpressions(exprs),
+                        Args = ExpressionHelpers.FunctionArgsFromExpression(new StringExpression { Value = node.ServiceName }),
                     },
                 ],
             };
