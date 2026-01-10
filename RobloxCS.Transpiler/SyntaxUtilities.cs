@@ -7,6 +7,8 @@ using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Types;
 using RobloxCS.Types;
+using Serilog;
+using TypeInfo = RobloxCS.AST.Types.TypeInfo;
 
 namespace RobloxCS.Transpiler;
 
@@ -53,20 +55,30 @@ public static class SyntaxUtilities {
         return instance;
     }
 
-    public static BasicTypeInfo BasicFromSymbol(ITypeSymbol symbol) {
+    public static TypeInfo TypeInfoFromSymbol(ITypeSymbol symbol, TranspilationContext ctx) {
         return symbol.SpecialType switch {
             SpecialType.System_Boolean => BasicTypeInfo.Boolean(),
             SpecialType.System_Int32 => BasicTypeInfo.Number(),
             SpecialType.System_Void => BasicTypeInfo.Void(),
             SpecialType.System_String => BasicTypeInfo.String(),
-            SpecialType.None => GetBasicFromNonPrimitive(symbol),
+            SpecialType.None => GetTypeFromNonPrimitive(symbol, ctx),
 
             _ => throw new ArgumentOutOfRangeException(nameof(symbol), symbol.SpecialType, null),
         };
     }
 
-    private static BasicTypeInfo GetBasicFromNonPrimitive(ITypeSymbol symbol) {
+    private static TypeInfo GetTypeFromNonPrimitive(ITypeSymbol symbol, TranspilationContext ctx) {
+        Log.Verbose(
+            "Getting type info for {SymbolName} ({SymbolTypeKind} / {SymbolSpecialType}) from assembly {ContainingAssembly}",
+            symbol.Name, symbol.TypeKind,
+            symbol.SpecialType, symbol.ContainingAssembly.Name
+        );
+
         if (symbol.TypeKind is TypeKind.Class or TypeKind.Struct) {
+            if (symbol is INamedTypeSymbol namedSymbol && IsSystemList(namedSymbol, ctx)) {
+                return GetTypeFromList(namedSymbol, ctx);
+            }
+
             var classNs = symbol.ContainingNamespace;
             var isRobloxType = classNs is not null && classNs.ToDisplayString() == "RobloxCS.Types";
 
@@ -80,6 +92,24 @@ public static class SyntaxUtilities {
         }
 
         throw new NotSupportedException($"Unsupported non-primitive type {symbol} for {symbol.Name}");
+    }
+
+    /// <summary>
+    /// Gets the element type of the provided List symbol.
+    /// </summary>
+    public static ArrayTypeInfo GetTypeFromList(INamedTypeSymbol symbol, TranspilationContext ctx) {
+        return new ArrayTypeInfo { ElementType = TypeInfoFromSymbol(symbol.TypeArguments.First(), ctx) };
+    }
+
+    public static bool IsSystemList(INamedTypeSymbol symbol, TranspilationContext ctx) {
+        if (symbol.Name != "List" || symbol.Arity != 1) return false;
+
+        var listMetadataType = ctx.Compiler.Compilation.GetTypeByMetadataName("System.Collections.Generic.List`1");
+        if (listMetadataType is null) {
+            throw new Exception("Failed to get list metadata type from compiler.");
+        }
+
+        return SymbolEqualityComparer.Default.Equals(symbol.OriginalDefinition, listMetadataType.OriginalDefinition);
     }
 
     public static BinOp SyntaxTokenToBinOp(SyntaxToken token) {
@@ -169,7 +199,7 @@ public static class SyntaxUtilities {
 
     extension(SemanticModel semantics) {
         public ITypeSymbol CheckedGetTypeInfo(TypeSyntax syntax) {
-            return semantics.GetTypeInfo(syntax).Type ?? throw new InvalidOperationException($"Could not resolve type for {syntax}");
+            return semantics.GetTypeInfo(syntax).ConvertedType ?? throw new InvalidOperationException($"Could not resolve type for {syntax}");
         }
 
         public INamedTypeSymbol CheckedGetDeclaredSymbol(BaseTypeDeclarationSyntax node) {

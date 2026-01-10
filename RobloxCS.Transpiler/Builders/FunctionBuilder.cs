@@ -12,7 +12,7 @@ using TypeInfo = RobloxCS.AST.Types.TypeInfo; // conflict with `Microsoft.CodeAn
 namespace RobloxCS.Transpiler.Builders;
 
 public static class FunctionBuilder {
-    public static FunctionDeclarationStatement CreateNewMethod(INamedTypeSymbol classSymbol, IMethodSymbol ctorSymbol) {
+    public static FunctionDeclarationStatement CreateNewMethod(INamedTypeSymbol classSymbol, IMethodSymbol ctorSymbol, TranspilationContext ctx) {
         var paramNames = ctorSymbol.IsImplicitlyDeclared
             ? []
             : ctorSymbol.Parameters.Select(p => p.Name).ToList();
@@ -20,7 +20,7 @@ public static class FunctionBuilder {
         var args = paramNames.Select(NameParameter.FromString).Cast<Parameter>().ToList();
         var specs = ctorSymbol.IsImplicitlyDeclared
             ? []
-            : ctorSymbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
+            : ctorSymbol.Parameters.Select(p => SyntaxUtilities.TypeInfoFromSymbol(p.Type, ctx)).Cast<TypeInfo>().ToList();
 
         var bodyArgExprs = paramNames.Select(SymbolExpression.FromString).Cast<Expression>().ToList();
         var bodyArgs = ExpressionHelpers.FunctionArgsFromExpressions(bodyArgExprs);
@@ -71,7 +71,7 @@ public static class FunctionBuilder {
 
         var specs = ctorSymbol.IsImplicitlyDeclared
             ? []
-            : ctorSymbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
+            : ctorSymbol.Parameters.Select(p => SyntaxUtilities.TypeInfoFromSymbol(p.Type, ctx)).Cast<TypeInfo>().ToList();
 
         var decl = StatementHelpers.FullFunctionDeclaration(
             $"{classSymbol.Name}:constructor",
@@ -100,8 +100,8 @@ public static class FunctionBuilder {
 
     public static Statement BuildFromMethodSymbol(IMethodSymbol symbol, TranspilationContext ctx) {
         var pars = symbol.Parameters.Select(p => NameParameter.FromString(p.Name)).Cast<Parameter>().ToList();
-        var specs = symbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Cast<TypeInfo>().ToList();
-        var returnType = SyntaxUtilities.BasicFromSymbol(symbol.ReturnType);
+        var specs = symbol.Parameters.Select(p => SyntaxUtilities.TypeInfoFromSymbol(p.Type, ctx)).Cast<TypeInfo>().ToList();
+        var returnType = SyntaxUtilities.TypeInfoFromSymbol(symbol.ReturnType, ctx);
 
         var cls = symbol.ContainingSymbol;
         if (cls is null) {

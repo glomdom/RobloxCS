@@ -55,7 +55,7 @@ public static class StatementBuilder {
         var symbol = ctx.Semantics.GetDeclaredSymbol(syntax);
         var type = ((ILocalSymbol)symbol!).Type;
 
-        return StatementHelpers.SingleTypedLocalAssignment(syntax.Identifier.ValueText, initExpr!, SyntaxUtilities.BasicFromSymbol(type));
+        return StatementHelpers.SingleTypedLocalAssignment(syntax.Identifier.ValueText, initExpr!, SyntaxUtilities.TypeInfoFromSymbol(type, ctx));
     }
 
     private static ReturnStatement BuildFromReturnStmt(ReturnStatementSyntax syntax, TranspilationContext ctx) {
@@ -171,7 +171,7 @@ public static class StatementBuilder {
         var initExprs = initExprSyntaxes.Select(s => ExpressionBuilder.BuildFromSyntax(s, ctx)).ToList();
         var typeSym = ctx.Semantics.CheckedGetTypeInfo(decl.Type);
 
-        var type = SyntaxUtilities.BasicFromSymbol(typeSym);
+        var type = SyntaxUtilities.TypeInfoFromSymbol(typeSym, ctx);
         var assignment = LocalAssignmentStatement.OfSingleType(varNames, initExprs, type);
 
         return assignment;

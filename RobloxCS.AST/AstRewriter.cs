@@ -261,7 +261,12 @@ public class AstRewriter : IAstVisitor<AstNode>, IInternalAstVisitor<AstNode> {
 
     public virtual AstNode VisitIndex(Index node) => node;
 
-    public virtual AstNode VisitArrayTypeInfo(ArrayTypeInfo node) => throw new NotImplementedException();
+    public virtual AstNode VisitArrayTypeInfo(ArrayTypeInfo node) {
+        node.ElementType = Visit(node.ElementType);
+
+        return node;
+    }
+
     public virtual AstNode VisitBasicTypeInfo(BasicTypeInfo node) => node;
     public virtual AstNode VisitBooleanTypeInfo(BooleanTypeInfo node) => throw new NotImplementedException();
 

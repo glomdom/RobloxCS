@@ -267,6 +267,12 @@ public class RendererWalker : AstVisitorBase {
         _state.AppendIndentedLine("end");
     }
 
+    public override void VisitArrayTypeInfo(ArrayTypeInfo node) {
+        _state.Builder.Append("{ ");
+        Visit(node.ElementType);
+        _state.Builder.Append(" }");
+    }
+
     public override void VisitAssignment(AssignmentStatement node) {
         _state.AppendIndent();
         RenderDelimited(node.Vars, ", ");

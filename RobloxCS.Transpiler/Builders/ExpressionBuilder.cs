@@ -144,8 +144,6 @@ public static class ExpressionBuilder {
             var isRoblox = ns.ToDisplayString() == "RobloxCS.Types";
 
             if (isRoblox) {
-                Log.Debug("Class {methodContainer}", methodContainer);
-
                 var nativeAttribute = SyntaxUtilities.ExtractAttributeFromAttributes<RobloxNativeAttribute>(methodContainer.GetAttributes());
                 if (nativeAttribute.NativeType == RobloxNativeType.Service) {
                     var call = new FunctionCallExpression {

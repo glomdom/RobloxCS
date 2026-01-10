@@ -32,11 +32,11 @@ public static class TypeFieldBuilder {
         var classType = BasicTypeInfo.FromString($"_Instance{className}");
 
         var names = symbol.Parameters.Select(p => p.Name).Prepend("self").ToList();
-        var types = symbol.Parameters.Select(p => SyntaxUtilities.BasicFromSymbol(p.Type)).Prepend(classType).ToList();
+        var types = symbol.Parameters.Select(p => SyntaxUtilities.TypeInfoFromSymbol(p.Type, ctx)).Prepend(classType).ToList();
 
         var args = names.Zip(types, (name, type) => new TypeArgument { Name = name, TypeInfo = type }).ToList();
 
-        var callbackReturnType = SyntaxUtilities.BasicFromSymbol(symbol.ReturnType);
+        var callbackReturnType = SyntaxUtilities.TypeInfoFromSymbol(symbol.ReturnType, ctx);
         var callbackType = TypeHelpers.FullCallbackType(args, callbackReturnType);
         var field = TypeHelpers.FullTypeField(symbol.Name, callbackType);
 
@@ -46,7 +46,7 @@ public static class TypeFieldBuilder {
     public static IEnumerable<TypeField> GenerateTypeFieldsFromField(ISymbol symbol, TranspilationContext ctx) {
         if (symbol is not IFieldSymbol fieldSymbol) yield break;
 
-        var typeName = SyntaxUtilities.BasicFromSymbol(fieldSymbol.Type);
+        var typeName = SyntaxUtilities.TypeInfoFromSymbol(fieldSymbol.Type, ctx);
         var isReadonly = fieldSymbol.IsReadOnly;
 
         var field = TypeHelpers.FullTypeField(fieldSymbol.Name, typeName, isReadonly ? AccessModifier.Read : null);

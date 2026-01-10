@@ -11,7 +11,7 @@ using Serilog;
 namespace RobloxCS.Transpiler.Walkers;
 
 public sealed class ServiceLoweringWalker : AstRewriter, IInternalAstVisitor<AstNode> {
-    private Dictionary<string, Expression> _serviceUsageMap = new();
+    private readonly Dictionary<string, Expression> _serviceUsageMap = new();
 
     public AstNode VisitTransientServiceUsageExpression(TransientServiceUsageExpression node) {
         Log.Debug("Lowering transient service usage");

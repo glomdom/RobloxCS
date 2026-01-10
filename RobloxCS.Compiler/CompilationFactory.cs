@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Basic.Reference.Assemblies;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Serilog;
@@ -13,22 +14,20 @@ internal static class CompilationFactory {
         global using System.Text;
     ";
 
+    private const string TypesRef = @"RobloxCS.Types\bin\Debug\net10.0\RobloxCS.Types.dll";
+
     public static CSharpCompilation Create(string assemblyName, SyntaxTree syntaxTree) {
         var watch = Stopwatch.StartNew();
 
-        var trustedAssembliesPaths = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!).Split(Path.PathSeparator);
-        var references = trustedAssembliesPaths
-            .Where(p => !string.IsNullOrEmpty(p))
-            .Append(@"RobloxCS.Types\bin\Debug\net10.0\RobloxCS.Types.dll")
-            .Select(p => MetadataReference.CreateFromFile(p))
-            .ToList();
+        var standardRefs = Net100.References.All;
+        var allRefs = standardRefs.Append(MetadataReference.CreateFromFile(TypesRef));
 
         var globalUsingsTree = CSharpSyntaxTree.ParseText(GlobalUsingsCode);
 
         var compilation = CSharpCompilation.Create(
             assemblyName,
             syntaxTrees: [syntaxTree, globalUsingsTree],
-            references: references,
+            references: allRefs,
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
         );
 

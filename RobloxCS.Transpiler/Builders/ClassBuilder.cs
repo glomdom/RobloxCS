@@ -92,7 +92,7 @@ public static class ClassBuilder {
         if (ctorSymbol is null) return DefaultCtor();
 
         var parameters = ctorSymbol.Parameters
-            .Select(p => TypeHelpers.FullTypeArgument(p.Name, SyntaxUtilities.BasicFromSymbol(p.Type)))
+            .Select(p => TypeHelpers.FullTypeArgument(p.Name, SyntaxUtilities.TypeInfoFromSymbol(p.Type, ctx)))
             .Prepend(TypeHelpers.FullTypeArgument("self", BasicTypeInfo.FromString($"_Instance{node.Identifier.ValueText}")))
             .ToList();
 
@@ -150,7 +150,7 @@ public static class ClassBuilder {
         }
 
         foreach (var ctor in classSymbol.InstanceConstructors) {
-            block.AddStatement(FunctionBuilder.CreateNewMethod(classSymbol, ctor));
+            block.AddStatement(FunctionBuilder.CreateNewMethod(classSymbol, ctor, ctx));
         }
 
         foreach (var ctor in classSymbol.InstanceConstructors) {
