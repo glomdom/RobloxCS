@@ -45,7 +45,7 @@ public sealed class ServiceLoweringWalker : AstRewriter, IInternalAstVisitor<Ast
         return SymbolExpression.FromString(node.ServiceName);
     }
 
-    public List<Statement> GetHeaderStatements() {
+    public List<Statement> GetServiceStatements() {
         var stmts = new List<Statement>();
 
         foreach (var (varName, useExpression) in _serviceUsageMap) {

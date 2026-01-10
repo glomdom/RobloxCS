@@ -12,7 +12,7 @@ public sealed class ServiceLoweringPass : IPass {
     }
 
     public void PostRun(TranspilationContext ctx) {
-        var stmts = _walker.GetHeaderStatements();
+        var stmts = _walker.GetServiceStatements();
 
         ctx.RootBlock.Statements.InsertRange(0, stmts);
     }
