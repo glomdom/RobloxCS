@@ -104,12 +104,7 @@ public static class SyntaxUtilities {
     public static bool IsSystemList(INamedTypeSymbol symbol, TranspilationContext ctx) {
         if (symbol.Name != "List" || symbol.Arity != 1) return false;
 
-        var listMetadataType = ctx.Compiler.Compilation.GetTypeByMetadataName("System.Collections.Generic.List`1");
-        if (listMetadataType is null) {
-            throw new Exception("Failed to get list metadata type from compiler.");
-        }
-
-        return SymbolEqualityComparer.Default.Equals(symbol.OriginalDefinition, listMetadataType.OriginalDefinition);
+        return SymbolEqualityComparer.Default.Equals(symbol.OriginalDefinition, ctx.Compiler.Types.ListTypeSymbol.OriginalDefinition);
     }
 
     public static BinOp SyntaxTokenToBinOp(SyntaxToken token) {

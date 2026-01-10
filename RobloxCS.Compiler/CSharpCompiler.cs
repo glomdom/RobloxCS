@@ -12,6 +12,7 @@ public sealed class CSharpCompiler {
     public SyntaxTree SyntaxTree { get; }
     public CSharpCompilation Compilation { get; }
     public ImmutableArray<Diagnostic> Diagnostics { get; }
+    public MetadataTypes Types { get; }
 
     public CompilationUnitSyntax Root => SyntaxTree.GetCompilationUnitRoot();
 
@@ -20,6 +21,7 @@ public sealed class CSharpCompiler {
 
         SyntaxTree = SourceParser.ParseFile(path);
         Compilation = CompilationFactory.Create("Anonymous", SyntaxTree);
+        Types = new MetadataTypes(Compilation);
 
         Log.Information("Running diagnostics for {File}", path);
         var watch = Stopwatch.StartNew();
@@ -34,5 +36,19 @@ public sealed class CSharpCompiler {
         var formatter = new DiagnosticFormatter();
 
         return [..Diagnostics.Select(d => formatter.Format(d))];
+    }
+
+    public class MetadataTypes {
+        public INamedTypeSymbol ListTypeSymbol;
+
+        public MetadataTypes(CSharpCompilation compilation) {
+            ListTypeSymbol = CheckedGetType(compilation, "System.Collections.Generic.List`1");
+        }
+
+        private static INamedTypeSymbol CheckedGetType(CSharpCompilation compilation, string name) {
+            var result = compilation.GetTypeByMetadataName(name);
+
+            return result ?? throw new Exception($"Failed to find {name} in metadata names of compiler.");
+        }
     }
 }
