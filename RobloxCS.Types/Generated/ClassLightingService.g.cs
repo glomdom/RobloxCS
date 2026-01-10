@@ -21,10 +21,10 @@ public static partial class LightingService {
     public static bool PrioritizeLightingQuality { get; } = default!;
     public static float ShadowSoftness { get; set; } = default!;
     public static string TimeOfDay { get; set; } = default!;
-    public static double GetMinutesAfterMidnight() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Vector3 GetMoonDirection() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static float GetMoonPhase() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Vector3 GetSunDirection() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SetMinutesAfterMidnight() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static double GetMinutesAfterMidnight() => ThrowHelper.ThrowTranspiledMethod();
+    public static Vector3 GetMoonDirection() => ThrowHelper.ThrowTranspiledMethod();
+    public static float GetMoonPhase() => ThrowHelper.ThrowTranspiledMethod();
+    public static Vector3 GetSunDirection() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SetMinutesAfterMidnight() => ThrowHelper.ThrowTranspiledMethod();
     public static RBXScriptSignal<bool> LightingChanged { get; private set; } = null!;
 }

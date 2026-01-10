@@ -21,5 +21,5 @@ public partial class Beam : Instance  {
     public float Width0 { get; set; } = default!;
     public float Width1 { get; set; } = default!;
     public float ZOffset { get; set; } = default!;
-    public void SetTextureOffset() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void SetTextureOffset() => ThrowHelper.ThrowTranspiledMethod();
 }

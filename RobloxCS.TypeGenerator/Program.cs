@@ -13,8 +13,10 @@ namespace RobloxCS.TypeGenerator;
 
 internal static class Program {
     private const string ApiDumpUrl = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/refs/heads/roblox/API-Dump.json";
-    private const string FunctionBody = "throw new InvalidOperationException(\"Cannot call reserved method for RobloxCS transpiler.\");"; // im lazy
+    private const string FunctionBody = "ThrowHelper.ThrowTranspiledMethod();"; // im lazy
 
+    // format is RawClassName::PatchedFunction
+    private static readonly List<string> PatchedNames = ["Players::GetPlayers"];
     private static readonly List<string> EnumNames = [];
 
     private static readonly JsonSerializerOptions Options = new() {
@@ -139,6 +141,8 @@ internal static class Program {
 
                     case RobloxMemberType.Function: {
                         var prop = (RobloxFunction)member;
+
+                        if (PatchedNames.Contains($"{classDef.Name}::{prop.Name}")) continue;
 
                         var isTupleReturn = prop.ReturnType.Count > 1;
                         string returnType;
@@ -276,8 +280,8 @@ internal static class Program {
             _ => type.Name,
         };
 
-        if (csharpType.StartsWith("Dictionary") || csharpType.StartsWith("List")) {
-            Log.Warning("Unmapped container type {Type}. TODO: Manually patch.", csharpType);
+        if (csharpType.StartsWith("Dictionary") || csharpType.StartsWith("List") && csharpType != "List<Enums.SecurityCapability>") {
+            Log.Warning("Unmapped container type {Type}. Manual patch required.", csharpType);
         }
 
         return csharpType;

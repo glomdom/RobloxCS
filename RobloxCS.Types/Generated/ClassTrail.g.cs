@@ -18,5 +18,5 @@ public partial class Trail : Instance  {
     public Enums.TextureMode TextureMode { get; set; } = default!;
     public NumberSequence Transparency { get; set; } = default!;
     public NumberSequence WidthScale { get; set; } = default!;
-    public void Clear() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void Clear() => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -3,9 +3,9 @@ namespace RobloxCS.Types;
 [RobloxNative("Path", RobloxNativeType.Instance)]
 public partial class Path : Instance  {
     public Enums.PathStatus Status { get; set; } = default!;
-    public List<object> GetWaypoints() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public int CheckOcclusionAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void ComputeAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public List<object> GetWaypoints() => ThrowHelper.ThrowTranspiledMethod();
+    public int CheckOcclusionAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public void ComputeAsync() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<int> Blocked { get; private set; } = null!;
     public RBXScriptSignal<int> Unblocked { get; private set; } = null!;
 }

@@ -22,6 +22,6 @@ public partial class ScrollingFrame : GuiObject  {
     public string TopImageContent { get; set; } = default!;
     public Enums.ScrollBarInset VerticalScrollBarInset { get; set; } = default!;
     public Enums.VerticalScrollBarPosition VerticalScrollBarPosition { get; set; } = default!;
-    public Vector2 GetScrollVelocity() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void ResetScrollVelocity() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Vector2 GetScrollVelocity() => ThrowHelper.ThrowTranspiledMethod();
+    public void ResetScrollVelocity() => ThrowHelper.ThrowTranspiledMethod();
 }

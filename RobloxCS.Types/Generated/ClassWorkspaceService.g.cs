@@ -42,12 +42,12 @@ public partial class Workspace : WorldRoot  {
     public static bool TouchesUseCollisionGroups { get; set; } = default!;
     public static Enums.RolloutState UseFixedSimulation { get; set; } = default!;
     public static Enums.RolloutState UseNewLuauTypeSolver { get; set; } = default!;
-    public static int GetNumAwakeParts() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static int GetPhysicsThrottling() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static double GetRealPhysicsFPS() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static double GetServerTimeNow() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void JoinToOutsiders() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static bool PGSIsEnabled() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void UnjoinFromOutsiders() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static int GetNumAwakeParts() => ThrowHelper.ThrowTranspiledMethod();
+    public static int GetPhysicsThrottling() => ThrowHelper.ThrowTranspiledMethod();
+    public static double GetRealPhysicsFPS() => ThrowHelper.ThrowTranspiledMethod();
+    public static double GetServerTimeNow() => ThrowHelper.ThrowTranspiledMethod();
+    public static void JoinToOutsiders() => ThrowHelper.ThrowTranspiledMethod();
+    public static bool PGSIsEnabled() => ThrowHelper.ThrowTranspiledMethod();
+    public static void UnjoinFromOutsiders() => ThrowHelper.ThrowTranspiledMethod();
     public static RBXScriptSignal<Player> PersistentLoaded { get; private set; } = null!;
 }

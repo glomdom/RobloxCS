@@ -4,14 +4,14 @@ namespace RobloxCS.Types;
 public partial class AudioRecorder : Instance  {
     public bool IsRecording { get; } = default!;
     public double TimeLength { get; set; } = default!;
-    public void Clear() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<Instance> GetConnectedWires() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetInputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetOutputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public string GetTemporaryContent() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void Stop() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public bool CanRecordAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<Instance> GetUnrecordableInstancesAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void RecordAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void Clear() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetConnectedWires() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetInputPins() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetOutputPins() => ThrowHelper.ThrowTranspiledMethod();
+    public string GetTemporaryContent() => ThrowHelper.ThrowTranspiledMethod();
+    public void Stop() => ThrowHelper.ThrowTranspiledMethod();
+    public bool CanRecordAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetUnrecordableInstancesAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public void RecordAsync() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<bool, string, Wire, Instance> WiringChanged { get; private set; } = null!;
 }

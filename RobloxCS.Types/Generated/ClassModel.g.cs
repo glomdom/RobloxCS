@@ -6,13 +6,13 @@ public partial class Model : PVInstance  {
     public BasePart PrimaryPart { get; set; } = default!;
     public float Scale { get; set; } = default!;
     public CFrame WorldPivot { get; set; } = default!;
-    public void AddPersistentPlayer() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public (CFrame, Vector3) GetBoundingBox() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public Vector3 GetExtentsSize() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<Instance> GetPersistentPlayers() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public float GetScale() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void MoveTo() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void RemovePersistentPlayer() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void ScaleTo() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void TranslateBy() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void AddPersistentPlayer() => ThrowHelper.ThrowTranspiledMethod();
+    public (CFrame, Vector3) GetBoundingBox() => ThrowHelper.ThrowTranspiledMethod();
+    public Vector3 GetExtentsSize() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetPersistentPlayers() => ThrowHelper.ThrowTranspiledMethod();
+    public float GetScale() => ThrowHelper.ThrowTranspiledMethod();
+    public void MoveTo() => ThrowHelper.ThrowTranspiledMethod();
+    public void RemovePersistentPlayer() => ThrowHelper.ThrowTranspiledMethod();
+    public void ScaleTo() => ThrowHelper.ThrowTranspiledMethod();
+    public void TranslateBy() => ThrowHelper.ThrowTranspiledMethod();
 }

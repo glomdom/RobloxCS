@@ -2,6 +2,6 @@
 namespace RobloxCS.Types;
 [RobloxNative("StudioTestService", RobloxNativeType.Service)]
 public static partial class StudioTestService {
-    public static void EndTest() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static object GetTestArgs() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static void EndTest() => ThrowHelper.ThrowTranspiledMethod();
+    public static object GetTestArgs() => ThrowHelper.ThrowTranspiledMethod();
 }

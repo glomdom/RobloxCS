@@ -37,6 +37,6 @@ public partial class ParticleEmitter : Instance  {
     public float VelocityInheritance { get; set; } = default!;
     public bool WindAffectsDrag { get; set; } = default!;
     public float ZOffset { get; set; } = default!;
-    public void Clear() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void Emit() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void Clear() => ThrowHelper.ThrowTranspiledMethod();
+    public void Emit() => ThrowHelper.ThrowTranspiledMethod();
 }

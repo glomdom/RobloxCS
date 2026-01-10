@@ -8,5 +8,5 @@ public partial class MeshPart : TriangleMeshPart  {
     public Enums.RenderFidelity RenderFidelity { get; } = default!;
     public string TextureContent { get; set; } = default!;
     public string TextureID { get; set; } = default!;
-    public void ApplyMesh() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void ApplyMesh() => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -2,8 +2,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("ConfigService", RobloxNativeType.Service)]
 public static partial class ConfigService {
-    public static void ClearTestingValue() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SetTestingValue() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static ConfigSnapshot GetConfigAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static ConfigSnapshot GetConfigForPlayerAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static void ClearTestingValue() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SetTestingValue() => ThrowHelper.ThrowTranspiledMethod();
+    public static ConfigSnapshot GetConfigAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static ConfigSnapshot GetConfigForPlayerAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

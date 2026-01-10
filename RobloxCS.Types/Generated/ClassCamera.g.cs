@@ -15,14 +15,14 @@ public partial class Camera : PVInstance  {
     public float NearPlaneZ { get; set; } = default!;
     public bool VRTiltAndRollEnabled { get; set; } = default!;
     public Vector2 ViewportSize { get; set; } = default!;
-    public List<Instance> GetPartsObscuringTarget() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public CFrame GetRenderCFrame() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public float GetRoll() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public Ray ScreenPointToRay() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetRoll() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public Ray ViewportPointToRay() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public LuaTuple WorldToScreenPoint() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public LuaTuple WorldToViewportPoint() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void ZoomToExtents() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public List<Instance> GetPartsObscuringTarget() => ThrowHelper.ThrowTranspiledMethod();
+    public CFrame GetRenderCFrame() => ThrowHelper.ThrowTranspiledMethod();
+    public float GetRoll() => ThrowHelper.ThrowTranspiledMethod();
+    public Ray ScreenPointToRay() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetRoll() => ThrowHelper.ThrowTranspiledMethod();
+    public Ray ViewportPointToRay() => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple WorldToScreenPoint() => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple WorldToViewportPoint() => ThrowHelper.ThrowTranspiledMethod();
+    public void ZoomToExtents() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal InterpolationFinished { get; private set; } = null!;
 }

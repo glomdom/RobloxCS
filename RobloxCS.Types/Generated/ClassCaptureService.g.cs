@@ -2,18 +2,18 @@
 namespace RobloxCS.Types;
 [RobloxNative("CaptureService", RobloxNativeType.Service)]
 public static partial class CaptureService {
-    public static void CaptureScreenshot() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Dictionary<string, object> GetDeviceInfo() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void PromptSaveCapturesToGallery() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void PromptShareCapture() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void StopVideoCapture() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void TakeCapture() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static bool InternalCheckPlayabilityAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static int InternalGetStartPlaceIdAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static bool PromptCaptureGalleryPermissionAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static LuaTuple ReadCapturesFromGalleryAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Enums.VideoCaptureStartedResult StartVideoCaptureAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static LuaTuple UploadCaptureAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static void CaptureScreenshot() => ThrowHelper.ThrowTranspiledMethod();
+    public static Dictionary<string, object> GetDeviceInfo() => ThrowHelper.ThrowTranspiledMethod();
+    public static void PromptSaveCapturesToGallery() => ThrowHelper.ThrowTranspiledMethod();
+    public static void PromptShareCapture() => ThrowHelper.ThrowTranspiledMethod();
+    public static void StopVideoCapture() => ThrowHelper.ThrowTranspiledMethod();
+    public static void TakeCapture() => ThrowHelper.ThrowTranspiledMethod();
+    public static bool InternalCheckPlayabilityAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static int InternalGetStartPlaceIdAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static bool PromptCaptureGalleryPermissionAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static LuaTuple ReadCapturesFromGalleryAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static Enums.VideoCaptureStartedResult StartVideoCaptureAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static LuaTuple UploadCaptureAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static RBXScriptSignal<Enums.CaptureType> CaptureBegan { get; private set; } = null!;
     public static RBXScriptSignal<Enums.CaptureType> CaptureEnded { get; private set; } = null!;
     public static RBXScriptSignal<string> UserCaptureSaved { get; private set; } = null!;

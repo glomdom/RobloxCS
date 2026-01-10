@@ -4,10 +4,10 @@ namespace RobloxCS.Types;
 public static partial class LocalizationService {
     public static string RobloxLocaleId { get; set; } = default!;
     public static string SystemLocaleId { get; set; } = default!;
-    public static List<Instance> GetCorescriptLocalizations() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static List<object> GetTableEntries() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Instance GetTranslatorForPlayer() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static string GetCountryRegionForPlayerAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Instance GetTranslatorForLocaleAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Instance GetTranslatorForPlayerAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static List<Instance> GetCorescriptLocalizations() => ThrowHelper.ThrowTranspiledMethod();
+    public static List<object> GetTableEntries() => ThrowHelper.ThrowTranspiledMethod();
+    public static Instance GetTranslatorForPlayer() => ThrowHelper.ThrowTranspiledMethod();
+    public static string GetCountryRegionForPlayerAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static Instance GetTranslatorForLocaleAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static Instance GetTranslatorForPlayerAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

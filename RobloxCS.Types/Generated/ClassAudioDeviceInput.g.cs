@@ -7,10 +7,10 @@ public partial class AudioDeviceInput : Instance  {
     public bool Muted { get; set; } = default!;
     public Player Player { get; set; } = default!;
     public float Volume { get; set; } = default!;
-    public List<Instance> GetConnectedWires() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetInputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetOutputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetUserIdAccessList() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetUserIdAccessList() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public List<Instance> GetConnectedWires() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetInputPins() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetOutputPins() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetUserIdAccessList() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetUserIdAccessList() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<bool, string, Wire, Instance> WiringChanged { get; private set; } = null!;
 }

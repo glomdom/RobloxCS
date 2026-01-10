@@ -2,24 +2,24 @@
 namespace RobloxCS.Types;
 [RobloxNative("AssetService", RobloxNativeType.Service)]
 public static partial class AssetService {
-    public static EditableImage CreateEditableImage() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static EditableMesh CreateEditableMesh() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Decal ComposeDecalAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static LuaTuple CreateAssetAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static LuaTuple CreateAssetVersionAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static EditableImage CreateEditableImageAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static EditableMesh CreateEditableMeshAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static MeshPart CreateMeshPartAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static int CreatePlaceAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static int CreatePlaceInPlayerInventoryAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static SurfaceAppearance CreateSurfaceAppearanceAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static List<object> GetAssetIdsForPackageAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static List<object> GetAudioMetadataAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Dictionary<string, object> GetBundleDetailsAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Instance GetGamePlacesAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Instance LoadAssetAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static LuaTuple PromptCreateAssetAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static LuaTuple PromptImportAnimationClipFromVideoAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SavePlaceAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static AudioPages SearchAudioAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static EditableImage CreateEditableImage() => ThrowHelper.ThrowTranspiledMethod();
+    public static EditableMesh CreateEditableMesh() => ThrowHelper.ThrowTranspiledMethod();
+    public static Decal ComposeDecalAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static LuaTuple CreateAssetAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static LuaTuple CreateAssetVersionAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static EditableImage CreateEditableImageAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static EditableMesh CreateEditableMeshAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static MeshPart CreateMeshPartAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static int CreatePlaceAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static int CreatePlaceInPlayerInventoryAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static SurfaceAppearance CreateSurfaceAppearanceAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static List<object> GetAssetIdsForPackageAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static List<object> GetAudioMetadataAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static Dictionary<string, object> GetBundleDetailsAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static Instance GetGamePlacesAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static Instance LoadAssetAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static LuaTuple PromptCreateAssetAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static LuaTuple PromptImportAnimationClipFromVideoAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SavePlaceAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static AudioPages SearchAudioAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

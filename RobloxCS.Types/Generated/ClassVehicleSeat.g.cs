@@ -13,5 +13,5 @@ public partial class VehicleSeat : BasePart  {
     public float ThrottleFloat { get; set; } = default!;
     public float Torque { get; set; } = default!;
     public float TurnSpeed { get; set; } = default!;
-    public void Sit() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void Sit() => ThrowHelper.ThrowTranspiledMethod();
 }

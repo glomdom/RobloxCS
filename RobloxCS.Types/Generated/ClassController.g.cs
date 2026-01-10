@@ -2,8 +2,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("Controller", RobloxNativeType.Instance)]
 public partial class Controller : Instance  {
-    public void BindButton() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public bool GetButton() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void UnbindButton() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void BindButton() => ThrowHelper.ThrowTranspiledMethod();
+    public bool GetButton() => ThrowHelper.ThrowTranspiledMethod();
+    public void UnbindButton() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Enums.Button> ButtonChanged { get; private set; } = null!;
 }

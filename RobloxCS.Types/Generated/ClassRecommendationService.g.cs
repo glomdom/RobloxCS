@@ -2,11 +2,11 @@
 namespace RobloxCS.Types;
 [RobloxNative("RecommendationService", RobloxNativeType.Service)]
 public static partial class RecommendationService {
-    public static void LogActionEvent() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void LogImpressionEvent() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static RecommendationPages GenerateItemListAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Dictionary<string, object> GetRecommendationItemAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Dictionary<string, object> RegisterItemAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void RemoveItemAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void UpdateItemAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static void LogActionEvent() => ThrowHelper.ThrowTranspiledMethod();
+    public static void LogImpressionEvent() => ThrowHelper.ThrowTranspiledMethod();
+    public static RecommendationPages GenerateItemListAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static Dictionary<string, object> GetRecommendationItemAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static Dictionary<string, object> RegisterItemAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static void RemoveItemAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static void UpdateItemAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -13,10 +13,10 @@ public partial class IKControl : Instance  {
     public Instance Target { get; set; } = default!;
     public Enums.IKControlType Type { get; set; } = default!;
     public float Weight { get; set; } = default!;
-    public int GetChainCount() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public float GetChainLength() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public CFrame GetNodeLocalCFrame() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public CFrame GetNodeWorldCFrame() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public CFrame GetRawFinalTarget() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public CFrame GetSmoothedFinalTarget() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public int GetChainCount() => ThrowHelper.ThrowTranspiledMethod();
+    public float GetChainLength() => ThrowHelper.ThrowTranspiledMethod();
+    public CFrame GetNodeLocalCFrame() => ThrowHelper.ThrowTranspiledMethod();
+    public CFrame GetNodeWorldCFrame() => ThrowHelper.ThrowTranspiledMethod();
+    public CFrame GetRawFinalTarget() => ThrowHelper.ThrowTranspiledMethod();
+    public CFrame GetSmoothedFinalTarget() => ThrowHelper.ThrowTranspiledMethod();
 }

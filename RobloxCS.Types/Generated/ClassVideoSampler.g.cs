@@ -4,5 +4,5 @@ namespace RobloxCS.Types;
 public partial class VideoSampler : Object  {
     public double TimeLength { get; set; } = default!;
     public string VideoContent { get; set; } = default!;
-    public List<object> GetSamplesAtTimesAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public List<object> GetSamplesAtTimesAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

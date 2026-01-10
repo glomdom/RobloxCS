@@ -2,9 +2,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("AdService", RobloxNativeType.Service)]
 public static partial class AdService {
-    public static Instance CreateAdRewardFromDevProductId() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void UnregisterAdOpportunity() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static object GetAdAvailabilityNowAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void RegisterAdOpportunityAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Enums.ShowAdResult ShowRewardedVideoAdAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static Instance CreateAdRewardFromDevProductId() => ThrowHelper.ThrowTranspiledMethod();
+    public static void UnregisterAdOpportunity() => ThrowHelper.ThrowTranspiledMethod();
+    public static object GetAdAvailabilityNowAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static void RegisterAdOpportunityAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static Enums.ShowAdResult ShowRewardedVideoAdAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

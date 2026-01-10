@@ -9,5 +9,5 @@ public partial class Attachment : Instance  {
     public Vector3 WorldAxis { get; set; } = default!;
     public CFrame WorldCFrame { get; set; } = default!;
     public Vector3 WorldSecondaryAxis { get; set; } = default!;
-    public List<Instance> GetConstraints() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public List<Instance> GetConstraints() => ThrowHelper.ThrowTranspiledMethod();
 }

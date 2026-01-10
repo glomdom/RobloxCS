@@ -7,5 +7,5 @@ public partial class InputObject : Instance  {
     public Vector3 Position { get; set; } = default!;
     public Enums.UserInputState UserInputState { get; set; } = default!;
     public Enums.UserInputType UserInputType { get; set; } = default!;
-    public bool IsModifierKeyDown() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public bool IsModifierKeyDown() => ThrowHelper.ThrowTranspiledMethod();
 }

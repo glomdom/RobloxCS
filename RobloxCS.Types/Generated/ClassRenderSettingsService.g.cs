@@ -16,5 +16,5 @@ public static partial class RenderSettingsService {
     public static bool RenderCSGTrianglesDebug { get; set; } = default!;
     public static bool ShowBoundingBoxes { get; set; } = default!;
     public static Enums.ViewMode ViewMode { get; set; } = default!;
-    public static int GetMaxQualityLevel() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static int GetMaxQualityLevel() => ThrowHelper.ThrowTranspiledMethod();
 }

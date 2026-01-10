@@ -2,10 +2,10 @@
 namespace RobloxCS.Types;
 [RobloxNative("GeometryService", RobloxNativeType.Service)]
 public static partial class GeometryService {
-    public static List<object> CalculateConstraintsToPreserve() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static List<object> FragmentAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static List<object> IntersectAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static List<object> SubtractAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static MeshPart SweepPartAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static List<object> UnionAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static List<object> CalculateConstraintsToPreserve() => ThrowHelper.ThrowTranspiledMethod();
+    public static List<object> FragmentAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static List<object> IntersectAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static List<object> SubtractAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static MeshPart SweepPartAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static List<object> UnionAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

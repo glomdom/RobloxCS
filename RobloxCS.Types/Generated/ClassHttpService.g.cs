@@ -3,13 +3,13 @@ namespace RobloxCS.Types;
 [RobloxNative("HttpService", RobloxNativeType.Service)]
 public static partial class HttpService {
     public static bool HttpEnabled { get; } = default!;
-    public static WebStreamClient CreateWebStreamClient() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static string GenerateGUID() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Secret GetSecret() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static object JSONDecode() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static string JSONEncode() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static string UrlEncode() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static string GetAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static string PostAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Dictionary<string, object> RequestAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static WebStreamClient CreateWebStreamClient() => ThrowHelper.ThrowTranspiledMethod();
+    public static string GenerateGUID() => ThrowHelper.ThrowTranspiledMethod();
+    public static Secret GetSecret() => ThrowHelper.ThrowTranspiledMethod();
+    public static object JSONDecode() => ThrowHelper.ThrowTranspiledMethod();
+    public static string JSONEncode() => ThrowHelper.ThrowTranspiledMethod();
+    public static string UrlEncode() => ThrowHelper.ThrowTranspiledMethod();
+    public static string GetAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static string PostAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static Dictionary<string, object> RequestAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

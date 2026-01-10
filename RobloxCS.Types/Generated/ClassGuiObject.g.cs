@@ -27,9 +27,9 @@ public partial class GuiObject : GuiBase2d  {
     public Enums.SizeConstraint SizeConstraint { get; set; } = default!;
     public bool Visible { get; set; } = default!;
     public int ZIndex { get; set; } = default!;
-    public bool TweenPosition() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public bool TweenSize() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public bool TweenSizeAndPosition() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public bool TweenPosition() => ThrowHelper.ThrowTranspiledMethod();
+    public bool TweenSize() => ThrowHelper.ThrowTranspiledMethod();
+    public bool TweenSizeAndPosition() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<InputObject> InputBegan { get; private set; } = null!;
     public RBXScriptSignal<InputObject> InputChanged { get; private set; } = null!;
     public RBXScriptSignal<InputObject> InputEnded { get; private set; } = null!;

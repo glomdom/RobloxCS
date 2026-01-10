@@ -6,5 +6,5 @@ public partial class TextGenerator : Instance  {
     public string SystemPrompt { get; set; } = default!;
     public float Temperature { get; set; } = default!;
     public float TopP { get; set; } = default!;
-    public Dictionary<string, object> GenerateTextAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Dictionary<string, object> GenerateTextAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

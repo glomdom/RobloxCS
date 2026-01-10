@@ -4,6 +4,6 @@ namespace RobloxCS.Types;
 public partial class TextFilterTranslatedResult : Instance  {
     public string SourceLanguage { get; set; } = default!;
     public TextFilterResult SourceText { get; set; } = default!;
-    public TextFilterResult GetTranslationForLocale() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public Dictionary<string, object> GetTranslations() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public TextFilterResult GetTranslationForLocale() => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetTranslations() => ThrowHelper.ThrowTranspiledMethod();
 }

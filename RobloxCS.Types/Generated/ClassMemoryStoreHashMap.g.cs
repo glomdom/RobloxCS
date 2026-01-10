@@ -2,9 +2,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("MemoryStoreHashMap", RobloxNativeType.Instance)]
 public partial class MemoryStoreHashMap : Instance  {
-    public object GetAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public MemoryStoreHashMapPages ListItemsAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void RemoveAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public bool SetAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public object UpdateAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public object GetAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public MemoryStoreHashMapPages ListItemsAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public bool SetAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public object UpdateAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

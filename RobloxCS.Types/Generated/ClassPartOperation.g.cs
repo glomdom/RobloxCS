@@ -6,5 +6,5 @@ public partial class PartOperation : TriangleMeshPart  {
     public float SmoothingAngle { get; } = default!;
     public int TriangleCount { get; set; } = default!;
     public bool UsePartColor { get; set; } = default!;
-    public void SubstituteGeometry() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void SubstituteGeometry() => ThrowHelper.ThrowTranspiledMethod();
 }

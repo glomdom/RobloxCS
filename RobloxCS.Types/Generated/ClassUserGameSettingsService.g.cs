@@ -15,13 +15,13 @@ public static partial class UserGameSettingsService {
     public static Enums.TouchMovementMode TouchMovementMode { get; set; } = default!;
     public static bool VRSmoothRotationEnabled { get; } = default!;
     public static bool VignetteEnabled { get; } = default!;
-    public static int GetCameraYInvertValue() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static bool GetOnboardingCompleted() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static bool InFullScreen() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static bool InStudioMode() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SetCameraYInvertVisible() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SetGamepadCameraSensitivityVisible() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SetOnboardingCompleted() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static int GetCameraYInvertValue() => ThrowHelper.ThrowTranspiledMethod();
+    public static bool GetOnboardingCompleted() => ThrowHelper.ThrowTranspiledMethod();
+    public static bool InFullScreen() => ThrowHelper.ThrowTranspiledMethod();
+    public static bool InStudioMode() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SetCameraYInvertVisible() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SetGamepadCameraSensitivityVisible() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SetOnboardingCompleted() => ThrowHelper.ThrowTranspiledMethod();
     public static RBXScriptSignal<bool> FullscreenChanged { get; private set; } = null!;
     public static RBXScriptSignal<bool> StudioModeChanged { get; private set; } = null!;
 }

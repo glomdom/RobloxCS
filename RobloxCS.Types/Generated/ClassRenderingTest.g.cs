@@ -15,5 +15,5 @@ public partial class RenderingTest : Instance  {
     public bool ShouldSkip { get; set; } = default!;
     public string Ticket { get; set; } = default!;
     public int Timeout { get; set; } = default!;
-    public void RenderdocTriggerCapture() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void RenderdocTriggerCapture() => ThrowHelper.ThrowTranspiledMethod();
 }

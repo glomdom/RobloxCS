@@ -2,9 +2,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("GroupService", RobloxNativeType.Service)]
 public static partial class GroupService {
-    public static StandardPages GetAlliesAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static StandardPages GetEnemiesAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static object GetGroupInfoAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static List<object> GetGroupsAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Enums.GroupMembershipStatus PromptJoinAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static StandardPages GetAlliesAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static StandardPages GetEnemiesAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static object GetGroupInfoAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static List<object> GetGroupsAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static Enums.GroupMembershipStatus PromptJoinAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

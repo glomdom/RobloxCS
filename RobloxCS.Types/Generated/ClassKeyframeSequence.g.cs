@@ -2,7 +2,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("KeyframeSequence", RobloxNativeType.Instance)]
 public partial class KeyframeSequence : AnimationClip  {
-    public void AddKeyframe() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<Instance> GetKeyframes() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void RemoveKeyframe() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void AddKeyframe() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetKeyframes() => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveKeyframe() => ThrowHelper.ThrowTranspiledMethod();
 }

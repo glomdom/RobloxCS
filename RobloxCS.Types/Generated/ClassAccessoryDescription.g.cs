@@ -11,5 +11,5 @@ public partial class AccessoryDescription : Instance  {
     public float Puffiness { get; set; } = default!;
     public Vector3 Rotation { get; set; } = default!;
     public Vector3 Scale { get; set; } = default!;
-    public Instance GetAppliedInstance() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Instance GetAppliedInstance() => ThrowHelper.ThrowTranspiledMethod();
 }

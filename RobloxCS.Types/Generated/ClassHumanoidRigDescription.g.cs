@@ -112,8 +112,8 @@ public partial class HumanoidRigDescription : Instance  {
     public Vector3 WaistRangeMin { get; set; } = default!;
     public float WaistSize { get; set; } = default!;
     public CFrame WaistTposeAdjustment { get; set; } = default!;
-    public Instance GetJointFromName() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetJointNames() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetR15JointNames() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetR6JointNames() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Instance GetJointFromName() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetJointNames() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetR15JointNames() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetR6JointNames() => ThrowHelper.ThrowTranspiledMethod();
 }

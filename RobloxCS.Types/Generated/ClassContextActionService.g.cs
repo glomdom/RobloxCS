@@ -2,20 +2,20 @@
 namespace RobloxCS.Types;
 [RobloxNative("ContextActionService", RobloxNativeType.Service)]
 public static partial class ContextActionService {
-    public static void BindAction() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void BindActionAtPriority() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void BindActivate() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Dictionary<string, object> GetAllBoundActionInfo() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Dictionary<string, object> GetBoundActionInfo() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static string GetCurrentLocalToolIcon() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SetDescription() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SetImage() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SetPosition() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SetTitle() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void UnbindAction() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void UnbindActivate() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void UnbindAllActions() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Instance GetButton() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static void BindAction() => ThrowHelper.ThrowTranspiledMethod();
+    public static void BindActionAtPriority() => ThrowHelper.ThrowTranspiledMethod();
+    public static void BindActivate() => ThrowHelper.ThrowTranspiledMethod();
+    public static Dictionary<string, object> GetAllBoundActionInfo() => ThrowHelper.ThrowTranspiledMethod();
+    public static Dictionary<string, object> GetBoundActionInfo() => ThrowHelper.ThrowTranspiledMethod();
+    public static string GetCurrentLocalToolIcon() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SetDescription() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SetImage() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SetPosition() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SetTitle() => ThrowHelper.ThrowTranspiledMethod();
+    public static void UnbindAction() => ThrowHelper.ThrowTranspiledMethod();
+    public static void UnbindActivate() => ThrowHelper.ThrowTranspiledMethod();
+    public static void UnbindAllActions() => ThrowHelper.ThrowTranspiledMethod();
+    public static Instance GetButton() => ThrowHelper.ThrowTranspiledMethod();
     public static RBXScriptSignal<Instance> LocalToolEquipped { get; private set; } = null!;
     public static RBXScriptSignal<Instance> LocalToolUnequipped { get; private set; } = null!;
 }

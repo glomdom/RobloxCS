@@ -43,8 +43,8 @@ public partial class HandRigDescription : Instance  {
     public CFrame Thumb3TposeAdjustment { get; set; } = default!;
     public Vector3 ThumbRange { get; set; } = default!;
     public float ThumbSize { get; set; } = default!;
-    public Vector3 GetFingerControl() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public Vector3 GetFingerTip() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetFingerControl() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetFingerTip() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Vector3 GetFingerControl() => ThrowHelper.ThrowTranspiledMethod();
+    public Vector3 GetFingerTip() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetFingerControl() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetFingerTip() => ThrowHelper.ThrowTranspiledMethod();
 }

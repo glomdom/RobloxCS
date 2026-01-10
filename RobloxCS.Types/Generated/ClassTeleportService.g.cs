@@ -2,20 +2,20 @@
 namespace RobloxCS.Types;
 [RobloxNative("TeleportService", RobloxNativeType.Service)]
 public static partial class TeleportService {
-    public static Instance GetArrivingTeleportGui() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static object GetLocalPlayerTeleportData() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static object GetTeleportSetting() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SetTeleportGui() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SetTeleportSetting() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void Teleport() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void TeleportToPlaceInstance() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void TeleportToPrivateServer() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void TeleportToSpawnByName() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static LuaTuple GetPlayerPlaceInstanceAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Enums.PromptExperienceDetailsResult PromptExperienceDetailsAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static LuaTuple ReserveServerAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static Instance TeleportAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static string TeleportPartyAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static Instance GetArrivingTeleportGui() => ThrowHelper.ThrowTranspiledMethod();
+    public static object GetLocalPlayerTeleportData() => ThrowHelper.ThrowTranspiledMethod();
+    public static object GetTeleportSetting() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SetTeleportGui() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SetTeleportSetting() => ThrowHelper.ThrowTranspiledMethod();
+    public static void Teleport() => ThrowHelper.ThrowTranspiledMethod();
+    public static void TeleportToPlaceInstance() => ThrowHelper.ThrowTranspiledMethod();
+    public static void TeleportToPrivateServer() => ThrowHelper.ThrowTranspiledMethod();
+    public static void TeleportToSpawnByName() => ThrowHelper.ThrowTranspiledMethod();
+    public static LuaTuple GetPlayerPlaceInstanceAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static Enums.PromptExperienceDetailsResult PromptExperienceDetailsAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static LuaTuple ReserveServerAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static Instance TeleportAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static string TeleportPartyAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static RBXScriptSignal<Instance, object> LocalPlayerArrivedFromTeleport { get; private set; } = null!;
     public static RBXScriptSignal<Instance, Enums.TeleportResult, string, int, Instance> TeleportInitFailed { get; private set; } = null!;
 }

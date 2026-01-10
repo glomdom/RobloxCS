@@ -4,15 +4,15 @@ namespace RobloxCS.Types;
 public static partial class ContentProviderService {
     public static string BaseUrl { get; set; } = default!;
     public static int RequestQueueSize { get; set; } = default!;
-    public static Enums.AssetFetchStatus GetAssetFetchStatus() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static RBXScriptSignal GetAssetFetchStatusChangedSignal() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static List<object> ListEncryptedAssets() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void RegisterDefaultEncryptionKey() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void RegisterDefaultSessionKey() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void RegisterEncryptedAsset() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void RegisterSessionEncryptedAsset() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void UnregisterDefaultEncryptionKey() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void UnregisterEncryptedAsset() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void PreloadAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static Enums.AssetFetchStatus GetAssetFetchStatus() => ThrowHelper.ThrowTranspiledMethod();
+    public static RBXScriptSignal GetAssetFetchStatusChangedSignal() => ThrowHelper.ThrowTranspiledMethod();
+    public static List<object> ListEncryptedAssets() => ThrowHelper.ThrowTranspiledMethod();
+    public static void RegisterDefaultEncryptionKey() => ThrowHelper.ThrowTranspiledMethod();
+    public static void RegisterDefaultSessionKey() => ThrowHelper.ThrowTranspiledMethod();
+    public static void RegisterEncryptedAsset() => ThrowHelper.ThrowTranspiledMethod();
+    public static void RegisterSessionEncryptedAsset() => ThrowHelper.ThrowTranspiledMethod();
+    public static void UnregisterDefaultEncryptionKey() => ThrowHelper.ThrowTranspiledMethod();
+    public static void UnregisterEncryptedAsset() => ThrowHelper.ThrowTranspiledMethod();
+    public static void PreloadAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static RBXScriptSignal<string> AssetFetchFailed { get; private set; } = null!;
 }

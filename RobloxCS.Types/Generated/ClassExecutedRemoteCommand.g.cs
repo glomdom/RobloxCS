@@ -2,8 +2,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("ExecutedRemoteCommand", RobloxNativeType.Instance)]
 public partial class ExecutedRemoteCommand : Object  {
-    public void RunMoreCode() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SendUpdate() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void Stop() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void RunMoreCode() => ThrowHelper.ThrowTranspiledMethod();
+    public void SendUpdate() => ThrowHelper.ThrowTranspiledMethod();
+    public void Stop() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<LuaTuple> ReceivedUpdate { get; private set; } = null!;
 }

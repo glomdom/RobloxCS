@@ -3,8 +3,8 @@ namespace RobloxCS.Types;
 [RobloxNative("TweenBase", RobloxNativeType.Instance)]
 public partial class TweenBase : Instance  {
     public Enums.PlaybackState PlaybackState { get; set; } = default!;
-    public void Cancel() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void Pause() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void Play() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void Cancel() => ThrowHelper.ThrowTranspiledMethod();
+    public void Pause() => ThrowHelper.ThrowTranspiledMethod();
+    public void Play() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Enums.PlaybackState> Completed { get; private set; } = null!;
 }

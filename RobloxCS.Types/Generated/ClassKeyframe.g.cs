@@ -3,10 +3,10 @@ namespace RobloxCS.Types;
 [RobloxNative("Keyframe", RobloxNativeType.Instance)]
 public partial class Keyframe : Instance  {
     public float Time { get; set; } = default!;
-    public void AddMarker() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void AddPose() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<Instance> GetMarkers() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<Instance> GetPoses() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void RemoveMarker() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void RemovePose() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void AddMarker() => ThrowHelper.ThrowTranspiledMethod();
+    public void AddPose() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetMarkers() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetPoses() => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveMarker() => ThrowHelper.ThrowTranspiledMethod();
+    public void RemovePose() => ThrowHelper.ThrowTranspiledMethod();
 }

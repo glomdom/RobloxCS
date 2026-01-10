@@ -24,11 +24,11 @@ public static partial class StatsService {
     public static int UI2DTriangleCount { get; set; } = default!;
     public static int UI3DDrawcallCount { get; set; } = default!;
     public static int UI3DTriangleCount { get; set; } = default!;
-    public static int GetHarmonyQualityLevel() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static List<object> GetMemoryCategoryNames() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static List<object> GetMemoryUsageMbAllCategories() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static float GetMemoryUsageMbForTag() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static float GetTotalMemoryUsageMb() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void ResetHarmonyMemoryTarget() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SetHarmonyMemoryTarget() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static int GetHarmonyQualityLevel() => ThrowHelper.ThrowTranspiledMethod();
+    public static List<object> GetMemoryCategoryNames() => ThrowHelper.ThrowTranspiledMethod();
+    public static List<object> GetMemoryUsageMbAllCategories() => ThrowHelper.ThrowTranspiledMethod();
+    public static float GetMemoryUsageMbForTag() => ThrowHelper.ThrowTranspiledMethod();
+    public static float GetTotalMemoryUsageMb() => ThrowHelper.ThrowTranspiledMethod();
+    public static void ResetHarmonyMemoryTarget() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SetHarmonyMemoryTarget() => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -2,9 +2,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("GlobalDataStore", RobloxNativeType.Instance)]
 public partial class GlobalDataStore : Instance  {
-    public LuaTuple GetAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public object IncrementAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public LuaTuple RemoveAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public object SetAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public LuaTuple UpdateAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public LuaTuple GetAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public object IncrementAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple RemoveAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public object SetAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple UpdateAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

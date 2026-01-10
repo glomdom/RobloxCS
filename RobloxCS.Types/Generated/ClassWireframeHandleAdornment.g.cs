@@ -4,9 +4,9 @@ namespace RobloxCS.Types;
 public partial class WireframeHandleAdornment : HandleAdornment  {
     public Vector3 Scale { get; set; } = default!;
     public float Thickness { get; set; } = default!;
-    public void AddLine() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void AddLines() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void AddPath() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void AddText() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void Clear() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void AddLine() => ThrowHelper.ThrowTranspiledMethod();
+    public void AddLines() => ThrowHelper.ThrowTranspiledMethod();
+    public void AddPath() => ThrowHelper.ThrowTranspiledMethod();
+    public void AddText() => ThrowHelper.ThrowTranspiledMethod();
+    public void Clear() => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -31,9 +31,9 @@ public partial class TextBox : GuiObject  {
     public bool TextWrapped { get; set; } = default!;
     public Enums.TextXAlignment TextXAlignment { get; set; } = default!;
     public Enums.TextYAlignment TextYAlignment { get; set; } = default!;
-    public void CaptureFocus() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public bool IsFocused() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void ReleaseFocus() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void CaptureFocus() => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsFocused() => ThrowHelper.ThrowTranspiledMethod();
+    public void ReleaseFocus() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<bool, InputObject> FocusLost { get; private set; } = null!;
     public RBXScriptSignal Focused { get; private set; } = null!;
     public RBXScriptSignal ReturnPressedFromOnScreenKeyboard { get; private set; } = null!;

@@ -12,10 +12,10 @@ public partial class UIPageLayout : UIGridStyleLayout  {
     public bool ScrollWheelInputEnabled { get; set; } = default!;
     public bool TouchInputEnabled { get; set; } = default!;
     public float TweenTime { get; set; } = default!;
-    public void JumpTo() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void JumpToIndex() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void Next() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void Previous() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void JumpTo() => ThrowHelper.ThrowTranspiledMethod();
+    public void JumpToIndex() => ThrowHelper.ThrowTranspiledMethod();
+    public void Next() => ThrowHelper.ThrowTranspiledMethod();
+    public void Previous() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Instance> PageEnter { get; private set; } = null!;
     public RBXScriptSignal<Instance> PageLeave { get; private set; } = null!;
     public RBXScriptSignal<Instance> Stopped { get; private set; } = null!;

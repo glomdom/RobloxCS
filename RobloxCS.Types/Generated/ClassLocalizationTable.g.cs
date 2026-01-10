@@ -3,15 +3,15 @@ namespace RobloxCS.Types;
 [RobloxNative("LocalizationTable", RobloxNativeType.Instance)]
 public partial class LocalizationTable : Instance  {
     public string SourceLocaleId { get; set; } = default!;
-    public List<object> GetEntries() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public Instance GetTranslator() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void RemoveEntry() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void RemoveEntryValue() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void RemoveTargetLocale() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetEntries() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetEntryContext() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetEntryExample() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetEntryKey() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetEntrySource() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetEntryValue() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public List<object> GetEntries() => ThrowHelper.ThrowTranspiledMethod();
+    public Instance GetTranslator() => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveEntry() => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveEntryValue() => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveTargetLocale() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEntries() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEntryContext() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEntryExample() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEntryKey() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEntrySource() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEntryValue() => ThrowHelper.ThrowTranspiledMethod();
 }

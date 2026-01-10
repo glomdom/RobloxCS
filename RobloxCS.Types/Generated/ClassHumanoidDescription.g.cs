@@ -42,14 +42,14 @@ public partial class HumanoidDescription : Instance  {
     public string WaistAccessory { get; set; } = default!;
     public int WalkAnimation { get; set; } = default!;
     public float WidthScale { get; set; } = default!;
-    public void AddEmote() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetAccessories() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public Dictionary<string, object> GetEmotes() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetEquippedEmotes() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void RemoveEmote() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetAccessories() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetEmotes() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetEquippedEmotes() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void AddEmote() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetAccessories() => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetEmotes() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetEquippedEmotes() => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveEmote() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetAccessories() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEmotes() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEquippedEmotes() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Dictionary<string, object>> EmotesChanged { get; private set; } = null!;
     public RBXScriptSignal<List<object>> EquippedEmotesChanged { get; private set; } = null!;
 }

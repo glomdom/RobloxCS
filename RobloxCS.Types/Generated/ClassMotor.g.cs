@@ -5,5 +5,5 @@ public partial class Motor : JointInstance  {
     public float CurrentAngle { get; set; } = default!;
     public float DesiredAngle { get; set; } = default!;
     public float MaxVelocity { get; set; } = default!;
-    public void SetDesiredAngle() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void SetDesiredAngle() => ThrowHelper.ThrowTranspiledMethod();
 }

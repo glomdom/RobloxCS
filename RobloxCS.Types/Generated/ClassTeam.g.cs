@@ -4,7 +4,7 @@ namespace RobloxCS.Types;
 public partial class Team : Instance  {
     public bool AutoAssignable { get; set; } = default!;
     public BrickColor TeamColor { get; set; } = default!;
-    public List<Instance> GetPlayers() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public List<Instance> GetPlayers() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Player> PlayerAdded { get; private set; } = null!;
     public RBXScriptSignal<Player> PlayerRemoved { get; private set; } = null!;
 }

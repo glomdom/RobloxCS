@@ -4,5 +4,5 @@ namespace RobloxCS.Types;
 public partial class Seat : Part  {
     public bool Disabled { get; set; } = default!;
     public Humanoid Occupant { get; set; } = default!;
-    public void Sit() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void Sit() => ThrowHelper.ThrowTranspiledMethod();
 }

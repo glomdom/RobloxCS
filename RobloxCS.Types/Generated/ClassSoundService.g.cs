@@ -10,7 +10,7 @@ public static partial class SoundService {
     public static bool RespectFilteringEnabled { get; set; } = default!;
     public static float RolloffScale { get; set; } = default!;
     public static Enums.VolumetricAudio VolumetricAudio { get; set; } = default!;
-    public static LuaTuple GetListener() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void PlayLocalSound() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static void SetListener() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static LuaTuple GetListener() => ThrowHelper.ThrowTranspiledMethod();
+    public static void PlayLocalSound() => ThrowHelper.ThrowTranspiledMethod();
+    public static void SetListener() => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -2,9 +2,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("RemoteEvent", RobloxNativeType.Instance)]
 public partial class RemoteEvent : BaseRemoteEvent  {
-    public void FireAllClients() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void FireClient() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void FireServer() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void FireAllClients() => ThrowHelper.ThrowTranspiledMethod();
+    public void FireClient() => ThrowHelper.ThrowTranspiledMethod();
+    public void FireServer() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<LuaTuple> OnClientEvent { get; private set; } = null!;
     public RBXScriptSignal<Player, LuaTuple> OnServerEvent { get; private set; } = null!;
 }

@@ -6,8 +6,8 @@ public partial class AudioGate : Instance  {
     public bool Bypass { get; set; } = default!;
     public float Release { get; set; } = default!;
     public NumberRange Threshold { get; set; } = default!;
-    public List<Instance> GetConnectedWires() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetInputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetOutputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public List<Instance> GetConnectedWires() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetInputPins() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetOutputPins() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<bool, string, Wire, Instance> WiringChanged { get; private set; } = null!;
 }

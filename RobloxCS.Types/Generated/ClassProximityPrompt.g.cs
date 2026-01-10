@@ -17,8 +17,8 @@ public partial class ProximityPrompt : Instance  {
     public LocalizationTable RootLocalizationTable { get; set; } = default!;
     public Enums.ProximityPromptStyle Style { get; set; } = default!;
     public Vector2 UIOffset { get; set; } = default!;
-    public void InputHoldBegin() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void InputHoldEnd() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void InputHoldBegin() => ThrowHelper.ThrowTranspiledMethod();
+    public void InputHoldEnd() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal IndicatorHidden { get; private set; } = null!;
     public RBXScriptSignal IndicatorShown { get; private set; } = null!;
     public RBXScriptSignal<Player> PromptButtonHoldBegan { get; private set; } = null!;

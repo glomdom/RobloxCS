@@ -20,10 +20,10 @@ public partial class Sound : Instance  {
     public double TimeLength { get; set; } = default!;
     public double TimePosition { get; set; } = default!;
     public float Volume { get; set; } = default!;
-    public void Pause() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void Play() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void Resume() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void Stop() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void Pause() => ThrowHelper.ThrowTranspiledMethod();
+    public void Play() => ThrowHelper.ThrowTranspiledMethod();
+    public void Resume() => ThrowHelper.ThrowTranspiledMethod();
+    public void Stop() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<string, int> DidLoop { get; private set; } = null!;
     public RBXScriptSignal<string> Ended { get; private set; } = null!;
     public RBXScriptSignal<string> Loaded { get; private set; } = null!;

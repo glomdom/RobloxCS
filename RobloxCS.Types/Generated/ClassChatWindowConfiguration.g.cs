@@ -16,5 +16,5 @@ public partial class ChatWindowConfiguration : TextChatConfigurations  {
     public double TextStrokeTransparency { get; set; } = default!;
     public Enums.VerticalAlignment VerticalAlignment { get; set; } = default!;
     public float WidthScale { get; set; } = default!;
-    public ChatWindowMessageProperties DeriveNewMessageProperties() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public ChatWindowMessageProperties DeriveNewMessageProperties() => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -24,10 +24,10 @@ public partial class UIDragDetector : UIComponent  {
     public UDim2 SelectionModeDragSpeed { get; set; } = default!;
     public float SelectionModeRotateSpeed { get; set; } = default!;
     public Enums.UIDragSpeedAxisMapping UIDragSpeedAxisMapping { get; set; } = default!;
-    public RBXScriptConnection AddConstraintFunction() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public UDim2 GetReferencePosition() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public float GetReferenceRotation() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetDragStyleFunction() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public RBXScriptConnection AddConstraintFunction() => ThrowHelper.ThrowTranspiledMethod();
+    public UDim2 GetReferencePosition() => ThrowHelper.ThrowTranspiledMethod();
+    public float GetReferenceRotation() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetDragStyleFunction() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Vector2> DragContinue { get; private set; } = null!;
     public RBXScriptSignal<Vector2> DragEnd { get; private set; } = null!;
     public RBXScriptSignal<Vector2> DragStart { get; private set; } = null!;

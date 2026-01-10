@@ -4,14 +4,14 @@ namespace RobloxCS.Types;
 public partial class AudioEmitter : Instance  {
     public bool AcousticSimulationEnabled { get; set; } = default!;
     public string AudioInteractionGroup { get; set; } = default!;
-    public Dictionary<string, object> GetAngleAttenuation() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public float GetAudibilityFor() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<Instance> GetConnectedWires() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public Dictionary<string, object> GetDistanceAttenuation() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetInputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<Instance> GetInteractingListeners() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public List<object> GetOutputPins() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetAngleAttenuation() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public void SetDistanceAttenuation() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public Dictionary<string, object> GetAngleAttenuation() => ThrowHelper.ThrowTranspiledMethod();
+    public float GetAudibilityFor() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetConnectedWires() => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetDistanceAttenuation() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetInputPins() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetInteractingListeners() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetOutputPins() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetAngleAttenuation() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetDistanceAttenuation() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<bool, string, Wire, Instance> WiringChanged { get; private set; } = null!;
 }

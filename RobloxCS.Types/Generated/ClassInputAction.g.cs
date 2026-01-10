@@ -4,8 +4,8 @@ namespace RobloxCS.Types;
 public partial class InputAction : Instance  {
     public bool Enabled { get; set; } = default!;
     public Enums.InputActionType Type { get; set; } = default!;
-    public void Fire() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public object GetState() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public void Fire() => ThrowHelper.ThrowTranspiledMethod();
+    public object GetState() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal Pressed { get; private set; } = null!;
     public RBXScriptSignal Released { get; private set; } = null!;
     public RBXScriptSignal<object> StateChanged { get; private set; } = null!;

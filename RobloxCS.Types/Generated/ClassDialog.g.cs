@@ -12,6 +12,6 @@ public partial class Dialog : Instance  {
     public Enums.DialogTone Tone { get; set; } = default!;
     public float TriggerDistance { get; set; } = default!;
     public Vector3 TriggerOffset { get; set; } = default!;
-    public List<Instance> GetCurrentPlayers() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public List<Instance> GetCurrentPlayers() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Instance, Instance> DialogChoiceSelected { get; private set; } = null!;
 }

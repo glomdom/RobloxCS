@@ -6,10 +6,10 @@ public static partial class TextChatService {
     public static Enums.ChatVersion ChatVersion { get; } = default!;
     public static bool CreateDefaultCommands { get; } = default!;
     public static bool CreateDefaultTextChannels { get; } = default!;
-    public static void DisplayBubble() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static bool CanUserChatAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static bool CanUsersChatAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
-    public static List<object> CanUsersDirectChatAsync() => throw new InvalidOperationException("Cannot call reserved method for RobloxCS transpiler.");
+    public static void DisplayBubble() => ThrowHelper.ThrowTranspiledMethod();
+    public static bool CanUserChatAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static bool CanUsersChatAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static List<object> CanUsersDirectChatAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static RBXScriptSignal<Instance, TextChatMessage> BubbleDisplayed { get; private set; } = null!;
     public static RBXScriptSignal<TextChatMessage> MessageReceived { get; private set; } = null!;
     public static RBXScriptSignal<TextChatMessage> SendingMessage { get; private set; } = null!;
