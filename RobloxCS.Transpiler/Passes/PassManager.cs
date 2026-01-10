@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using RobloxCS.Common;
 using Serilog;
 
 namespace RobloxCS.Transpiler.Passes;
@@ -16,8 +17,12 @@ public sealed class PassManager {
         var passWatch = new Stopwatch();
         foreach (var pass in Passes) {
             passWatch.Restart();
-            pass.Run(ctx);
-            pass.PostRun(ctx);
+
+            using (LoggerSetup.PushPass(pass.Name)) {
+                pass.Run(ctx);
+                pass.PostRun(ctx);
+            }
+
             passWatch.Stop();
 
             Log.Debug("{Pass} finished in {ElapsedMs}ms", pass.GetType().Name, passWatch.ElapsedMilliseconds);

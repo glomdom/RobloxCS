@@ -3,6 +3,8 @@
 namespace RobloxCS.Transpiler.Passes;
 
 public sealed class ServiceLoweringPass : IPass {
+    public string Name => "Service Lowering";
+
     private readonly ServiceLoweringWalker _walker = new();
 
     public void Run(TranspilationContext ctx) {

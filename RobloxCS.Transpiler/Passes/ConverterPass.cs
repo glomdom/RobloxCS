@@ -8,9 +8,11 @@ namespace RobloxCS.Transpiler.Passes;
 /// on how complicated the C# code is.
 /// </summary>
 public sealed class ConverterPass : IPass {
+    public string Name => "Converter";
+
     public void Run(TranspilationContext ctx) {
         var walker = new ConverterWalker(ctx);
-        
+
         walker.Visit(ctx.Root);
     }
 }

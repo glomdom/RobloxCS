@@ -10,7 +10,7 @@ public sealed class ConverterWalker : CSharpSyntaxWalker {
     public ConverterWalker(TranspilationContext ctx) {
         Ctx = ctx;
     }
-    
+
     public override void VisitClassDeclaration(ClassDeclarationSyntax node) {
         var classStatements = ClassBuilder.Build(node, Ctx);
 
