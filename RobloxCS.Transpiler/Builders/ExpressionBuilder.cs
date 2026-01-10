@@ -94,7 +94,7 @@ public static class ExpressionBuilder {
 
         var nativeAttribute = SyntaxUtilities.ExtractAttributeFromAttributes<RobloxNativeAttribute>(classSymbol.GetAttributes());
         if (nativeAttribute.NativeType == RobloxNativeType.Instance) {
-            Log.Verbose("Rewriting object creation to use Instance.new");
+            Log.Verbose("Rewriting instance creation of {InstanceName} to use Instance.new", nativeAttribute.RobloxName);
 
             List<Expression> prependedExprs = [StringExpression.FromString(nativeAttribute.RobloxName), ..exprs];
 
