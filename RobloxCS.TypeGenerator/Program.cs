@@ -15,7 +15,6 @@ internal static class Program {
     private const string ApiDumpUrl = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/refs/heads/roblox/API-Dump.json";
     private const string FunctionBody = "throw new InvalidOperationException(\"Cannot call reserved method for RobloxCS transpiler.\");"; // im lazy
 
-    private static readonly List<string> SkippedNames = ["Studio", "BindableFunction"];
     private static readonly List<string> EnumNames = [];
 
     private static readonly JsonSerializerOptions Options = new() {
@@ -86,12 +85,6 @@ internal static class Program {
 
         foreach (var classDef in api.Classes) {
             if (!IsClassAllowed(classDef)) continue;
-
-            if (SkippedNames.Contains(classDef.Name)) {
-                Log.Verbose("Skipping class {ClassName} with tags {Tags}", classDef.Name, classDef.Tags);
-
-                continue;
-            }
 
             var isService = IsService(classDef);
             var shouldAppendService = false;
@@ -215,7 +208,7 @@ internal static class Program {
                         if (parameters.Count > 0) callbackType += $"<{string.Join(", ", parameters)}>";
 
                         Log.Verbose("Generating event {CallbackName} with tags {Tags} and security {Security}", callback.Name, callback.Tags, callback.Security);
-                        
+
                         if (isService) {
                             builder.AppendLine($"    public static {callbackType} {callback.Name} {{ get; set; }} = default!;");
                         } else {
