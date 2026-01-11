@@ -37,7 +37,7 @@ public sealed class GlobalRegistry {
     }
 
     private void InitializeBuiltins(CSharpCompiler.MetadataTypes types) {
-        var list = new ClassInfo(types.ListTypeSymbol.MetadataName);
+        var list = new ClassInfo(types.GenericListTypeSymbol.MetadataName);
         list.AddMember("Count", BasicTypeInfo.Number());
 
         Classes["List"] = list;

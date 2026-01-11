@@ -12,13 +12,7 @@ internal static class ExpressionLowerer {
         LiteralExpressionSyntax lit when lit.IsKind(SyntaxKind.NumericLiteralExpression) => new NumberExpression { Value = Convert.ToDouble(lit.Token.Value) },
         LiteralExpressionSyntax lit when lit.IsKind(SyntaxKind.TrueLiteralExpression) => new BooleanExpression { Value = true },
         LiteralExpressionSyntax lit when lit.IsKind(SyntaxKind.FalseLiteralExpression) => new BooleanExpression { Value = false },
-        CollectionExpressionSyntax col => new TableConstructorExpression {
-            Fields = col.Elements.Select(e => TypeFieldBuilder.BuildFromSyntax(e switch {
-                ExpressionElementSyntax exprElem => exprElem.Expression,
-
-                _ => throw new NotSupportedException($"Unsupported element type: {e.Kind()}."),
-            }, ctx)).ToList(),
-        },
+        CollectionExpressionSyntax col => ExpressionBuilder.BuildFromSyntax(col, ctx),
 
         _ => throw new ArgumentOutOfRangeException(nameof(syntax), $"Unsupported expression: {syntax.Kind()}"),
     };

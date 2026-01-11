@@ -76,7 +76,10 @@ public static class SyntaxUtilities {
 
         if (symbol.TypeKind is TypeKind.Class or TypeKind.Struct) {
             if (symbol is INamedTypeSymbol namedSymbol && IsSystemList(namedSymbol, ctx)) {
-                return GetTypeFromList(namedSymbol, ctx);
+                var elemType = TypeInfoFromSymbol(namedSymbol.TypeArguments.First(), ctx);
+                if (elemType is not BasicTypeInfo elemTypeInfo) throw new NotSupportedException("TypeInfo was not basic, this is not supported yet.");
+
+                return BasicTypeInfo.FromString($"List.List<{elemTypeInfo.Name}>");
             }
 
             var classNs = symbol.ContainingNamespace;
@@ -94,17 +97,10 @@ public static class SyntaxUtilities {
         throw new NotSupportedException($"Unsupported non-primitive type {symbol} for {symbol.Name}");
     }
 
-    /// <summary>
-    /// Gets the element type of the provided List symbol.
-    /// </summary>
-    public static ArrayTypeInfo GetTypeFromList(INamedTypeSymbol symbol, TranspilationContext ctx) {
-        return new ArrayTypeInfo { ElementType = TypeInfoFromSymbol(symbol.TypeArguments.First(), ctx) };
-    }
-
     public static bool IsSystemList(INamedTypeSymbol symbol, TranspilationContext ctx) {
         if (symbol.Name != "List" || symbol.Arity != 1) return false;
 
-        return SymbolEqualityComparer.Default.Equals(symbol.OriginalDefinition, ctx.Compiler.Types.ListTypeSymbol.OriginalDefinition);
+        return SymbolEqualityComparer.Default.Equals(symbol.OriginalDefinition, ctx.Compiler.Types.GenericListTypeSymbol.OriginalDefinition);
     }
 
     public static BinOp SyntaxTokenToBinOp(SyntaxToken token) {

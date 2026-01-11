@@ -39,10 +39,10 @@ public sealed class CSharpCompiler {
     }
 
     public class MetadataTypes {
-        public readonly INamedTypeSymbol ListTypeSymbol;
+        public readonly INamedTypeSymbol GenericListTypeSymbol;
 
         public MetadataTypes(CSharpCompilation compilation) {
-            ListTypeSymbol = CheckedGetType(compilation, "System.Collections.Generic.List`1");
+            GenericListTypeSymbol = CheckedGetType(compilation, "System.Collections.Generic.List`1");
         }
 
         private static INamedTypeSymbol CheckedGetType(CSharpCompilation compilation, string name) {

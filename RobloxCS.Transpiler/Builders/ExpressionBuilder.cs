@@ -20,6 +20,7 @@ public static class ExpressionBuilder {
             LiteralExpressionSyntax exprSyntax => HandleLiteralExpressionSyntax(exprSyntax, ctx),
             BinaryExpressionSyntax binExprSyntax => HandleBinaryExpressionSyntax(binExprSyntax, ctx),
             PrefixUnaryExpressionSyntax prefixUnaryExprSyntax => HandleUnaryExpressionSyntax(prefixUnaryExprSyntax, ctx),
+            CollectionExpressionSyntax collectionExpressionSyntax => HandleCollectionExpressionSyntax(collectionExpressionSyntax, ctx),
             InvocationExpressionSyntax invocationExpressionSyntax => HandleInvocationExpressionSyntax(invocationExpressionSyntax, ctx),
             ConditionalExpressionSyntax conditionalExpressionSyntax => HandleConditionalExpressionSyntax(conditionalExpressionSyntax, ctx),
             MemberAccessExpressionSyntax memberAccessExpressionSyntax => HandleMemberAccessExpressionSyntax(memberAccessExpressionSyntax, ctx),
@@ -32,6 +33,22 @@ public static class ExpressionBuilder {
 
             _ => throw new NotSupportedException($"Expression {syntax.Kind()} is not supported. {syntax}"),
         };
+    }
+
+    private static Expression HandleCollectionExpressionSyntax(CollectionExpressionSyntax syntax, TranspilationContext ctx) {
+        var assignedType = ctx.Semantics.GetTypeInfo(syntax);
+        var targetType = assignedType.ConvertedType;
+        if (targetType is null) {
+            throw new Exception("Failed to determine collection expression result type.");
+        }
+
+        var exprArgs = syntax.Elements.Select(ces => BuildFromSyntax(NormalizeCollectionExpressionSyntax(ces), ctx)).ToArray();
+
+        if (SymbolEqualityComparer.Default.Equals(targetType.OriginalDefinition, ctx.Compiler.Types.GenericListTypeSymbol)) {
+            return ExpressionHelpers.DirectFunctionCall("List", "new", exprArgs);
+        }
+
+        throw new NotSupportedException("Could not find suitable target type for collection expression.");
     }
 
     private static Expression HandlePostfixUnarySyntax(PostfixUnaryExpressionSyntax syntax, TranspilationContext ctx) {
@@ -292,6 +309,14 @@ public static class ExpressionBuilder {
                     Name = SymbolExpression.FromString(fieldSymbol.Name),
                 },
             ],
+        };
+    }
+
+    private static ExpressionSyntax NormalizeCollectionExpressionSyntax(CollectionElementSyntax syntax) {
+        return syntax switch {
+            ExpressionElementSyntax elemSyntax => elemSyntax.Expression,
+
+            _ => throw new NotSupportedException($"Unsupported collection expression syntax {syntax.GetType().Name}."),
         };
     }
 }

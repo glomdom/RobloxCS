@@ -1,5 +1,7 @@
 ﻿using RobloxCS.AST;
+using RobloxCS.AST.Expressions;
 using RobloxCS.Compiler;
+using RobloxCS.Transpiler.Helpers;
 using RobloxCS.Transpiler.Passes;
 
 namespace RobloxCS.Transpiler;
@@ -18,6 +20,11 @@ public sealed class CSharpTranspiler {
         PassManager.Register(new TransientLoweringPass());
         PassManager.Register(new ServiceLoweringPass());
         PassManager.Register(new CollectionsLoweringPass());
+
+        // TODO: FIX THIS GARBAGE..............
+        Ctx.RootBlock.AddStatement(StatementHelpers.UntypedLocalAssignment("List",
+            ExpressionHelpers.SimpleFunctionCall("require",
+                SymbolExpression.FromString("game:GetService(\"ReplicatedStorage\"):WaitForChild(\"robloxcs\"):WaitForChild(\"RuntimeLib\"):WaitForChild(\"List\")"))));
     }
 
     public Chunk Transpile() {
