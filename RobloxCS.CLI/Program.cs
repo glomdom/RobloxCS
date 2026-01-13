@@ -7,7 +7,7 @@ namespace RobloxCS.CLI;
 internal static class Program {
     private static int Main(string[] args) {
         LoggerSetup.Configure();
-        
+
         var app = new CommandApp();
         app.Configure(config => {
             config.SetApplicationName("rbxcsc");
@@ -18,6 +18,7 @@ internal static class Program {
             config.AddBranch<CompileSettings>("compile", branch => {
                 branch.SetDescription("Compile a C# file to Luau or a C# project");
                 branch.AddCommand<FileCompileCommand>("file");
+                branch.AddCommand<ProjectCompileCommand>("project");
             });
         });
 
