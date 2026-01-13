@@ -32,6 +32,14 @@ public sealed class CSharpCompiler {
         Log.Information("Ran diagnostics for {File} in {TimeMS}ms", path, watch.ElapsedMilliseconds);
     }
 
+    public CSharpCompiler(SyntaxTree tree, Compilation compilation) {
+        SyntaxTree = tree;
+        FilePath = tree.FilePath;
+        Compilation = (CSharpCompilation)compilation;
+        Types = new MetadataTypes(Compilation);
+        Diagnostics = [..Compilation.GetDiagnostics().Where(d => d.Severity != DiagnosticSeverity.Hidden)];
+    }
+
     public ImmutableArray<string> FormatDiagnostics() {
         var formatter = new DiagnosticFormatter();
 
