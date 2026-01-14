@@ -34,7 +34,7 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
         LoggerSetup.LevelSwitch.MinimumLevel = settings.Verbosity ? LogEventLevel.Verbose : LogEventLevel.Warning;
 
         var fullCwd = Path.GetFullPath(Environment.CurrentDirectory);
-        Log.Information("Searching for candidate .csproj files in {SearchDirectory}", fullCwd);
+        Log.Debug("Searching for candidate .csproj files in {SearchDirectory}", fullCwd);
 
         var outDir = Path.Combine(fullCwd, "out");
 
@@ -53,13 +53,13 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
         var watch = Stopwatch.StartNew();
 
         MSBuildLocator.RegisterDefaults();
-        Log.Information("Registered MSBuild defaults");
+        Log.Debug("Registered MSBuild defaults");
 
         using var workspace = MSBuildWorkspace.Create();
-        Log.Information("Created MSBuild workspace");
+        Log.Debug("Created MSBuild workspace");
 
         var project = await workspace.OpenProjectAsync(csprojFile, cancellationToken: cancellation);
-        Log.Information("Read MSBuild properties");
+        Log.Verbose("Read MSBuild properties");
 
         var compilation = await project.GetCompilationAsync(cancellation);
         if (compilation is null) {
@@ -68,7 +68,7 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
             return -1;
         }
 
-        Log.Information("Got C# compilation");
+        Log.Debug("Got C# compilation");
 
         // TODO: Support this
         // string intermediatesFolderName;
@@ -80,7 +80,7 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
         // }
 
         watch.Stop();
-        Log.Information("Finished project handling for {ProjectFilePath} in {ElapsedMillis}ms", csprojFile, watch.ElapsedMilliseconds);
+        Log.Debug("Finished project handling for {ProjectFilePath} in {ElapsedMillis}ms", csprojFile, watch.ElapsedMilliseconds);
 
         foreach (var document in project.Documents) {
             if (document.Folders is ["obj", ..]) {
@@ -110,10 +110,11 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
             var code = renderer.Render(chunk);
 
             var filename = Path.GetFileNameWithoutExtension(syntaxTree.FilePath);
-            var outPath = Path.Combine(outDir, $"{filename}.luau");
+            var combinedOutDir = Path.Combine([outDir, ..document.Folders]);
+            var outPath = Path.Combine(combinedOutDir, $"{filename}.luau");
 
+            Directory.CreateDirectory(combinedOutDir);
             Log.Verbose("Writing output to {OutFilePath}", outPath);
-            Directory.CreateDirectory(outDir);
 
             await File.WriteAllTextAsync(outPath, code, cancellation);
         }
