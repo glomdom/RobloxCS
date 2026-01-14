@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="RobloxCS.Client/RobloxCS.Client.csproj" />
+  <Project Path="RobloxCS.Server/RobloxCS.Server.csproj" />
+  <Project Path="RobloxCS.Shared/RobloxCS.Shared.csproj" />
+</Solution>

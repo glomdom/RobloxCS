@@ -1,12 +1,11 @@
 <Solution>
-  <Project Path="RobloxCS.AST\RobloxCS.AST.csproj" Type="C#" />
-  <Project Path="RobloxCS.CLI\RobloxCS.CLI.csproj" Type="C#" />
-  <Project Path="RobloxCS.Common\RobloxCS.Common.csproj" Type="C#" />
-  <Project Path="RobloxCS.Compiler\RobloxCS.Compiler.csproj" Type="C#" />
-  <Project Path="RobloxCS.Example\RobloxCS.Example.csproj" Type="C#" />
-  <Project Path="RobloxCS.Renderer\RobloxCS.Renderer.csproj" Type="C#" />
-  <Project Path="RobloxCS.Tests\RobloxCS.Tests.csproj" Type="C#" />
-  <Project Path="RobloxCS.Transpiler\RobloxCS.Transpiler.csproj" Type="C#" />
-  <Project Path="RobloxCS.TypeGenerator\RobloxCS.TypeGenerator.csproj" Type="C#" />
-  <Project Path="RobloxCS.Types\RobloxCS.Types.csproj" Type="C#" />
+  <Project Path="RobloxCS.AST\RobloxCS.AST.csproj" />
+  <Project Path="RobloxCS.CLI\RobloxCS.CLI.csproj" />
+  <Project Path="RobloxCS.Common\RobloxCS.Common.csproj" />
+  <Project Path="RobloxCS.Compiler\RobloxCS.Compiler.csproj" />
+  <Project Path="RobloxCS.Renderer\RobloxCS.Renderer.csproj" />
+  <Project Path="RobloxCS.Tests\RobloxCS.Tests.csproj" />
+  <Project Path="RobloxCS.Transpiler\RobloxCS.Transpiler.csproj" />
+  <Project Path="RobloxCS.TypeGenerator\RobloxCS.TypeGenerator.csproj" />
+  <Project Path="RobloxCS.Types\RobloxCS.Types.csproj" />
 </Solution>
