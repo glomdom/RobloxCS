@@ -3,7 +3,6 @@ using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
 using RobloxCS.Transpiler.Semantics;
-using Serilog;
 
 namespace RobloxCS.Transpiler.Walkers;
 
