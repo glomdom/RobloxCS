@@ -1,7 +1,7 @@
 ﻿namespace RobloxCS.Client;
 
 internal class Runtime {
-    public static void Main() {
+    public void Main() {
         Console.WriteLine("Hello from client!");
     }
 }
