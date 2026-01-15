@@ -91,6 +91,17 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
                     _console.MarkupLine(diag);
                 }
 
+                ScriptType scriptType;
+                if (document.Name.EndsWith(".server.cs")) {
+                    scriptType = ScriptType.Server;
+                } else if (document.Name.EndsWith(".client.cs")) {
+                    scriptType = ScriptType.Local;
+                } else {
+                    scriptType = ScriptType.Module;
+                }
+
+                Log.Verbose("Compiling {DocumentName} as a {ScriptType} script", document.Name, scriptType);
+
                 var transpiler = new CSharpTranspiler(new TranspilerOptions(ScriptType.Module), compiler);
                 var chunk = transpiler.Transpile();
 
