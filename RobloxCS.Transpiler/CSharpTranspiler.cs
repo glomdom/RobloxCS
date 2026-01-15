@@ -14,6 +14,7 @@ public sealed class CSharpTranspiler {
         Ctx = new TranspilationContext(options, compiler);
         PassManager = new PassManager();
 
+        PassManager.Register(new ValidatorPass());
         PassManager.Register(new HeaderCollectorPass());
         PassManager.Register(new ConverterPass());
         PassManager.Register(new LinkerPass());

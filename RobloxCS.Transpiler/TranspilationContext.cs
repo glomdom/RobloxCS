@@ -15,6 +15,7 @@ public sealed class TranspilationContext {
     public CompilationUnitSyntax Root { get; }
     public Block RootBlock { get; set; } = BlockHelpers.Empty();
     public GlobalRegistry Registry { get; set; }
+    public string? EntryPointName { get; set; }
 
     public TranspilationContext(TranspilerOptions options, CSharpCompiler compiler) {
         Options = options;

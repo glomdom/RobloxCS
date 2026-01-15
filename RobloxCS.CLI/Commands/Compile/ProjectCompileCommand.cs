@@ -102,7 +102,7 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
 
                 Log.Verbose("Compiling {DocumentName} as a {ScriptType} script", document.Name, scriptType);
 
-                var transpiler = new CSharpTranspiler(new TranspilerOptions(ScriptType.Module), compiler);
+                var transpiler = new CSharpTranspiler(new TranspilerOptions(scriptType), compiler);
                 var chunk = transpiler.Transpile();
 
                 var renderer = new RendererWalker();
