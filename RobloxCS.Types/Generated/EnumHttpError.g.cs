@@ -20,5 +20,7 @@ public static partial class Enums {
         ConnectionClosed = 13,
         ServerProtocolError = 14,
         CreatorEnvironmentsNotSupportedByService = 15,
+        InactivityTimeout = 16,
+        TooManyOutstandingRequests = 17,
     }
 }

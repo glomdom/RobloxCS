@@ -10,7 +10,7 @@ public static partial class CaptureService {
     public static void PromptSaveCapturesToGallery() => ThrowHelper.ThrowTranspiledMethod();
     public static void PromptShareCapture() => ThrowHelper.ThrowTranspiledMethod();
     public static void StopVideoCapture() => ThrowHelper.ThrowTranspiledMethod();
-    public static void TakeCapture() => ThrowHelper.ThrowTranspiledMethod();
+    public static void TakeScreenshotCaptureAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static bool InternalCheckPlayabilityAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static int InternalGetStartPlaceIdAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static bool PromptCaptureGalleryPermissionAsync() => ThrowHelper.ThrowTranspiledMethod();

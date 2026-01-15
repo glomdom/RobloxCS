@@ -18,6 +18,7 @@ public static partial class AvatarEditorService {
     public static Dictionary<string, object> GetAvatarRulesAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static List<object> GetBatchItemDetailsAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static bool GetFavoriteAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public static List<object> GetHeadShapesAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static InventoryPages GetInventoryAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static Dictionary<string, object> GetItemDetailsAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static Dictionary<string, object> GetOutfitDetailsAsync() => ThrowHelper.ThrowTranspiledMethod();
