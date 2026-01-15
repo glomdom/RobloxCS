@@ -116,7 +116,7 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
             }
         }
 
-        // TODO: Support this
+        // TODO: Support this; EC: nested dirs
         // string intermediatesFolderName;
         // if (project.CompilationOutputInfo.GeneratedFilesOutputDirectory is null) {
         //     Log.Verbose("Generated files output directory is null, presuming `obj`");
