@@ -3,6 +3,7 @@ using RobloxCS.AST.Expressions;
 using RobloxCS.Compiler;
 using RobloxCS.Transpiler.Helpers;
 using RobloxCS.Transpiler.Passes;
+using Serilog;
 
 namespace RobloxCS.Transpiler;
 
@@ -29,7 +30,12 @@ public sealed class CSharpTranspiler {
     }
 
     public Chunk Transpile() {
-        PassManager.Run(Ctx);
+        var success = PassManager.Run(Ctx);
+        if (!success) {
+            Log.Error("Failed to transpile");
+
+            Environment.Exit(-1);
+        }
 
         return Ctx.ToChunk();
     }

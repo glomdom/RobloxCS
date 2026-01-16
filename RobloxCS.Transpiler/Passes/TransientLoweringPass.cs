@@ -10,6 +10,7 @@ namespace RobloxCS.Transpiler.Passes;
 /// </summary>
 public sealed class TransientLoweringPass : IPass {
     public string Name => "Transient Lowering";
+    public List<string> Diagnostics { get; } = [];
 
     public void Run(TranspilationContext ctx) {
         var walker = new TransientLoweringWalker();
