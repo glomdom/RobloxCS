@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\RobloxCS.Types\RobloxCS.Types.csproj"/>
+        <PackageReference Include="RobloxCS.Types" Version="*" />
     </ItemGroup>
 
 </Project>

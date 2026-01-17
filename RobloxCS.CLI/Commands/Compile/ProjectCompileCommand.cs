@@ -58,6 +58,8 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
         Log.Debug("Found MSBuild executable in {ExecutablePath}", vsi.MSBuildPath);
 
         using var workspace = MSBuildWorkspace.Create();
+        workspace.LoadMetadataForReferencedProjects = true;
+
         Log.Debug("Created MSBuild workspace");
 
         var solution = await workspace.OpenSolutionAsync(slnFile, cancellationToken: cancellation);
@@ -100,7 +102,7 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
                     scriptType = ScriptType.Module;
                 }
 
-                Log.Verbose("Compiling {DocumentName} as a {ScriptType} script", document.Name, scriptType);
+                Log.Verbose("Compiling {DocumentName} as a {ScriptType} script with folders {Folders}", document.Name, scriptType, document.Folders);
 
                 var transpiler = new CSharpTranspiler(new TranspilerOptions(scriptType), compiler);
                 var chunk = transpiler.Transpile();
