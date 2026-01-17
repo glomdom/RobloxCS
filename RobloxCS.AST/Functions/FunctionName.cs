@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Functions;
+namespace RobloxCS.AST.Functions;
 
 public sealed class FunctionName : AstNode {
     public required List<string> Names { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Types;
+namespace RobloxCS.AST.Types;
 
 public sealed class IntersectionTypeInfo : TypeInfo {
     public required List<TypeInfo> Types;

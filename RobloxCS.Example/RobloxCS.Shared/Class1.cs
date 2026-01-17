@@ -1,3 +1,3 @@
-﻿namespace RobloxCS.Shared;
+namespace RobloxCS.Shared;
 
 public class Class1 { }

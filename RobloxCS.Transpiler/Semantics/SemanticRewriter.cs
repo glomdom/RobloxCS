@@ -1,4 +1,4 @@
-﻿using RobloxCS.AST;
+using RobloxCS.AST;
 using RobloxCS.AST.Parameters;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;

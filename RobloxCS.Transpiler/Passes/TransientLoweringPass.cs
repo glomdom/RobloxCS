@@ -1,4 +1,4 @@
-﻿using RobloxCS.AST;
+using RobloxCS.AST;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Transient;
 using RobloxCS.Transpiler.Walkers;

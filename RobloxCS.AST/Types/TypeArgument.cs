@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Types;
+namespace RobloxCS.AST.Types;
 
 public sealed class TypeArgument : AstNode {
     public string? Name;

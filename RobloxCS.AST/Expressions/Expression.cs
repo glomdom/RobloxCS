@@ -1,3 +1,3 @@
-﻿namespace RobloxCS.AST.Expressions;
+namespace RobloxCS.AST.Expressions;
 
 public abstract class Expression : AstNode;

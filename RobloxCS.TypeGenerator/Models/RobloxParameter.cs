@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.TypeGenerator.Models;
+namespace RobloxCS.TypeGenerator.Models;
 
 public class RobloxParameter {
     public required string Name { get; init; }

@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Prefixes;
+namespace RobloxCS.AST.Prefixes;
 
 public sealed class NamePrefix : Prefix {
     public required string Name { get; set; }

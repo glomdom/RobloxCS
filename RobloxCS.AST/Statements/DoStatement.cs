@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Statements;
+namespace RobloxCS.AST.Statements;
 
 public class DoStatement : Statement {
     public required Block Block { get; set; }

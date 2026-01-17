@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.Types.Attributes;
+namespace RobloxCS.Types.Attributes;
 
 /// <summary>
 /// Defines a method inside a class can be used as an entry point.

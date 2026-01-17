@@ -1,4 +1,4 @@
-﻿using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Types;
 
 namespace RobloxCS.AST.Statements;

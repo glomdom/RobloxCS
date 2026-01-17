@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.Tests.Data;
+namespace RobloxCS.Tests.Data;
 
 internal class ScopeAndState {
     private static int GlobalCounter = 0;

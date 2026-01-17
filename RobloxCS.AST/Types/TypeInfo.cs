@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Types;
+namespace RobloxCS.AST.Types;
 
 // TODO: Generic, GenericPack, Module, Optional, Table, Typeof, Tuple, Variadic, VariadicPack
 

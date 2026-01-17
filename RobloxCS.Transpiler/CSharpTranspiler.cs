@@ -1,4 +1,4 @@
-﻿using RobloxCS.AST;
+using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.Compiler;
 using RobloxCS.Transpiler.Helpers;

@@ -1,3 +1,3 @@
-﻿namespace RobloxCS.AST.Parameters;
+namespace RobloxCS.AST.Parameters;
 
 public abstract class Parameter : AstNode;

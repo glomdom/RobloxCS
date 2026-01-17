@@ -1,4 +1,4 @@
-﻿using RobloxCS.Transpiler.Walkers;
+using RobloxCS.Transpiler.Walkers;
 using Serilog;
 
 namespace RobloxCS.Transpiler.Passes;

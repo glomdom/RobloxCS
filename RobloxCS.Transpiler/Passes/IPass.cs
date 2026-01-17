@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.Transpiler.Passes;
+namespace RobloxCS.Transpiler.Passes;
 
 public interface IPass {
     string Name { get; }

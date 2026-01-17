@@ -1,4 +1,4 @@
-﻿using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
 using RobloxCS.AST.Generics;
 using RobloxCS.AST.Parameters;

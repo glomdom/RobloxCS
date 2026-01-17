@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST;
+namespace RobloxCS.AST;
 
 public enum CompoundOp {
     PlusEqual,

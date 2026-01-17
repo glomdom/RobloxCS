@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Expressions;
+namespace RobloxCS.AST.Expressions;
 
 public sealed class TableConstructorExpression : Expression {
     public required List<TableField> Fields { get; set; }

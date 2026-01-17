@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Expressions;
+namespace RobloxCS.AST.Expressions;
 
 public sealed class InterpolatedStringExpression : Expression {
     public required List<InterpolatedStringSegment> Segments { get; set; }

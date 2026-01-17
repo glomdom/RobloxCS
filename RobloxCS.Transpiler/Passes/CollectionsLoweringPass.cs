@@ -1,4 +1,4 @@
-﻿using RobloxCS.Transpiler.Walkers;
+using RobloxCS.Transpiler.Walkers;
 
 namespace RobloxCS.Transpiler.Passes;
 

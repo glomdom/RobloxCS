@@ -1,4 +1,4 @@
-﻿using RobloxCS.Types.Attributes;
+using RobloxCS.Types.Attributes;
 
 namespace RobloxCS.Client;
 

@@ -1,4 +1,4 @@
-﻿using RobloxCS.AST.Types;
+using RobloxCS.AST.Types;
 
 namespace RobloxCS.AST.Generics;
 

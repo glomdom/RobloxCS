@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.Types;
+namespace RobloxCS.Types;
 
 internal enum RobloxNativeType {
     /// <summary>

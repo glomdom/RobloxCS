@@ -1,4 +1,4 @@
-﻿using Serilog;
+using Serilog;
 
 namespace RobloxCS.Transpiler.Scoping;
 

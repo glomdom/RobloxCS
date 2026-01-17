@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST;
+namespace RobloxCS.AST;
 
 public abstract class AstNode {
     public AstNode? Parent { get; set; }
