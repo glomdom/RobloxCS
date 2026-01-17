@@ -14,6 +14,16 @@ public sealed class ServiceLoweringWalker : AstRewriter, IInternalAstVisitor<Ast
 
     public AstNode VisitTransientServiceUsageExpression(TransientServiceUsageExpression node) {
         Log.Debug("Lowering transient service usage");
+        
+        var getServiceStmt = new FunctionCallExpression {
+            Prefix = NamePrefix.FromString("game"),
+            Suffixes = [
+                new MethodCall {
+                    Name = "GetService",
+                    Args = ExpressionHelpers.FunctionArgsFromExpression(new StringExpression { Value = node.ServiceName }),
+                },
+            ],
+        };
 
         if (node.AccessExpression is FunctionCallExpression funcCall) {
             if (funcCall.Prefix is not NamePrefix name) throw new Exception("Cannot lower transient server usage whose call is a function whose prefix is not a NamePrefix.");
@@ -28,18 +38,12 @@ public sealed class ServiceLoweringWalker : AstRewriter, IInternalAstVisitor<Ast
                 ],
             };
 
-            _serviceUsageMap[node.ServiceName] = new FunctionCallExpression {
-                Prefix = NamePrefix.FromString("game"),
-                Suffixes = [
-                    new MethodCall {
-                        Name = "GetService",
-                        Args = ExpressionHelpers.FunctionArgsFromExpression(new StringExpression { Value = node.ServiceName }),
-                    },
-                ],
-            };
+            _serviceUsageMap[node.ServiceName] = getServiceStmt;
 
             return call;
         }
+
+        _serviceUsageMap[node.ServiceName] = getServiceStmt;
 
         return SymbolExpression.FromString(node.ServiceName);
     }
