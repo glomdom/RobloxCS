@@ -43,6 +43,8 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
 
         var candidateMatcher = new Matcher().AddInclude("*.slnx");
         var slnCandidates = candidateMatcher.GetResultsInFullPath(fullCwd).ToList();
+        
+        // TODO: Instead of using _pathMapping and manually mapping paths, read default.project.json.
 
         if (slnCandidates.Count == 0) {
             Log.Error("Failed to find a .slnx file in the current directory.");
