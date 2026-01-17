@@ -22,6 +22,7 @@ public sealed class CSharpTranspiler {
         PassManager.Register(new TransientLoweringPass());
         PassManager.Register(new ServiceLoweringPass());
         PassManager.Register(new CollectionsLoweringPass());
+        PassManager.Register(new ProloguePass());
 
         // TODO: FIX THIS GARBAGE..............
         Ctx.RootBlock.AddStatement(StatementHelpers.UntypedLocalAssignment("List",

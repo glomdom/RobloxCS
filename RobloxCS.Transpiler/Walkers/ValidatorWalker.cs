@@ -8,6 +8,7 @@ public sealed class ValidatorWalker : CSharpSyntaxWalker {
     public bool FoundEntryPoint => EntryPointNames.Count != 0;
     public bool IsAmbiguousEntryPoint => EntryPointNames.Count != 1;
     public List<string> EntryPointNames { get; } = [];
+    public string EntryPointClassName { get; set; } = string.Empty;
 
     private readonly TranspilationContext _ctx;
 
@@ -31,6 +32,9 @@ public sealed class ValidatorWalker : CSharpSyntaxWalker {
 
         if (isEntryPoint) {
             EntryPointNames.Add(methodSymbol.Name);
+
+            var containingClass = methodSymbol.ContainingSymbol;
+            EntryPointClassName = containingClass.Name;
         }
 
         base.VisitMethodDeclaration(node);
