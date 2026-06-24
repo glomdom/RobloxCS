@@ -1,7 +1,18 @@
 # RobloxCS
 
-Empowering Roblox developers to do better.
+> [!NOTE]
+> Experimental software. Here be dragons.
+>
+> Found an issue? Submit an issue, or PR a fix.
 
-> [!WARNING]
-> This project has now moved to [codeberg](https://codeberg.org/glomdom/RobloxCS).
-> The repository on GitHub will be made read-only.
+Empowering ROBLOX developers to do better.
+
+A C# to Luau compiler.
+
+## Status
+
+> [!NOTE]
+> Huge rewrite PRs will not be accepted as I neither have the time nor the energy to review them,
+> and the core is constantly changing.
+
+Issues and feature suggestions are welcome.
