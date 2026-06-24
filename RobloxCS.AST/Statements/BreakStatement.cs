@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Statements;
+namespace RobloxCS.AST.Statements;
 
 public sealed class BreakStatement : Statement {
     public override BreakStatement DeepClone() => new();

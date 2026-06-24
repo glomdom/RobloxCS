@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.Types;
+namespace RobloxCS.Types;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 internal class RobloxNativeAttribute : Attribute {

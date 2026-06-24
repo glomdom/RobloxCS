@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Expressions;
+namespace RobloxCS.AST.Expressions;
 
 public sealed class ParenthesisExpression : Expression {
     public required Expression Expression { get; set; }

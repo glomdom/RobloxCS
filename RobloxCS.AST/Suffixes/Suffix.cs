@@ -1,3 +1,3 @@
-﻿namespace RobloxCS.AST.Suffixes;
+namespace RobloxCS.AST.Suffixes;
 
 public abstract class Suffix : AstNode;

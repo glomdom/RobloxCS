@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST;
+namespace RobloxCS.AST;
 
 public sealed class Chunk : AstNode {
     public required Block Block { get; set; }

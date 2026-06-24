@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.TypeGenerator.Models;
+namespace RobloxCS.TypeGenerator.Models;
 
 public enum RobloxSecurityType {
     None,

@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.Tests.Data;
+namespace RobloxCS.Tests.Data;
 
 internal class NestedContinueControlFlow {
     internal void Main() {

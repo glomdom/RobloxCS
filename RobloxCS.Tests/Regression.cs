@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text;
 using RobloxCS.Compiler;
 using RobloxCS.Renderer;

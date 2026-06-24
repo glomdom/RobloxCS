@@ -1,3 +1,3 @@
-﻿namespace RobloxCS.TypeGenerator.Models;
+namespace RobloxCS.TypeGenerator.Models;
 
 public record RobloxSerialization(bool CanLoad, bool CanSave);

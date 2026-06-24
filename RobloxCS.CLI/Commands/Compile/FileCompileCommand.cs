@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using JetBrains.Annotations;
 using RobloxCS.Common;
 using RobloxCS.Compiler;

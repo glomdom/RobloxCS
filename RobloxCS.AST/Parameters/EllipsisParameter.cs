@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Parameters;
+namespace RobloxCS.AST.Parameters;
 
 public sealed class EllipsisParameter : Parameter {
     public override EllipsisParameter DeepClone() => new();

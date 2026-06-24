@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Expressions;
+namespace RobloxCS.AST.Expressions;
 
 public sealed class UnaryOperatorExpression : Expression {
     public required UnOp UnOp { get; set; }

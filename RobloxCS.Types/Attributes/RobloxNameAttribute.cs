@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.Types;
+namespace RobloxCS.Types;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
 internal class RobloxNameAttribute : Attribute {

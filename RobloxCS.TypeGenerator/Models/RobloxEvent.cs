@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.TypeGenerator.Models;
+namespace RobloxCS.TypeGenerator.Models;
 
 public sealed class RobloxEvent : RobloxMember {
     public override RobloxMemberType MemberType => RobloxMemberType.Event;

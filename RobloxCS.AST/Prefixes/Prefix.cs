@@ -1,3 +1,3 @@
-﻿namespace RobloxCS.AST.Prefixes;
+namespace RobloxCS.AST.Prefixes;
 
 public abstract class Prefix : AstNode;

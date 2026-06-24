@@ -7,7 +7,6 @@ namespace RobloxCS.Types;
 public static partial class AvatarCreationService {
     public static Dictionary<string, object> GetValidationRules() => ThrowHelper.ThrowTranspiledMethod();
     public static string AutoSetupAvatarAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static string AutoSetupAvatarNewAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static string GenerateAvatar2DPreviewAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static string GenerateAvatarAsync() => ThrowHelper.ThrowTranspiledMethod();
     public static List<object> GetBatchTokenDetailsAsync() => ThrowHelper.ThrowTranspiledMethod();

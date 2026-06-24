@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
@@ -290,13 +290,35 @@ public static class ExpressionBuilder {
         var symbol = ctx.Semantics.GetSymbolInfo(syntax).Symbol;
         if (symbol is null) throw new Exception($"Semantics failed to get symbol info for {syntax.Identifier.ValueText}.");
 
+        Log.Warning("Using dig {W}", symbol.Name);
+
         return symbol switch {
             IParameterSymbol parameterSymbol => SymbolExpression.FromString(parameterSymbol.Name),
             ILocalSymbol localSymbol => SymbolExpression.FromString(localSymbol.Name),
             IFieldSymbol fieldSymbol => HandleIFieldSymbol(fieldSymbol),
+            INamedTypeSymbol namedTypeSymbol => HandleINamedTypeSymbol(namedTypeSymbol, ctx),
 
             _ => throw new NotSupportedException($"IdentifierNameSyntax {symbol.Kind} is not supported."),
         };
+    }
+
+    private static Expression HandleINamedTypeSymbol(INamedTypeSymbol symbol, TranspilationContext ctx) {
+        var ns = symbol.ContainingNamespace;
+        var isRoblox = ns.ToDisplayString() == "RobloxCS.Types";
+
+        if (isRoblox) {
+            var nativeAttribute = SyntaxUtilities.ExtractAttributeFromAttributes<RobloxNativeAttribute>(symbol.GetAttributes());
+            if (nativeAttribute.NativeType == RobloxNativeType.Service) {
+                var serviceName = nativeAttribute.RobloxName;
+
+                return new TransientServiceUsageExpression {
+                    ServiceName = serviceName,
+                    AccessExpression = null!,
+                };
+            }
+        }
+
+        throw new NotSupportedException($"Unsupported INamedTypeSymbol {symbol}");
     }
 
     private static Expression HandleIFieldSymbol(IFieldSymbol fieldSymbol) {

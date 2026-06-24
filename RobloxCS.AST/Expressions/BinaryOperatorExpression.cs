@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Expressions;
+namespace RobloxCS.AST.Expressions;
 
 public sealed class BinaryOperatorExpression : Expression {
     public required Expression Left { get; set; }

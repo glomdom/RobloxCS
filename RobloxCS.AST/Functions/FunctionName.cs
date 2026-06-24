@@ -1,5 +1,3 @@
-﻿using System.Text;
-
 namespace RobloxCS.AST.Functions;
 
 public sealed class FunctionName : AstNode {

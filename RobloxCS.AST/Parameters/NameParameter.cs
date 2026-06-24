@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Parameters;
+namespace RobloxCS.AST.Parameters;
 
 public sealed class NameParameter : Parameter {
     public required string Name { get; set; }

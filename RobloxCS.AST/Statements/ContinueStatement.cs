@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Statements;
+namespace RobloxCS.AST.Statements;
 
 public sealed class ContinueStatement : Statement {
     public override ContinueStatement DeepClone() => new();

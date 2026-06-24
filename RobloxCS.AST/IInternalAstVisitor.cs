@@ -1,4 +1,4 @@
-﻿using RobloxCS.AST.Transient;
+using RobloxCS.AST.Transient;
 
 namespace RobloxCS.AST;
 

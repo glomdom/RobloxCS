@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST;
 using RobloxCS.AST.Statements;
@@ -15,6 +15,8 @@ public sealed class TranspilationContext {
     public CompilationUnitSyntax Root { get; }
     public Block RootBlock { get; set; } = BlockHelpers.Empty();
     public GlobalRegistry Registry { get; set; }
+    public string? EntryPointName { get; set; }
+    public string EntryPointClassName { get; set; } = string.Empty;
 
     public TranspilationContext(TranspilerOptions options, CSharpCompiler compiler) {
         Options = options;

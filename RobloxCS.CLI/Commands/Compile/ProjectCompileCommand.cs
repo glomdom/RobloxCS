@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using JetBrains.Annotations;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
@@ -43,6 +43,8 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
 
         var candidateMatcher = new Matcher().AddInclude("*.slnx");
         var slnCandidates = candidateMatcher.GetResultsInFullPath(fullCwd).ToList();
+        
+        // TODO: Instead of using _pathMapping and manually mapping paths, read default.project.json.
 
         if (slnCandidates.Count == 0) {
             Log.Error("Failed to find a .slnx file in the current directory.");
@@ -58,6 +60,8 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
         Log.Debug("Found MSBuild executable in {ExecutablePath}", vsi.MSBuildPath);
 
         using var workspace = MSBuildWorkspace.Create();
+        workspace.LoadMetadataForReferencedProjects = true;
+
         Log.Debug("Created MSBuild workspace");
 
         var solution = await workspace.OpenSolutionAsync(slnFile, cancellationToken: cancellation);
@@ -91,7 +95,18 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
                     _console.MarkupLine(diag);
                 }
 
-                var transpiler = new CSharpTranspiler(new TranspilerOptions(ScriptType.Module), compiler);
+                ScriptType scriptType;
+                if (document.Name.EndsWith(".server.cs")) {
+                    scriptType = ScriptType.Server;
+                } else if (document.Name.EndsWith(".client.cs")) {
+                    scriptType = ScriptType.Local;
+                } else {
+                    scriptType = ScriptType.Module;
+                }
+
+                Log.Verbose("Compiling {DocumentName} as a {ScriptType} script with folders {Folders}", document.Name, scriptType, document.Folders);
+
+                var transpiler = new CSharpTranspiler(new TranspilerOptions(scriptType), compiler);
                 var chunk = transpiler.Transpile();
 
                 var renderer = new RendererWalker();

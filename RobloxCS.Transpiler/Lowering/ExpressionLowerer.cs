@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.AST.Expressions;
@@ -13,6 +13,7 @@ internal static class ExpressionLowerer {
         LiteralExpressionSyntax lit when lit.IsKind(SyntaxKind.TrueLiteralExpression) => new BooleanExpression { Value = true },
         LiteralExpressionSyntax lit when lit.IsKind(SyntaxKind.FalseLiteralExpression) => new BooleanExpression { Value = false },
         CollectionExpressionSyntax col => ExpressionBuilder.BuildFromSyntax(col, ctx),
+        MemberAccessExpressionSyntax access => ExpressionBuilder.BuildFromSyntax(access, ctx),
 
         _ => throw new ArgumentOutOfRangeException(nameof(syntax), $"Unsupported expression: {syntax.Kind()}"),
     };

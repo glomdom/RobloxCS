@@ -1,4 +1,4 @@
-﻿using RobloxCS.AST;
+using RobloxCS.AST;
 
 namespace RobloxCS.Transpiler.Walkers;
 

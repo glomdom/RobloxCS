@@ -1,8 +1,9 @@
-﻿using RobloxCS.AST;
+using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.Compiler;
 using RobloxCS.Transpiler.Helpers;
 using RobloxCS.Transpiler.Passes;
+using Serilog;
 
 namespace RobloxCS.Transpiler;
 
@@ -14,12 +15,14 @@ public sealed class CSharpTranspiler {
         Ctx = new TranspilationContext(options, compiler);
         PassManager = new PassManager();
 
+        PassManager.Register(new ValidatorPass());
         PassManager.Register(new HeaderCollectorPass());
         PassManager.Register(new ConverterPass());
         PassManager.Register(new LinkerPass());
         PassManager.Register(new TransientLoweringPass());
         PassManager.Register(new ServiceLoweringPass());
         PassManager.Register(new CollectionsLoweringPass());
+        PassManager.Register(new ProloguePass());
 
         // TODO: FIX THIS GARBAGE..............
         Ctx.RootBlock.AddStatement(StatementHelpers.UntypedLocalAssignment("List",
@@ -28,7 +31,12 @@ public sealed class CSharpTranspiler {
     }
 
     public Chunk Transpile() {
-        PassManager.Run(Ctx);
+        var success = PassManager.Run(Ctx);
+        if (!success) {
+            Log.Error("Failed to transpile");
+
+            Environment.Exit(-1);
+        }
 
         return Ctx.ToChunk();
     }

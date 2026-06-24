@@ -1,4 +1,4 @@
-﻿using RobloxCS.AST;
+using RobloxCS.AST;
 using RobloxCS.AST.Statements;
 
 namespace RobloxCS.Transpiler.Helpers;

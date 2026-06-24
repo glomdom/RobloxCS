@@ -1,4 +1,4 @@
-﻿using RobloxCS.CLI.Commands.Compile;
+using RobloxCS.CLI.Commands.Compile;
 using RobloxCS.Common;
 using Spectre.Console.Cli;
 

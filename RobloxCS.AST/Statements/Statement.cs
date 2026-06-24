@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Statements;
+namespace RobloxCS.AST.Statements;
 
 public abstract class Statement : AstNode {
     public override void Accept(IAstVisitor v) => v.VisitStatement(this);

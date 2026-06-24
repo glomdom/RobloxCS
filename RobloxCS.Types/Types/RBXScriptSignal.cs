@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.Types;
+namespace RobloxCS.Types;
 
 [RobloxNative("RBXScriptSignal", RobloxNativeType.DataType)]
 public class RBXScriptSignal {

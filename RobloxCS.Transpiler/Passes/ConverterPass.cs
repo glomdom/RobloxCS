@@ -1,4 +1,4 @@
-﻿using RobloxCS.Transpiler.Walkers;
+using RobloxCS.Transpiler.Walkers;
 
 namespace RobloxCS.Transpiler.Passes;
 
@@ -9,6 +9,7 @@ namespace RobloxCS.Transpiler.Passes;
 /// </summary>
 public sealed class ConverterPass : IPass {
     public string Name => "Converter";
+    public List<string> Diagnostics { get; } = [];
 
     public void Run(TranspilationContext ctx) {
         var walker = new ConverterWalker(ctx);

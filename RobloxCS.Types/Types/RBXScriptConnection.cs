@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.Types;
+namespace RobloxCS.Types;
 
 [RobloxNative("RBXScriptConnection", RobloxNativeType.DataType)]
 public class RBXScriptConnection {

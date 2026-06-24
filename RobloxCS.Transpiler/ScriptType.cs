@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.Transpiler;
+namespace RobloxCS.Transpiler;
 
 public enum ScriptType {
     Local,

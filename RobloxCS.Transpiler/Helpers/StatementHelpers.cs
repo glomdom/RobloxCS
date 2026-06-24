@@ -1,4 +1,4 @@
-﻿using RobloxCS.AST;
+using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
 using RobloxCS.AST.Parameters;
@@ -66,6 +66,18 @@ public static class StatementHelpers {
         };
         
         return decl;
+    }
+    
+    public static FunctionCallStatement SimpleFunctionCall(string name, params Expression[] args) {
+        var prefix = NamePrefix.FromString(name);
+        var suffix = new AnonymousCall { Arguments = ExpressionHelpers.FunctionArgsFromExpressions(args) };
+
+        var stmt = new FunctionCallStatement {
+            Prefix = prefix,
+            Suffixes = [suffix],
+        };
+        
+        return stmt;
     }
 
     public static FunctionCallStatement SimpleMethodCall(string name, string methodName, params Expression[] args) {

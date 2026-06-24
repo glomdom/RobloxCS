@@ -1,9 +1,10 @@
-﻿using RobloxCS.Transpiler.Walkers;
+using RobloxCS.Transpiler.Walkers;
 
 namespace RobloxCS.Transpiler.Passes;
 
 public sealed class ServiceLoweringPass : IPass {
     public string Name => "Service Lowering";
+    public List<string> Diagnostics { get; } = [];
 
     private readonly ServiceLoweringWalker _walker = new();
 

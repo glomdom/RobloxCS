@@ -1,4 +1,4 @@
-﻿namespace RobloxCS.AST.Expressions;
+namespace RobloxCS.AST.Expressions;
 
 public sealed class ElseIfExpression : Expression {
     public required Expression Condition { get; set; }
