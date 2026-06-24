@@ -195,14 +195,14 @@ public static class SyntaxUtilities {
 
         public INamedTypeSymbol CheckedGetDeclaredSymbol(BaseTypeDeclarationSyntax node) {
             var sym = semantics.GetDeclaredSymbol(node);
-            if (sym is null || sym is IErrorTypeSymbol) {
+            if (sym is null or IErrorTypeSymbol) {
                 throw new Exception($"CheckedGetDeclaredSymbol failed at asking semantic model what type {node.Identifier.ValueText} is");
             }
 
             return sym;
         }
 
-        public T GetSymbol<T>(CSharpSyntaxNode node) where T : ISymbol {
+        public T GetSymbol<T>(MemberAccessExpressionSyntax node) where T : ISymbol {
             var symbol = semantics.GetSymbolInfo(node).Symbol;
             if (symbol is null) {
                 throw new Exception("Attempted to get symbol from MemberAccessExpressionSyntax but got null.");
@@ -211,7 +211,7 @@ public static class SyntaxUtilities {
             return (T)symbol;
         }
 
-        public ISymbol GetSymbol(CSharpSyntaxNode node) {
+        public ISymbol GetSymbol(MemberAccessExpressionSyntax node) {
             var symbol = semantics.GetSymbolInfo(node).Symbol;
 
             return symbol ?? throw new Exception("Attempted to get symbol from MemberAccessExpressionSyntax but got null.");
