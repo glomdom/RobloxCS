@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Text;
 using RobloxCS.Compiler;
 using RobloxCS.Renderer;
 using RobloxCS.Transpiler;
@@ -77,7 +76,7 @@ public class Regression {
     }
 
     private static string TranspileFile(string path) {
-        var transpiler = new CSharpTranspiler(new TranspilerOptions(ScriptType.Local), new CSharpCompiler(path, "RobloxCS.Types.dll"));
+        var transpiler = new CSharpTranspiler(new TranspilerOptions(ScriptType.Local), new CSharpCompiler(path, "RobloxCS.Types.dll", true));
 
         var chunk = transpiler.Transpile();
         var renderer = new RendererWalker();

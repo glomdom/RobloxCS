@@ -8,6 +8,8 @@ public sealed class ProloguePass : IPass {
     public List<string> Diagnostics { get; } = [];
 
     public void Run(TranspilationContext ctx) {
+        if (string.IsNullOrEmpty(ctx.EntryPointName)) return;
+
         var entryName = ctx.EntryPointName!;
         var instantiateExpr = ExpressionHelpers.DirectFunctionCall(ctx.EntryPointClassName, "new");
         var instantiateBind = StatementHelpers.UntypedLocalAssignment("__entrypointCls", instantiateExpr);

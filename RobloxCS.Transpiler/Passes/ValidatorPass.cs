@@ -11,16 +11,23 @@ public sealed class ValidatorPass : IPass {
         var walker = new ValidatorWalker(ctx);
         walker.Visit(ctx.Root);
 
-        if (ctx.Options.ScriptType != ScriptType.Module) {
-            if (walker is { FoundEntryPoint: true, IsAmbiguousEntryPoint: true }) {
-                Diagnostics.Add("Found an entry point but it is ambiguous.");
-            } else if (walker is { FoundEntryPoint: true, IsAmbiguousEntryPoint: false }) {
+        if (ctx.Options.ScriptType == ScriptType.Module) return;
+
+        switch (walker) {
+            case { FoundEntryPoint: true, IsAmbiguousEntryPoint: true }: Diagnostics.Add("Found an entry point but it is ambiguous."); break;
+            case { FoundEntryPoint: true, IsAmbiguousEntryPoint: false }: {
                 ctx.EntryPointName = walker.EntryPointNames[0];
                 ctx.EntryPointClassName = walker.EntryPointClassName;
 
                 Log.Verbose("Found entry point {EntryPointName}", ctx.EntryPointName);
-            } else {
+
+                break;
+            }
+
+            default: {
                 Diagnostics.Add("Missing entry point in non-module script"); // TODO: move this to Diagnostics struct
+
+                break;
             }
         }
     }
