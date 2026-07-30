@@ -26,8 +26,8 @@
             <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="11.0.0-preview.5.26302.115"/>
-        <PackageReference Include="Spectre.Console" Version="0.57.1"/>
-        <PackageReference Include="Spectre.Console.Cli" Version="1.0.0-alpha.0.12"/>
+        <PackageReference Include="Spectre.Console" Version="0.57.2" />
+        <PackageReference Include="Spectre.Console.Cli" Version="0.55.0" />
     </ItemGroup>
 
     <ItemGroup>

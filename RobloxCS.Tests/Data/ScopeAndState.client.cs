@@ -1,9 +1,12 @@
+using RobloxCS.Types.Attributes;
+
 namespace RobloxCS.Tests.Data;
 
 internal class ScopeAndState {
     private static int GlobalCounter = 0;
     private int ID = 0;
 
+    [EntryPoint]
     internal void Main() {
         var instanceA = new ScopeAndState();
         var instanceB = new ScopeAndState();

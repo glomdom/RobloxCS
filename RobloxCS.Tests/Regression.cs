@@ -73,26 +73,16 @@ public class Regression {
             var name = Path.GetFileNameWithoutExtension(path) + ".luau";
 
             File.WriteAllText(Path.Join(outDir, name), output);
-            InjectInstantiate(Path.Join(outDir, name), Path.GetFileNameWithoutExtension(path));
         }
     }
 
     private static string TranspileFile(string path) {
-        var transpiler = new CSharpTranspiler(new TranspilerOptions(ScriptType.Module), new CSharpCompiler(path));
+        var transpiler = new CSharpTranspiler(new TranspilerOptions(ScriptType.Local), new CSharpCompiler(path, "RobloxCS.Types.dll"));
 
         var chunk = transpiler.Transpile();
         var renderer = new RendererWalker();
         var output = renderer.Render(chunk);
 
         return output;
-    }
-
-    private static void InjectInstantiate(string path, string className) {
-        var sb = new StringBuilder();
-        sb.AppendLine($"local __inst = {className}.new()");
-        sb.AppendLine("__inst:Main()");
-
-        using var file = File.Open(path, FileMode.Append);
-        file.Write(Encoding.UTF8.GetBytes(sb.ToString()));
     }
 }

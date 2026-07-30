@@ -1,6 +1,9 @@
+using RobloxCS.Types.Attributes;
+
 namespace RobloxCS.Tests.Data;
 
 internal class NestedContinueControlFlow {
+    [EntryPoint]
     internal void Main() {
         for (var x = 0; x < 3; x++) {
             for (var y = 0; y < 3; y++) {

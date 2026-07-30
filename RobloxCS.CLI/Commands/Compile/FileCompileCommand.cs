@@ -30,7 +30,7 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
         LoggerSetup.LevelSwitch.MinimumLevel = settings.Verbosity ? LogEventLevel.Verbose : LogEventLevel.Warning;
 
         Log.Information("Creating C# compiler");
-        var compiler = new CSharpCompiler(settings.Path);
+        var compiler = new CSharpCompiler(settings.Path, settings.TypesFilePath);
         var diagnosticMessages = compiler.FormatDiagnostics();
 
         TranspilerOptions options;

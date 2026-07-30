@@ -30,11 +30,15 @@ public sealed class ValidatorWalker : CSharpSyntaxWalker {
             attr.AttributeClass?.ContainingNamespace?.ToDisplayString() == "RobloxCS.Types.Attributes"
         );
 
-        if (isEntryPoint) {
+        if (isEntryPoint && _ctx.Options.ScriptType != ScriptType.Module) {
             EntryPointNames.Add(methodSymbol.Name);
 
             var containingClass = methodSymbol.ContainingSymbol;
             EntryPointClassName = containingClass.Name;
+        } else if (isEntryPoint) {
+            Log.Error("Usage of EntryPoint attribute inside a script that will be generated as a ModuleScript is not allowed");
+
+            return;
         }
 
         base.VisitMethodDeclaration(node);

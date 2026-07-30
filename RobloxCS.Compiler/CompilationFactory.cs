@@ -14,13 +14,11 @@ internal static class CompilationFactory {
         global using System.Text;
     ";
 
-    private const string TypesRef = @"RobloxCS.Types\bin\Debug\net10.0\RobloxCS.Types.dll";
-
-    public static CSharpCompilation Create(string assemblyName, SyntaxTree syntaxTree) {
+    public static CSharpCompilation Create(string assemblyName, SyntaxTree syntaxTree, string typesPath) {
         var watch = Stopwatch.StartNew();
 
         var standardRefs = Net100.References.All;
-        var allRefs = standardRefs.Append(MetadataReference.CreateFromFile(TypesRef));
+        var allRefs = standardRefs.Append(MetadataReference.CreateFromFile(typesPath));
 
         var globalUsingsTree = CSharpSyntaxTree.ParseText(GlobalUsingsCode);
 

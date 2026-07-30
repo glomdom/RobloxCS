@@ -25,9 +25,9 @@ public sealed class CSharpTranspiler {
         PassManager.Register(new ProloguePass());
 
         // TODO: FIX THIS GARBAGE..............
-        Ctx.RootBlock.AddStatement(StatementHelpers.UntypedLocalAssignment("List",
-            ExpressionHelpers.SimpleFunctionCall("require",
-                SymbolExpression.FromString("game:GetService(\"ReplicatedStorage\"):WaitForChild(\"robloxcs\"):WaitForChild(\"RuntimeLib\"):WaitForChild(\"List\")"))));
+        // Ctx.RootBlock.AddStatement(StatementHelpers.UntypedLocalAssignment("List",
+        //     ExpressionHelpers.SimpleFunctionCall("require",
+        //         SymbolExpression.FromString("game:GetService(\"ReplicatedStorage\"):WaitForChild(\"robloxcs\"):WaitForChild(\"RuntimeLib\"):WaitForChild(\"List\")"))));
     }
 
     public Chunk Transpile() {

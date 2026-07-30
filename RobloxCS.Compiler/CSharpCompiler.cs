@@ -16,11 +16,11 @@ public sealed class CSharpCompiler {
 
     public CompilationUnitSyntax Root => SyntaxTree.GetCompilationUnitRoot();
 
-    public CSharpCompiler(string path) {
+    public CSharpCompiler(string path, string typesPath) {
         FilePath = path;
 
         SyntaxTree = SourceParser.ParseFile(path);
-        Compilation = CompilationFactory.Create("Anonymous", SyntaxTree);
+        Compilation = CompilationFactory.Create("Anonymous", SyntaxTree, typesPath);
         Types = new MetadataTypes(Compilation);
 
         Log.Information("Running diagnostics for {File}", path);
