@@ -28,7 +28,8 @@ public static class ExpressionBuilder {
             ElementAccessExpressionSyntax elementAccessExpressionSyntax => HandleElementAccessExpressionSyntax(elementAccessExpressionSyntax, ctx),
             ParenthesizedExpressionSyntax parenthesizedExpressionSyntax => HandleParenthesizedExpressionSyntax(parenthesizedExpressionSyntax, ctx),
             ObjectCreationExpressionSyntax objectCreationExpressionSyntax => HandleObjectCreationExpressionSyntax(objectCreationExpressionSyntax, ctx),
-            ParenthesizedLambdaExpressionSyntax parenthesizedLambdaExpressionSyntax => HandleParenthesizedLambdaExpressionSyntax(parenthesizedLambdaExpressionSyntax, ctx),
+            ParenthesizedLambdaExpressionSyntax parenthesizedLambdaExpressionSyntax => HandleParenthesizedLambdaExpressionSyntax(parenthesizedLambdaExpressionSyntax,
+                ctx),
             PostfixUnaryExpressionSyntax postfixUnaryExpressionSyntax => HandlePostfixUnarySyntax(postfixUnaryExpressionSyntax, ctx),
 
             _ => throw new NotSupportedException($"Expression {syntax.Kind()} is not supported. {syntax}"),
@@ -116,7 +117,6 @@ public static class ExpressionBuilder {
         List<Expression> exprs = [];
         if (syntax.ArgumentList is not null) {
             var args = syntax.ArgumentList.Arguments;
-            foreach (var arg in args) { }
 
             exprs = syntax.ArgumentList.Arguments.Select(a => BuildFromSyntax(a.Expression, ctx)).ToList();
         }
@@ -130,7 +130,7 @@ public static class ExpressionBuilder {
         if (nativeAttribute.NativeType == RobloxNativeType.Instance) {
             Log.Verbose("Rewriting instance creation of {InstanceName} to use Instance.new", nativeAttribute.RobloxName);
 
-            List<Expression> prependedExprs = [StringExpression.FromString(nativeAttribute.RobloxName), ..exprs];
+            List<Expression> prependedExprs = [StringExpression.FromString(nativeAttribute.RobloxName), .. exprs];
 
             return ExpressionHelpers.DirectFunctionCall("Instance", "new", prependedExprs);
         }
@@ -197,27 +197,28 @@ public static class ExpressionBuilder {
             }
         }
 
-        if (methodSymbol.IsStatic) throw new Exception("Static methods are not yet supported.");
+        var isExternal = SyntaxUtilities.IsInvokedOnExternalObject(syntax, ctx.Semantics, out var receiver);
+        if (isExternal) {
+            var obj = BuildFromSyntax((ExpressionSyntax)receiver!.Syntax, ctx);
+            var prefix = new ExpressionPrefix { Expression = obj };
 
-        if (SyntaxUtilities.IsInvokedOnExternalObject(syntax, ctx.Semantics, out var receiver)) {
-            var obj = BuildFromSyntax((ExpressionSyntax)receiver.Syntax, ctx);
-
-            var call = new FunctionCallExpression {
-                Prefix = new ExpressionPrefix { Expression = obj },
-                Suffixes = [
-                    new MethodCall {
-                        Name = methodSymbol.Name,
-                        Args = functionArgs,
-                    },
-                ],
-            };
-
-            return call;
+            return methodSymbol.IsStatic
+                ? new FunctionCallExpression {
+                    Prefix = prefix,
+                    Suffixes = [
+                        new Dot { Name = ExpressionHelpers.SymbolFromString(methodSymbol.Name) },
+                        new AnonymousCall { Arguments = functionArgs },
+                    ],
+                }
+                : new FunctionCallExpression {
+                    Prefix = prefix,
+                    Suffixes = [new MethodCall { Name = methodSymbol.Name, Args = functionArgs }],
+                };
         }
 
-        var selfCall = ExpressionHelpers.SimpleMethodCall("self", methodSymbol.Name, functionArgs);
-
-        return selfCall;
+        return methodSymbol.IsStatic
+            ? ExpressionHelpers.DirectFunctionCall(methodSymbol.ContainingType.Name, methodSymbol.Name, args)
+            : ExpressionHelpers.SimpleMethodCall("self", methodSymbol.Name, functionArgs);
     }
 
     private static Expression HandlePostfixExpressionSyntax(PostfixUnaryExpressionSyntax syntax, TranspilationContext ctx) {
@@ -289,8 +290,6 @@ public static class ExpressionBuilder {
     private static Expression HandleIdentifierNameSyntax(IdentifierNameSyntax syntax, TranspilationContext ctx) {
         var symbol = ctx.Semantics.GetSymbolInfo(syntax).Symbol;
         if (symbol is null) throw new Exception($"Semantics failed to get symbol info for {syntax.Identifier.ValueText}.");
-
-        Log.Warning("Using dig {W}", symbol.Name);
 
         return symbol switch {
             IParameterSymbol parameterSymbol => SymbolExpression.FromString(parameterSymbol.Name),

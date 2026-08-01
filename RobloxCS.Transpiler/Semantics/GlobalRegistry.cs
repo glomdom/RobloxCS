@@ -40,6 +40,6 @@ public sealed class GlobalRegistry {
         var list = new ClassInfo(types.GenericListTypeSymbol.MetadataName);
         list.AddMember("Count", BasicTypeInfo.Number());
 
-        Classes["List"] = list;
+        // Classes["List"] = list;
     }
 }
