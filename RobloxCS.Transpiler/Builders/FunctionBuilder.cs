@@ -8,6 +8,7 @@ using RobloxCS.AST.Parameters;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
 using RobloxCS.Transpiler.Helpers;
+using Serilog;
 using TypeInfo = RobloxCS.AST.Types.TypeInfo; // conflict with `Microsoft.CodeAnalysis.TypeInfo`
 
 namespace RobloxCS.Transpiler.Builders;
@@ -117,9 +118,11 @@ public static class FunctionBuilder {
                 functionBlock.AddStatement(result);
             }
         }
-
+        
+        var name = symbol.IsStatic ? $"{cls.Name}.{symbol.Name}" : $"{cls.Name}:{symbol.Name}";
+        
         var decl = StatementHelpers.FullFunctionDeclaration(
-            $"{cls.Name}:{symbol.Name}",
+            name,
             pars,
             specs,
             functionBlock,
