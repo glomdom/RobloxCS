@@ -2,23 +2,65 @@ name: Build and Test
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ master ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ master ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+  CONFIGURATION: Release
+  LUNE_VERSION: 0.10.5
 
 jobs:
   build:
+    name: Build & Test
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
+    
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+          uses: actions/setup-dotnet@v6
+          with:
+            dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
         with:
-          dotnet-version: 10.0.x
+          path: ${{ env.NUGET_PACKAGES }}
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props', '**/*.sln', '**/*.slnx') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Install Lune
+        run: |
+          set -euo pipefail
+          dir="$RUNNER_TEMP/lune"
+          mkdir -p "$dir"
+          curl -fsSL -o "$dir/lune.zip" \
+            "https://github.com/lune-org/lune/releases/download/v${LUNE_VERSION}/lune-${LUNE_VERSION}-linux-x86_64.zip"
+          unzip -q "$dir/lune.zip" -d "$dir"
+          chmod +x "$dir/lune"
+          echo "$dir" >> "$GITHUB_PATH"
+
+      - name: Verify Lune
+        run: lune --version
+
       - name: Restore dependencies
         run: dotnet restore
+
       - name: Build
-        run: dotnet build --no-restore
-#      - name: Test
-#        run: dotnet test --no-restore
+        run: dotnet build --no-restore -c "$CONFIGURATION"
+
+      - name: Test
+        run: dotnet test --no-build -c "$CONFIGURATION"
