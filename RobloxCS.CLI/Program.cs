@@ -1,5 +1,6 @@
 using RobloxCS.CLI.Commands.Compile;
 using RobloxCS.Common;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace RobloxCS.CLI;
@@ -22,6 +23,18 @@ internal static class Program {
             });
         });
 
-        return app.Run(args);
+        try {
+            return app.Run(args);
+        } catch (CommandParseException ex) {
+            AnsiConsole.MarkupLine($"[red]error:[/] {Markup.Escape(ex.Message)}");
+            AnsiConsole.WriteLine();
+            app.Run(["--help"]);
+
+            return -1;
+        } catch (Exception ex) {
+            AnsiConsole.MarkupLine($"[red]error:[/] {Markup.Escape(ex.Message)}");
+
+            return -1;
+        }
     }
 }
