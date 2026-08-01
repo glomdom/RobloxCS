@@ -53,8 +53,12 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
         var loaded = await SolutionLoader.LoadAsync(slnFile, cancellation);
         if (!loaded.Ok) return Fail(loaded.Diagnostic);
 
+        Log.Debug("Loaded solution from {SolutionFile}", slnFile);
+
         var loadedAnchors = RojoProject.LoadAnchors(projectFile);
         if (!loadedAnchors.Ok) return Fail(loadedAnchors.Diagnostic);
+
+        Log.Debug("Loaded anchors from rojo project {ProjectFile}", projectFile);
 
         var solution = loaded.Value;
         var anchors = loadedAnchors.Value;
@@ -66,6 +70,8 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
 
             var plan = prepared.Value;
 
+            Log.Debug("Prepared project {ProjectName}", plan.Project.Name);
+
             foreach (var document in project.Documents.Where(Filters.ShouldCompile)) {
                 var diagnostics = new List<Diagnostic>();
                 var compiled = await DocumentCompiler.CompileDocument(document, plan, diagnostics, cancellation);
@@ -74,6 +80,8 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
 
                     return Fail(compiled.Diagnostic);
                 }
+                
+                Log.Debug("Compiled file {FileName}", document.Name);
 
                 outputs.Add(compiled.Value);
             }
