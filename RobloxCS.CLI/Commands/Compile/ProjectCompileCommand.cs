@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.Extensions.FileSystemGlobbing;
 using RobloxCS.Common;
+using RobloxCS.Common.Rojo;
 using RobloxCS.Compiler;
 using RobloxCS.Renderer;
 using RobloxCS.Transpiler;
@@ -19,10 +20,9 @@ namespace RobloxCS.CLI.Commands.Compile;
 [Description("Compile a C# project.")]
 [UsedImplicitly]
 public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.Settings> {
-    private readonly IAnsiConsole _console;
+    private const string DefaultProjectFileName = "default.project.json";
 
-    // TODO: Extract this into a config file perhaps
-    private readonly Dictionary<string, string> _pathMapping = new() { { "Shared", "Shared" }, { "Server", "Server" }, { "Client", "Client" } };
+    private readonly IAnsiConsole _console;
 
     public ProjectCompileCommand(IAnsiConsole console) {
         _console = console;
@@ -50,7 +50,13 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
         }
 
         var slnFile = slnCandidates.First();
-        var outDir = Path.Combine(fullCwd, "out");
+
+        var projectFile = Path.Combine(fullCwd, DefaultProjectFileName);
+        if (!File.Exists(projectFile)) {
+            Log.Error("Failed to find {ProjectFileName} in {SearchDirectory}. Output paths are read from it.", DefaultProjectFileName, fullCwd);
+
+            return -1;
+        }
 
         if (!MSBuildLocator.IsRegistered) {
             var vsi = MSBuildLocator.RegisterDefaults();
@@ -59,11 +65,11 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
             Log.Debug("Found MSBuild executable in {ExecutablePath}", vsi.MSBuildPath);
         }
 
-        return await RunAsync(slnFile, outDir, cancellation);
+        return await RunAsync(slnFile, projectFile, cancellation);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private async Task<int> RunAsync(string slnFile, string outDir, CancellationToken cancellation) {
+    private async Task<int> RunAsync(string slnFile, string projectFile, CancellationToken cancellation) {
         Log.Information("Starting project handling for {ProjectFilePath}", slnFile);
 
         using var workspace = MSBuildWorkspace.Create();
@@ -92,29 +98,35 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
 
         Log.Verbose("Opened solution {SolutionName}", solutionName);
 
+        var anchors = RojoProject.ReadAnchors(projectFile);
+        foreach (var x in anchors) {
+            Log.Debug("Got instance anchor {Anchor}", x);
+        }
+
+        if (anchors.Count == 0) {
+            Log.Error("{ProjectFile} declares no $path entries, so there is nowhere to write output.", projectFile);
+
+            return -1;
+        }
+
         foreach (var project in solution.Projects) {
             var compilation = await GetProjectCompilationAsync(project, cancellation);
             if (compilation is null) return -1;
 
             if (!compilation.References.Any()) {
                 Log.Error(
-                    "Project {ProjectName} compiled with zero metadata references. MSBuildWorkspace does not restore -- run `dotnet restore` on the target solution.",
+                    "Project {ProjectName} compiled with zero metadata references. MSBuildWorkspace does not restore, run `dotnet restore` on the target solution.",
                     project.Name
                 );
 
                 return -1;
             }
 
-            Log.Debug(
-                "Got C# compilation for {ProjectName} with {ReferenceCount} reference(s)",
-                project.Name, compilation.References.Count());
+            Log.Debug("Got C# compilation for {ProjectName} with {ReferenceCount} reference(s)", project.Name, compilation.References.Count());
 
-            // resolve the output mapping once per project rather than once per document
-            if (!_pathMapping.TryGetValue(project.Name.Split('.').Last(), out var dirName)) {
-                Log.Error("Failed to get directory mapping for {ProjectName}. Is it missing?", project.Name);
+            if (!RojoProject.TryResolveAnchor(project.Name, anchors, out var anchor)) return -1;
 
-                return -1;
-            }
+            Log.Debug("Mapped {ProjectName} to {Anchor}", project.Name, anchor);
 
             foreach (var document in project.Documents) {
                 if (document.Folders is ["obj", ..]) {
@@ -159,7 +171,7 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
                 var code = renderer.Render(chunk);
 
                 var filename = Path.GetFileNameWithoutExtension(syntaxTree.FilePath);
-                var combinedOutDir = Path.Combine([outDir, dirName, .. document.Folders]);
+                var combinedOutDir = Path.Combine([anchor.FullPath, .. document.Folders]);
                 var outPath = Path.Combine(combinedOutDir, $"{filename}.luau");
 
                 Directory.CreateDirectory(combinedOutDir);
