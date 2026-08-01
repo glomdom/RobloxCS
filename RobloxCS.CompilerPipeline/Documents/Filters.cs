@@ -3,5 +3,10 @@
 namespace RobloxCS.CompilerPipeline.Documents;
 
 public static class Filters {
-    public static bool ShouldCompile(Document x) => x.Folders is not ["obj", ..];
+    public static bool ShouldCompile(Document x) {
+        if (x.Folders is ["obj", ..] or ["bin", ..]) return false;
+        if (string.IsNullOrEmpty(x.FilePath)) return false;
+
+        return true;
+    }
 }
