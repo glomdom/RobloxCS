@@ -2,6 +2,7 @@
   <Project Path="RobloxCS.AST\RobloxCS.AST.csproj" />
   <Project Path="RobloxCS.CLI\RobloxCS.CLI.csproj" />
   <Project Path="RobloxCS.Common\RobloxCS.Common.csproj" />
+  <Project Path="RobloxCS.CompilerPipeline/RobloxCS.CompilerPipeline.csproj" />
   <Project Path="RobloxCS.Compiler\RobloxCS.Compiler.csproj" />
   <Project Path="RobloxCS.Renderer\RobloxCS.Renderer.csproj" />
   <Project Path="RobloxCS.Tests\RobloxCS.Tests.csproj" />

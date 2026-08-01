@@ -1,15 +1,19 @@
 ﻿using System.Text.Json;
+using RobloxCS.Common.Diagnostics;
 using Serilog;
 
 namespace RobloxCS.Common.Rojo;
 
 public static class RojoProject {
-    public static List<RojoAnchor> ReadAnchors(string projectFilePath) {
-        var projectDir = Path.GetDirectoryName(Path.GetFullPath(projectFilePath)) ?? throw new InvalidOperationException($"Could not determine directory of '{projectFilePath}'");
+    public static Result<List<RojoAnchor>> LoadAnchors(string projectFilePath) {
+        var projectDir = Path.GetDirectoryName(Path.GetFullPath(projectFilePath));
+        if (projectDir is null) {
+            return Diagnostic.Error(DiagnosticId.FileNotFound, $"Could not determine directory of '{projectFilePath}'");
+        }
 
         using var doc = JsonDocument.Parse(File.ReadAllText(projectFilePath));
         if (!doc.RootElement.TryGetProperty("tree", out var tree)) {
-            throw new InvalidOperationException($"'{projectFilePath}' has no 'tree' element");
+            return Diagnostic.Error(DiagnosticId.InvalidProjectJson, $"'{projectFilePath}' has no 'tree' element");
         }
 
         var anchors = new List<RojoAnchor>();

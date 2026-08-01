@@ -1,10 +1,8 @@
 using System.ComponentModel;
 using JetBrains.Annotations;
 using RobloxCS.Common;
-using RobloxCS.Compiler;
-using RobloxCS.Renderer;
-using RobloxCS.Transpiler;
-using Serilog;
+using RobloxCS.Common.Diagnostics;
+using RobloxCS.CompilerPipeline.Documents;
 using Serilog.Events;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -29,34 +27,23 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
     protected override int Execute(CommandContext context, Settings settings, CancellationToken cancellation) {
         LoggerSetup.LevelSwitch.MinimumLevel = settings.Verbosity ? LogEventLevel.Verbose : LogEventLevel.Warning;
 
-        Log.Information("Creating C# compiler");
-        var compiler = new CSharpCompiler(settings.Path, settings.TypesFilePath, settings.SkipDiagnostics);
-        var diagnosticMessages = compiler.FormatDiagnostics();
+        List<Diagnostic> diagnostics = [];
+        var result = FileCompiler.Compile(settings.Path, settings.TypesFilePath, settings.SkipDiagnostics, diagnostics);
 
-        TranspilerOptions options;
-        if (settings.Path.EndsWith("client.cs")) {
-            options = new TranspilerOptions(ScriptType: ScriptType.Local);
-        } else if (settings.Path.EndsWith("server.cs")) {
-            options = new TranspilerOptions(ScriptType: ScriptType.Server);
-        } else {
-            options = new TranspilerOptions(ScriptType: ScriptType.Module);
+        foreach (var d in diagnostics) {
+            _console.WriteLine(d.Render());
         }
 
-        foreach (var diagnostic in diagnosticMessages) {
-            _console.MarkupLine(diagnostic);
-        }
+        if (!result.Ok) return Fail(result.Diagnostic);
 
-        Log.Information("Creating C# transpiler");
-        var transpiler = new CSharpTranspiler(options, compiler);
-        var chunk = transpiler.Transpile();
-
-        Log.Information("Starting to render nodes");
-
-        var t = new RendererWalker();
-        var output = t.Render(chunk);
-
-        Console.WriteLine(output);
+        Console.WriteLine(result.Value);
 
         return 0;
+    }
+
+    private int Fail(Diagnostic diag) {
+        _console.MarkupLine(diag.Render());
+
+        return -1;
     }
 }
