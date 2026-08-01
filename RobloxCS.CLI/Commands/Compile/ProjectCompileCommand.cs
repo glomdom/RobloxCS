@@ -18,15 +18,17 @@ namespace RobloxCS.CLI.Commands.Compile;
 [Description("Compile a C# project.")]
 [UsedImplicitly]
 public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.Settings> {
-    private const string DefaultProjectFileName = "default.project.json";
-
     private readonly IAnsiConsole _console;
 
     public ProjectCompileCommand(IAnsiConsole console) {
         _console = console;
     }
 
-    public sealed class Settings : CompileSettings;
+    public sealed class Settings : CompileSettings {
+        [CommandOption("--project")]
+        [Description("File path to Rojo's project JSON")]
+        public string ProjectJsonPath { get; init; } = "default.project.json";
+    }
 
     protected override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellation) {
         LoggerSetup.LevelSwitch.MinimumLevel = settings.Verbosity ? LogEventLevel.Verbose : LogEventLevel.Warning;
@@ -36,9 +38,9 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
         if (!discovery.Ok) return Fail(discovery.Diagnostic);
 
         var slnFile = discovery.Value;
-        var projectFile = Path.Combine(cwd, DefaultProjectFileName);
+        var projectFile = Path.Combine(cwd, settings.ProjectJsonPath);
         if (!File.Exists(projectFile)) {
-            Log.Error("Failed to find {ProjectFileName} in {SearchDirectory}.", DefaultProjectFileName, cwd);
+            Log.Error("Failed to find {ProjectFileName} in {SearchDirectory}.", settings.ProjectJsonPath, cwd);
 
             return -1;
         }
@@ -80,7 +82,7 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
 
                     return Fail(compiled.Diagnostic);
                 }
-                
+
                 Log.Debug("Compiled file {FileName}", document.Name);
 
                 outputs.Add(compiled.Value);
