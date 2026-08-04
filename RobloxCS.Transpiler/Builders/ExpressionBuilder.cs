@@ -28,8 +28,7 @@ public static class ExpressionBuilder {
             ElementAccessExpressionSyntax elementAccessExpressionSyntax => HandleElementAccessExpressionSyntax(elementAccessExpressionSyntax, ctx),
             ParenthesizedExpressionSyntax parenthesizedExpressionSyntax => HandleParenthesizedExpressionSyntax(parenthesizedExpressionSyntax, ctx),
             ObjectCreationExpressionSyntax objectCreationExpressionSyntax => HandleObjectCreationExpressionSyntax(objectCreationExpressionSyntax, ctx),
-            ParenthesizedLambdaExpressionSyntax parenthesizedLambdaExpressionSyntax => HandleParenthesizedLambdaExpressionSyntax(parenthesizedLambdaExpressionSyntax,
-                ctx),
+            ParenthesizedLambdaExpressionSyntax parenthesizedLambdaExpressionSyntax => HandleParenthesizedLambdaExpressionSyntax(parenthesizedLambdaExpressionSyntax, ctx),
             PostfixUnaryExpressionSyntax postfixUnaryExpressionSyntax => HandlePostfixUnarySyntax(postfixUnaryExpressionSyntax, ctx),
 
             _ => throw new NotSupportedException($"Expression {syntax.Kind()} is not supported. {syntax}"),
