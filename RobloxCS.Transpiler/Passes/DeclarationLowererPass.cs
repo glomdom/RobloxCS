@@ -13,7 +13,7 @@ public sealed class DeclarationLowererPass : IPass {
         var builder = new HirBuilder(ctx);
         var module = builder.Build();
 
-        foreach (var type in module.Classes) {
+        foreach (var type in module.Types) {
             AnsiConsole.WriteLine($"{type.Symbol.Name}");
 
             foreach (var field in type.Fields) {

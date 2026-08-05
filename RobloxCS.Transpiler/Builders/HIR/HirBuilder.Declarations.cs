@@ -8,7 +8,7 @@ using Serilog;
 namespace RobloxCS.Transpiler.Builders.HIR;
 
 public sealed partial class HirBuilder {
-    public HirClass BuildTypeDeclaration(INamedTypeSymbol typeSymbol, TypeDeclarationSyntax typeSyntax) {
+    public HirType BuildType(INamedTypeSymbol typeSymbol, TypeDeclarationSyntax typeSyntax) {
         var methods = new List<HirMethod>();
         var fields = new List<HirField>();
 
@@ -47,7 +47,7 @@ public sealed partial class HirBuilder {
             // }
         }
 
-        return new HirClass {
+        return new HirType {
             Location = SyntaxUtilities.ResolveLocations(typeSymbol.Locations),
             Symbol = typeSymbol,
             Base = typeSymbol.BaseType,

@@ -15,18 +15,18 @@ public sealed partial class HirBuilder {
     public HirModule Build() {
         var types = Context.Root.DescendantNodes().OfType<TypeDeclarationSyntax>();
 
-        var classes = new List<HirClass>();
+        var classes = new List<HirType>();
 
         foreach (var type in types) {
             var typeSymbol = Context.Semantics.CheckedGetDeclaredSymbol<INamedTypeSymbol>(type);
-            var result = BuildTypeDeclaration(typeSymbol, type);
+            var result = BuildType(typeSymbol, type);
 
             classes.Add(result);
         }
 
         return new HirModule {
             SourcePath = Context.Compiler.FilePath,
-            Classes = classes,
+            Types = classes,
         };
     }
 }
