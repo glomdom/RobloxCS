@@ -15,11 +15,10 @@ public sealed class CSharpTranspiler {
 
         PassManager.Register(new ValidatorPass());
         PassManager.Register(new HeaderCollectorPass());
-        PassManager.Register(new ConverterPass());
+        PassManager.Register(new DeclarationLowererPass());
         PassManager.Register(new LinkerPass());
         PassManager.Register(new TransientLoweringPass());
         PassManager.Register(new ServiceLoweringPass());
-        PassManager.Register(new CollectionsLoweringPass());
         PassManager.Register(new ProloguePass());
 
         // TODO: FIX THIS GARBAGE..............
@@ -36,6 +35,8 @@ public sealed class CSharpTranspiler {
             Environment.Exit(-1);
         }
 
-        return Ctx.ToChunk();
+        // return Ctx.ToChunk();
+
+        return default;
     }
 }

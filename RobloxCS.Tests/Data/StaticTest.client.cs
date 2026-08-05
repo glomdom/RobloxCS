@@ -3,6 +3,8 @@
 namespace RobloxCS.Tests.Data;
 
 internal class StaticTest {
+    private int _x = 2;
+    
     [EntryPoint]
     internal void Main() {
         var greeting = "slice";

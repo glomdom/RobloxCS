@@ -5,7 +5,6 @@ using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Suffixes;
-using RobloxCS.AST.Transient;
 using RobloxCS.Transpiler.Helpers;
 using RobloxCS.Transpiler.Macros;
 using RobloxCS.Types;
@@ -77,7 +76,7 @@ public static class ExpressionBuilder {
     }
 
     private static VarExpression HandleMemberAccessExpressionSyntax(MemberAccessExpressionSyntax syntax, TranspilationContext ctx) {
-        var symbol = ctx.Semantics.GetSymbol(syntax);
+        var symbol = ctx.Semantics.GetSymbolInfo(syntax).Symbol;
 
         return symbol switch {
             IFieldSymbol fieldSymbol => new VarExpression {
@@ -103,7 +102,7 @@ public static class ExpressionBuilder {
                 ],
             },
 
-            _ => throw new NotSupportedException($"Unsupported member access: {symbol.GetType().Name}")
+            _ => throw new NotSupportedException($"Unsupported member access."),
         };
     }
 
@@ -188,10 +187,7 @@ public static class ExpressionBuilder {
                         ],
                     };
 
-                    return new TransientServiceUsageExpression {
-                        ServiceName = nativeAttribute.RobloxName,
-                        AccessExpression = call,
-                    };
+                    return default;
                 }
             }
         }
@@ -309,10 +305,7 @@ public static class ExpressionBuilder {
             if (nativeAttribute.NativeType == RobloxNativeType.Service) {
                 var serviceName = nativeAttribute.RobloxName;
 
-                return new TransientServiceUsageExpression {
-                    ServiceName = serviceName,
-                    AccessExpression = null!,
-                };
+                return default;
             }
         }
 

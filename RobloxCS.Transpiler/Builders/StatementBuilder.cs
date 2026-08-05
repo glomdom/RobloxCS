@@ -5,7 +5,7 @@ using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
-using RobloxCS.AST.Transient;
+using RobloxCS.HIR.Statements;
 using RobloxCS.Transpiler.Helpers;
 
 namespace RobloxCS.Transpiler.Builders;
@@ -18,10 +18,10 @@ public static class StatementBuilder {
         return stmt switch {
             ExpressionStatementSyntax exprStmtSyntax => BuildFromExprStmt(exprStmtSyntax, ctx),
             LocalDeclarationStatementSyntax localDeclStmtSyntax => BuildFromLocalDeclStmt(localDeclStmtSyntax, ctx),
-            BlockSyntax blockSyntax => BuildFromBlock(blockSyntax, ctx),
+            //BlockSyntax blockSyntax => BuildFromBlock(blockSyntax, ctx),
             IfStatementSyntax ifStatementSyntax => BuildFromIfStmt(ifStatementSyntax, ctx),
             WhileStatementSyntax whileStatementSyntax => BuildFromWhileStmt(whileStatementSyntax, ctx),
-            ForStatementSyntax forStatementSyntax => BuildFromForStmt(forStatementSyntax, ctx),
+            //ForStatementSyntax forStatementSyntax => BuildFromForStmt(forStatementSyntax, ctx),
             ReturnStatementSyntax returnStatementSyntax => BuildFromReturnStmt(returnStatementSyntax, ctx),
             DoStatementSyntax doStatementSyntax => BuildFromDoStmt(doStatementSyntax, ctx),
             ContinueStatementSyntax => BuildFromContinueStmt(),
@@ -69,7 +69,7 @@ public static class StatementBuilder {
         return returnStmt;
     }
 
-    private static TransientForLoop BuildFromForStmt(ForStatementSyntax syntax, TranspilationContext ctx) {
+    private static HirFor BuildFromForStmt(ForStatementSyntax syntax, TranspilationContext ctx) {
         var inits = new List<Statement>();
 
         inits.AddRange(
@@ -78,15 +78,15 @@ public static class StatementBuilder {
             syntax.Initializers
                 .Select(e => BuildFromExprSyntax(e, ctx))
         );
+        
+        // var transient = new TransientForLoop {
+        //     Initializers = inits,
+        //     Condition = syntax.Condition is not null ? ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx) : null,
+        //     Incrementors = syntax.Incrementors.Select(expr => BuildFromExprSyntax(expr, ctx)).ToList(),
+        //     Body = BlockBuilder.BuildFromStatement(syntax.Statement, ctx),
+        // };
 
-        var transient = new TransientForLoop {
-            Initializers = inits,
-            Condition = syntax.Condition is not null ? ExpressionBuilder.BuildFromSyntax(syntax.Condition, ctx) : null,
-            Incrementors = syntax.Incrementors.Select(expr => BuildFromExprSyntax(expr, ctx)).ToList(),
-            Body = BlockBuilder.BuildFromStatement(syntax.Statement, ctx),
-        };
-
-        return transient;
+        return default;
     }
 
     private static Statement BuildFromExprSyntax(ExpressionSyntax syntax, TranspilationContext ctx) {
@@ -156,10 +156,11 @@ public static class StatementBuilder {
         return ifStmt;
     }
 
-    private static TransientBlock BuildFromBlock(BlockSyntax syntax, TranspilationContext ctx) {
+    private static HirBlock BuildFromBlock(BlockSyntax syntax, TranspilationContext ctx) {
         var body = BlockBuilder.Build(syntax, ctx);
 
-        return new TransientBlock { Statements = body.Statements };
+        // return new TransientBlock { Statements = body.Statements };
+        return default;
     }
 
     private static Statement BuildFromLocalDeclStmt(LocalDeclarationStatementSyntax localDeclStmtSyntax, TranspilationContext ctx) {
