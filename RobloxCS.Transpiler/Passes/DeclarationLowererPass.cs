@@ -1,3 +1,4 @@
+using RobloxCS.HIR;
 using RobloxCS.HIR.Declarations;
 using RobloxCS.HIR.Expressions;
 using RobloxCS.Transpiler.Builders.HIR;
@@ -19,6 +20,32 @@ public sealed class DeclarationLowererPass : IPass {
             foreach (var field in type.Fields) {
                 FormatField(field, 1);
             }
+
+            foreach (var method in type.Methods) {
+                FormatMethod(method, 1);
+            }
+        }
+    }
+
+    private static void FormatMethod(HirMethod method, int depth) {
+        var padding = FormatDepth(depth);
+        var methodDisplay = method.IsStatic ? "static method" : "method";
+
+        AnsiConsole.MarkupLine($"{padding}[cyan]{methodDisplay}[/] {method.Symbol.Name}");
+
+        foreach (var param in method.Parameters) {
+            FormatParameter(param, depth + 1);
+        }
+    }
+
+    private static void FormatParameter(HirParameter parameter, int depth) {
+        var padding = FormatDepth(depth);
+
+        var defaultParameterDisplay = parameter.DefaultValue is not null ? " [lime]with default value[/]" : null;
+        AnsiConsole.MarkupLine($"{padding}[yellow]{parameter.Symbol.Type} parameter[/] {parameter.Symbol.Name}{defaultParameterDisplay}");
+
+        if (parameter.DefaultValue is { } defaultValue) {
+            FormatExpression(defaultValue, depth + 1);
         }
     }
 

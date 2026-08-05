@@ -38,13 +38,22 @@ public sealed partial class HirBuilder {
                 fields.Add(field);
             }
 
-            // if (member is IMethodSymbol { MethodKind: MethodKind.Ordinary } method) {
-            //     methods.Add(new HirMethod {
-            //         Location = SyntaxUtilities.ResolveLocations(method.Locations),
-            //         Symbol = method,
-            //         
-            //     });
-            // }
+            if (member is IMethodSymbol method) {
+                Log.Verbose("Adding method {MethodName} of kind {MethodKind}", method.Name, method.MethodKind);
+
+                var parameters = method.Parameters.Select(BuildParameter).ToList();
+                
+                methods.Add(new HirMethod {
+                    Location = SyntaxUtilities.ResolveLocations(method.Locations),
+                    Symbol = method,
+                    Parameters = parameters,
+                    TypeParameters = [],
+                    Block = null,
+                    IsStatic = method.IsStatic,
+                    IsConstructor = false,
+                    IsEntryPoint = false,
+                });
+            }
         }
 
         return new HirType {
