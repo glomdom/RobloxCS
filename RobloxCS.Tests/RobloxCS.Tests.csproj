@@ -35,5 +35,9 @@
     <ItemGroup>
         <None Include="Data\**" CopyToOutputDirectory="Always"/>
     </ItemGroup>
-    
+
+    <ItemGroup>
+        <AssemblyMetadata Include="ProjectDir" Value="$(MSBuildProjectDirectory)"/>
+    </ItemGroup>
+
 </Project>

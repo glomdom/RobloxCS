@@ -9,8 +9,6 @@ namespace RobloxCS.Tests;
 
 [TestFixture]
 public class Regression {
-    private const string UpdateGoldenVariable = "ROBLOXCS_UPDATE_GOLDEN";
-
     private static readonly ConcurrentDictionary<string, string> TranspileCache = new();
 
     [Test, TestCaseSource(nameof(GetCases))]
@@ -18,23 +16,15 @@ public class Regression {
         var actual = Normalize(Transpile(InputPath(name)));
         var goldenPath = Path.Join(_goldenDir, name + ".luau");
 
-        if (_shouldUpdateGolden) {
-            var sourceGoldenPath = Path.Join(_sourceGoldenDir, name + ".luau");
-
-            Directory.CreateDirectory(_sourceGoldenDir);
-            File.WriteAllText(sourceGoldenPath, actual);
-
-            Assert.Ignore($"Golden updated: {sourceGoldenPath}");
-        }
-
         if (!File.Exists(goldenPath)) {
             Assert.Fail(
-                $"No golden file for '{name}'. Re-run with {UpdateGoldenVariable}=1 to create it."
+                $"No golden file for '{name}'. Run the UpdateGoldens test to create it, " + "then review the diff before committing."
             );
         }
 
         Assert.That(actual, Is.EqualTo(Normalize(File.ReadAllText(goldenPath))));
     }
+
 
     [Test, TestCaseSource(nameof(GetCases))]
     public void Behaviour(string name) {
@@ -44,7 +34,6 @@ public class Regression {
         File.WriteAllText(outputPath, Transpile(InputPath(name)));
 
         var expectedPath = Path.Join(_expectedDir, name + ".out");
-
         if (!File.Exists(expectedPath)) {
             Assert.Fail($"No expected output for '{name}'. Create {expectedPath}.");
         }
@@ -53,6 +42,23 @@ public class Regression {
 
         Assert.That(Normalize(actual), Is.EqualTo(Normalize(File.ReadAllText(expectedPath))));
     }
+
+    [Test, Explicit("Overwrites committed golden files."), Category("UpdateGolden")]
+    public void UpdateGoldens() {
+        Directory.CreateDirectory(_sourceGoldenDir);
+
+        foreach (var testCase in GetCases()) {
+            var name = (string)testCase.Arguments[0]!;
+            var rendered = Normalize(Transpile(InputPath(name)));
+
+            File.WriteAllText(Path.Join(_sourceGoldenDir, name + ".luau"), rendered + "\n");
+
+            TestContext.Out.WriteLine($"wrote {name}.luau");
+        }
+
+        TestContext.Out.WriteLine($"goldens written to {_sourceGoldenDir}");
+    }
+
 
     private static string Transpile(string path) =>
         TranspileCache.GetOrAdd(path, static p => {
@@ -125,7 +131,6 @@ public class Regression {
     private static string Normalize(string text) => text.ReplaceLineEndings("\n").TrimEnd('\n');
     private static string InputPath(string name) => Path.Join(_dataDir, name + ".cs");
 
-    private static bool _shouldUpdateGolden => Environment.GetEnvironmentVariable(UpdateGoldenVariable) is "1" or "true";
     private static string _baseDir => TestContext.CurrentContext.TestDirectory;
     private static string _dataDir => Path.Join(_baseDir, "Data");
     private static string _goldenDir => Path.Join(_dataDir, "Golden");
