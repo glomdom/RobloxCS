@@ -6,22 +6,17 @@ namespace RobloxCS.Transpiler.Builders.HIR;
 
 public sealed partial class HirBuilder {
     public HirExpression? BuildExpression(IOperation operation) {
-        if (operation.Type is null) {
-            throw new InvalidOperationException("Operation provided cannot produce null.");
-        }
-
         switch (operation.Kind) {
-            case OperationKind.Literal: {
-                var literalOperation = (ILiteralOperation)operation;
-                if (literalOperation.ConstantValue.HasValue) {
-                    return new HirLiteral {
-                        Location = literalOperation.Syntax.GetLocation(),
-                        Type = literalOperation.Type!,
-                        Value = operation.ConstantValue.Value,
-                    };
+            case OperationKind.Literal when operation is ILiteralOperation literalOperation: {
+                return HandleLiteralOperation(literalOperation);
+            }
+
+            case OperationKind.VariableInitializer when operation is IVariableInitializerOperation variableInitializerOperation: {
+                if (variableInitializerOperation.Value is ILiteralOperation literalValue) {
+                    return HandleLiteralOperation(literalValue);
                 }
 
-                break;
+                throw new NotSupportedException($"Variable initializer operation with initializer '{variableInitializerOperation.Value.Kind}' is not supported.");
             }
 
             default: {
@@ -30,5 +25,23 @@ public sealed partial class HirBuilder {
         }
 
         return null;
+
+        HirLiteral HandleLiteralOperation(ILiteralOperation literalOperation) {
+            if (literalOperation.ConstantValue.HasValue) {
+                return new HirLiteral {
+                    Location = literalOperation.Syntax.GetLocation(),
+                    Type = literalOperation.Type!,
+                    Value = literalOperation.ConstantValue.Value,
+                };
+            }
+
+            Console.WriteLine(literalOperation.Kind);
+
+            return new HirLiteral {
+                Location = literalOperation.Syntax.GetLocation(),
+                Type = literalOperation.Type!,
+                Value = null,
+            };
+        }
     }
 }

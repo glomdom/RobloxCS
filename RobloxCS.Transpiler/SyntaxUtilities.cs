@@ -202,7 +202,7 @@ public static class SyntaxUtilities {
             if (operation is not T op) {
                 var display = operation is null ? "null" : operation.GetType().Name;
                 
-                throw new InvalidOperationException($"Failed to get operation, {display} is not the expected {typeof(T).Name}.");
+                throw new InvalidOperationException($"Failed to get operation, '{display}' is not the expected '{typeof(T).Name}'.");
             }
 
             return op;
@@ -219,7 +219,9 @@ public static class SyntaxUtilities {
         public T GetFirstSyntaxFromSymbol<T>(ISymbol symbol) where T : SyntaxNode {
             var syntaxRef = symbol.DeclaringSyntaxReferences.FirstOrDefault();
             if (syntaxRef?.GetSyntax() is not T syntax) {
-                throw new InvalidOperationException("Failed to get syntax.");
+                var display = syntaxRef is null ? "null" : syntaxRef.GetType().Name;
+                
+                throw new InvalidOperationException($"Failed to get syntax, '{display}' is not the expected '{typeof(T).Name}'.");
             }
 
             return syntax;
