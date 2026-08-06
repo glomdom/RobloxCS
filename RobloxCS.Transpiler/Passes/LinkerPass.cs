@@ -1,5 +1,3 @@
-using RobloxCS.Transpiler.Walkers;
-
 namespace RobloxCS.Transpiler.Passes;
 
 /// <summary>
@@ -10,7 +8,7 @@ public sealed class LinkerPass : IPass {
     public List<string> Diagnostics { get; } = [];
 
     public void Run(TranspilationContext ctx) {
-        var linker = new LinkerWalker(ctx);
-        linker.LinkParents(ctx.RootBlock);
+        // var linker = new LinkerWalker(ctx);
+        // linker.LinkParents(ctx.RootBlock);
     }
 }

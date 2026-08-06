@@ -2,7 +2,7 @@
 
 namespace RobloxCS.HIR.Declarations;
 
-public sealed record HirClass : HirDeclaration {
+public sealed record HirType : HirDeclaration {
     public required INamedTypeSymbol Symbol { get; init; }
 
     public required INamedTypeSymbol? Base { get; init; }

@@ -1,7 +1,4 @@
-using RobloxCS.AST;
 using RobloxCS.AST.Statements;
-using RobloxCS.AST.Transient;
-using RobloxCS.Transpiler.Walkers;
 
 namespace RobloxCS.Transpiler.Passes;
 
@@ -13,7 +10,7 @@ public sealed class TransientLoweringPass : IPass {
     public List<string> Diagnostics { get; } = [];
 
     public void Run(TranspilationContext ctx) {
-        var walker = new TransientLoweringWalker();
-        ctx.RootBlock = (Block)walker.Visit(ctx.RootBlock);
+        // var walker = new TransientLoweringWalker();
+        // ctx.RootBlock = (Block)walker.Visit(ctx.RootBlock);
     }
 }

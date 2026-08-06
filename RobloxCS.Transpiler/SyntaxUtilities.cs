@@ -188,33 +188,43 @@ public static class SyntaxUtilities {
         return true;
     }
 
+    public static Location ResolveLocations(ImmutableArray<Location> locations) =>
+        locations.Length > 1 ? throw new NotSupportedException("Partial location definitions are not supported yet.") : locations.First();
+
     extension(SemanticModel semantics) {
         public ITypeSymbol CheckedGetTypeInfo(TypeSyntax syntax) {
             return semantics.GetTypeInfo(syntax).ConvertedType ?? throw new InvalidOperationException($"Could not resolve type for {syntax}");
         }
 
-        public INamedTypeSymbol CheckedGetDeclaredSymbol(BaseTypeDeclarationSyntax node) {
-            var sym = semantics.GetDeclaredSymbol(node);
-            if (sym is null or IErrorTypeSymbol) {
-                throw new Exception($"CheckedGetDeclaredSymbol failed at asking semantic model what type {node.Identifier.ValueText} is");
+        public T CheckedGetOperation<T>(SyntaxNode node) where T : IOperation {
+            var operation = semantics.GetOperation(node);
+            
+            if (operation is not T op) {
+                var display = operation is null ? "null" : operation.GetType().Name;
+                
+                throw new InvalidOperationException($"Failed to get operation, '{display}' is not the expected '{typeof(T).Name}'.");
+            }
+
+            return op;
+        }
+        
+        public T CheckedGetDeclaredSymbol<T>(SyntaxNode node) where T : ISymbol {
+            if (semantics.GetDeclaredSymbol(node) is not T sym) {
+                throw new InvalidOperationException("Failed to get symbol.");
             }
 
             return sym;
         }
 
-        public T GetSymbol<T>(MemberAccessExpressionSyntax node) where T : ISymbol {
-            var symbol = semantics.GetSymbolInfo(node).Symbol;
-            if (symbol is null) {
-                throw new Exception("Attempted to get symbol from MemberAccessExpressionSyntax but got null.");
+        public T GetFirstSyntaxFromSymbol<T>(ISymbol symbol) where T : SyntaxNode {
+            var syntaxRef = symbol.DeclaringSyntaxReferences.FirstOrDefault();
+            if (syntaxRef?.GetSyntax() is not T syntax) {
+                var display = syntaxRef is null ? "null" : syntaxRef.GetType().Name;
+                
+                throw new InvalidOperationException($"Failed to get syntax, '{display}' is not the expected '{typeof(T).Name}'.");
             }
 
-            return (T)symbol;
-        }
-
-        public ISymbol GetSymbol(MemberAccessExpressionSyntax node) {
-            var symbol = semantics.GetSymbolInfo(node).Symbol;
-
-            return symbol ?? throw new Exception("Attempted to get symbol from MemberAccessExpressionSyntax but got null.");
+            return syntax;
         }
     }
 }

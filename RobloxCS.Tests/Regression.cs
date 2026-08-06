@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Reflection;
 using RobloxCS.Compiler;
 using RobloxCS.Renderer;
 using RobloxCS.Transpiler;
@@ -7,81 +9,147 @@ namespace RobloxCS.Tests;
 
 [TestFixture]
 public class Regression {
-    [Test, TestCaseSource(nameof(GetFromFiles))]
-    public void FileTest(string inputPath, string expected) {
-        var output = TryWithLune(inputPath);
+    private static readonly ConcurrentDictionary<string, string> TranspileCache = new();
 
-        Assert.That(output, Is.EqualTo(expected));
+    [Test, TestCaseSource(nameof(GetCases))]
+    public void Golden(string name) {
+        var actual = Normalize(Transpile(InputPath(name)));
+        var goldenPath = Path.Join(_goldenDir, name + ".luau");
+
+        if (!File.Exists(goldenPath)) {
+            Assert.Fail(
+                $"No golden file for '{name}'. Run the UpdateGoldens test to create it, " + "then review the diff before committing."
+            );
+        }
+
+        Assert.That(actual, Is.EqualTo(Normalize(File.ReadAllText(goldenPath))));
     }
 
-    private static string TryWithLune(string path) {
-        Process? luneProc;
+
+    [Test, TestCaseSource(nameof(GetCases))]
+    public void Behaviour(string name) {
+        var outputPath = Path.Join(_outputDir, name + ".luau");
+
+        Directory.CreateDirectory(_outputDir);
+        File.WriteAllText(outputPath, Transpile(InputPath(name)));
+
+        var expectedPath = Path.Join(_expectedDir, name + ".out");
+        if (!File.Exists(expectedPath)) {
+            Assert.Fail($"No expected output for '{name}'. Create {expectedPath}.");
+        }
+
+        var actual = RunWithLune(outputPath);
+
+        Assert.That(Normalize(actual), Is.EqualTo(Normalize(File.ReadAllText(expectedPath))));
+    }
+
+    [Test, Explicit("Overwrites committed golden files."), Category("UpdateGolden")]
+    public void UpdateGoldens() {
+        Directory.CreateDirectory(_sourceGoldenDir);
+
+        foreach (var testCase in GetCases()) {
+            var name = (string)testCase.Arguments[0]!;
+            var rendered = Normalize(Transpile(InputPath(name)));
+
+            File.WriteAllText(Path.Join(_sourceGoldenDir, name + ".luau"), rendered + "\n");
+
+            TestContext.Out.WriteLine($"wrote {name}.luau");
+        }
+
+        TestContext.Out.WriteLine($"goldens written to {_sourceGoldenDir}");
+    }
+
+
+    private static string Transpile(string path) =>
+        TranspileCache.GetOrAdd(path, static p => {
+            var transpiler = new CSharpTranspiler(
+                new TranspilerOptions(ScriptType.Local),
+                new CSharpCompiler(p, "RobloxCS.Types.dll", true)
+            );
+
+            var chunk = transpiler.Transpile();
+            var renderer = new RendererWalker();
+
+            return renderer.Render(chunk);
+        });
+
+    private static string RunWithLune(string path) {
+        var startInfo = new ProcessStartInfo {
+            FileName = "lune",
+            Arguments = $"run {path}",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+        };
+
+        Process? process;
         try {
-            luneProc = Process.Start(new ProcessStartInfo {
-                FileName = "lune",
-                Arguments = $"run {path}",
-                RedirectStandardOutput = true,
-                RedirectStandardError = false,
-                RedirectStandardInput = false,
-            });
-
-            if (luneProc is null) throw new Exception("Failed to start lune.");
+            process = Process.Start(startInfo);
         } catch (Exception ex) {
-            throw new Exception("Lune is not installed or available in PATH.", ex);
+            throw new Exception("Lune is not installed or not on PATH.", ex);
         }
 
-        luneProc.WaitForExit();
+        if (process is null) throw new Exception("Failed to start lune.");
 
-        return luneProc.StandardOutput.ReadToEnd();
+        // waiting first deadlocks >4kb
+        var stdoutTask = process.StandardOutput.ReadToEndAsync();
+        var stderrTask = process.StandardError.ReadToEndAsync();
+
+        if (!process.WaitForExit(30_000)) {
+            process.Kill(entireProcessTree: true);
+
+            throw new Exception($"Lune timed out after 30s running '{path}'.");
+        }
+
+        var stdout = stdoutTask.GetAwaiter().GetResult();
+        var stderr = stderrTask.GetAwaiter().GetResult();
+
+        if (process.ExitCode != 0) {
+            throw new Exception($"Lune exited with {process.ExitCode} running '{path}'.\n{stderr}");
+        }
+
+        return stdout;
     }
 
-    private static IEnumerable<TestCaseData> GetFromFiles() {
-        GenerateLuauFiles();
-
-        var workDir = TestContext.CurrentContext.WorkDirectory;
-        var dataDir = Path.Join(workDir, "Data/");
-        var outDir = Path.Join(dataDir, "Output/");
-        var expectedDir = Path.Join(dataDir, "Expected/");
-
-        if (!Directory.Exists(dataDir)) {
-            throw new Exception("Data folder not found. Cannot proceed to generate tests.");
+    private static IEnumerable<TestCaseData> GetCases() {
+        if (!Directory.Exists(_dataDir)) {
+            throw new DirectoryNotFoundException($"Test data directory not found: {_dataDir}");
         }
 
-        foreach (var path in Directory.GetFiles(outDir)) {
-            var fileName = Path.GetFileNameWithoutExtension(path);
-            var expectedPath = Path.Join(expectedDir, fileName + ".out");
-            var expected = File.ReadAllText(expectedPath);
-
-            yield return new TestCaseData(path, expected).SetName($"{fileName}");
-        }
-    }
-
-    private static void GenerateLuauFiles() {
-        var workDir = TestContext.CurrentContext.WorkDirectory;
-        var dataDir = Path.Join(workDir, "Data/");
-        var outDir = Path.Join(dataDir, "Output/");
-
-        if (!Directory.Exists(dataDir)) {
-            throw new Exception("Data folder not found. Cannot proceed to generate tests.");
+        var inputs = Directory.GetFiles(_dataDir, "*.cs", SearchOption.TopDirectoryOnly);
+        if (inputs.Length == 0) {
+            throw new InvalidOperationException($"No .cs test inputs found in {_dataDir}");
         }
 
-        Directory.CreateDirectory(outDir);
+        foreach (var path in inputs.OrderBy(static p => p, StringComparer.Ordinal)) {
+            var name = Path.GetFileNameWithoutExtension(path);
 
-        foreach (var path in Directory.GetFiles(dataDir)) {
-            var output = TranspileFile(path);
-            var name = Path.GetFileNameWithoutExtension(path) + ".luau";
-
-            File.WriteAllText(Path.Join(outDir, name), output);
+            yield return new TestCaseData(name).SetName(name);
         }
     }
 
-    private static string TranspileFile(string path) {
-        var transpiler = new CSharpTranspiler(new TranspilerOptions(ScriptType.Local), new CSharpCompiler(path, "RobloxCS.Types.dll", true));
+    private static string Normalize(string text) => text.ReplaceLineEndings("\n").TrimEnd('\n');
+    private static string InputPath(string name) => Path.Join(_dataDir, name + ".cs");
 
-        var chunk = transpiler.Transpile();
-        var renderer = new RendererWalker();
-        var output = renderer.Render(chunk);
+    private static string _baseDir => TestContext.CurrentContext.TestDirectory;
+    private static string _dataDir => Path.Join(_baseDir, "Data");
+    private static string _goldenDir => Path.Join(_dataDir, "Golden");
+    private static string _expectedDir => Path.Join(_dataDir, "Expected");
+    private static string _outputDir => Path.Join(_dataDir, "Output");
 
-        return output;
+    private static string _sourceGoldenDir {
+        get {
+            var projectDir = typeof(Regression).Assembly
+                .GetCustomAttributes<AssemblyMetadataAttribute>()
+                .FirstOrDefault(static a => a.Key == "ProjectDir")?.Value;
+
+            if (string.IsNullOrEmpty(projectDir)) {
+                throw new InvalidOperationException(
+                    "ProjectDir assembly metadata is missing."
+                );
+            }
+
+            return Path.Join(projectDir, "Data", "Golden");
+        }
     }
 }
