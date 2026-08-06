@@ -1,6 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
+using RobloxCS.HIR;
 using RobloxCS.HIR.Expressions;
+using Serilog;
 
 namespace RobloxCS.Transpiler.Builders.HIR;
 
@@ -32,6 +34,44 @@ public sealed partial class HirBuilder {
                     Location = localReferenceOperation.Syntax.GetLocation(),
                     Symbol = localReferenceOperation.Local,
                     Type = type,
+                };
+            }
+
+            case OperationKind.Argument when operation is IArgumentOperation argumentOperation: {
+                if (argumentOperation.Type is not null) {
+                    Log.Information("Argument has constant value {ConstantValue}", argumentOperation.Value.ConstantValue.HasValue);
+                }
+
+                if (argumentOperation.Parameter is null) {
+                    throw new NotSupportedException("__arglist is not supported");
+                }
+
+                HirExpression? defaultValue = null;
+                if (argumentOperation.ArgumentKind == ArgumentKind.DefaultValue) {
+                    Log.Information("TODO");
+                }
+
+                var value = BuildExpression(argumentOperation.Value);
+
+                return new HirArgument {
+                    Symbol = argumentOperation.Parameter,
+                    Location = argumentOperation.Syntax.GetLocation(),
+                    Type = argumentOperation.Type!,
+                    Value = value,
+                    // IsParams = argumentOperation.Parameter.IsParams,
+                    // RefKind = argumentOperation.Parameter.RefKind,
+                };
+            }
+
+            case OperationKind.ParameterReference when operation is IParameterReferenceOperation parameterReferenceOperation: {
+                if (parameterReferenceOperation.Type is not { } type) {
+                    throw new InvalidOperationException("Parameter reference type is null.");
+                }
+
+                return new HirParameterRef {
+                    Location = parameterReferenceOperation.Syntax.GetLocation(),
+                    Type = type,
+                    Symbol = parameterReferenceOperation.Parameter,
                 };
             }
 

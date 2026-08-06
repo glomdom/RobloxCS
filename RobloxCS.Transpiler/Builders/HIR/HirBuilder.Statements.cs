@@ -11,11 +11,40 @@ public sealed partial class HirBuilder {
             OperationKind.VariableDeclarationGroup => HandleVariableDeclarationGroup((IVariableDeclarationGroupOperation)operation),
             OperationKind.ExpressionStatement => HandleExpressionStatement((IExpressionStatementOperation)operation),
             OperationKind.SimpleAssignment => HandleSimpleAssignment((ISimpleAssignmentOperation)operation),
+            OperationKind.Invocation => HandleInvocation((IInvocationOperation)operation),
 
             _ => throw new NotSupportedException($"Operation of kind '{operation.Kind}' is not supported."),
         };
 
-        HirStatement HandleSimpleAssignment(ISimpleAssignmentOperation assignOperation) {
+        HirExpressionStatement HandleInvocation(IInvocationOperation invocationOperation) {
+            if (invocationOperation.Type is null) {
+                throw new InvalidOperationException("Invocation type cannot be null");
+            }
+
+            HirExpression? receiver = null;
+            if (invocationOperation.Instance is { } inst) {
+                receiver = BuildExpression(inst);
+            }
+
+            var isExtension = invocationOperation.TargetMethod.ReducedFrom is not null;
+
+            var args = invocationOperation.Arguments.Select(BuildExpression).ToList();
+            var call = new HirCall {
+                Location = invocationOperation.Syntax.GetLocation(),
+                Type = invocationOperation.Type,
+                Method = invocationOperation.TargetMethod,
+                Receiver = receiver,
+                Arguments = args,
+                IsExtension = isExtension,
+            };
+
+            return new HirExpressionStatement {
+                Location = call.Location,
+                Expression = call,
+            };
+        }
+
+        HirAssignment HandleSimpleAssignment(ISimpleAssignmentOperation assignOperation) {
             if (assignOperation.IsRef) {
                 throw new NotSupportedException("Ref assignments are not supported.");
             }

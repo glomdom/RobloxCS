@@ -88,6 +88,13 @@ public sealed class DeclarationLowererPass : IPass {
                 break;
             }
 
+            case HirExpressionStatement expressionStatement: {
+                AnsiConsole.MarkupLine($"{padding}[cyan]expression statement[/]");
+                FormatExpression(expressionStatement.Expression, depth + 1);
+
+                break;
+            }
+
             default: {
                 AnsiConsole.MarkupLineInterpolated($"{padding}[red]unhandled statement[/] [white]{statement.GetType().Name}[/]");
 
@@ -126,12 +133,34 @@ public sealed class DeclarationLowererPass : IPass {
     private static void FormatExpression(HirExpression expression, int depth) {
         var padding = FormatDepth(depth);
 
-        if (expression is HirLiteral literal) {
-            AnsiConsole.MarkupLine($"{padding}[yellow]{literal.Type} literal[/] [white]{literal.Value!}[/]");
-        } else if (expression is HirLocalRef localRef) {
-            AnsiConsole.MarkupLine($"{padding}[yellow]local ref[/] [white]{localRef.Symbol.Name}[/]");
-        } else {
-            AnsiConsole.MarkupLine($"{padding}[red]unhandled expression[/] [white]{expression.GetType().Name}[/]");
+        switch (expression) {
+            case HirLiteral literal: {
+                AnsiConsole.MarkupLine($"{padding}[yellow]{literal.Type} literal[/] [white]{literal.Value!}[/]");
+
+                break;
+            }
+
+            case HirLocalRef localRef: {
+                AnsiConsole.MarkupLine($"{padding}[yellow]local ref[/] [white]{localRef.Symbol.Name}[/]");
+
+                break;
+            }
+
+            case HirCall call: {
+                var extensionPrefix = call.IsExtension ? " [lime]extension[/]" : string.Empty;
+                var staticPrefix = call.Method.IsStatic ? " [lime]static[/]" : string.Empty;
+                var containingPrefix = call.Method.IsStatic ? $" [yellow]{call.Method.ContainingSymbol}[/]" : string.Empty;
+                
+                AnsiConsole.MarkupLine($"{padding}[cyan]call[/] [white]{call.Method.Name}[/]{staticPrefix}{extensionPrefix}{containingPrefix}");
+
+                break;
+            }
+
+            default: {
+                AnsiConsole.MarkupLine($"{padding}[red]unhandled expression[/] [white]{expression.GetType().Name}[/]");
+
+                break;
+            }
         }
     }
 
