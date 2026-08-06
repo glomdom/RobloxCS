@@ -67,13 +67,31 @@ public sealed class DeclarationLowererPass : IPass {
     private static void FormatStatement(HirStatement statement, int depth) {
         var padding = FormatDepth(depth);
 
-        if (statement is HirLocalDeclaration localDeclaration) {
-            foreach (var decl in localDeclaration.Declarators) {
-                AnsiConsole.MarkupLine($"{padding}[cyan]local declaration[/] [white]{decl.Symbol.Name}[/]");
+        switch (statement) {
+            case HirLocalDeclaration localDeclaration: {
+                foreach (var decl in localDeclaration.Declarators) {
+                    AnsiConsole.MarkupLine($"{padding}[cyan]local declaration[/] [white]{decl.Symbol.Name}[/]");
 
-                if (decl.Initializer is not null) {
-                    FormatExpression(decl.Initializer, depth + 1);
+                    if (decl.Initializer is not null) {
+                        FormatExpression(decl.Initializer, depth + 1);
+                    }
                 }
+
+                break;
+            }
+
+            case HirAssignment assignment: {
+                AnsiConsole.MarkupLine($"{padding}[cyan]assignment[/]");
+                FormatExpression(assignment.Target, depth + 1);
+                FormatExpression(assignment.Value, depth + 1);
+
+                break;
+            }
+
+            default: {
+                AnsiConsole.MarkupLineInterpolated($"{padding}[red]unhandled statement[/] [white]{statement.GetType().Name}[/]");
+
+                break;
             }
         }
     }
@@ -105,15 +123,16 @@ public sealed class DeclarationLowererPass : IPass {
         }
     }
 
-    private static void FormatExpression(HirExpression initializer, int depth) {
+    private static void FormatExpression(HirExpression expression, int depth) {
         var padding = FormatDepth(depth);
 
-        var format = string.Empty;
-        if (initializer is HirLiteral literal) {
-            format = $"[yellow]{literal.Type} literal[/] [white]{literal.Value!}[/]";
+        if (expression is HirLiteral literal) {
+            AnsiConsole.MarkupLine($"{padding}[yellow]{literal.Type} literal[/] [white]{literal.Value!}[/]");
+        } else if (expression is HirLocalRef localRef) {
+            AnsiConsole.MarkupLine($"{padding}[yellow]local ref[/] [white]{localRef.Symbol.Name}[/]");
+        } else {
+            AnsiConsole.MarkupLine($"{padding}[red]unhandled expression[/] [white]{expression.GetType().Name}[/]");
         }
-
-        AnsiConsole.MarkupLine($"{padding}{format}");
     }
 
     private static string FormatDepth(int depth) => string.Concat(Enumerable.Repeat("  ", depth));

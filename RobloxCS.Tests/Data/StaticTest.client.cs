@@ -9,9 +9,9 @@ internal class StaticTest {
     internal void Main() {
         var greeting = "slice";
         int a = 1, b = 2;
-        // int c;
-        //
-        // c = 3;
+        int c;
+        
+        c = 3;
         //
         // Console.WriteLine(greeting);
         // Console.WriteLine(a);
