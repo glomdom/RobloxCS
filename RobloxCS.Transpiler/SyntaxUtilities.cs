@@ -219,7 +219,8 @@ public static class SyntaxUtilities {
         public T GetFirstSyntaxFromSymbol<T>(ISymbol symbol) where T : SyntaxNode {
             var syntaxRef = symbol.DeclaringSyntaxReferences.FirstOrDefault();
             if (syntaxRef?.GetSyntax() is not T syntax) {
-                var display = syntaxRef is null ? "null" : syntaxRef.GetType().Name;
+                var node = syntaxRef?.GetSyntax();
+                var display = node is null ? "null" : $"{node.Kind()} ({node.GetType().Name})";
                 
                 throw new InvalidOperationException($"Failed to get syntax, '{display}' is not the expected '{typeof(T).Name}'.");
             }

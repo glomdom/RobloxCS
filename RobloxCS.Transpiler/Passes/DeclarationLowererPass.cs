@@ -32,9 +32,11 @@ public sealed class DeclarationLowererPass : IPass {
     private static void FormatMethod(HirMethod method, int depth) {
         var padding = FormatDepth(depth);
         var methodDisplay = method.IsStatic ? "static method" : "method";
-        var methodPrefix = method.IsConstructor ? " [lime]constructor[/]" : null;
+        var isImplicitCtor = method is { IsConstructor: true, IsImplicit: true } ? "implicit " : string.Empty;
+        var methodPrefix = method.IsConstructor ? $" [lime]{isImplicitCtor}constructor[/]" : string.Empty;
+        var isEntryPoint = method.IsEntryPoint ? " [lime]entry point[/]" : string.Empty;
 
-        AnsiConsole.MarkupLine($"{padding}[cyan]{methodDisplay}[/] [white]{method.Symbol.Name}[/]{methodPrefix}");
+        AnsiConsole.MarkupLine($"{padding}[cyan]{methodDisplay}[/] [white]{method.Symbol.Name}[/]{methodPrefix}{isEntryPoint}");
 
         foreach (var param in method.Parameters) {
             FormatParameter(param, depth + 1);
@@ -150,8 +152,42 @@ public sealed class DeclarationLowererPass : IPass {
                 var extensionPrefix = call.IsExtension ? " [lime]extension[/]" : string.Empty;
                 var staticPrefix = call.Method.IsStatic ? " [lime]static[/]" : string.Empty;
                 var containingPrefix = call.Method.IsStatic ? $" [yellow]{call.Method.ContainingSymbol}[/]" : string.Empty;
-                
+
                 AnsiConsole.MarkupLine($"{padding}[cyan]call[/] [white]{call.Method.Name}[/]{staticPrefix}{extensionPrefix}{containingPrefix}");
+
+                foreach (var arg in call.Arguments) {
+                    FormatExpression(arg, depth + 1);
+                }
+
+                break;
+            }
+
+            case HirArgument argument: {
+                AnsiConsole.MarkupLine($"{padding}[cyan]argument[/]");
+                FormatExpression(argument.Value, depth + 1);
+
+                break;
+            }
+
+            case HirParameterRef paramRef: {
+                AnsiConsole.MarkupLine($"{padding}[yellow]param ref[/] [white]{paramRef.Symbol.Name}[/]");
+                
+                break;
+            }
+
+            case HirFieldAccess fieldAccess: {
+                var target = fieldAccess.Symbol.Name;
+
+                AnsiConsole.MarkupLine($"{padding}[cyan]field access[/] [white]{target}[/]");
+                if (fieldAccess.Receiver is not null) {
+                    FormatExpression(fieldAccess.Receiver, depth + 1);
+                }
+
+                break;
+            }
+
+            case HirThis @this: {
+                AnsiConsole.MarkupLine($"{padding}[magenta]this[/]");
 
                 break;
             }

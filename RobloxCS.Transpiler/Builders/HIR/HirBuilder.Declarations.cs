@@ -48,13 +48,27 @@ public sealed partial class HirBuilder {
                     var isCtor = method is { MethodKind: MethodKind.Constructor };
                     var isImplicitCtor = method is { IsImplicitlyDeclared: true } && isCtor;
 
+                    var isEntryPoint = false;
+                    foreach (var attrData in method.GetAttributes()) {
+                        var entryPointAttr = Context.Compiler.Compilation.GetTypeByMetadataName("RobloxCS.Types.Attributes.EntryPointAttribute");
+                        if (entryPointAttr is null) {
+                            throw new InvalidOperationException("Failed to get 'EntryPointAttribute' from compilation.");
+                        }
+
+                        if (SymbolEqualityComparer.Default.Equals(attrData.AttributeClass, entryPointAttr)) {
+                            isEntryPoint = true;
+                        }
+
+                        Log.Information("{AttrName}", attrData.AttributeClass?.MetadataName);
+                    }
+
                     var parameters = method.Parameters.Select(BuildParameter).ToList();
+                    var statements = new List<HirStatement>();
 
                     var block = new HirBlock { Location = Location.None, Statements = [], Locals = [] };
                     if (!isImplicitCtor) {
                         var syntax = Context.Semantics.GetFirstSyntaxFromSymbol<BaseMethodDeclarationSyntax>(method);
                         var operation = Context.Semantics.CheckedGetOperation<IMethodBodyOperation>(syntax);
-                        var statements = new List<HirStatement>();
 
                         if (operation.BlockBody is { } body) {
                             foreach (var bodyOperation in body.Operations) {
@@ -67,6 +81,36 @@ public sealed partial class HirBuilder {
                         } else {
                             throw new NotSupportedException("Expression bodies are not supported yet.");
                         }
+                    } else {
+                        Log.Information("Reconstructing implicit constructor {MethodName}", method.Name);
+                        Log.Warning("Locals are not yet reconstructed for implicit constructors");
+
+                        if (method.DeclaringSyntaxReferences.FirstOrDefault() is not null) {
+                            throw new InvalidOperationException("Implicit constructor contains a declaring syntax.");
+                        }
+
+                        var container = method.ContainingSymbol;
+                        if (container is not INamedTypeSymbol cls) {
+                            throw new NotSupportedException("Reconstructing implicit constructor is not supported for types other than classes.");
+                        }
+
+                        foreach (var classMember in cls.GetMembers()) {
+                            if (classMember is not IFieldSymbol fieldSymbol) continue;
+
+                            if (fieldSymbol.AssociatedSymbol is not null) {
+                                throw new NotSupportedException("Backing fields are not yet supported.");
+                            }
+
+                            var syntax = Context.Semantics.GetFirstSyntaxFromSymbol<VariableDeclaratorSyntax>(fieldSymbol);
+                            if (syntax.Initializer is null) {
+                                throw new NotSupportedException("No initializer fields are not yet supported.");
+                            }
+
+                            var fieldOperation = Context.Semantics.CheckedGetOperation<IFieldInitializerOperation>(syntax.Initializer);
+                            statements.Add(BuildStatement(fieldOperation));
+                        }
+
+                        block = block with { Statements = statements, Locals = [] };
                     }
 
                     methods.Add(new HirMethod {
@@ -77,7 +121,8 @@ public sealed partial class HirBuilder {
                         Block = block,
                         IsStatic = method.IsStatic,
                         IsConstructor = isCtor,
-                        IsEntryPoint = false,
+                        IsEntryPoint = isEntryPoint,
+                        IsImplicit = method is { IsImplicitlyDeclared: true }
                     });
 
                     break;

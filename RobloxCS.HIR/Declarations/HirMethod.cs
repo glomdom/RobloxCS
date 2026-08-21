@@ -12,4 +12,5 @@ public sealed record HirMethod : HirDeclaration {
     public required bool IsStatic { get; init; }
     public required bool IsConstructor { get; init; }
     public required bool IsEntryPoint { get; init; }
+    public required bool IsImplicit { get; init; }
 }
