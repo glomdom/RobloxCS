@@ -13,13 +13,7 @@ public sealed class CSharpTranspiler {
         Ctx = new TranspilationContext(options, compiler);
         PassManager = new PassManager();
 
-        PassManager.Register(new ValidatorPass());
-        PassManager.Register(new HeaderCollectorPass());
-        PassManager.Register(new DeclarationLowererPass());
-        PassManager.Register(new LinkerPass());
-        PassManager.Register(new TransientLoweringPass());
-        PassManager.Register(new ServiceLoweringPass());
-        PassManager.Register(new ProloguePass());
+        PassManager.Register(new HirPrinterPass());
 
         // TODO: FIX THIS GARBAGE..............
         // Ctx.RootBlock.AddStatement(StatementHelpers.UntypedLocalAssignment("List",
@@ -28,8 +22,8 @@ public sealed class CSharpTranspiler {
     }
 
     public Chunk Transpile() {
-        var success = PassManager.Run(Ctx);
-        if (!success) {
+        var module = PassManager.Start(Ctx);
+        if (module is null) {
             Log.Error("Failed to transpile");
 
             Environment.Exit(-1);

@@ -3,19 +3,15 @@ using RobloxCS.HIR;
 using RobloxCS.HIR.Declarations;
 using RobloxCS.HIR.Expressions;
 using RobloxCS.HIR.Statements;
-using RobloxCS.Transpiler.Builders.HIR;
 using Spectre.Console;
 
 namespace RobloxCS.Transpiler.Passes;
 
-public sealed class DeclarationLowererPass : IPass {
-    public string Name => "Declaration Lowerer";
+public sealed class HirPrinterPass : IPass {
+    public string Name => "HIR Printer";
     public List<string> Diagnostics { get; } = [];
 
-    public void Run(TranspilationContext ctx) {
-        var builder = new HirBuilder(ctx);
-        var module = builder.Build();
-
+    public HirModule Run(HirModule module, TranspilationContext ctx) {
         foreach (var type in module.Types) {
             AnsiConsole.MarkupLine($"[cyan]class[/] [white]{type.Symbol.Name}[/]");
 
@@ -27,6 +23,8 @@ public sealed class DeclarationLowererPass : IPass {
                 FormatMethod(method, 1);
             }
         }
+
+        return module;
     }
 
     private static void FormatMethod(HirMethod method, int depth) {
