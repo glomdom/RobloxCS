@@ -24,6 +24,7 @@ public sealed partial class HirBuilder {
         }
 
         return new HirModule {
+            Location = Location.None,
             SourcePath = Context.Compiler.FilePath,
             Types = classes,
         };

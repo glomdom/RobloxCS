@@ -105,7 +105,7 @@ public sealed partial class HirBuilder {
 
             return new HirLocalDeclaration {
                 Location = operation.Syntax.GetLocation(),
-                Declarators = declarators,
+                Declarators = [.. declarators],
             };
         }
 

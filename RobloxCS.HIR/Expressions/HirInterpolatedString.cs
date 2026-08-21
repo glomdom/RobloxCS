@@ -1,5 +1,7 @@
-﻿namespace RobloxCS.HIR.Expressions;
+﻿using System.Collections.Immutable;
+
+namespace RobloxCS.HIR.Expressions;
 
 public sealed record HirInterpolatedString : HirExpression {
-    public required List<HirInterpolationPart> Parts { get; init; }
+    public required IImmutableList<HirInterpolationPart> Parts { get; init; }
 }

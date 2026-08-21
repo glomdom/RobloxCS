@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
 using RobloxCS.HIR.Statements;
 
 namespace RobloxCS.HIR.Declarations;
@@ -6,8 +7,8 @@ namespace RobloxCS.HIR.Declarations;
 public sealed record HirMethod : HirDeclaration {
     public required IMethodSymbol Symbol { get; init; }
 
-    public required List<HirParameter> Parameters { get; init; }
-    public required List<ITypeParameterSymbol> TypeParameters { get; init; }
+    public required IImmutableList<HirParameter> Parameters { get; init; }
+    public required IImmutableList<ITypeParameterSymbol> TypeParameters { get; init; }
     public required HirBlock? Block { get; init; }
     public required bool IsStatic { get; init; }
     public required bool IsConstructor { get; init; }

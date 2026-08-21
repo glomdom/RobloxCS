@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.HIR.Declarations;
@@ -93,7 +94,7 @@ public sealed partial class HirBuilder {
             if (operation.BlockBody is { } body) {
                 statements.AddRange(body.Operations.Select(BuildStatement));
 
-                block = block with { Statements = statements, Locals = [.. body.Locals] };
+                block = block with { Statements = [.. statements], Locals = [.. body.Locals] };
             } else {
                 var stmt = Context.Diagnostics.UnsupportedStatement("expression bodies are not supported", SyntaxUtilities.ResolveLocations(method.Locations));
 
@@ -130,13 +131,13 @@ public sealed partial class HirBuilder {
                 statements.Add(BuildStatement(fieldOperation));
             }
 
-            block = block with { Statements = statements, Locals = [] };
+            block = block with { Statements = [.. statements], Locals = [] };
         }
 
         return new HirMethod {
             Location = SyntaxUtilities.ResolveLocations(method.Locations),
             Symbol = method,
-            Parameters = parameters,
+            Parameters = [.. parameters],
             TypeParameters = [], // todo
             Block = block,
             IsStatic = method.IsStatic,
