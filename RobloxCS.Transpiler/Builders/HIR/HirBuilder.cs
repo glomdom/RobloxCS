@@ -14,7 +14,6 @@ public sealed partial class HirBuilder {
 
     public HirModule Build() {
         var types = Context.Root.DescendantNodes().OfType<TypeDeclarationSyntax>();
-
         var classes = new List<HirType>();
 
         foreach (var type in types) {

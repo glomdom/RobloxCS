@@ -31,6 +31,10 @@ public sealed class CSharpTranspiler {
 
         // return Ctx.ToChunk();
 
-        return default;
+        return new Chunk {
+            Block = new Block {
+                Statements = [],
+            }
+        };
     }
 }

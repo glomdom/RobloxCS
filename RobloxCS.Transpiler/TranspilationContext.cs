@@ -1,6 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RobloxCS.Compiler;
+using RobloxCS.Transpiler.Diagnostics;
 
 namespace RobloxCS.Transpiler;
 
@@ -9,6 +10,7 @@ public sealed class TranspilationContext {
     public CSharpCompiler Compiler { get; }
     public SemanticModel Semantics { get; }
     public CompilationUnitSyntax Root { get; }
+    public DiagnosticBag Diagnostics { get; } = new();
 
     public TranspilationContext(TranspilerOptions options, CSharpCompiler compiler) {
         Options = options;
