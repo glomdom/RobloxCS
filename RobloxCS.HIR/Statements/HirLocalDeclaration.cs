@@ -3,5 +3,5 @@
 namespace RobloxCS.HIR.Statements;
 
 public sealed record HirLocalDeclaration : HirStatement {
-    public required IImmutableList<HirVariableDeclarator> Declarators { get; init; }
+    public required ImmutableArray<HirVariableDeclarator> Declarators { get; init; }
 }

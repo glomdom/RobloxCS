@@ -67,7 +67,7 @@ public sealed partial class HirBuilder {
                 Type = invocationOperation.Type,
                 Method = invocationOperation.TargetMethod,
                 Receiver = receiver,
-                Arguments = args,
+                Arguments = [.. args],
                 IsExtension = isExtension,
             };
 

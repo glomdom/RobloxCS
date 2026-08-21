@@ -4,6 +4,6 @@ using Microsoft.CodeAnalysis;
 namespace RobloxCS.HIR.Statements;
 
 public sealed record HirBlock : HirStatement {
-    public required IImmutableList<HirStatement> Statements { get; init; }
-    public required IImmutableList<ILocalSymbol> Locals { get; init; }
+    public required ImmutableArray<HirStatement> Statements { get; init; }
+    public required ImmutableArray<ILocalSymbol> Locals { get; init; }
 }

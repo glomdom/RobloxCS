@@ -7,8 +7,8 @@ namespace RobloxCS.HIR.Declarations;
 public sealed record HirMethod : HirDeclaration {
     public required IMethodSymbol Symbol { get; init; }
 
-    public required IImmutableList<HirParameter> Parameters { get; init; }
-    public required IImmutableList<ITypeParameterSymbol> TypeParameters { get; init; }
+    public required ImmutableArray<HirParameter> Parameters { get; init; }
+    public required ImmutableArray<ITypeParameterSymbol> TypeParameters { get; init; }
     public required HirBlock? Block { get; init; }
     public required bool IsStatic { get; init; }
     public required bool IsConstructor { get; init; }

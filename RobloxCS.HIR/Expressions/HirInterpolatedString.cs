@@ -3,5 +3,5 @@
 namespace RobloxCS.HIR.Expressions;
 
 public sealed record HirInterpolatedString : HirExpression {
-    public required IImmutableList<HirInterpolationPart> Parts { get; init; }
+    public required ImmutableArray<HirInterpolationPart> Parts { get; init; }
 }

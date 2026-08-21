@@ -36,8 +36,8 @@ public sealed partial class HirBuilder {
             Location = SyntaxUtilities.ResolveLocations(typeSymbol.Locations),
             Symbol = typeSymbol,
             Base = typeSymbol.BaseType,
-            Fields = fields,
-            Methods = methods,
+            Fields = [.. fields],
+            Methods = [.. methods],
             Properties = [],
         };
     }
@@ -67,7 +67,7 @@ public sealed partial class HirBuilder {
 
     public HirMethod BuildMethod(IMethodSymbol method) {
         Log.Verbose("Adding method {MethodName} of kind {MethodKind}", method.Name, method.MethodKind);
-        
+
         var entryPointAttr = Context.Compiler.Compilation.GetTypeByMetadataName("RobloxCS.Types.Attributes.EntryPointAttribute");
         if (entryPointAttr is null) {
             throw new InvalidOperationException("Failed to get 'EntryPointAttribute' from compilation.");
@@ -90,7 +90,7 @@ public sealed partial class HirBuilder {
         if (!isImplicitCtor) {
             var syntax = Context.Semantics.GetFirstSyntaxFromSymbol<BaseMethodDeclarationSyntax>(method);
             var operation = Context.Semantics.CheckedGetOperation<IMethodBodyOperation>(syntax);
- 
+
             if (operation.BlockBody is { } body) {
                 statements.AddRange(body.Operations.Select(BuildStatement));
 
