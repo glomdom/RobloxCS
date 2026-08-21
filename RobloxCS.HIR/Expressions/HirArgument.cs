@@ -2,7 +2,7 @@
 
 namespace RobloxCS.HIR.Expressions;
 
-public sealed record HirArgument : HirExpression {
+public sealed record HirArgument : HirNode {
     public required IParameterSymbol Symbol { get; init; }
     public required HirExpression Value { get; init; }
 }

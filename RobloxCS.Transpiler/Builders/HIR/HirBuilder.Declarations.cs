@@ -16,27 +16,7 @@ public sealed partial class HirBuilder {
         foreach (var member in typeSymbol.GetMembers()) {
             switch (member) {
                 case IFieldSymbol fieldSymbol: {
-                    if (fieldSymbol.IsImplicitlyDeclared) {
-                        Log.Verbose("Skipping {FieldName} as it is implicitly declared", fieldSymbol.Name);
-                    }
-
-                    var syntax = Context.Semantics.GetFirstSyntaxFromSymbol<VariableDeclaratorSyntax>(member);
-                    var hasInitializer = syntax.Initializer is not null;
-
-                    HirExpression? initializer = null;
-                    if (hasInitializer) {
-                        var operation = Context.Semantics.CheckedGetOperation<IFieldInitializerOperation>(syntax.Initializer!);
-
-                        initializer = BuildExpression(operation.Value);
-                    }
-
-                    var field = new HirField {
-                        Location = SyntaxUtilities.ResolveLocations(fieldSymbol.Locations),
-                        Symbol = fieldSymbol,
-                        Initializer = initializer,
-                        IsStatic = fieldSymbol.IsStatic,
-                    };
-
+                    var field = BuildField(fieldSymbol);
                     fields.Add(field);
 
                     break;
@@ -61,19 +41,42 @@ public sealed partial class HirBuilder {
         };
     }
 
+    public HirField BuildField(IFieldSymbol field) {
+        if (field.IsImplicitlyDeclared) {
+            Log.Verbose("Skipping {FieldName} as it is implicitly declared", field.Name);
+        }
+
+        var syntax = Context.Semantics.GetFirstSyntaxFromSymbol<VariableDeclaratorSyntax>(field);
+        var hasInitializer = syntax.Initializer is not null;
+
+        HirExpression? initializer = null;
+        if (hasInitializer) {
+            var operation = Context.Semantics.CheckedGetOperation<IFieldInitializerOperation>(syntax.Initializer!);
+
+            initializer = BuildExpression(operation.Value);
+        }
+
+        return new HirField {
+            Location = SyntaxUtilities.ResolveLocations(field.Locations),
+            Symbol = field,
+            Initializer = initializer,
+            IsStatic = field.IsStatic,
+        };
+    }
+
     public HirMethod BuildMethod(IMethodSymbol method) {
         Log.Verbose("Adding method {MethodName} of kind {MethodKind}", method.Name, method.MethodKind);
+        
+        var entryPointAttr = Context.Compiler.Compilation.GetTypeByMetadataName("RobloxCS.Types.Attributes.EntryPointAttribute");
+        if (entryPointAttr is null) {
+            throw new InvalidOperationException("Failed to get 'EntryPointAttribute' from compilation.");
+        }
 
         var isCtor = method is { MethodKind: MethodKind.Constructor };
         var isImplicitCtor = method is { IsImplicitlyDeclared: true } && isCtor;
 
         var isEntryPoint = false;
         foreach (var attrData in method.GetAttributes()) {
-            var entryPointAttr = Context.Compiler.Compilation.GetTypeByMetadataName("RobloxCS.Types.Attributes.EntryPointAttribute");
-            if (entryPointAttr is null) {
-                throw new InvalidOperationException("Failed to get 'EntryPointAttribute' from compilation.");
-            }
-
             if (SymbolEqualityComparer.Default.Equals(attrData.AttributeClass, entryPointAttr)) {
                 isEntryPoint = true;
             }

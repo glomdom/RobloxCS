@@ -61,7 +61,7 @@ public sealed partial class HirBuilder {
 
             var isExtension = invocationOperation.TargetMethod.ReducedFrom is not null;
 
-            var args = invocationOperation.Arguments.Select(BuildExpression).ToList();
+            var args = invocationOperation.Arguments.Select(BuildArgument).ToList();
             var call = new HirCall {
                 Location = invocationOperation.Syntax.GetLocation(),
                 Type = invocationOperation.Type,

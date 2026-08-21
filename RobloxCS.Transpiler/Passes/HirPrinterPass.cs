@@ -120,6 +120,13 @@ public sealed class HirPrinterPass : IPass {
         }
     }
 
+    private static void FormatArgument(HirArgument argument, int depth) {
+        var padding = FormatDepth(depth);
+        
+        AnsiConsole.MarkupLine($"{padding}[cyan]argument[/]");
+        FormatExpression(argument.Value, depth + 1);
+    }
+
     private static void FormatField(HirField field, int depth) {
         var padding = FormatDepth(depth);
 
@@ -154,22 +161,15 @@ public sealed class HirPrinterPass : IPass {
                 AnsiConsole.MarkupLine($"{padding}[cyan]call[/] [white]{call.Method.Name}[/]{staticPrefix}{extensionPrefix}{containingPrefix}");
 
                 foreach (var arg in call.Arguments) {
-                    FormatExpression(arg, depth + 1);
+                    FormatArgument(arg, depth + 1);
                 }
-
-                break;
-            }
-
-            case HirArgument argument: {
-                AnsiConsole.MarkupLine($"{padding}[cyan]argument[/]");
-                FormatExpression(argument.Value, depth + 1);
 
                 break;
             }
 
             case HirParameterRef paramRef: {
                 AnsiConsole.MarkupLine($"{padding}[yellow]param ref[/] [white]{paramRef.Symbol.Name}[/]");
-                
+
                 break;
             }
 
