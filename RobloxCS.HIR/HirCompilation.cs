@@ -3,5 +3,5 @@
 namespace RobloxCS.HIR;
 
 public sealed record HirCompilation : HirNode {
-    public required IImmutableList<HirModule> Modules { get; init; }
+    public required ImmutableArray<HirModule> Modules { get; init; }
 }
