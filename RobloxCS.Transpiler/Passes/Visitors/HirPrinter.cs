@@ -8,7 +8,7 @@ using Spectre.Console;
 namespace RobloxCS.Transpiler.Passes.Visitors;
 
 public sealed class HirPrinter : HirVisitor {
-    private const string Guide = "[grey]│[/] ";
+    private const string Guide = "[grey]··[/]";
 
     private int _depth;
 
