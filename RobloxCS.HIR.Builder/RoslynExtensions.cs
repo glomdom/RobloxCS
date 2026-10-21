@@ -3,11 +3,19 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace RobloxCS.Transpiler;
+namespace RobloxCS.HIR.Builder;
 
-public static class SyntaxUtilities {
-    public static Location ResolveLocations(ImmutableArray<Location> locations) =>
-        locations.Length > 1 ? throw new NotSupportedException("Partial location definitions are not supported yet.") : locations.First();
+internal static class RoslynExtensions {
+    /// <summary>
+    /// Resolves a symbol's single declaring location. Partial declarations are not supported yet.
+    /// </summary>
+    public static Location ResolveSingle(this ImmutableArray<Location> locations) {
+        if (locations.Length > 1) {
+            throw new NotSupportedException("Partial location definitions are not supported yet.");
+        }
+
+        return locations.First();
+    }
 
     extension(SemanticModel semantics) {
         public T CheckedGetOperation<T>(SyntaxNode node) where T : IOperation {

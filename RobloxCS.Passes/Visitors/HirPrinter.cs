@@ -1,11 +1,11 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using RobloxCS.HIR;
 using RobloxCS.HIR.Declarations;
 using RobloxCS.HIR.Expressions;
 using RobloxCS.HIR.Statements;
 using Spectre.Console;
 
-namespace RobloxCS.Transpiler.Passes.Visitors;
+namespace RobloxCS.Passes.Visitors;
 
 public sealed class HirPrinter : HirVisitor {
     private const string Guide = "[grey]··[/]";
@@ -224,7 +224,9 @@ public sealed class HirPrinter : HirVisitor {
 
     private static string Flags(params string?[] flags) {
         var present = flags.Where(flag => flag is not null).ToList();
-        if (present.Count == 0) return string.Empty;
+        if (present.Count == 0) {
+            return string.Empty;
+        }
 
         return $" [grey italic]{string.Join(" ", present)}[/]";
     }

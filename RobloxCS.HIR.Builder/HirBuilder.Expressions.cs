@@ -1,9 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.HIR.Expressions;
-using Serilog;
 
-namespace RobloxCS.Transpiler.Builders.HIR;
+namespace RobloxCS.HIR.Builder;
 
 public sealed partial class HirBuilder {
     public HirExpression BuildExpression(IOperation operation) {
@@ -54,20 +53,12 @@ public sealed partial class HirBuilder {
         }
 
         HirLiteral HandleLiteralOperation(ILiteralOperation literalOperation) {
-            if (literalOperation.ConstantValue.HasValue) {
-                return new HirLiteral {
-                    Location = literalOperation.Syntax.GetLocation(),
-                    Type = literalOperation.Type!,
-                    Value = literalOperation.ConstantValue.Value,
-                };
-            }
-
-            Console.WriteLine(literalOperation.Kind);
+            var constant = literalOperation.ConstantValue;
 
             return new HirLiteral {
                 Location = literalOperation.Syntax.GetLocation(),
                 Type = literalOperation.Type!,
-                Value = null,
+                Value = constant.HasValue ? constant.Value : null,
             };
         }
     }

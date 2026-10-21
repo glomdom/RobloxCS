@@ -1,9 +1,9 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.HIR.Expressions;
 using RobloxCS.HIR.Statements;
 
-namespace RobloxCS.Transpiler.Builders.HIR;
+namespace RobloxCS.HIR.Builder;
 
 public sealed partial class HirBuilder {
     public HirStatement BuildStatement(IOperation operation) {

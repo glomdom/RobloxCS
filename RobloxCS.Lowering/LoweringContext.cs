@@ -1,9 +1,9 @@
-﻿using System.Collections.Frozen;
+using System.Collections.Frozen;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using RobloxCS.AST.Statements;
 
-namespace RobloxCS.Transpiler;
+namespace RobloxCS.Lowering;
 
 public sealed class LoweringContext {
     public List<Statement> Prologue { get; } = [];

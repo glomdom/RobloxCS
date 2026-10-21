@@ -35,7 +35,9 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
 
         var cwd = Environment.CurrentDirectory;
         var discovery = SolutionDiscovery.Discover(cwd);
-        if (!discovery.Ok) return Fail(discovery.Diagnostic);
+        if (!discovery.Ok) {
+            return Fail(discovery.Diagnostic);
+        }
 
         var slnFile = discovery.Value;
         var projectFile = Path.Combine(cwd, settings.ProjectJsonPath);
@@ -47,18 +49,22 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
 
         MsBuildRegister.RegisterDefaults();
 
-        return await RunAsync(slnFile, projectFile, cancellation);
+        return await RunAsync(slnFile, projectFile, new EmitOptions(settings.PrintHir), cancellation);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private async Task<int> RunAsync(string slnFile, string projectFile, CancellationToken cancellation) {
+    private async Task<int> RunAsync(string slnFile, string projectFile, EmitOptions options, CancellationToken cancellation) {
         var loaded = await SolutionLoader.LoadAsync(slnFile, cancellation);
-        if (!loaded.Ok) return Fail(loaded.Diagnostic);
+        if (!loaded.Ok) {
+            return Fail(loaded.Diagnostic);
+        }
 
         Log.Debug("Loaded solution from {SolutionFile}", slnFile);
 
         var loadedAnchors = RojoProject.LoadAnchors(projectFile);
-        if (!loadedAnchors.Ok) return Fail(loadedAnchors.Diagnostic);
+        if (!loadedAnchors.Ok) {
+            return Fail(loadedAnchors.Diagnostic);
+        }
 
         Log.Debug("Loaded anchors from rojo project {ProjectFile}", projectFile);
 
@@ -68,7 +74,9 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
 
         foreach (var project in solution.Solution.Projects) {
             var prepared = await ProjectPreparation.PrepareProjectAsync(project, anchors, cancellation);
-            if (!prepared.Ok) return Fail(prepared.Diagnostic);
+            if (!prepared.Ok) {
+                return Fail(prepared.Diagnostic);
+            }
 
             var plan = prepared.Value;
 
@@ -76,10 +84,11 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
 
             foreach (var document in project.Documents.Where(Filters.ShouldCompile)) {
                 var diagnostics = new List<Diagnostic>();
-                var compiled = await DocumentCompiler.CompileDocument(document, plan, diagnostics, cancellation);
-                if (!compiled.Ok) {
-                    foreach (var diag in diagnostics) _console.MarkupLine(diag.Render());
+                var compiled = await DocumentCompiler.CompileDocument(document, plan, options, diagnostics, cancellation);
 
+                DiagnosticMarkup.PrintAll(_console, diagnostics);
+
+                if (!compiled.Ok) {
                     return Fail(compiled.Diagnostic);
                 }
 
@@ -90,8 +99,6 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
         }
 
         foreach (var file in outputs) {
-            foreach (var diag in file.Diagnostics) _console.MarkupLine(diag);
-
             Directory.CreateDirectory(Path.GetDirectoryName(file.OutPath)!);
             await File.WriteAllTextAsync(file.OutPath, file.Code, cancellation);
         }
@@ -100,7 +107,7 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
     }
 
     private int Fail(Diagnostic diag) {
-        _console.MarkupLine(diag.Render());
+        DiagnosticMarkup.Print(_console, diag);
 
         return -1;
     }

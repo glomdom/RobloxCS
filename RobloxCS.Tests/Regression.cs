@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
 using RobloxCS.Compiler;
+using RobloxCS.Lowering;
 using RobloxCS.Renderer;
 using RobloxCS.Transpiler;
 
@@ -67,10 +68,12 @@ public class Regression {
                 new CSharpCompiler(p, "RobloxCS.Types.dll", true)
             );
 
-            var chunk = transpiler.Transpile();
-            var renderer = new RendererWalker();
+            var result = transpiler.Transpile();
+            if (!result.Ok) {
+                Assert.Fail($"Failed to transpile '{p}':\n" + string.Join("\n", result.Diagnostics.Select(d => d.Render())));
+            }
 
-            return renderer.Render(chunk);
+            return new RendererWalker().Render(result.Chunk!);
         });
 
     private static string RunWithLune(string path) {

@@ -1,23 +1,15 @@
-﻿using Microsoft.CodeAnalysis.Operations;
+using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.HIR.Expressions;
-using Serilog;
 
-namespace RobloxCS.Transpiler.Builders.HIR;
+namespace RobloxCS.HIR.Builder;
 
-public partial class HirBuilder {
+public sealed partial class HirBuilder {
     public HirArgument BuildArgument(IArgumentOperation operation) {
-        if (operation.Type is not null) {
-            Log.Information("Argument has constant value {ConstantValue}", operation.Value.ConstantValue.HasValue);
-        }
-
         if (operation.Parameter is null) {
             throw new NotSupportedException("__arglist is not supported");
         }
 
-        if (operation.ArgumentKind == ArgumentKind.DefaultValue) {
-            Log.Information("TODO");
-        }
-
+        // TODO: ArgumentKind.DefaultValue — the value is a synthesized default and currently goes through BuildExpression like any other.
         var value = BuildExpression(operation.Value);
 
         return new HirArgument {

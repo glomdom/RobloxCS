@@ -1,11 +1,12 @@
 ﻿using RobloxCS.Common;
 using RobloxCS.Common.Diagnostics;
 using RobloxCS.Compiler;
+using RobloxCS.Transpiler;
 
 namespace RobloxCS.CompilerPipeline.Documents;
 
 public static class FileCompiler {
-    public static Result<string> Compile(string path, string typesPath, bool skipDiagnostics, List<Diagnostic> diagnostics) {
+    public static Result<string> Compile(string path, string typesPath, bool skipDiagnostics, EmitOptions options, List<Diagnostic> diagnostics) {
         if (!File.Exists(path)) {
             return Diagnostic.Error(DiagnosticId.FileNotFound, $"'{path}' does not exist.");
         }
@@ -17,6 +18,8 @@ public static class FileCompiler {
             return Diagnostic.Error(DiagnosticId.SourceDidNotCompile, $"Refusing to transpile '{path}', C# compiler errored out.");
         }
 
-        return LuauEmitter.Emit(compiler, ScriptTypeResolver.FromFileName(path));
+        var transpilerOptions = new TranspilerOptions(ScriptTypeResolver.FromFileName(path), options.PrintHir);
+
+        return LuauEmitter.Emit(compiler, transpilerOptions, diagnostics);
     }
 }

@@ -1,8 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
-using RobloxCS.HIR;
+using Microsoft.CodeAnalysis;
 using RobloxCS.HIR.Expressions;
 
-namespace RobloxCS.Transpiler.Builders.HIR;
+namespace RobloxCS.HIR.Builder;
 
 public sealed partial class HirBuilder {
     public HirParameter BuildParameter(IParameterSymbol parameterSymbol) {
@@ -19,7 +18,7 @@ public sealed partial class HirBuilder {
         }
 
         return new HirParameter {
-            Location = SyntaxUtilities.ResolveLocations(parameterSymbol.Locations),
+            Location = parameterSymbol.Locations.ResolveSingle(),
             Symbol = parameterSymbol,
             DefaultValue = defaultValue,
             IsParams = parameterSymbol.IsParams,

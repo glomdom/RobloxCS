@@ -60,17 +60,13 @@ public sealed class CSharpCompiler {
         );
     }
 
-    public ImmutableArray<string> FormatDiagnostics() {
-        var formatter = new DiagnosticFormatter();
-
-        return [.. Diagnostics.Select(d => formatter.Format(d))];
-    }
-
     public sealed class MetadataTypes {
         public readonly INamedTypeSymbol GenericListTypeSymbol;
+        public readonly INamedTypeSymbol EntryPointAttributeSymbol;
 
         public MetadataTypes(CSharpCompilation compilation) {
             GenericListTypeSymbol = CheckedGetType(compilation, "System.Collections.Generic.List`1");
+            EntryPointAttributeSymbol = CheckedGetType(compilation, "RobloxCS.Types.Attributes.EntryPointAttribute");
         }
 
         private static INamedTypeSymbol CheckedGetType(CSharpCompilation compilation, string name) {
