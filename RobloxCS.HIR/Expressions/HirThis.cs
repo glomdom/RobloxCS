@@ -1,3 +1,3 @@
 ﻿namespace RobloxCS.HIR.Expressions;
 
-public record HirThis : HirExpression;
+public sealed record HirThis : HirExpression;

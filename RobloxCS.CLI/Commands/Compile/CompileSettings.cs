@@ -11,4 +11,8 @@ public abstract class CompileSettings : CommonSettings {
     [CommandOption("--no-diagnostics")]
     [Description("Don't run Roslyn diagnostics")]
     public bool SkipDiagnostics { get; init; }
+
+    [CommandOption("--print-hir")]
+    [Description("Dump the HIR of each file before lowering")]
+    public bool PrintHir { get; init; }
 }

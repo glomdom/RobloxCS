@@ -6,7 +6,6 @@ using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.AST.Suffixes;
 using RobloxCS.AST.Types;
-using RobloxCS.Transpiler.Extensions;
 
 namespace RobloxCS.Renderer;
 
@@ -103,7 +102,7 @@ public class RendererWalker : AstVisitorBase {
 
     public override void VisitFunctionDeclaration(FunctionDeclarationStatement node) {
         _state.AppendIndented("function ");
-        _state.Builder.Append(node.Name.ToFriendly());
+        _state.Builder.Append(node.Name.ToString());
         Visit(node.Body);
         _state.AppendIndentedLine("end");
     }

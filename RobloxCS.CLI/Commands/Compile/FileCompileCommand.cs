@@ -2,6 +2,7 @@ using System.ComponentModel;
 using JetBrains.Annotations;
 using RobloxCS.Common;
 using RobloxCS.Common.Diagnostics;
+using RobloxCS.CompilerPipeline;
 using RobloxCS.CompilerPipeline.Documents;
 using Serilog.Events;
 using Spectre.Console;
@@ -28,22 +29,19 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
         LoggerSetup.LevelSwitch.MinimumLevel = settings.Verbosity ? LogEventLevel.Verbose : LogEventLevel.Warning;
 
         List<Diagnostic> diagnostics = [];
-        var result = FileCompiler.Compile(settings.Path, settings.TypesFilePath, settings.SkipDiagnostics, diagnostics);
+        var options = new EmitOptions(settings.PrintHir);
+        var result = FileCompiler.Compile(settings.Path, settings.TypesFilePath, settings.SkipDiagnostics, options, diagnostics);
 
-        foreach (var d in diagnostics) {
-            _console.WriteLine(d.Render());
+        DiagnosticMarkup.PrintAll(_console, diagnostics);
+
+        if (!result.Ok) {
+            DiagnosticMarkup.Print(_console, result.Diagnostic);
+
+            return -1;
         }
-
-        if (!result.Ok) return Fail(result.Diagnostic);
 
         Console.WriteLine(result.Value);
 
         return 0;
-    }
-
-    private int Fail(Diagnostic diag) {
-        _console.MarkupLine(diag.Render());
-
-        return -1;
     }
 }

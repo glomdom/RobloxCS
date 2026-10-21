@@ -32,7 +32,7 @@ internal static class Program {
 
             return -1;
         } catch (Exception ex) {
-            AnsiConsole.MarkupLine($"[red]error:[/] {Markup.Escape(ex.Message)}");
+            AnsiConsole.WriteLine(ex.ToString());
             AnsiConsole.MarkupLine("[cyan]note:[/] This may be a compiler bug, please report it at https://github.com/glomdom/RobloxCS");
 
             return -1;

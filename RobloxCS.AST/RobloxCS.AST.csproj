@@ -9,11 +9,5 @@
     <ItemGroup>
       <PackageReference Include="Serilog" Version="4.4.0" />
     </ItemGroup>
-    
-    <ItemGroup>
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-            <_Parameter1>RobloxCS.Transpiler</_Parameter1>
-        </AssemblyAttribute>
-    </ItemGroup>
 
 </Project>
