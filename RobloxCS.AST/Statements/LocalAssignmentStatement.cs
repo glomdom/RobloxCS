@@ -17,6 +17,14 @@ public sealed class LocalAssignmentStatement : Statement {
             Types = [type],
         };
     }
+    
+    public static LocalAssignmentStatement Untyped(string name, Expression expr) {
+        return new LocalAssignmentStatement {
+            Names = [SymbolExpression.FromString(name)],
+            Expressions = [expr],
+            Types = [],
+        };
+    }
 
     public static LocalAssignmentStatement Naked(string name, TypeInfo type) {
         return new LocalAssignmentStatement {

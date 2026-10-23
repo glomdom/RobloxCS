@@ -22,6 +22,11 @@ public sealed partial class HirBuilder {
                     break;
                 }
 
+                // Roslyn synthesizes this when static fields have initializers; those come through HirField instead.
+                case IMethodSymbol { MethodKind: MethodKind.StaticConstructor, IsImplicitlyDeclared: true }: {
+                    break;
+                }
+
                 case IMethodSymbol methodSymbol: {
                     var method = BuildMethod(methodSymbol);
                     methods.Add(method);
@@ -94,7 +99,7 @@ public sealed partial class HirBuilder {
 
     private HirBlock BuildMethodBlock(IMethodSymbol method) {
         var syntax = Semantics.GetFirstSyntaxFromSymbol<BaseMethodDeclarationSyntax>(method);
-        var operation = Semantics.CheckedGetOperation<IMethodBodyOperation>(syntax);
+        var operation = Semantics.CheckedGetOperation<IMethodBodyBaseOperation>(syntax);
 
         if (operation.BlockBody is not { } body) {
             var error = Unsupported("expression bodies are not supported", method.Locations.ResolveSingle());

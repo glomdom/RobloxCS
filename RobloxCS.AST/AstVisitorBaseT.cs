@@ -99,6 +99,7 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
     public virtual T VisitIndexSignatureFieldKey(IndexSignatureTypeFieldKey node) => DefaultVisit(node);
     public virtual T VisitTypeInfo(TypeInfo node) => DefaultVisit(node);
     public virtual T VisitUnionTypeInfo(UnionTypeInfo node) => DefaultVisit(node);
+    public virtual T VisitTypeofTypeInfo(TypeofTypeInfo node) => DefaultVisit(node);
 
     public virtual T VisitVarExpression(VarExpression node) => DefaultVisit(node);
     public virtual T VisitVarName(VarName node) => DefaultVisit(node);

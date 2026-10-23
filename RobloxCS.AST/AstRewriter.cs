@@ -300,6 +300,7 @@ public class AstRewriter : IAstVisitor<AstNode> {
     public virtual AstNode VisitIndexSignatureFieldKey(IndexSignatureTypeFieldKey node) => throw new NotImplementedException();
     public virtual AstNode VisitTypeInfo(TypeInfo node) => throw new NotImplementedException();
     public virtual AstNode VisitUnionTypeInfo(UnionTypeInfo node) => throw new NotImplementedException();
+    public virtual AstNode VisitTypeofTypeInfo(TypeofTypeInfo node) => throw new NotImplementedException();
 
     public virtual AstNode VisitVarExpression(VarExpression node) {
         node.Prefix = Visit(node.Prefix, node)!;

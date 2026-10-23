@@ -88,6 +88,7 @@ public interface IAstVisitor {
     void VisitNameTypeFieldKey(NameTypeFieldKey node);
     void VisitIndexSignatureFieldKey(IndexSignatureTypeFieldKey node);
     void VisitTypeInfo(TypeInfo node);
+    void VisitTypeofTypeInfo(TypeofTypeInfo node);
     void VisitUnionTypeInfo(UnionTypeInfo node);
 
     void VisitVarExpression(VarExpression node);
@@ -174,6 +175,7 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitNameTypeFieldKey(NameTypeFieldKey node);
     T VisitIndexSignatureFieldKey(IndexSignatureTypeFieldKey node);
     T VisitTypeInfo(TypeInfo node);
+    T VisitTypeofTypeInfo(TypeofTypeInfo node);
     T VisitUnionTypeInfo(UnionTypeInfo node);
 
     T VisitVarExpression(VarExpression node);

@@ -24,6 +24,32 @@ public class RendererWalker : AstVisitorBase {
     }
 
     public override void VisitChunk(Chunk node) {
+        switch (node.Mode) {
+            case TypeCheckMode.Strict: {
+                _state.Builder.AppendLine("--!strict");
+                
+                break;
+            }
+            
+            case TypeCheckMode.NonStrict: {
+                _state.Builder.AppendLine("--!nonstrict");
+                
+                break;
+            }
+            
+            case TypeCheckMode.NoCheck: {
+                _state.Builder.AppendLine("--!nocheck");
+                
+                break;
+            }
+            
+            default: {
+                throw new ArgumentOutOfRangeException(nameof(node));
+            }
+        }
+
+        _state.Builder.AppendLine();
+        
         Visit(node.Block);
     }
 
@@ -100,9 +126,17 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.Append(node.Name);
     }
 
+    public override void VisitTypeofTypeInfo(TypeofTypeInfo node) {
+        _state.Builder.Append("typeof(");
+        
+        Visit(node.Expression);
+        
+        _state.Builder.Append(')');
+    }
+
     public override void VisitFunctionDeclaration(FunctionDeclarationStatement node) {
         _state.AppendIndented("function ");
-        _state.Builder.Append(node.Name.ToString());
+        _state.Builder.Append(node.Name);
         Visit(node.Body);
         _state.AppendIndentedLine("end");
     }
