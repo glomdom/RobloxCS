@@ -9,7 +9,7 @@ public sealed partial class HirBuilder {
             throw new NotSupportedException("__arglist is not supported");
         }
 
-        // TODO: ArgumentKind.DefaultValue — the value is a synthesized default and currently goes through BuildExpression like any other.
+        // TODO: ArgumentKind.DefaultValue: the value is a synthesized default and currently goes through BuildExpression like any other.
         var value = BuildExpression(operation.Value);
 
         return new HirArgument {

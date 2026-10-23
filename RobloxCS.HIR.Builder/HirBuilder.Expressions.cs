@@ -1,4 +1,7 @@
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.HIR.Expressions;
 
@@ -12,11 +15,7 @@ public sealed partial class HirBuilder {
             }
 
             case OperationKind.VariableInitializer when operation is IVariableInitializerOperation variableInitializerOperation: {
-                if (variableInitializerOperation.Value is ILiteralOperation literalValue) {
-                    return HandleLiteralOperation(literalValue);
-                }
-
-                throw new NotSupportedException($"Variable initializer operation with initializer '{variableInitializerOperation.Value.Kind}' is not supported.");
+                return BuildExpression(variableInitializerOperation.Value);
             }
 
             case OperationKind.LocalReference when operation is ILocalReferenceOperation localReferenceOperation: {
@@ -35,6 +34,25 @@ public sealed partial class HirBuilder {
                 };
             }
 
+            case OperationKind.ObjectCreation when operation is IObjectCreationOperation creationOperation: {
+                if (creationOperation.Type is not { } type) {
+                    throw new InvalidOperationException("Object creation resulted in null type.");
+                }
+
+                if (creationOperation.Constructor is not { } ctor) {
+                    throw new InvalidOperationException("Object creation called without a ctor.");
+                }
+
+                var args = creationOperation.Arguments.Select(BuildArgument).ToImmutableArray();
+
+                return new HirObjectCreation {
+                    Location = creationOperation.Syntax.GetLocation(),
+                    Type = type,
+                    Constructor = ctor,
+                    Arguments = args,
+                };
+            }
+
             case OperationKind.ParameterReference when operation is IParameterReferenceOperation parameterReferenceOperation: {
                 if (parameterReferenceOperation.Type is not { } type) {
                     throw new InvalidOperationException("Parameter reference type is null.");
@@ -47,8 +65,82 @@ public sealed partial class HirBuilder {
                 };
             }
 
+            case OperationKind.Binary when operation is IBinaryOperation binaryOperation: {
+                if (binaryOperation.Type is not { } type) {
+                    throw new InvalidOperationException("Binary operation does not produce a type.");
+                }
+
+                if (binaryOperation.IsLifted) {
+                    throw new NotSupportedException("Lifted binary operations are not supported.");
+                }
+
+                var left = BuildExpression(binaryOperation.LeftOperand);
+                var right = BuildExpression(binaryOperation.RightOperand);
+
+                return new HirBinary {
+                    Location = binaryOperation.Syntax.GetLocation(),
+                    Type = type,
+                    IsChecked = binaryOperation.IsChecked,
+                    Left = left,
+                    Right = right,
+                    Op = binaryOperation.OperatorKind,
+                    OperatorMethod = binaryOperation.OperatorMethod,
+                };
+            }
+
+            case OperationKind.Conversion when operation is IConversionOperation conversionOperation: {
+                if (conversionOperation.IsTryCast) {
+                    throw new NotSupportedException("Try casts are not supported yet.");
+                }
+
+                if (conversionOperation.Type is not { } type) {
+                    throw new InvalidOperationException("Conversion operation does not produce a type.");
+                }
+
+                var conversion = conversionOperation.GetConversion();
+
+                return new HirConversion {
+                    Location = conversionOperation.Syntax.GetLocation(),
+                    Type = conversionOperation.Type,
+                    Operand = BuildExpression(conversionOperation.Operand),
+                    Kind = ClassifyConversion(conversion, type),
+                    Method = conversionOperation.OperatorMethod,
+                    IsImplicit = conversion.IsImplicit,
+                };
+            }
+
+            case OperationKind.FieldReference when operation is IFieldReferenceOperation fieldReferenceOperation: {
+                if (fieldReferenceOperation.Type is not { } type) {
+                    throw new InvalidOperationException("Field reference operation does not have a type.");
+                }
+
+                var receiver = fieldReferenceOperation.Field.IsStatic ? null : BuildExpression(fieldReferenceOperation.Instance!);
+
+                return new HirFieldAccess {
+                    Location = fieldReferenceOperation.Syntax.GetLocation(),
+                    Type = type,
+                    Symbol = fieldReferenceOperation.Field,
+                    Receiver = receiver,
+                };
+            }
+
+            case OperationKind.InstanceReference when operation is IInstanceReferenceOperation instanceReferenceOperation: {
+                if (instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance) {
+                    return new HirThis {
+                        Location = instanceReferenceOperation.Syntax.GetLocation(),
+                        Type = instanceReferenceOperation.Type!,
+                    };
+                }
+
+                if (instanceReferenceOperation.Syntax is BaseExpressionSyntax) {
+                    throw new NotSupportedException("base is not supported.");
+                }
+
+                throw new NotSupportedException($"Instance reference of kind '{instanceReferenceOperation.ReferenceKind}' is not supported yet.");
+            }
+
             default: {
-                throw new NotSupportedException($"Operation kind '{operation.Kind}' is not supported.");
+                throw new NotSupportedException($"Expression operation kind '{operation.Kind}' is not supported.");
             }
         }
 
@@ -61,5 +153,39 @@ public sealed partial class HirBuilder {
                 Value = constant.HasValue ? constant.Value : null,
             };
         }
+    }
+
+    private static HirConversionKind ClassifyConversion(Conversion conversion, ITypeSymbol target) {
+        if (conversion.IsUserDefined) {
+            return HirConversionKind.UserDefined;
+        }
+
+        if (conversion.IsIdentity) {
+            return HirConversionKind.Identity;
+        }
+
+        if (conversion.IsBoxing) {
+            return HirConversionKind.Boxing;
+        }
+
+        if (conversion.IsUnboxing) {
+            return HirConversionKind.Unboxing;
+        }
+
+        if (conversion.IsNullable) {
+            return target.OriginalDefinition.SpecialType is SpecialType.System_Nullable_T
+                ? HirConversionKind.NullableWrap
+                : HirConversionKind.NullableUnwrap;
+        }
+
+        if (conversion.IsNumeric || conversion.IsConstantExpression) {
+            return HirConversionKind.Numeric;
+        }
+
+        if (conversion.IsReference || conversion.IsNullLiteral) {
+            return HirConversionKind.Reference;
+        }
+
+        throw new NotSupportedException($"Conversion '{conversion}' is not supported yet.");
     }
 }

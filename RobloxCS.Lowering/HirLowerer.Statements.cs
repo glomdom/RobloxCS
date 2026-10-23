@@ -1,5 +1,6 @@
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.HIR.Expressions;
 using RobloxCS.HIR.Statements;
@@ -113,16 +114,40 @@ public sealed partial class HirLowerer {
     }
 
     private List<Statement> LowerExpressionStatement(HirExpressionStatement statement) {
+        if (statement.Expression is HirIncrementDecrement increment) {
+            return LowerIncrementStatement(increment);
+        }
+        
         if (statement.Expression is not HirCall call) {
             Unsupported($"'{statement.Expression.GetType().Name}' can't be used as a statement yet.", statement.Location);
 
             return [];
         }
 
-        if (LowerCall(call) is not FunctionCallExpression lowered) {
+        if (LowerCall(call) is not { } lowered) {
             return [];
         }
 
         return [Stmt(lowered)];
+    }
+    
+    private List<Statement> LowerIncrementStatement(HirIncrementDecrement increment) {
+        if (LowerAssignmentTarget(increment.Target) is not { } target) {
+            return [];
+        }
+
+        Log.Verbose("Lowering {Operator} to a compound assignment", increment.IsIncrement ? "++" : "--");
+
+        return [
+            new CompoundAssignmentStatement {
+                Left = target,
+                Operator = increment.IsIncrement ? CompoundOp.PlusEqual : CompoundOp.MinusEqual,
+                Right = new VarExpression {
+                    Prefix = new ExpressionPrefix {
+                        Expression = Num(1),
+                    },
+                },
+            },
+        ];
     }
 }

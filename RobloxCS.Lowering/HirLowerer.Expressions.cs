@@ -1,7 +1,10 @@
 using System.Globalization;
+using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
+using RobloxCS.HIR;
 using RobloxCS.HIR.Expressions;
 using Serilog;
 using static RobloxCS.Lowering.Luau;
@@ -35,6 +38,36 @@ public sealed partial class HirLowerer {
                 return LowerCall(call) ?? (Expression)Nil();
             }
 
+            case HirObjectCreation creation: {
+                var type = creation.Constructor.ContainingType;
+
+                if (!IsModuleType(type)) {
+                    Unsupported($"Creating '{type.ToDisplayString()}' is not supported yet.", creation.Location);
+
+                    return Nil();
+                }
+
+                var args = creation.Arguments.Select(argument => LowerExpression(argument.Value)).ToList();
+
+                Log.Verbose("Lowering object creation {ClassName}.new with {ArgumentCount} arguments", type.Name, args.Count);
+
+                return Call(Index(ClassName(type), "new"), args);
+            }
+            
+            case HirBinary binary: {
+                return LowerBinary(binary);
+            }
+
+            case HirIncrementDecrement increment: {
+                Unsupported("++ and -- can only be used as statements yet.", increment.Location);
+
+                return Nil();
+            }
+            
+            case HirConversion conversion: {
+                return LowerConversion(conversion);
+            }
+
             default: {
                 Unsupported($"'{expression.GetType().Name}' expressions are not supported yet.", expression.Location);
 
@@ -56,7 +89,6 @@ public sealed partial class HirLowerer {
 
     private VarExpression LowerFieldAccess(HirFieldAccess access) {
         var field = access.Symbol;
-
         if (field.IsStatic) {
             Log.Verbose("Lowering static field access {ClassName}.{FieldName}", field.ContainingType.Name, field.Name);
 
@@ -104,6 +136,145 @@ public sealed partial class HirLowerer {
         var receiver = call.Receiver is null ? Name("self") : LowerExpression(call.Receiver);
 
         return MethodCall(receiver, method.Name, args);
+    }
+    
+    private Expression LowerBinary(HirBinary binary) {
+        if (binary.OperatorMethod is not null) {
+            Unsupported($"User-defined operator '{binary.OperatorMethod.ToDisplayString()}' is not supported yet.", binary.Location);
+
+            return Nil();
+        }
+
+        if (binary.Op is BinaryOperatorKind.Add && binary.Type.SpecialType is SpecialType.System_String) {
+            return LowerStringConcat(binary);
+        }
+
+        var left = LowerExpression(binary.Left);
+        var right = LowerExpression(binary.Right);
+
+        if (binary.Op is BinaryOperatorKind.Remainder) {
+            Log.Verbose("Lowering % to math.fmod to keep C#'s truncated remainder");
+
+            return Call(Index("math", "fmod"), left, right);
+        }
+
+        if (binary.Op is BinaryOperatorKind.Divide && IsIntegral(binary.Type)) {
+            Unsupported("Integer division is not supported yet.", binary.Location);
+
+            return Nil();
+        }
+
+        if (ToBinOp(binary.Op) is not { } op) {
+            Unsupported($"Binary operator '{binary.Op}' is not supported yet.", binary.Location);
+
+            return Nil();
+        }
+
+        return new BinaryOperatorExpression {
+            Left = left,
+            Op = op,
+            Right = right,
+        };
+    }
+    
+    private Expression LowerConversion(HirConversion conversion) {
+        switch (conversion.Kind) {
+            case HirConversionKind.Identity:
+            case HirConversionKind.Boxing:
+            case HirConversionKind.Unboxing:
+            case HirConversionKind.Reference:
+            case HirConversionKind.NullableWrap:
+            case HirConversionKind.NullableUnwrap: {
+                return LowerExpression(conversion.Operand);
+            }
+
+            case HirConversionKind.Numeric: {
+                if (conversion.IsImplicit) {
+                    return LowerExpression(conversion.Operand);
+                }
+
+                Unsupported("Explicit numeric casts are not supported yet.", conversion.Location);
+
+                return Nil();
+            }
+
+            default: {
+                Unsupported($"'{conversion.Kind}' conversions are not supported yet.", conversion.Location);
+
+                return Nil();
+            }
+        }
+    }
+    
+    private static BinOp? ToBinOp(BinaryOperatorKind kind) {
+        return kind switch {
+            BinaryOperatorKind.Add => BinOp.Plus,
+            BinaryOperatorKind.Subtract => BinOp.Minus,
+            BinaryOperatorKind.Multiply => BinOp.Star,
+            BinaryOperatorKind.Divide => BinOp.Slash,
+            BinaryOperatorKind.Equals => BinOp.TwoEqual,
+            BinaryOperatorKind.NotEquals => BinOp.TildeEqual,
+            BinaryOperatorKind.LessThan => BinOp.LessThan,
+            BinaryOperatorKind.LessThanOrEqual => BinOp.LessThanEqual,
+            BinaryOperatorKind.GreaterThan => BinOp.GreaterThan,
+            BinaryOperatorKind.GreaterThanOrEqual => BinOp.GreaterThanEqual,
+            BinaryOperatorKind.ConditionalAnd => BinOp.And,
+            BinaryOperatorKind.ConditionalOr => BinOp.Or,
+
+            _ => null,
+        };
+    }
+
+    private static bool IsIntegral(ITypeSymbol type) {
+        return type.SpecialType is SpecialType.System_SByte or SpecialType.System_Byte
+            or SpecialType.System_Int16 or SpecialType.System_UInt16
+            or SpecialType.System_Int32 or SpecialType.System_UInt32
+            or SpecialType.System_Int64 or SpecialType.System_UInt64;
+    }
+
+    private Expression LowerStringConcat(HirBinary binary) {
+        var operands = new List<HirExpression>();
+        FlattenConcat(binary, operands);
+
+        Log.Verbose("Lowering string concatenation of {OperandCount} operands to an interpolated string", operands.Count);
+
+        var segments = new List<InterpolatedStringSegment>();
+        var text = new StringBuilder();
+
+        foreach (var operand in operands) {
+            if (operand is HirLiteral { Value: string literal }) {
+                text.Append(literal);
+
+                continue;
+            }
+
+            segments.Add(new InterpolatedStringSegment {
+                Literal = text.ToString(),
+                Expression = LowerExpression(operand),
+            });
+
+            text.Clear();
+        }
+
+        if (segments.Count == 0) {
+            return Str(text.ToString());
+        }
+
+        return new InterpolatedStringExpression {
+            Segments = segments,
+            LastString = text.ToString(),
+        };
+    }
+
+    private static void FlattenConcat(HirExpression expression, List<HirExpression> operands) {
+        if (expression is HirBinary { Op: BinaryOperatorKind.Add, OperatorMethod: null } binary && binary.Type.SpecialType is SpecialType.System_String) {
+            FlattenConcat(binary.Left, operands);
+            FlattenConcat(binary.Right, operands);
+
+            return;
+        }
+
+        operands.Add(expression);
     }
 
     private static bool IsConsoleWrite(IMethodSymbol method) {

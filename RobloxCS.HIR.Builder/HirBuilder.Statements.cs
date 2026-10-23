@@ -13,9 +13,29 @@ public sealed partial class HirBuilder {
             OperationKind.SimpleAssignment => HandleSimpleAssignment((ISimpleAssignmentOperation)operation),
             OperationKind.Invocation => HandleInvocation((IInvocationOperation)operation),
             OperationKind.FieldInitializer => HandleFieldInitializer((IFieldInitializerOperation)operation),
+            OperationKind.Increment or OperationKind.Decrement => HandleIncrementDecrement((IIncrementOrDecrementOperation)operation),
 
-            _ => throw new NotSupportedException($"Operation of kind '{operation.Kind}' is not supported."),
+            _ => throw new NotSupportedException($"Statement operation of kind '{operation.Kind}' is not supported."),
         };
+
+        HirStatement HandleIncrementDecrement(IIncrementOrDecrementOperation incrementOrDecrementOperation) {
+            if (incrementOrDecrementOperation.Type is not { } type) {
+                throw new InvalidOperationException("Increment or decrement operation does not produce a type.");
+            }
+
+            var dec = new HirIncrementDecrement {
+                Location = incrementOrDecrementOperation.Syntax.GetLocation(),
+                Type = type,
+                Target = BuildExpression(incrementOrDecrementOperation.Target),
+                IsPrefix = !incrementOrDecrementOperation.IsPostfix,
+                IsIncrement = incrementOrDecrementOperation.Kind == OperationKind.Increment,
+            };
+
+            return new HirExpressionStatement {
+                Location = incrementOrDecrementOperation.Syntax.GetLocation(),
+                Expression = dec,
+            };
+        }
 
         HirAssignment HandleFieldInitializer(IFieldInitializerOperation fieldInitializerOperation) {
             if (fieldInitializerOperation.InitializedFields.Length != 1) {
@@ -24,11 +44,11 @@ public sealed partial class HirBuilder {
 
             var targetField = fieldInitializerOperation.InitializedFields.First();
             if (targetField.IsConst) {
-                throw new NotSupportedException("Const fields are not yet supported.");
+                throw new NotSupportedException("Const field initializers are not yet supported.");
             }
 
             if (targetField.IsStatic) {
-                throw new NotSupportedException("Static fields are not yet supported.");
+                throw new NotSupportedException("Static field initializers are not yet supported.");
             }
 
             var value = BuildExpression(fieldInitializerOperation.Value);

@@ -132,6 +132,10 @@ public sealed partial class HirBuilder {
             if (classMember is not IFieldSymbol fieldSymbol) {
                 continue;
             }
+            
+            if (fieldSymbol.IsStatic || fieldSymbol.IsConst) {
+                continue;
+            }
 
             if (fieldSymbol.AssociatedSymbol is not null) {
                 throw new NotSupportedException("Backing fields are not yet supported.");
