@@ -96,6 +96,7 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
         }
 
         var emitOptions = options with { Modules = graph };
+        var failures = 0;
 
         foreach (var plan in plans) {
             foreach (var document in plan.Project.Documents.Where(Filters.ShouldCompile)) {
@@ -105,21 +106,20 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
                 DiagnosticMarkup.PrintAll(_console, diagnostics);
 
                 if (!compiled.Ok) {
-                    return Fail(compiled.Diagnostic);
+                    DiagnosticMarkup.Print(_console, compiled.Diagnostic);
+                    failures++;
+
+                    continue;
                 }
 
-                Log.Debug("Compiled file {FileName}", document.Name);
+                Directory.CreateDirectory(Path.GetDirectoryName(compiled.Value.OutPath)!);
+                await File.WriteAllTextAsync(compiled.Value.OutPath, compiled.Value.Code, cancellation);
 
-                outputs.Add(compiled.Value);
+                Log.Debug("Wrote {OutPath}", compiled.Value.OutPath);
             }
         }
 
-        foreach (var file in outputs) {
-            Directory.CreateDirectory(Path.GetDirectoryName(file.OutPath)!);
-            await File.WriteAllTextAsync(file.OutPath, file.Code, cancellation);
-        }
-
-        return 0;
+        return failures == 0 ? 0 : -1;
     }
 
     private int Fail(Diagnostic diag) {

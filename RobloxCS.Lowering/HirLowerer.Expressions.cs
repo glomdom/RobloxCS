@@ -6,6 +6,7 @@ using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.HIR;
 using RobloxCS.HIR.Expressions;
+using RobloxCS.Types;
 using Serilog;
 using static RobloxCS.Lowering.Luau;
 
@@ -72,6 +73,10 @@ public sealed partial class HirLowerer {
                 return LowerPropertyAccess(access);
             }
 
+            case HirLambda lambda: {
+                return LowerLambda(lambda);
+            }
+
             default: {
                 Unsupported($"Lowering '{expression.GetType().Name}' expressions are not supported yet.", expression.Location);
 
@@ -79,18 +84,38 @@ public sealed partial class HirLowerer {
             }
         }
     }
-    
-    private VarExpression LowerPropertyAccess(HirPropertyAccess access) {
-        var field = access.Symbol;
-        if (field.IsStatic) {
-            Log.Verbose("Lowering static field access {ClassName}.{FieldName}", field.ContainingType.Name, field.Name);
 
-            return Index(ClassName(field.ContainingType), field.Name);
+    private AnonymousFunctionExpression LowerLambda(HirLambda lambda) {
+        Log.Verbose("Lowering lambda with {ParameterCount} parameters", lambda.Parameters.Length);
+
+        var parameters = LowerParameters(lambda.Parameters);
+        var returnType = LowerType(lambda.Symbol.ReturnType, lambda.Location);
+        var outerReturnsSelf = _returnsSelf;
+
+        _returnsSelf = false;
+
+        var body = LowerBlock(lambda.Body);
+
+        _returnsSelf = outerReturnsSelf;
+
+        return Lambda(parameters, returnType, body);
+    }
+
+    private Expression LowerPropertyAccess(HirPropertyAccess access) {
+        var property = access.Symbol;
+        var name = RobloxMemberName(property);
+
+        if (!property.IsStatic) {
+            return Index(access.Receiver is null ? Name("self") : LowerExpression(access.Receiver), name);
         }
 
-        var receiver = access.Receiver is null ? Name("self") : LowerExpression(access.Receiver);
+        if (GetRobloxNative(property.ContainingType) is { Kind: RobloxNativeType.Service } service) {
+            return Index(GetService(service.Name), name);
+        }
 
-        return Index(receiver, field.Name);
+        Unsupported($"Static property '{property.ToDisplayString()}' is not supported yet.", access.Location);
+
+        return Nil();
     }
 
     private static Expression LowerLiteral(HirLiteral literal) {
@@ -133,6 +158,10 @@ public sealed partial class HirLowerer {
             return Call("print", args);
         }
 
+        if (GetRobloxNative(method.ContainingType) is { } native) {
+            return LowerNativeCall(call, native, args) as FunctionCallExpression;
+        }
+        
         if (!IsTranspiledType(method.ContainingType)) {
             Unsupported($"Calls to '{method.ToDisplayString()}' are not supported yet.", call.Location);
 

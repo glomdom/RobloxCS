@@ -118,6 +118,19 @@ internal static class Luau {
             },
         };
     }
+    
+    public static AnonymousFunctionExpression Lambda(List<(string Name, TypeInfo Type)> parameters, TypeInfo returnType, List<Statement> body) {
+        return new AnonymousFunctionExpression {
+            Body = new FunctionBody {
+                Parameters = [.. parameters.Select(parameter => (Parameter)NameParameter.FromString(parameter.Name))],
+                TypeSpecifiers = [.. parameters.Select(parameter => parameter.Type)],
+                ReturnType = returnType,
+                Body = new Block {
+                    Statements = body,
+                },
+            },
+        };
+    }
 
     private static FunctionArgs Args(IEnumerable<Expression> args) => new() { Arguments = [.. args] };
 

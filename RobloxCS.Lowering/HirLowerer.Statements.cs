@@ -1,5 +1,4 @@
 using RobloxCS.AST;
-using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.HIR.Expressions;
@@ -11,15 +10,26 @@ namespace RobloxCS.Lowering;
 
 public sealed partial class HirLowerer {
     private readonly Stack<List<HirStatement>> _continueIncrementors = new();
+    private bool _returnsSelf;
     
     private List<Statement> LowerBlock(HirBlock? block) {
         if (block is null) {
-            Log.Verbose("Block is null, lowering to an empty body");
-
             return [];
         }
 
-        return [.. block.Statements.SelectMany(LowerStatement)];
+        var statements = new List<Statement>();
+        foreach (var statement in block.Statements) {
+            statements.AddRange(LowerStatement(statement));
+
+            if (statement is not (HirReturn or HirBreak or HirContinue)) continue;
+            if (statement != block.Statements[^1]) {
+                Log.Verbose("Dropping unreachable statements after {Terminator}", statement.GetType().Name);
+            }
+
+            break;
+        }
+
+        return statements;
     }
 
     private List<Statement> LowerStatement(HirStatement statement) {
@@ -62,6 +72,10 @@ public sealed partial class HirLowerer {
                 return [new BreakStatement()];
             }
 
+            case HirReturn returnStatement: {
+                return LowerReturn(returnStatement);
+            }
+
             default: {
                 Unsupported($"Lowering '{statement.GetType().Name}' statements are not supported yet.", statement.Location);
 
@@ -69,7 +83,19 @@ public sealed partial class HirLowerer {
             }
         }
     }
-    
+
+    private List<Statement> LowerReturn(HirReturn statement) {
+        if (_returnsSelf) {
+            return [Return(Name("self"))];
+        }
+
+        if (statement.Value is null) {
+            return [Return()];
+        }
+
+        return [Return(LowerExpression(statement.Value))];
+    }
+
     private List<Statement> LowerContinue(HirContinue statement) {
         var statements = new List<Statement>();
 

@@ -1,6 +1,8 @@
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
+using RobloxCS.HIR;
 using RobloxCS.HIR.Declarations;
 using Serilog;
 using static RobloxCS.Lowering.Luau;
@@ -109,7 +111,7 @@ public sealed partial class HirLowerer {
 
         _names.BeginFunction();
 
-        var parameters = constructor is null ? [] : LowerParameters(constructor);
+        var parameters = constructor is null ? [] : LowerParameters(constructor.Parameters);
         var body = new List<Statement> { Local("self", NewInstance(name, instanceFields.Count > 0)) };
 
         foreach (var field in instanceFields) {
@@ -121,8 +123,13 @@ public sealed partial class HirLowerer {
             body.Add(Assign(Index("self", field.Symbol.Name), LowerFieldValue(field)));
         }
 
+        
         if (constructor is { IsImplicit: false }) {
+            _returnsSelf = true;
+
             body.AddRange(LowerBlock(constructor.Block));
+
+            _returnsSelf = false;
         }
 
         body.Add(Return(Name("self")));
@@ -144,7 +151,7 @@ public sealed partial class HirLowerer {
 
         _names.BeginFunction();
 
-        var parameters = LowerParameters(method);
+        var parameters = LowerParameters(method.Parameters);
         if (!method.IsStatic) {
             parameters.Insert(0, ("self", Type(className)));
         }
@@ -157,10 +164,10 @@ public sealed partial class HirLowerer {
         return [Function(className, method.Symbol.Name, parameters, returnType, body)];
     }
 
-    private List<(string Name, TypeInfo Type)> LowerParameters(HirMethod method) {
+    private List<(string Name, TypeInfo Type)> LowerParameters(ImmutableArray<HirParameter> hirParameters) {
         var parameters = new List<(string Name, TypeInfo Type)>();
 
-        foreach (var parameter in method.Parameters) {
+        foreach (var parameter in hirParameters) {
             if (parameter.RefKind is not RefKind.None) {
                 Unsupported("ref, out and in parameters are not supported yet.", parameter.Location);
             }
@@ -254,6 +261,10 @@ public sealed partial class HirLowerer {
             case SpecialType.System_Decimal: {
                 return Type("number");
             }
+        }
+        
+        if (GetRobloxNative(type) is { } native) {
+            return Type(native.Name);
         }
 
         if (IsTranspiledType(type)) {

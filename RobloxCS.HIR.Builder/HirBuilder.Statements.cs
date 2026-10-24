@@ -18,9 +18,19 @@ public sealed partial class HirBuilder {
             OperationKind.Loop => HandleLoop((ILoopOperation)operation),
             OperationKind.Conditional => HandleConditional((IConditionalOperation)operation),
             OperationKind.Branch => HandleBranch((IBranchOperation)operation),
+            OperationKind.Return => HandleReturn((IReturnOperation)operation),
 
             _ => throw new NotSupportedException($"Statement operation of kind '{operation.Kind}' is not supported."),
         };
+
+        HirStatement HandleReturn(IReturnOperation returnOperation) {
+            var expr = returnOperation.ReturnedValue is not null ? BuildExpression(returnOperation.ReturnedValue) : null;
+            
+            return new HirReturn {
+                Location = returnOperation.Syntax.GetLocation(),
+                Value = expr,
+            };
+        }
 
         HirStatement HandleBranch(IBranchOperation branchOperation) {
             return branchOperation.BranchKind switch {

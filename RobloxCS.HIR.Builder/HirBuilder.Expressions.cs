@@ -172,6 +172,36 @@ public sealed partial class HirBuilder {
                 };
             }
 
+            case OperationKind.DelegateCreation when operation is IDelegateCreationOperation delegateCreationOperation: {
+                if (delegateCreationOperation.Type is not { } delegateType) {
+                    throw new InvalidOperationException("Delegate creation operation does not produce a type.");
+                }
+
+                switch (delegateCreationOperation.Target) {
+                    case IAnonymousFunctionOperation anon: {
+                        if (anon.Symbol.IsAsync) {
+                            throw new NotSupportedException("Async lambdas are not supported yet.");
+                        }
+
+                        return new HirLambda {
+                            Location = anon.Syntax.GetLocation(),
+                            Type = delegateType,
+                            Symbol = anon.Symbol,
+                            Parameters = [.. anon.Symbol.Parameters.Select(BuildParameter)],
+                            Body = BuildBlock(anon.Body),
+                        };
+                    }
+
+                    case IMethodReferenceOperation: {
+                        throw new NotSupportedException("Passing a method group as a delegate is not supported yet.");
+                    }
+
+                    default: {
+                        throw new NotSupportedException($"Delegate creation with target '{delegateCreationOperation.Target.Kind}' is not supported.");
+                    }
+                }
+            }
+
             default: {
                 throw new NotSupportedException($"Expression operation kind '{operation.Kind}' is not supported.");
             }
