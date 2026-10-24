@@ -18,4 +18,6 @@ public static class DiagnosticId {
     public const string TranspilationFailed = "RBXCS0010";
 
     public const string UnsupportedSyntax = "RBXCS0100";
+
+    public const string TypeSplitAcrossModules = "RBXCS0200";
 }

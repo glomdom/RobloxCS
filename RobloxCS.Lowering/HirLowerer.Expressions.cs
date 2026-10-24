@@ -41,7 +41,7 @@ public sealed partial class HirLowerer {
             case HirObjectCreation creation: {
                 var type = creation.Constructor.ContainingType;
 
-                if (!IsModuleType(type)) {
+                if (!IsTranspiledType(type)) {
                     Unsupported($"Creating '{type.ToDisplayString()}' is not supported yet.", creation.Location);
 
                     return Nil();
@@ -51,7 +51,7 @@ public sealed partial class HirLowerer {
 
                 Log.Verbose("Lowering object creation {ClassName}.new with {ArgumentCount} arguments", type.Name, args.Count);
 
-                return Call(Index(ClassName(type), "new"), args);
+                return Call(Index(ReferenceType(type, creation.Location), "new"), args);
             }
             
             case HirBinary binary: {
@@ -109,7 +109,7 @@ public sealed partial class HirLowerer {
         if (field.IsStatic) {
             Log.Verbose("Lowering static field access {ClassName}.{FieldName}", field.ContainingType.Name, field.Name);
 
-            return Index(ClassName(field.ContainingType), field.Name);
+            return Index(ReferenceType(field.ContainingType, access.Location), field.Name);
         }
 
         var receiver = access.Receiver is null ? Name("self") : LowerExpression(access.Receiver);
@@ -133,7 +133,7 @@ public sealed partial class HirLowerer {
             return Call("print", args);
         }
 
-        if (!IsModuleType(method.ContainingType)) {
+        if (!IsTranspiledType(method.ContainingType)) {
             Unsupported($"Calls to '{method.ToDisplayString()}' are not supported yet.", call.Location);
 
             return null;
@@ -142,7 +142,7 @@ public sealed partial class HirLowerer {
         if (method.IsStatic) {
             Log.Verbose("Lowering static call {ClassName}.{MethodName} with {ArgumentCount} arguments", method.ContainingType.Name, method.Name, args.Count);
 
-            return Call(Index(ClassName(method.ContainingType), method.Name), args);
+            return Call(Index(ReferenceType(method.ContainingType, call.Location), method.Name), args);
         }
 
         Log.Verbose(

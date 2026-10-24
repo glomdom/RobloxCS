@@ -10,6 +10,7 @@
         <ProjectReference Include="..\RobloxCS.Common\RobloxCS.Common.csproj"/>
         <ProjectReference Include="..\RobloxCS.Compiler\RobloxCS.Compiler.csproj" />
         <ProjectReference Include="..\RobloxCS.Lowering\RobloxCS.Lowering.csproj" />
+        <ProjectReference Include="..\RobloxCS.Modules\RobloxCS.Modules.csproj" />
         <ProjectReference Include="..\RobloxCS.Renderer\RobloxCS.Renderer.csproj" />
         <ProjectReference Include="..\RobloxCS.Transpiler\RobloxCS.Transpiler.csproj" />
     </ItemGroup>

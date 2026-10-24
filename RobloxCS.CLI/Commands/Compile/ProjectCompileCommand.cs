@@ -5,6 +5,7 @@ using RobloxCS.Common;
 using RobloxCS.Common.Rojo;
 using RobloxCS.CompilerPipeline;
 using RobloxCS.CompilerPipeline.Documents;
+using RobloxCS.CompilerPipeline.Modules;
 using RobloxCS.CompilerPipeline.Projects;
 using RobloxCS.CompilerPipeline.Solutions;
 using Serilog;
@@ -72,19 +73,34 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
         var anchors = loadedAnchors.Value;
         var outputs = new List<CompiledFile>();
 
+        var plans = new List<ProjectPlan>();
+
         foreach (var project in solution.Solution.Projects) {
             var prepared = await ProjectPreparation.PrepareProjectAsync(project, anchors, cancellation);
             if (!prepared.Ok) {
                 return Fail(prepared.Diagnostic);
             }
 
-            var plan = prepared.Value;
+            plans.Add(prepared.Value);
 
-            Log.Debug("Prepared project {ProjectName}", plan.Project.Name);
+            Log.Debug("Prepared project {ProjectName}", prepared.Value.Project.Name);
+        }
 
-            foreach (var document in project.Documents.Where(Filters.ShouldCompile)) {
+        var graphDiagnostics = new List<Diagnostic>();
+        var graph = await ModuleGraphBuilder.BuildAsync(plans, graphDiagnostics, cancellation);
+
+        DiagnosticMarkup.PrintAll(_console, graphDiagnostics);
+
+        if (graphDiagnostics.Any(d => d.IsError)) {
+            return -1;
+        }
+
+        var emitOptions = options with { Modules = graph };
+
+        foreach (var plan in plans) {
+            foreach (var document in plan.Project.Documents.Where(Filters.ShouldCompile)) {
                 var diagnostics = new List<Diagnostic>();
-                var compiled = await DocumentCompiler.CompileDocument(document, plan, options, diagnostics, cancellation);
+                var compiled = await DocumentCompiler.CompileDocument(document, plan, emitOptions, diagnostics, cancellation);
 
                 DiagnosticMarkup.PrintAll(_console, diagnostics);
 

@@ -7,6 +7,7 @@
   <Project Path="RobloxCS.HIR/RobloxCS.HIR.csproj" />
   <Project Path="RobloxCS.HIR.Builder/RobloxCS.HIR.Builder.csproj" />
   <Project Path="RobloxCS.Lowering/RobloxCS.Lowering.csproj" />
+  <Project Path="RobloxCS.Modules/RobloxCS.Modules.csproj" />
   <Project Path="RobloxCS.Passes/RobloxCS.Passes.csproj" />
   <Project Path="RobloxCS.Renderer\RobloxCS.Renderer.csproj" />
   <Project Path="RobloxCS.Tests\RobloxCS.Tests.csproj" />

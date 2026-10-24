@@ -46,7 +46,7 @@ public sealed class CSharpTranspiler {
             return new TranspileResult(null, diagnostics.All);
         }
 
-        var chunk = new HirLowerer(Options.ScriptType, diagnostics).Lower(module);
+        var chunk = new HirLowerer(Options.ScriptType, Options.Modules, diagnostics).Lower(module);
         if (diagnostics.HasErrors) {
             return new TranspileResult(null, diagnostics.All);
         }

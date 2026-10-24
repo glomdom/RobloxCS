@@ -15,6 +15,7 @@
       <ProjectReference Include="..\RobloxCS.AST\RobloxCS.AST.csproj" />
       <ProjectReference Include="..\RobloxCS.Common\RobloxCS.Common.csproj" />
       <ProjectReference Include="..\RobloxCS.HIR\RobloxCS.HIR.csproj" />
+      <ProjectReference Include="..\RobloxCS.Modules\RobloxCS.Modules.csproj" />
       <ProjectReference Include="..\RobloxCS.Types\RobloxCS.Types.csproj" />
     </ItemGroup>
 

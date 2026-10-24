@@ -28,7 +28,9 @@ public static class DocumentCompiler {
             return Diagnostic.Error(DiagnosticId.SourceDidNotCompile, $"Refusing to transpile '{document.Name}', check above for compiler errors.");
         }
 
-        var transpilerOptions = new TranspilerOptions(ScriptTypeResolver.FromFileName(document.Name), options.PrintHir);
+        var transpilerOptions = new TranspilerOptions(ScriptTypeResolver.FromFileName(document.Name), options.PrintHir) {
+            Modules = options.Modules,
+        };
 
         var code = LuauEmitter.Emit(compiler, transpilerOptions, diagnostics);
         if (!code.Ok) {

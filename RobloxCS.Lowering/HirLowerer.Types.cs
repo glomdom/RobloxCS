@@ -256,8 +256,8 @@ public sealed partial class HirLowerer {
             }
         }
 
-        if (IsModuleType(type)) {
-            return Type(ClassName((INamedTypeSymbol)type));
+        if (IsTranspiledType(type)) {
+            return Type(ReferenceType((INamedTypeSymbol)type, location));
         }
 
         Unsupported($"Type '{type.ToDisplayString()}' is not supported yet.", location);

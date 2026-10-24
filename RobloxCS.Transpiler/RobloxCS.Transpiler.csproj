@@ -13,6 +13,7 @@
       <ProjectReference Include="..\RobloxCS.HIR\RobloxCS.HIR.csproj" />
       <ProjectReference Include="..\RobloxCS.HIR.Builder\RobloxCS.HIR.Builder.csproj" />
       <ProjectReference Include="..\RobloxCS.Lowering\RobloxCS.Lowering.csproj" />
+      <ProjectReference Include="..\RobloxCS.Modules\RobloxCS.Modules.csproj" />
       <ProjectReference Include="..\RobloxCS.Passes\RobloxCS.Passes.csproj" />
     </ItemGroup>
 
