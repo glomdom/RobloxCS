@@ -19,7 +19,7 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
   CONFIGURATION: Release
-  LUNE_VERSION: 0.10.5
+  LUAU_VERSION: 0.744
 
 jobs:
   build:
@@ -42,19 +42,19 @@ jobs:
           key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props', '**/*.sln', '**/*.slnx') }}
           restore-keys: nuget-${{ runner.os }}-
 
-      - name: Install Lune
+      - name: Install Luau
         run: |
           set -euo pipefail
-          dir="$RUNNER_TEMP/lune"
+          dir="$RUNNER_TEMP/luau"
           mkdir -p "$dir"
-          curl -fsSL -o "$dir/lune.zip" \
-            "https://github.com/lune-org/lune/releases/download/v${LUNE_VERSION}/lune-${LUNE_VERSION}-linux-x86_64.zip"
-          unzip -q "$dir/lune.zip" -d "$dir"
-          chmod +x "$dir/lune"
+          curl -fsSL -o "$dir/luau.zip" \
+            "https://github.com/luau-lang/luau/releases/download/${LUAU_VERSION}/luau-ubuntu.zip"
+          unzip -q "$dir/luau.zip" -d "$dir"
+          chmod +x "$dir/luau"
           echo "$dir" >> "$GITHUB_PATH"
 
-      - name: Verify Lune
-        run: lune --version
+      - name: Verify Luau
+        run: luau -h
 
       - name: Restore dependencies
         run: dotnet restore
