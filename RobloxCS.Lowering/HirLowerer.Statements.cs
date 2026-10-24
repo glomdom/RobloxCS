@@ -10,6 +10,8 @@ using static RobloxCS.Lowering.Luau;
 namespace RobloxCS.Lowering;
 
 public sealed partial class HirLowerer {
+    private readonly Stack<List<HirStatement>> _continueIncrementors = new();
+    
     private List<Statement> LowerBlock(HirBlock? block) {
         if (block is null) {
             Log.Verbose("Block is null, lowering to an empty body");
@@ -40,12 +42,132 @@ public sealed partial class HirLowerer {
                 return [new DoStatement { Block = new Block { Statements = LowerBlock(block) } }];
             }
 
+            case HirIf compare: {
+                return LowerIf(compare);
+            }
+
+            case HirFor loop: {
+                return LowerFor(loop);
+            }
+
+            case HirWhile loop: {
+                return LowerWhile(loop);
+            }
+
+            case HirContinue stmt: {
+                return LowerContinue(stmt);
+            }
+            
+            case HirBreak: {
+                return [new BreakStatement()];
+            }
+
             default: {
                 Unsupported($"'{statement.GetType().Name}' statements are not supported yet.", statement.Location);
 
                 return [];
             }
         }
+    }
+    
+    private List<Statement> LowerContinue(HirContinue statement) {
+        var statements = new List<Statement>();
+
+        if (_continueIncrementors.TryPeek(out var incrementors) && incrementors.Count > 0) {
+            Log.Verbose("Running {IncrementorCount} incrementors before continue", incrementors.Count);
+
+            statements.AddRange(incrementors.SelectMany(LowerStatement));
+        }
+
+        statements.Add(new ContinueStatement());
+
+        return statements;
+    }
+
+    private List<Statement> LowerIf(HirIf compare) {
+        var elseIfs = new List<ElseIfBlock>();
+        Block? elseBlock = null;
+
+        var next = compare.Else;
+        while (next is not null) {
+            if (next is HirIf elseIf) {
+                elseIfs.Add(new ElseIfBlock {
+                    Condition = LowerExpression(elseIf.Condition),
+                    Block = new Block { Statements = LowerBlock(elseIf.Then) },
+                });
+
+                next = elseIf.Else;
+
+                continue;
+            }
+
+            elseBlock = new Block {
+                Statements = next is HirBlock block ? LowerBlock(block) : LowerStatement(next),
+            };
+
+            break;
+        }
+
+        Log.Verbose("Lowering if with {ElseIfCount} elseif branches and {ElseKind}", elseIfs.Count, elseBlock is null ? "no else" : "an else");
+
+        return [
+            new IfStatement {
+                Condition = LowerExpression(compare.Condition),
+                Block = new Block { Statements = LowerBlock(compare.Then) },
+                ElseIf = elseIfs.Count > 0 ? elseIfs : null,
+                Else = elseBlock,
+            },
+        ];
+    }
+    
+    private List<Statement> LowerFor(HirFor loop) {
+        Log.Verbose(
+            "Lowering for loop ({InitializerCount} initializers, {IncrementorCount} incrementors) to a while loop",
+            loop.Initializers.Length, loop.Incrementors.Length
+        );
+
+        var initializers = loop.Initializers.SelectMany(LowerStatement).ToList();
+        var condition = loop.Condition is { } hirCondition ? LowerExpression(hirCondition) : Bool(true);
+
+        _continueIncrementors.Push([.. loop.Incrementors]);
+        var body = LowerBlock(loop.Body);
+        _continueIncrementors.Pop();
+
+        if (body.LastOrDefault() is not (BreakStatement or ContinueStatement or ReturnStatement)) {
+            body.AddRange(loop.Incrementors.SelectMany(LowerStatement));
+        }
+
+        var whileLoop = new WhileStatement {
+            Condition = condition,
+            Block = new Block { Statements = body },
+        };
+
+        if (initializers.Count == 0) {
+            return [whileLoop];
+        }
+
+        return [
+            new DoStatement {
+                Block = new Block { Statements = [.. initializers, whileLoop] },
+            },
+        ];
+    }
+    
+    private List<Statement> LowerWhile(HirWhile loop) {
+        Log.Verbose("Lowering while loop");
+
+        var condition = LowerExpression(loop.Condition);
+
+        _continueIncrementors.Push([]);
+        var body = LowerBlock(loop.Body);
+        _continueIncrementors.Pop();
+
+        return [
+            new WhileStatement {
+                Condition = condition,
+                Block = new Block { Statements = body },
+            },
+        ];
     }
 
     private List<Statement> LowerLocalDeclaration(HirLocalDeclaration declaration) {

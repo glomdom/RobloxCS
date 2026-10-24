@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.HIR.Expressions;
@@ -14,9 +15,78 @@ public sealed partial class HirBuilder {
             OperationKind.Invocation => HandleInvocation((IInvocationOperation)operation),
             OperationKind.FieldInitializer => HandleFieldInitializer((IFieldInitializerOperation)operation),
             OperationKind.Increment or OperationKind.Decrement => HandleIncrementDecrement((IIncrementOrDecrementOperation)operation),
+            OperationKind.Loop => HandleLoop((ILoopOperation)operation),
+            OperationKind.Conditional => HandleConditional((IConditionalOperation)operation),
+            OperationKind.Branch => HandleBranch((IBranchOperation)operation),
 
             _ => throw new NotSupportedException($"Statement operation of kind '{operation.Kind}' is not supported."),
         };
+
+        HirStatement HandleBranch(IBranchOperation branchOperation) {
+            return branchOperation.BranchKind switch {
+                BranchKind.Continue => new HirContinue {
+                    Location = branchOperation.Syntax.GetLocation(),
+                },
+                
+                BranchKind.Break => new HirBreak {
+                    Location = branchOperation.Syntax.GetLocation(),
+                },
+                
+                _ => throw new NotSupportedException($"Branch operation of kind '{branchOperation.BranchKind}' is not supported."),
+            };
+        }
+
+        HirStatement HandleConditional(IConditionalOperation conditionalOperation) {
+            var cond = BuildExpression(conditionalOperation.Condition);
+            var thenExpr = BuildBlock(conditionalOperation.WhenTrue);
+            var elseExpr = conditionalOperation.WhenFalse is not null ? BuildStatement(conditionalOperation.WhenFalse) : null;
+            
+            return new HirIf {
+                Location = conditionalOperation.Syntax.GetLocation(),
+                Condition = cond,
+                Then = thenExpr,
+                Else = elseExpr,
+            };
+        }
+
+        HirStatement HandleLoop(ILoopOperation loopOperation) {
+            return loopOperation.LoopKind switch {
+                LoopKind.For => HandleForLoop((IForLoopOperation)loopOperation),
+                LoopKind.While => HandleWhileLoop((IWhileLoopOperation)loopOperation),
+                
+                _ => throw new NotSupportedException($"Loop operation of kind '{loopOperation.LoopKind}' is not supported."),
+            };
+        }
+        
+        HirStatement HandleWhileLoop(IWhileLoopOperation loop) {
+            if (loop.Condition is not { } condOperation) {
+                throw new InvalidOperationException("While loop operation does not have a condition.");
+            }
+            
+            var cond = BuildExpression(condOperation);
+            var block = BuildBlock(loop.Body);
+            
+            return new HirWhile {
+                Location = loop.Syntax.GetLocation(),
+                Condition = cond,
+                Body = block,
+            };
+        }
+        
+        HirStatement HandleForLoop(IForLoopOperation loop) {
+            var inits = loop.Before.Select(BuildStatement).ToImmutableArray();
+            var incrementors = loop.AtLoopBottom.Select(BuildStatement).ToImmutableArray();
+            var cond = loop.Condition is not null ? BuildExpression(loop.Condition) : null;
+            var block = BuildBlock(loop.Body);
+            
+            return new HirFor {
+                Location = loop.Syntax.GetLocation(),
+                Initializers = inits,
+                Condition = cond,
+                Incrementors = incrementors,
+                Body = block,
+            };
+        }
 
         HirStatement HandleIncrementDecrement(IIncrementOrDecrementOperation incrementOrDecrementOperation) {
             if (incrementOrDecrementOperation.Type is not { } type) {
@@ -141,5 +211,21 @@ public sealed partial class HirBuilder {
                 Initializer = initializer,
             };
         }
+    }
+    
+    private HirBlock BuildBlock(IOperation operation) {
+        if (operation is IBlockOperation block) {
+            return new HirBlock {
+                Location = block.Syntax.GetLocation(),
+                Statements = [.. block.Operations.Select(BuildStatement)],
+                Locals = [.. block.Locals],
+            };
+        }
+
+        return new HirBlock {
+            Location = operation.Syntax.GetLocation(),
+            Statements = [BuildStatement(operation)],
+            Locals = [],
+        };
     }
 }

@@ -1,4 +1,5 @@
 --!strict
+
 local Hello = {}
 Hello.__index = Hello
 type Hello = typeof(setmetatable({}, Hello))

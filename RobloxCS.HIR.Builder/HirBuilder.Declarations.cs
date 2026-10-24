@@ -101,17 +101,11 @@ public sealed partial class HirBuilder {
         var syntax = Semantics.GetFirstSyntaxFromSymbol<BaseMethodDeclarationSyntax>(method);
         var operation = Semantics.CheckedGetOperation<IMethodBodyBaseOperation>(syntax);
 
-        if (operation.BlockBody is not { } body) {
-            var error = Unsupported("expression bodies are not supported", method.Locations.ResolveSingle());
-
-            return new HirBlock { Location = Location.None, Statements = [error], Locals = [] };
+        if ((operation.BlockBody ?? operation.ExpressionBody) is not { } body) {
+            throw new InvalidOperationException($"Method '{method.Name}' has no body.");
         }
 
-        return new HirBlock {
-            Location = Location.None,
-            Statements = [.. body.Operations.Select(BuildStatement)],
-            Locals = [.. body.Locals],
-        };
+        return BuildBlock(body);
     }
 
     private HirBlock BuildImplicitConstructorBlock(IMethodSymbol method) {

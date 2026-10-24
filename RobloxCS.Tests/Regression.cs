@@ -39,9 +39,21 @@ public class Regression {
             Assert.Fail($"No expected output for '{name}'. Create {expectedPath}.");
         }
 
-        var actual = RunWithLune(outputPath);
+        var actual = RunWithLuau(outputPath);
 
         Assert.That(Normalize(actual), Is.EqualTo(Normalize(File.ReadAllText(expectedPath))));
+    }
+    
+    [Test, TestCaseSource(nameof(GetCases))]
+    public void Typecheck(string name) {
+        var outputPath = Path.Join(_outputDir, name + ".tc.luau");
+
+        Directory.CreateDirectory(_outputDir);
+        File.WriteAllText(outputPath, Transpile(InputPath(name)));
+
+        var actual = TypecheckWithLuau(outputPath);
+
+        Assert.That(actual, Is.True);
     }
 
     [Test, Explicit("Overwrites committed golden files."), Category("UpdateGolden")]
@@ -76,10 +88,10 @@ public class Regression {
             return new RendererWalker().Render(result.Chunk!);
         });
 
-    private static string RunWithLune(string path) {
+    private static string RunWithLuau(string path) {
         var startInfo = new ProcessStartInfo {
-            FileName = "lune",
-            Arguments = $"run {path}",
+            FileName = "luau",
+            Arguments = path,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
@@ -89,10 +101,10 @@ public class Regression {
         try {
             process = Process.Start(startInfo);
         } catch (Exception ex) {
-            throw new Exception("Lune is not installed or not on PATH.", ex);
+            throw new Exception("luau is not installed or not on PATH.", ex);
         }
 
-        if (process is null) throw new Exception("Failed to start lune.");
+        if (process is null) throw new Exception("Failed to start luau.");
 
         // waiting first deadlocks >4kb
         var stdoutTask = process.StandardOutput.ReadToEndAsync();
@@ -101,17 +113,53 @@ public class Regression {
         if (!process.WaitForExit(30_000)) {
             process.Kill(entireProcessTree: true);
 
-            throw new Exception($"Lune timed out after 30s running '{path}'.");
+            throw new Exception($"luau timed out after 30s running '{path}'.");
         }
 
         var stdout = stdoutTask.GetAwaiter().GetResult();
         var stderr = stderrTask.GetAwaiter().GetResult();
 
         if (process.ExitCode != 0) {
-            throw new Exception($"Lune exited with {process.ExitCode} running '{path}'.\n{stderr}");
+            throw new Exception($"luau exited with {process.ExitCode} running '{path}'.\n{stderr}");
         }
 
         return stdout;
+    }
+    
+    private static bool TypecheckWithLuau(string path) {
+        var startInfo = new ProcessStartInfo {
+            FileName = "luau-analyze",
+            Arguments = path,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+        };
+
+        Process? process;
+        try {
+            process = Process.Start(startInfo);
+        } catch (Exception ex) {
+            throw new Exception("luau-analuze is not installed or not on PATH.", ex);
+        }
+
+        if (process is null) throw new Exception("Failed to start luau.");
+
+        // waiting first deadlocks >4kb
+        var stderrTask = process.StandardError.ReadToEndAsync();
+
+        if (!process.WaitForExit(30_000)) {
+            process.Kill(entireProcessTree: true);
+
+            throw new Exception($"luau-analyze timed out after 30s running '{path}'.");
+        }
+
+        var stderr = stderrTask.GetAwaiter().GetResult();
+
+        if (process.ExitCode != 0) {
+            throw new Exception($"luau-analyze failed running '{path}'.\n{stderr}");
+        }
+
+        return true;
     }
 
     private static IEnumerable<TestCaseData> GetCases() {
