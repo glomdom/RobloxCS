@@ -6,3 +6,5 @@ out/
 
 *.DotSettings.*
 TestResults/
+
+/RobloxCS.Example/

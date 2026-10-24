@@ -63,7 +63,7 @@ public sealed partial class HirLowerer {
             }
 
             default: {
-                Unsupported($"'{statement.GetType().Name}' statements are not supported yet.", statement.Location);
+                Unsupported($"Lowering '{statement.GetType().Name}' statements are not supported yet.", statement.Location);
 
                 return [];
             }

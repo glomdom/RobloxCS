@@ -68,12 +68,29 @@ public sealed partial class HirLowerer {
                 return LowerConversion(conversion);
             }
 
+            case HirPropertyAccess access: {
+                return LowerPropertyAccess(access);
+            }
+
             default: {
-                Unsupported($"'{expression.GetType().Name}' expressions are not supported yet.", expression.Location);
+                Unsupported($"Lowering '{expression.GetType().Name}' expressions are not supported yet.", expression.Location);
 
                 return Nil();
             }
         }
+    }
+    
+    private VarExpression LowerPropertyAccess(HirPropertyAccess access) {
+        var field = access.Symbol;
+        if (field.IsStatic) {
+            Log.Verbose("Lowering static field access {ClassName}.{FieldName}", field.ContainingType.Name, field.Name);
+
+            return Index(ClassName(field.ContainingType), field.Name);
+        }
+
+        var receiver = access.Receiver is null ? Name("self") : LowerExpression(access.Receiver);
+
+        return Index(receiver, field.Name);
     }
 
     private static Expression LowerLiteral(HirLiteral literal) {

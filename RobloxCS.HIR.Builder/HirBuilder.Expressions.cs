@@ -139,6 +139,39 @@ public sealed partial class HirBuilder {
                 throw new NotSupportedException($"Instance reference of kind '{instanceReferenceOperation.ReferenceKind}' is not supported yet.");
             }
 
+            case OperationKind.Invocation when operation is IInvocationOperation invocationOperation: {
+                if (invocationOperation.Type is not { } type) {
+                    throw new InvalidOperationException("Invocation operation does not have a type.");
+                }
+
+                var receiver = invocationOperation.Instance is not null ? BuildExpression(invocationOperation.Instance) : null;
+                var args = invocationOperation.Arguments.Select(BuildArgument).ToImmutableArray();
+                
+                return new HirCall {
+                    Location = invocationOperation.Syntax.GetLocation(),
+                    Type = type,
+                    Method = invocationOperation.TargetMethod,
+                    Receiver = receiver,
+                    Arguments = args,
+                    IsExtension = false,
+                };
+            }
+
+            case OperationKind.PropertyReference when operation is IPropertyReferenceOperation propertyReferenceOperation: {
+                if (propertyReferenceOperation.Type is not { } type) {
+                    throw new InvalidOperationException("Property reference operation does not have a type.");
+                }
+
+                var receiver = propertyReferenceOperation.Instance is not null ? BuildExpression(propertyReferenceOperation.Instance) : null;
+                
+                return new HirPropertyAccess {
+                    Location = propertyReferenceOperation.Syntax.GetLocation(),
+                    Type = type,
+                    Receiver = receiver,
+                    Symbol = propertyReferenceOperation.Property,
+                };
+            }
+
             default: {
                 throw new NotSupportedException($"Expression operation kind '{operation.Kind}' is not supported.");
             }
