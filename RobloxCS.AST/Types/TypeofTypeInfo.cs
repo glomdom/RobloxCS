@@ -3,7 +3,7 @@
 namespace RobloxCS.AST.Types;
 
 public sealed class TypeofTypeInfo : TypeInfo {
-    public required Expression Expression { get; set; }
+    public required Expression Expression { get; init; }
 
     public override TypeofTypeInfo DeepClone() => new() { Expression = (Expression)Expression.DeepClone() };
     public override void Accept(IAstVisitor v) => v.VisitTypeofTypeInfo(this);
