@@ -58,7 +58,7 @@ public sealed partial class HirLowerer {
                 statements.Add(TypeDecl(FieldsTypeName(name), TableType(instanceFields.Select(field => (field.Symbol.Name, LowerFieldType(field))))));
             }
 
-            statements.Add(TypeDecl(name, Typeof(NewInstance(name, instanceFields.Count > 0))));
+            statements.Add(TypeDecl(name, Typeof(NewInstance(name, instanceFields.Count > 0)), true));
         }
 
         foreach (var field in staticFields) {
@@ -123,7 +123,7 @@ public sealed partial class HirLowerer {
             body.Add(Assign(Index("self", field.Symbol.Name), LowerFieldValue(field)));
         }
 
-        
+
         if (constructor is { IsImplicit: false }) {
             _returnsSelf = true;
 
@@ -262,7 +262,7 @@ public sealed partial class HirLowerer {
                 return Type("number");
             }
         }
-        
+
         if (GetRobloxNative(type) is { } native) {
             return Type(native.Name);
         }

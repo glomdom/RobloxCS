@@ -7,6 +7,7 @@ public sealed class TypeDeclarationStatement : Statement {
     public required string Name { get; set; }
     public List<GenericDeclaration>? Declarations { get; set; }
     public required TypeInfo DeclareAs { get; set; }
+    public bool Exported { get; set; } = false;
 
     public static TypeDeclarationStatement EmptyTable(string name) {
         return new TypeDeclarationStatement {
@@ -19,6 +20,7 @@ public sealed class TypeDeclarationStatement : Statement {
         Name = Name,
         Declarations = Declarations?.Select(decl => decl.DeepClone()).ToList(),
         DeclareAs = (TypeInfo)DeclareAs.DeepClone(),
+        Exported = Exported,
     };
 
     public override void Accept(IAstVisitor v) => v.VisitTypeDeclaration(this);

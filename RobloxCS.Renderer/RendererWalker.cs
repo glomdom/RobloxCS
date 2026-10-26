@@ -69,6 +69,11 @@ public class RendererWalker : AstVisitorBase {
 
     public override void VisitTypeDeclaration(TypeDeclarationStatement node) {
         _state.AppendIndent();
+
+        if (node.Exported) {
+            _state.Builder.Append("export ");
+        }
+        
         _state.Builder.Append("type ");
         _state.Builder.Append(node.Name);
         _state.Builder.Append(" = ");

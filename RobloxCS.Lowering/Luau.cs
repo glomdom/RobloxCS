@@ -90,10 +90,11 @@ internal static class Luau {
         };
     }
 
-    public static TypeDeclarationStatement TypeDecl(string name, TypeInfo type) {
+    public static TypeDeclarationStatement TypeDecl(string name, TypeInfo type, bool exported = false) {
         return new TypeDeclarationStatement {
             Name = name,
             DeclareAs = type,
+            Exported = exported,
         };
     }
 
