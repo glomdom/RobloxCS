@@ -313,14 +313,19 @@ public sealed partial class HirLowerer {
     }
 
     private static void FlattenConcat(HirExpression expression, List<HirExpression> operands) {
-        if (expression is HirBinary { Op: BinaryOperatorKind.Add, OperatorMethod: null } binary && binary.Type.SpecialType is SpecialType.System_String) {
-            FlattenConcat(binary.Left, operands);
-            FlattenConcat(binary.Right, operands);
+        while (true) {
+            if (expression is HirBinary { Op: BinaryOperatorKind.Add, OperatorMethod: null, Type.SpecialType: SpecialType.System_String } binary) {
+                FlattenConcat(binary.Left, operands);
 
-            return;
+                expression = binary.Right;
+            
+                continue;
+            }
+
+            operands.Add(expression);
+            
+            break;
         }
-
-        operands.Add(expression);
     }
 
     private static bool IsConsoleWrite(IMethodSymbol method) {
