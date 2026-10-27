@@ -2,7 +2,7 @@
 
 local ScopeAndState = {}
 ScopeAndState.__index = ScopeAndState
-type ScopeAndStateFields = {
+export type ScopeAndStateFields = {
   ID: number,
 }
 type ScopeAndState = typeof(setmetatable({} :: ScopeAndStateFields, ScopeAndState))

@@ -2,7 +2,7 @@
 
 local NestedContinueControlFlow = {}
 NestedContinueControlFlow.__index = NestedContinueControlFlow
-type NestedContinueControlFlow = typeof(setmetatable({}, NestedContinueControlFlow))
+export type NestedContinueControlFlow = typeof(setmetatable({}, NestedContinueControlFlow))
 function NestedContinueControlFlow.new(): NestedContinueControlFlow
   local self = setmetatable({}, NestedContinueControlFlow)
   return self

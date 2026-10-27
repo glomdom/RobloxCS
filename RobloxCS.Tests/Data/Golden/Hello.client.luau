@@ -2,7 +2,7 @@
 
 local Hello = {}
 Hello.__index = Hello
-type Hello = typeof(setmetatable({}, Hello))
+export type Hello = typeof(setmetatable({}, Hello))
 function Hello.new(): Hello
   local self = setmetatable({}, Hello)
   return self
