@@ -2,10 +2,10 @@
 
 local ScopeAndState = {}
 ScopeAndState.__index = ScopeAndState
-export type ScopeAndStateFields = {
+type ScopeAndStateFields = {
   ID: number,
 }
-type ScopeAndState = typeof(setmetatable({} :: ScopeAndStateFields, ScopeAndState))
+export type ScopeAndState = typeof(setmetatable({} :: ScopeAndStateFields, ScopeAndState))
 ScopeAndState.GlobalCounter = 0
 function ScopeAndState.new(): ScopeAndState
   local self = setmetatable({} :: ScopeAndStateFields, ScopeAndState)
