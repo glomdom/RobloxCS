@@ -2,10 +2,10 @@
 
 local StaticTest = {}
 StaticTest.__index = StaticTest
-export type StaticTestFields = {
+type StaticTestFields = {
   _x: number,
 }
-type StaticTest = typeof(setmetatable({} :: StaticTestFields, StaticTest))
+export type StaticTest = typeof(setmetatable({} :: StaticTestFields, StaticTest))
 function StaticTest.new(): StaticTest
   local self = setmetatable({} :: StaticTestFields, StaticTest)
   self._x = 2
