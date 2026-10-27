@@ -26,7 +26,7 @@ public sealed class FileCompileCommand : Command<FileCompileCommand.Settings> {
     }
 
     protected override int Execute(CommandContext context, Settings settings, CancellationToken cancellation) {
-        LoggerSetup.LevelSwitch.MinimumLevel = settings.Verbosity ? LogEventLevel.Verbose : LogEventLevel.Warning;
+        LoggerSetup.ApplyVerbosity(settings.Verbosity);
 
         List<Diagnostic> diagnostics = [];
         var options = new EmitOptions(settings.PrintHir);

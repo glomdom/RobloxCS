@@ -28,7 +28,7 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
     }
 
     protected override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellation) {
-        LoggerSetup.LevelSwitch.MinimumLevel = settings.Verbosity ? LogEventLevel.Verbose : LogEventLevel.Warning;
+        LoggerSetup.ApplyVerbosity(settings.Verbosity);
 
         var cwd = Environment.CurrentDirectory;
         var discovery = SolutionDiscovery.Discover(cwd);

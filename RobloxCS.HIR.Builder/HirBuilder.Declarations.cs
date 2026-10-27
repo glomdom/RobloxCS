@@ -110,7 +110,6 @@ public sealed partial class HirBuilder {
 
     private HirBlock BuildImplicitConstructorBlock(IMethodSymbol method) {
         Log.Debug("Reconstructing implicit constructor {MethodName}", method.Name);
-        Log.Warning("Locals are not yet reconstructed for implicit constructors");
 
         if (method.DeclaringSyntaxReferences.FirstOrDefault() is not null) {
             throw new InvalidOperationException("Implicit constructor contains a declaring syntax.");
@@ -121,31 +120,26 @@ public sealed partial class HirBuilder {
         }
 
         var statements = new List<HirStatement>();
+        var locals = new List<ILocalSymbol>();
 
-        foreach (var classMember in cls.GetMembers()) {
-            if (classMember is not IFieldSymbol fieldSymbol) {
+        foreach (var fieldSymbol in cls.GetMembers().OfType<IFieldSymbol>()) {
+            if (fieldSymbol.IsStatic || fieldSymbol.IsConst || fieldSymbol.IsImplicitlyDeclared) {
                 continue;
-            }
-            
-            if (fieldSymbol.IsStatic || fieldSymbol.IsConst) {
-                continue;
-            }
-
-            if (fieldSymbol.AssociatedSymbol is not null) {
-                throw new NotSupportedException("Backing fields are not yet supported.");
             }
 
             var syntax = Semantics.GetFirstSyntaxFromSymbol<VariableDeclaratorSyntax>(fieldSymbol);
             if (syntax.Initializer is null) {
-                throw new NotSupportedException("No initializer fields are not yet supported.");
+                continue;
             }
 
-            Log.Verbose("Added field {FieldSymbolName} to synthesized ctor", fieldSymbol.Name);
-
             var fieldOperation = Semantics.CheckedGetOperation<IFieldInitializerOperation>(syntax.Initializer);
+
+            Log.Verbose("Added field {FieldSymbolName} to synthesized ctor ({LocalCount} locals)", fieldSymbol.Name, fieldOperation.Locals.Length);
+
+            locals.AddRange(fieldOperation.Locals);
             statements.Add(BuildStatement(fieldOperation));
         }
 
-        return new HirBlock { Location = Location.None, Statements = [.. statements], Locals = [] };
+        return new HirBlock { Location = Location.None, Statements = [.. statements], Locals = [.. locals] };
     }
 }

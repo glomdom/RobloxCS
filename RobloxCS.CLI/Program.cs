@@ -1,4 +1,6 @@
+using System.Text;
 using RobloxCS.CLI.Commands.Compile;
+using RobloxCS.CLI.Commands.Watch;
 using RobloxCS.Common;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -7,6 +9,8 @@ namespace RobloxCS.CLI;
 
 internal static class Program {
     private static int Main(string[] args) {
+        Console.OutputEncoding = new UTF8Encoding();
+        
         LoggerSetup.Configure();
 
         var app = new CommandApp();
@@ -15,6 +19,8 @@ internal static class Program {
             config.SetApplicationVersion("0.0.0a");
             config.UseStrictParsing();
             config.PropagateExceptions();
+
+            config.AddCommand<ProjectWatchCommand>("watch");
 
             config.AddBranch<CompileSettings>("compile", branch => {
                 branch.SetDescription("Compile a C# file to Luau or a C# project");
