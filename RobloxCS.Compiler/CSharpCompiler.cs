@@ -40,11 +40,11 @@ public sealed class CSharpCompiler {
         }
     }
 
-    public CSharpCompiler(SyntaxTree tree, Compilation compilation) {
+    public CSharpCompiler(SyntaxTree tree, Compilation compilation, ImmutableArray<Diagnostic> diagnostics) {
         SyntaxTree = tree;
         FilePath = tree.FilePath;
         Compilation = (CSharpCompilation)compilation;
-        Diagnostics = [.. Compilation.GetDiagnostics().Where(d => d.Severity != DiagnosticSeverity.Hidden)];
+        Diagnostics = diagnostics;
 
         EnsureHasReferences(Compilation, tree.FilePath);
     }

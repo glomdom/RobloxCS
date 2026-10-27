@@ -20,7 +20,9 @@ public static class DocumentCompiler {
             return Diagnostic.Error(DiagnosticId.NoSyntaxTree, $"Failed to get syntax tree for document '{document.Name}'.");
         }
 
-        var compiler = new CSharpCompiler(syntaxTree, plan.Compilation);
+        var model = plan.Compilation.GetSemanticModel(syntaxTree);
+        var fileDiagnostics = options.SkipDiagnostics ? [] : model.GetDiagnostics(cancellationToken: cancellation);
+        var compiler = new CSharpCompiler(syntaxTree, plan.Compilation, fileDiagnostics);
 
         diagnostics.AddRange(compiler.Diagnostics.Select(Diagnostic.FromRoslyn));
 

@@ -8,4 +8,5 @@ namespace RobloxCS.CompilerPipeline;
 /// <param name="PrintHir">Dump each file's HIR to the console before lowering.</param>
 public sealed record EmitOptions(bool PrintHir = false) {
     public ModuleGraph Modules { get; init; } = ModuleGraph.Empty;
+    public bool SkipDiagnostics { get; init; } = false;
 }

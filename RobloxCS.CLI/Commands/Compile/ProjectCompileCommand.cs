@@ -71,7 +71,6 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
 
         var solution = loaded.Value;
         var anchors = loadedAnchors.Value;
-        var outputs = new List<CompiledFile>();
 
         var plans = new List<ProjectPlan>();
 
