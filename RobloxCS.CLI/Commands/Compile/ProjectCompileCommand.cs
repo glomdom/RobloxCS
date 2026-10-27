@@ -2,11 +2,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using RobloxCS.Common;
-using RobloxCS.Common.Rojo;
 using RobloxCS.CompilerPipeline;
-using RobloxCS.CompilerPipeline.Documents;
-using RobloxCS.CompilerPipeline.Modules;
-using RobloxCS.CompilerPipeline.Projects;
 using RobloxCS.CompilerPipeline.Solutions;
 using Serilog;
 using Serilog.Events;
@@ -55,66 +51,30 @@ public sealed class ProjectCompileCommand : AsyncCommand<ProjectCompileCommand.S
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     private async Task<int> RunAsync(string slnFile, string projectFile, EmitOptions options, CancellationToken cancellation) {
-        var loaded = await SolutionLoader.LoadAsync(slnFile, cancellation);
-        if (!loaded.Ok) {
-            return Fail(loaded.Diagnostic);
+        var openDiagnostics = new List<Diagnostic>();
+        var opened = await ProjectSession.OpenAsync(slnFile, projectFile, options, openDiagnostics, cancellation);
+
+        DiagnosticMarkup.PrintAll(_console, openDiagnostics);
+
+        if (!opened.Ok) {
+            return Fail(opened.Diagnostic);
         }
 
-        Log.Debug("Loaded solution from {SolutionFile}", slnFile);
+        using var session = opened.Value;
 
-        var loadedAnchors = RojoProject.LoadAnchors(projectFile);
-        if (!loadedAnchors.Ok) {
-            return Fail(loadedAnchors.Diagnostic);
-        }
-
-        Log.Debug("Loaded anchors from rojo project {ProjectFile}", projectFile);
-
-        var solution = loaded.Value;
-        var anchors = loadedAnchors.Value;
-
-        var plans = new List<ProjectPlan>();
-
-        foreach (var project in solution.Solution.Projects) {
-            var prepared = await ProjectPreparation.PrepareProjectAsync(project, anchors, cancellation);
-            if (!prepared.Ok) {
-                return Fail(prepared.Diagnostic);
-            }
-
-            plans.Add(prepared.Value);
-
-            Log.Debug("Prepared project {ProjectName}", prepared.Value.Project.Name);
-        }
-
-        var graphDiagnostics = new List<Diagnostic>();
-        var graph = await ModuleGraphBuilder.BuildAsync(plans, graphDiagnostics, cancellation);
-
-        DiagnosticMarkup.PrintAll(_console, graphDiagnostics);
-
-        if (graphDiagnostics.Any(d => d.IsError)) {
+        if (openDiagnostics.Any(d => d.IsError)) {
             return -1;
         }
 
-        var emitOptions = options with { Modules = graph };
         var failures = 0;
 
-        foreach (var plan in plans) {
-            foreach (var document in plan.Project.Documents.Where(Filters.ShouldCompile)) {
-                var diagnostics = new List<Diagnostic>();
-                var compiled = await DocumentCompiler.CompileDocument(document, plan, emitOptions, diagnostics, cancellation);
+        await foreach (var result in session.CompileAllAsync(cancellation)) {
+            DiagnosticMarkup.PrintAll(_console, result.Diagnostics);
 
-                DiagnosticMarkup.PrintAll(_console, diagnostics);
+            if (!result.Output.Ok) {
+                DiagnosticMarkup.Print(_console, result.Output.Diagnostic);
 
-                if (!compiled.Ok) {
-                    DiagnosticMarkup.Print(_console, compiled.Diagnostic);
-                    failures++;
-
-                    continue;
-                }
-
-                Directory.CreateDirectory(Path.GetDirectoryName(compiled.Value.OutPath)!);
-                await File.WriteAllTextAsync(compiled.Value.OutPath, compiled.Value.Code, cancellation);
-
-                Log.Debug("Wrote {OutPath}", compiled.Value.OutPath);
+                failures++;
             }
         }
 

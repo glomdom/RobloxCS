@@ -25,4 +25,8 @@
         <ProjectReference Include="..\RobloxCS.CompilerPipeline\RobloxCS.CompilerPipeline.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Commands\Watch\" />
+    </ItemGroup>
+
 </Project>
