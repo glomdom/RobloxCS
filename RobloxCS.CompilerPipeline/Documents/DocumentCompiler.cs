@@ -39,10 +39,15 @@ public static class DocumentCompiler {
             return code.Diagnostic;
         }
 
-        var filename = Path.GetFileNameWithoutExtension(syntaxTree.FilePath);
-        var combinedOutDir = Path.Combine([plan.Anchor.FullPath, .. document.Folders]);
-        var outPath = Path.Combine(combinedOutDir, $"{filename}.luau");
+        var outPath = OutPathFor(document, plan);
 
         return new CompiledFile(outPath, code.Value);
+    }
+    
+    public static string OutPathFor(Document document, ProjectPlan plan) {
+        var filename = Path.GetFileNameWithoutExtension(document.FilePath ?? document.Name);
+        var combinedOutDir = Path.Combine([plan.Anchor.FullPath, .. document.Folders]);
+
+        return Path.Combine(combinedOutDir, $"{filename}.luau");
     }
 }

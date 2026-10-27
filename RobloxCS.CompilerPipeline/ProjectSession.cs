@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 using RobloxCS.Common;
 using RobloxCS.Common.Rojo;
 using RobloxCS.CompilerPipeline.Documents;
@@ -12,6 +13,8 @@ using Diagnostic = RobloxCS.Common.Diagnostics.Diagnostic;
 namespace RobloxCS.CompilerPipeline;
 
 public sealed record DocumentResult(Document Document, Result<CompiledFile> Output, List<Diagnostic> Diagnostics);
+
+public sealed record SessionUpdate(List<DocumentResult> Results, List<string> DeletedOutputs, List<Diagnostic> Diagnostics, Diagnostic? Failure);
 
 public sealed class ProjectSession : IDisposable {
     private readonly LoadedSolution _loaded;
@@ -79,6 +82,131 @@ public sealed class ProjectSession : IDisposable {
         }
 
         return new DocumentResult(document, output, diagnostics);
+    }
+
+    public async Task<SessionUpdate> ApplyChangeAsync(IReadOnlyCollection<string> paths, CancellationToken cancellation) {
+        var changed = new HashSet<DocumentId>();
+        var deletedOutputs = new List<string>();
+        var oldGraph = Graph;
+        var solution = Solution;
+
+        foreach (var path in paths) {
+            var ids = solution.GetDocumentIdsWithFilePath(path);
+
+            if (!File.Exists(path)) {
+                foreach (var id in ids) {
+                    if (solution.GetDocument(id) is { } document && PlanFor(id.ProjectId) is { } plan) {
+                        deletedOutputs.Add(DocumentCompiler.OutPathFor(document, plan));
+                    }
+
+                    solution = solution.RemoveDocument(id);
+                }
+
+                continue;
+            }
+
+            var text = SourceText.From(await ReadWithRetryAsync(path, cancellation));
+
+            if (ids.Length > 0) {
+                foreach (var id in ids) {
+                    if (solution.GetDocument(id) is { } existing && (await existing.GetTextAsync(cancellation)).ContentEquals(text)) {
+                        continue;
+                    }
+
+                    solution = solution.WithDocumentText(id, text);
+                    changed.Add(id);
+                }
+
+                continue;
+            }
+
+            if (OwningProject(solution, path) is { } project) {
+                var id = DocumentId.CreateNewId(project.Id);
+                var folders = FoldersOf(project, path);
+
+                solution = solution.AddDocument(id, Path.GetFileName(path), text, folders, path);
+                changed.Add(id);
+            }
+        }
+
+        Solution = solution;
+
+        var diagnostics = new List<Diagnostic>();
+        if (await RefreshAsync(diagnostics, cancellation) is { } failure) {
+            return new SessionUpdate([], deletedOutputs, diagnostics, failure);
+        }
+
+        foreach (var output in deletedOutputs) {
+            File.Delete(output);
+        }
+
+        var toCompile = new HashSet<DocumentId>(changed);
+
+        if (GraphChanged(oldGraph, Graph)) {
+            var dependencyGraph = Solution.GetProjectDependencyGraph();
+            var touchedProjects = changed.Select(id => id.ProjectId).Distinct().ToList();
+
+            var affected = touchedProjects
+                .Concat(touchedProjects.SelectMany(dependencyGraph.GetProjectsThatTransitivelyDependOnThisProject))
+                .ToHashSet();
+
+            foreach (var projectId in affected) {
+                toCompile.UnionWith(Solution.GetProject(projectId)!.DocumentIds);
+            }
+        }
+
+        var results = new List<DocumentResult>();
+
+        foreach (var id in toCompile) {
+            if (Solution.GetDocument(id) is not { } document || !Filters.ShouldCompile(document) || PlanFor(id.ProjectId) is not { } plan) {
+                continue;
+            }
+
+            results.Add(await CompileAsync(plan, document, cancellation));
+        }
+
+        return new SessionUpdate(results, deletedOutputs, diagnostics, null);
+    }
+
+    private ProjectPlan? PlanFor(ProjectId id) => Plans.FirstOrDefault(plan => plan.Project.Id == id);
+
+    private static Project? OwningProject(Solution solution, string path) {
+        return solution.Projects
+            .Where(project => project.FilePath is not null)
+            .Select(project => (Project: project, Directory: Path.GetDirectoryName(project.FilePath)! + Path.DirectorySeparatorChar))
+            .Where(entry => path.StartsWith(entry.Directory, StringComparison.OrdinalIgnoreCase))
+            .MaxBy(entry => entry.Directory.Length)
+            .Project;
+    }
+
+    private static string[] FoldersOf(Project project, string path) {
+        var relative = Path.GetRelativePath(Path.GetDirectoryName(project.FilePath)!, Path.GetDirectoryName(path)!);
+
+        return relative == "." ? [] : relative.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+    }
+
+    private static bool GraphChanged(ModuleGraph before, ModuleGraph after) {
+        if (before.Types.Count != after.Types.Count) {
+            return true;
+        }
+
+        foreach (var (key, location) in after.Types) {
+            if (!before.Types.TryGetValue(key, out var old) || old.IsScript != location.IsScript || !old.InstancePath.SequenceEqual(location.InstancePath)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static async Task<string> ReadWithRetryAsync(string path, CancellationToken cancellation) {
+        for (var attempt = 0;; attempt++) {
+            try {
+                return await File.ReadAllTextAsync(path, cancellation);
+            } catch (IOException) when (attempt < 5) {
+                await Task.Delay(50, cancellation);
+            }
+        }
     }
 
     private async Task<Diagnostic?> RefreshAsync(List<Diagnostic> diagnostics, CancellationToken cancellation) {

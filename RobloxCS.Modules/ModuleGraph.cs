@@ -6,15 +6,14 @@ public sealed record ModuleLocation(IReadOnlyList<string> InstancePath, bool IsS
 
 public sealed class ModuleGraph {
     public static ModuleGraph Empty { get; } = new(new Dictionary<string, ModuleLocation>());
-
-    private readonly IReadOnlyDictionary<string, ModuleLocation> _types;
+    public IReadOnlyDictionary<string, ModuleLocation> Types { get; }
 
     public ModuleGraph(IReadOnlyDictionary<string, ModuleLocation> types) {
-        _types = types;
+        Types = types;
     }
 
     public bool TryGetModule(INamedTypeSymbol type, out ModuleLocation location) {
-        return _types.TryGetValue(KeyOf(type), out location!);
+        return Types.TryGetValue(KeyOf(type), out location!);
     }
 
     public static string KeyOf(INamedTypeSymbol type) {
