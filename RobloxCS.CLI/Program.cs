@@ -1,6 +1,6 @@
 using System.Text;
-using RobloxCS.CLI.Commands.Compile;
-using RobloxCS.CLI.Commands.Watch;
+using RobloxCS.CLI.Commands.Build;
+using RobloxCS.CLI.Commands.Emit;
 using RobloxCS.Common;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -20,13 +20,12 @@ internal static class Program {
             config.UseStrictParsing();
             config.PropagateExceptions();
 
-            config.AddCommand<ProjectWatchCommand>("watch");
+            config.AddCommand<BuildCommand>("build")
+                .WithExample("build")
+                .WithExample("build", "--watch");
 
-            config.AddBranch<CompileSettings>("compile", branch => {
-                branch.SetDescription("Compile a C# file to Luau or a C# project");
-                branch.AddCommand<FileCompileCommand>("file");
-                branch.AddCommand<ProjectCompileCommand>("project");
-            });
+            config.AddCommand<EmitCommand>("emit")
+                .WithExample("emit", "Main.client.cs");
         });
 
         try {
