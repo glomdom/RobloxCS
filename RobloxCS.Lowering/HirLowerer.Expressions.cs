@@ -103,19 +103,32 @@ public sealed partial class HirLowerer {
 
     private Expression LowerPropertyAccess(HirPropertyAccess access) {
         var property = access.Symbol;
-        var name = RobloxMemberName(property);
+        if (property.IsStatic && TryGetServiceName(property, out var service)) {
+            return MethodCall(Name("game"), "GetService", Str(service));
+        }
+        
+        var name = RobloxNameOf(property);
 
         if (!property.IsStatic) {
             return Index(access.Receiver is null ? Name("self") : LowerExpression(access.Receiver), name);
         }
 
-        if (GetRobloxNative(property.ContainingType) is { Kind: RobloxNativeType.Service } service) {
-            return Index(GetService(service.Name), name);
-        }
-
         Unsupported($"Static property '{property.ToDisplayString()}' is not supported yet.", access.Location);
 
         return Nil();
+    }
+    
+    private static string RobloxNameOf(ISymbol symbol) {
+        var attribute = symbol.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == "RobloxNameAttribute");
+
+        return attribute?.ConstructorArguments[0].Value as string ?? symbol.Name;
+    }
+    
+    private static bool TryGetServiceName(IPropertySymbol property, out string name) {
+        var attribute = property.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == "RobloxServiceAttribute");
+        name = attribute?.ConstructorArguments[0].Value as string ?? string.Empty;
+
+        return attribute is not null;
     }
 
     private static Expression LowerLiteral(HirLiteral literal) {
