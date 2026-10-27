@@ -7,7 +7,7 @@ namespace RobloxCS.Types;
 public partial class WebSocketClient : Instance  {
     public Enums.WebSocketState ConnectionState { get; set; } = default!;
     public void Close() => ThrowHelper.ThrowTranspiledMethod();
-    public void Send() => ThrowHelper.ThrowTranspiledMethod();
+    public void Send(string data) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal Closed { get; private set; } = null!;
     public RBXScriptSignal<string> MessageReceived { get; private set; } = null!;
     public RBXScriptSignal Opened { get; private set; } = null!;

@@ -7,4 +7,5 @@ namespace RobloxCS.Types;
 public partial class ShirtGraphic : CharacterAppearance  {
     public Color3 Color3 { get; set; } = default!;
     public string Graphic { get; set; } = default!;
+    public string TextureContent { get; set; } = default!;
 }

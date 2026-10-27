@@ -8,5 +8,6 @@ public static partial class Enums {
         Hull = 1,
         Box = 2,
         PreciseConvexDecomposition = 3,
+        Tunable = 4,
     }
 }

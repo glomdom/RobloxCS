@@ -5,8 +5,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("Controller", RobloxNativeType.Instance)]
 public partial class Controller : Instance  {
-    public void BindButton() => ThrowHelper.ThrowTranspiledMethod();
-    public bool GetButton() => ThrowHelper.ThrowTranspiledMethod();
-    public void UnbindButton() => ThrowHelper.ThrowTranspiledMethod();
+    public void BindButton(Enums.Button button, string caption) => ThrowHelper.ThrowTranspiledMethod();
+    public bool GetButton(Enums.Button button) => ThrowHelper.ThrowTranspiledMethod();
+    public void UnbindButton(Enums.Button button) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Enums.Button> ButtonChanged { get; private set; } = null!;
 }

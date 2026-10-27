@@ -7,7 +7,13 @@ namespace RobloxCS.Types;
 public partial class SurfaceAppearance : Instance  {
     public Enums.AlphaMode AlphaMode { get; set; } = default!;
     public Color3 Color { get; set; } = default!;
+    public string ColorMapContent { get; } = default!;
     public string EmissiveMaskContent { get; } = default!;
     public float EmissiveStrength { get; set; } = default!;
     public Color3 EmissiveTint { get; set; } = default!;
+    public string MetalnessMapContent { get; } = default!;
+    public string NormalMapContent { get; } = default!;
+    public Enums.ResamplerMode ResampleMode { get; set; } = default!;
+    public string RoughnessMapContent { get; } = default!;
+    public int SurfaceSlot { get; set; } = default!;
 }

@@ -24,13 +24,14 @@ public partial class UIDragDetector : UIComponent  {
     public UDim2 MinDragTranslation { get; set; } = default!;
     public GuiObject ReferenceUIInstance { get; set; } = default!;
     public Enums.UIDragDetectorResponseStyle ResponseStyle { get; set; } = default!;
+    public bool Selectable { get; set; } = default!;
     public UDim2 SelectionModeDragSpeed { get; set; } = default!;
     public float SelectionModeRotateSpeed { get; set; } = default!;
     public Enums.UIDragSpeedAxisMapping UIDragSpeedAxisMapping { get; set; } = default!;
-    public RBXScriptConnection AddConstraintFunction() => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptConnection AddConstraintFunction(int priority, Delegate function) => ThrowHelper.ThrowTranspiledMethod();
     public UDim2 GetReferencePosition() => ThrowHelper.ThrowTranspiledMethod();
     public float GetReferenceRotation() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetDragStyleFunction() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetDragStyleFunction(Delegate function) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Vector2> DragContinue { get; private set; } = null!;
     public RBXScriptSignal<Vector2> DragEnd { get; private set; } = null!;
     public RBXScriptSignal<Vector2> DragStart { get; private set; } = null!;

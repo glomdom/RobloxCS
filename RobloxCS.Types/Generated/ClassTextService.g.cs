@@ -4,11 +4,11 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("TextService", RobloxNativeType.Service)]
-public static partial class TextService {
-    public static Vector2 GetTextSize() => ThrowHelper.ThrowTranspiledMethod();
-    public static TextFilterTranslatedResult FilterAndTranslateStringAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static TextFilterResult FilterStringAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Dictionary<string, object> GetFamilyInfoAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Vector2 GetTextBoundsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static float GetTextSizeOffsetAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class TextService : Instance  {
+    public Vector2 GetTextSize(string @string, int fontSize, Enums.Font font, Vector2 frameSize) => ThrowHelper.ThrowTranspiledMethod();
+    public TextFilterTranslatedResult FilterAndTranslateStringAsync(string stringToFilter, long fromUserId, List<object> targetLocales, Enums.TextFilterContext textContext = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public TextFilterResult FilterStringAsync(string stringToFilter, long fromUserId, Enums.TextFilterContext textContext = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetFamilyInfoAsync(string assetId) => ThrowHelper.ThrowTranspiledMethod();
+    public Vector2 GetTextBoundsAsync(GetTextBoundsParams @params) => ThrowHelper.ThrowTranspiledMethod();
+    public float GetTextSizeOffsetAsync(int fontSize, Enums.Font font) => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -4,8 +4,8 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("TweenService", RobloxNativeType.Service)]
-public static partial class TweenService {
-    public static Tween Create() => ThrowHelper.ThrowTranspiledMethod();
-    public static float GetValue() => ThrowHelper.ThrowTranspiledMethod();
-    public static (object, object) SmoothDamp() => ThrowHelper.ThrowTranspiledMethod();
+public partial class TweenService : Instance  {
+    public Tween Create(Instance instance, TweenInfo tweenInfo, Dictionary<string, object> propertyTable) => ThrowHelper.ThrowTranspiledMethod();
+    public float GetValue(float alpha, Enums.EasingStyle easingStyle, Enums.EasingDirection easingDirection) => ThrowHelper.ThrowTranspiledMethod();
+    public (object, object) SmoothDamp(object current, object target, object velocity, float smoothTime, float? maxSpeed, float? dt) => ThrowHelper.ThrowTranspiledMethod();
 }

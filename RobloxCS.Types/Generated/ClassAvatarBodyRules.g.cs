@@ -5,4 +5,19 @@
 namespace RobloxCS.Types;
 [RobloxNative("AvatarBodyRules", RobloxNativeType.Instance)]
 public partial class AvatarBodyRules : Instance  {
+    public Enums.GameAvatarType AvatarType { get; set; } = default!;
+    public Enums.AvatarSettingsBuildMode BuildMode { get; set; } = default!;
+    public NumberRange CustomBuildBodyType { get; set; } = default!;
+    public NumberRange CustomBuildHead { get; set; } = default!;
+    public NumberRange CustomBuildHeight { get; set; } = default!;
+    public NumberRange CustomBuildProportions { get; set; } = default!;
+    public NumberRange CustomBuildWidth { get; set; } = default!;
+    public NumberRange CustomWorldHeight { get; set; } = default!;
+    public long HeadOverride { get; set; } = default!;
+    public long LeftArmOverride { get; set; } = default!;
+    public long LeftLegOverride { get; set; } = default!;
+    public long RightArmOverride { get; set; } = default!;
+    public long RightLegOverride { get; set; } = default!;
+    public Enums.AvatarSettingsScaleMode ScaleMode { get; set; } = default!;
+    public long TorsoOverride { get; set; } = default!;
 }

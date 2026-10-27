@@ -9,8 +9,10 @@ public partial class AudioSearchParams : Instance  {
     public string Artist { get; set; } = default!;
     public Enums.AudioSubType AudioSubType { get; set; } = default!;
     public int MaxDuration { get; set; } = default!;
+    public int MaxPageSize { get; set; } = default!;
     public int MinDuration { get; set; } = default!;
     public string SearchKeyword { get; set; } = default!;
+    public Enums.AudioSortType SortType { get; set; } = default!;
     public string Tag { get; set; } = default!;
     public string Title { get; set; } = default!;
 }

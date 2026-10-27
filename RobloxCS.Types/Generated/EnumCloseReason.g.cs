@@ -10,5 +10,6 @@ public static partial class Enums {
         DeveloperUpdate = 3,
         ServerEmpty = 4,
         OutOfMemory = 5,
+        Moderation = 6,
     }
 }

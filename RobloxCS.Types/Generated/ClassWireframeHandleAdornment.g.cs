@@ -7,9 +7,9 @@ namespace RobloxCS.Types;
 public partial class WireframeHandleAdornment : HandleAdornment  {
     public Vector3 Scale { get; set; } = default!;
     public float Thickness { get; set; } = default!;
-    public void AddLine() => ThrowHelper.ThrowTranspiledMethod();
-    public void AddLines() => ThrowHelper.ThrowTranspiledMethod();
-    public void AddPath() => ThrowHelper.ThrowTranspiledMethod();
-    public void AddText() => ThrowHelper.ThrowTranspiledMethod();
+    public void AddLine(Vector3 from, Vector3 to) => ThrowHelper.ThrowTranspiledMethod();
+    public void AddLines(List<object> points) => ThrowHelper.ThrowTranspiledMethod();
+    public void AddPath(List<object> points, bool loop) => ThrowHelper.ThrowTranspiledMethod();
+    public void AddText(Vector3 point, string text, int size = default!) => ThrowHelper.ThrowTranspiledMethod();
     public void Clear() => ThrowHelper.ThrowTranspiledMethod();
 }

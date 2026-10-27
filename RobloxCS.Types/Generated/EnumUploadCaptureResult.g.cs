@@ -10,5 +10,7 @@ public static partial class Enums {
         CaptureNotInGallery = 3,
         IneligibleCapture = 4,
         UploadQuotaReached = 5,
+        UploadPending = 6,
+        UploadFailed = 7,
     }
 }

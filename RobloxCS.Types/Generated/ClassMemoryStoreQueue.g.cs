@@ -5,8 +5,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("MemoryStoreQueue", RobloxNativeType.Instance)]
 public partial class MemoryStoreQueue : Instance  {
-    public void AddAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public int GetSizeAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple ReadAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public void RemoveAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public void AddAsync(object value, long expiration, double priority = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public int GetSizeAsync(bool excludeInvisible = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple ReadAsync(int count, bool allOrNothing = default!, double waitTimeout = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveAsync(string id) => ThrowHelper.ThrowTranspiledMethod();
 }

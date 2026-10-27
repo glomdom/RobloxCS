@@ -4,12 +4,12 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("EncodingService", RobloxNativeType.Service)]
-public static partial class EncodingService {
-    public static Buffer Base64Decode() => ThrowHelper.ThrowTranspiledMethod();
-    public static Buffer Base64Encode() => ThrowHelper.ThrowTranspiledMethod();
-    public static Buffer CompressBuffer() => ThrowHelper.ThrowTranspiledMethod();
-    public static Buffer ComputeBufferHash() => ThrowHelper.ThrowTranspiledMethod();
-    public static string ComputeStringHash() => ThrowHelper.ThrowTranspiledMethod();
-    public static Buffer DecompressBuffer() => ThrowHelper.ThrowTranspiledMethod();
-    public static int? GetDecompressedBufferSize() => ThrowHelper.ThrowTranspiledMethod();
+public partial class EncodingService : Instance  {
+    public Buffer Base64Decode(Buffer input) => ThrowHelper.ThrowTranspiledMethod();
+    public Buffer Base64Encode(Buffer input) => ThrowHelper.ThrowTranspiledMethod();
+    public Buffer CompressBuffer(Buffer input, Enums.CompressionAlgorithm algorithm, int compressionLevel = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public Buffer ComputeBufferHash(Buffer input, Enums.HashAlgorithm algorithm) => ThrowHelper.ThrowTranspiledMethod();
+    public string ComputeStringHash(string input, Enums.HashAlgorithm algorithm) => ThrowHelper.ThrowTranspiledMethod();
+    public Buffer DecompressBuffer(Buffer input, Enums.CompressionAlgorithm algorithm) => ThrowHelper.ThrowTranspiledMethod();
+    public int? GetDecompressedBufferSize(Buffer input, Enums.CompressionAlgorithm algorithm) => ThrowHelper.ThrowTranspiledMethod();
 }

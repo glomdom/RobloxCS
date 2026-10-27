@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("InstanceFileSyncService", RobloxNativeType.Service)]
-public static partial class InstanceFileSyncService {
+public partial class InstanceFileSyncService : Instance  {
 }

@@ -5,8 +5,10 @@
 namespace RobloxCS.Types;
 [RobloxNative("FluidForceSensor", RobloxNativeType.Instance)]
 public partial class FluidForceSensor : SensorBase  {
+    public Vector3 BuoyancyForce { get; set; } = default!;
+    public Vector3 BuoyancyTorque { get; set; } = default!;
     public Vector3 CenterOfPressure { get; set; } = default!;
     public Vector3 Force { get; set; } = default!;
     public Vector3 Torque { get; set; } = default!;
-    public LuaTuple EvaluateAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple EvaluateAsync(Vector3 linearVelocity, Vector3 angularVelocity, CFrame cframe) => ThrowHelper.ThrowTranspiledMethod();
 }

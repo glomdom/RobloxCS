@@ -4,7 +4,7 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("PolicyService", RobloxNativeType.Service)]
-public static partial class PolicyService {
-    public static bool CanViewBrandProjectAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Dictionary<string, object> GetPolicyInfoForPlayerAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class PolicyService : Instance  {
+    public bool CanViewBrandProjectAsync(Player player, string brandProjectId) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetPolicyInfoForPlayerAsync(Instance player) => ThrowHelper.ThrowTranspiledMethod();
 }

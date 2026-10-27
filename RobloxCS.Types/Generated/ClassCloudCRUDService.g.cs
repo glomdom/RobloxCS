@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("CloudCRUDService", RobloxNativeType.Service)]
-public static partial class CloudCRUDService {
+public partial class CloudCRUDService : Instance  {
 }

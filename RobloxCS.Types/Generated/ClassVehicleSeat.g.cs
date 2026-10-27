@@ -16,5 +16,5 @@ public partial class VehicleSeat : BasePart  {
     public float ThrottleFloat { get; set; } = default!;
     public float Torque { get; set; } = default!;
     public float TurnSpeed { get; set; } = default!;
-    public void Sit() => ThrowHelper.ThrowTranspiledMethod();
+    public void Sit(Instance humanoid) => ThrowHelper.ThrowTranspiledMethod();
 }

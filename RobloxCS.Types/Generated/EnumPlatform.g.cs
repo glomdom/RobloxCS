@@ -25,6 +25,7 @@ public static partial class Enums {
         UWP = 18,
         PS5 = 19,
         MetaOS = 20,
-        None = 21,
+        Web = 21,
+        None = 22,
     }
 }

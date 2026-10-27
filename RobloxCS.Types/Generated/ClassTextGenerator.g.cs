@@ -9,5 +9,5 @@ public partial class TextGenerator : Instance  {
     public string SystemPrompt { get; set; } = default!;
     public float Temperature { get; set; } = default!;
     public float TopP { get; set; } = default!;
-    public Dictionary<string, object> GenerateTextAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GenerateTextAsync(Dictionary<string, object> request) => ThrowHelper.ThrowTranspiledMethod();
 }

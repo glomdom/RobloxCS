@@ -7,12 +7,13 @@ namespace RobloxCS.Types;
 public partial class EditableImage : Object  {
     public Vector2 Size { get; set; } = default!;
     public void Destroy() => ThrowHelper.ThrowTranspiledMethod();
-    public void DrawCircle() => ThrowHelper.ThrowTranspiledMethod();
-    public void DrawImage() => ThrowHelper.ThrowTranspiledMethod();
-    public void DrawImageProjected() => ThrowHelper.ThrowTranspiledMethod();
-    public void DrawImageTransformed() => ThrowHelper.ThrowTranspiledMethod();
-    public void DrawLine() => ThrowHelper.ThrowTranspiledMethod();
-    public void DrawRectangle() => ThrowHelper.ThrowTranspiledMethod();
-    public Buffer ReadPixelsBuffer() => ThrowHelper.ThrowTranspiledMethod();
-    public void WritePixelsBuffer() => ThrowHelper.ThrowTranspiledMethod();
+    public void DrawCircle(Vector2 center, int radius, Color3 color, float transparency, Enums.ImageCombineType combineType, Enums.AntiAliasing antiAliasing = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void DrawImage(Vector2 position, EditableImage image, Enums.ImageCombineType combineType) => ThrowHelper.ThrowTranspiledMethod();
+    public void DrawImageProjected(Object projectionSource, Dictionary<string, object> projection, Dictionary<string, object> brushConfig) => ThrowHelper.ThrowTranspiledMethod();
+    public void DrawImageTransformed(Vector2 position, Vector2 scale, float rotation, EditableImage image, Dictionary<string, object>? options) => ThrowHelper.ThrowTranspiledMethod();
+    public void DrawLine(Vector2 p1, Vector2 p2, Color3 color, float transparency, Enums.ImageCombineType combineType, Enums.AntiAliasing antiAliasing = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void DrawRectangle(Vector2 position, Vector2 size, Color3 color, float transparency, Enums.ImageCombineType combineType) => ThrowHelper.ThrowTranspiledMethod();
+    public Buffer ReadPixelsBuffer(Vector2 position, Vector2 size) => ThrowHelper.ThrowTranspiledMethod();
+    public void SampleImageProjected(Object projectionSource, EditableImage sourceTexture, Dictionary<string, object> projectionConfig, Dictionary<string, object> brushConfig) => ThrowHelper.ThrowTranspiledMethod();
+    public void WritePixelsBuffer(Vector2 position, Vector2 size, Buffer buffer) => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -7,6 +7,6 @@ namespace RobloxCS.Types;
 public partial class TextFilterTranslatedResult : Instance  {
     public string SourceLanguage { get; set; } = default!;
     public TextFilterResult SourceText { get; set; } = default!;
-    public TextFilterResult GetTranslationForLocale() => ThrowHelper.ThrowTranspiledMethod();
+    public TextFilterResult GetTranslationForLocale(string locale) => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object> GetTranslations() => ThrowHelper.ThrowTranspiledMethod();
 }

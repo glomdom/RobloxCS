@@ -6,8 +6,8 @@ namespace RobloxCS.Types;
 [RobloxNative("EulerRotationCurve", RobloxNativeType.Instance)]
 public partial class EulerRotationCurve : Instance  {
     public Enums.RotationOrder RotationOrder { get; set; } = default!;
-    public List<object> GetAnglesAtTime() => ThrowHelper.ThrowTranspiledMethod();
-    public CFrame GetRotationAtTime() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetAnglesAtTime(float time) => ThrowHelper.ThrowTranspiledMethod();
+    public CFrame GetRotationAtTime(float time) => ThrowHelper.ThrowTranspiledMethod();
     public FloatCurve X() => ThrowHelper.ThrowTranspiledMethod();
     public FloatCurve Y() => ThrowHelper.ThrowTranspiledMethod();
     public FloatCurve Z() => ThrowHelper.ThrowTranspiledMethod();

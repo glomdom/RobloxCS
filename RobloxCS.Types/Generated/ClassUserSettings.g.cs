@@ -5,6 +5,6 @@
 namespace RobloxCS.Types;
 [RobloxNative("UserSettings", RobloxNativeType.Instance)]
 public partial class UserSettings : GenericSettings  {
-    public bool IsUserFeatureEnabled() => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsUserFeatureEnabled(string name) => ThrowHelper.ThrowTranspiledMethod();
     public void Reset() => ThrowHelper.ThrowTranspiledMethod();
 }

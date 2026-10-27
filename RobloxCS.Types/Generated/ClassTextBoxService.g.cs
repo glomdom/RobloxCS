@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("TextBoxService", RobloxNativeType.Service)]
-public static partial class TextBoxService {
+public partial class TextBoxService : Instance  {
 }

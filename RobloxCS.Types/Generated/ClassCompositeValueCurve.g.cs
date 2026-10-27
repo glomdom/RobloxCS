@@ -7,5 +7,5 @@ namespace RobloxCS.Types;
 public partial class CompositeValueCurve : Instance  {
     public Enums.CompositeValueCurveType CurveType { get; set; } = default!;
     public List<Instance> GetComponentCurves() => ThrowHelper.ThrowTranspiledMethod();
-    public object GetValueAtTime() => ThrowHelper.ThrowTranspiledMethod();
+    public object GetValueAtTime(float time) => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -5,10 +5,10 @@
 namespace RobloxCS.Types;
 [RobloxNative("MemoryStoreSortedMap", RobloxNativeType.Instance)]
 public partial class MemoryStoreSortedMap : Instance  {
-    public LuaTuple GetAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> GetRangeAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple GetAsync(string key) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetRangeAsync(Enums.SortDirection direction, int count, object exclusiveLowerBound, object exclusiveUpperBound) => ThrowHelper.ThrowTranspiledMethod();
     public int GetSizeAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public void RemoveAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public bool SetAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple UpdateAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveAsync(string key) => ThrowHelper.ThrowTranspiledMethod();
+    public bool SetAsync(string key, object value, long expiration, object sortKey) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple UpdateAsync(string key, Delegate transformFunction, long expiration) => ThrowHelper.ThrowTranspiledMethod();
 }

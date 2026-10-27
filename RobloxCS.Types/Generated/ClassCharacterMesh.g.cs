@@ -5,8 +5,11 @@
 namespace RobloxCS.Types;
 [RobloxNative("CharacterMesh", RobloxNativeType.Instance)]
 public partial class CharacterMesh : CharacterAppearance  {
-    public int BaseTextureId { get; set; } = default!;
+    public string BaseTextureContent { get; set; } = default!;
+    public long BaseTextureId { get; set; } = default!;
     public Enums.BodyPart BodyPart { get; set; } = default!;
-    public int MeshId { get; set; } = default!;
-    public int OverlayTextureId { get; set; } = default!;
+    public string MeshContent { get; set; } = default!;
+    public long MeshId { get; set; } = default!;
+    public string OverlayTextureContent { get; set; } = default!;
+    public long OverlayTextureId { get; set; } = default!;
 }

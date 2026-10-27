@@ -4,8 +4,8 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("MaterialService", RobloxNativeType.Service)]
-public static partial class MaterialService {
-    public static string GetBaseMaterialOverride() => ThrowHelper.ThrowTranspiledMethod();
-    public static MaterialVariant GetMaterialVariant() => ThrowHelper.ThrowTranspiledMethod();
-    public static void SetBaseMaterialOverride() => ThrowHelper.ThrowTranspiledMethod();
+public partial class MaterialService : Instance  {
+    public string GetBaseMaterialOverride(Enums.Material material) => ThrowHelper.ThrowTranspiledMethod();
+    public MaterialVariant GetMaterialVariant(Enums.Material material, string name) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetBaseMaterialOverride(Enums.Material material, string name) => ThrowHelper.ThrowTranspiledMethod();
 }

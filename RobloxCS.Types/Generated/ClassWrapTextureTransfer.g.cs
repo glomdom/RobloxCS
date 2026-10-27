@@ -8,4 +8,5 @@ public partial class WrapTextureTransfer : Instance  {
     public string ReferenceCageMeshContent { get; set; } = default!;
     public Vector2 UVMaxBound { get; set; } = default!;
     public Vector2 UVMinBound { get; set; } = default!;
+    public void PrepareProjectionMeshDataAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

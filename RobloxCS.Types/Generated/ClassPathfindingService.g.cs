@@ -4,7 +4,7 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("PathfindingService", RobloxNativeType.Service)]
-public static partial class PathfindingService {
-    public static Path CreatePath() => ThrowHelper.ThrowTranspiledMethod();
-    public static Path FindPathAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class PathfindingService : Instance  {
+    public Path CreatePath(Dictionary<string, object> agentParameters = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public Path FindPathAsync(Vector3 start, Vector3 finish) => ThrowHelper.ThrowTranspiledMethod();
 }

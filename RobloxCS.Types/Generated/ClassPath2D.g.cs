@@ -11,17 +11,17 @@ public partial class Path2D : GuiBase  {
     public bool Visible { get; set; } = default!;
     public int ZIndex { get; set; } = default!;
     public Rect GetBoundingRect() => ThrowHelper.ThrowTranspiledMethod();
-    public Path2DControlPoint GetControlPoint() => ThrowHelper.ThrowTranspiledMethod();
+    public Path2DControlPoint GetControlPoint(int index) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetControlPoints() => ThrowHelper.ThrowTranspiledMethod();
     public float GetLength() => ThrowHelper.ThrowTranspiledMethod();
     public int GetMaxControlPoints() => ThrowHelper.ThrowTranspiledMethod();
-    public UDim2 GetPositionOnCurve() => ThrowHelper.ThrowTranspiledMethod();
-    public UDim2 GetPositionOnCurveArcLength() => ThrowHelper.ThrowTranspiledMethod();
-    public Vector2 GetTangentOnCurve() => ThrowHelper.ThrowTranspiledMethod();
-    public Vector2 GetTangentOnCurveArcLength() => ThrowHelper.ThrowTranspiledMethod();
-    public void InsertControlPoint() => ThrowHelper.ThrowTranspiledMethod();
-    public void RemoveControlPoint() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetControlPoints() => ThrowHelper.ThrowTranspiledMethod();
-    public void UpdateControlPoint() => ThrowHelper.ThrowTranspiledMethod();
+    public UDim2 GetPositionOnCurve(float t) => ThrowHelper.ThrowTranspiledMethod();
+    public UDim2 GetPositionOnCurveArcLength(float t) => ThrowHelper.ThrowTranspiledMethod();
+    public Vector2 GetTangentOnCurve(float t) => ThrowHelper.ThrowTranspiledMethod();
+    public Vector2 GetTangentOnCurveArcLength(float t) => ThrowHelper.ThrowTranspiledMethod();
+    public void InsertControlPoint(int index, Path2DControlPoint point) => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveControlPoint(int index) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetControlPoints(List<object> controlPoints) => ThrowHelper.ThrowTranspiledMethod();
+    public void UpdateControlPoint(int index, Path2DControlPoint point) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal ControlPointChanged { get; private set; } = null!;
 }

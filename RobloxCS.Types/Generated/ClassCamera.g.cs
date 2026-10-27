@@ -16,16 +16,20 @@ public partial class Camera : PVInstance  {
     public float HeadScale { get; set; } = default!;
     public float MaxAxisFieldOfView { get; set; } = default!;
     public float NearPlaneZ { get; set; } = default!;
+    public Enums.OrthographicMode OrthographicMode { get; set; } = default!;
+    public float OrthographicSize { get; set; } = default!;
+    public Enums.ProjectionType ProjectionType { get; set; } = default!;
     public bool VRTiltAndRollEnabled { get; set; } = default!;
+    public float ViewStretch { get; set; } = default!;
     public Vector2 ViewportSize { get; set; } = default!;
-    public List<Instance> GetPartsObscuringTarget() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetPartsObscuringTarget(List<object> castPoints, List<Instance> ignoreList) => ThrowHelper.ThrowTranspiledMethod();
     public CFrame GetRenderCFrame() => ThrowHelper.ThrowTranspiledMethod();
     public float GetRoll() => ThrowHelper.ThrowTranspiledMethod();
-    public Ray ScreenPointToRay() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetRoll() => ThrowHelper.ThrowTranspiledMethod();
-    public Ray ViewportPointToRay() => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple WorldToScreenPoint() => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple WorldToViewportPoint() => ThrowHelper.ThrowTranspiledMethod();
-    public void ZoomToExtents() => ThrowHelper.ThrowTranspiledMethod();
+    public Ray ScreenPointToRay(float x, float y, float depth = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetRoll(float rollAngle) => ThrowHelper.ThrowTranspiledMethod();
+    public Ray ViewportPointToRay(float x, float y, float depth = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple WorldToScreenPoint(Vector3 worldPoint) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple WorldToViewportPoint(Vector3 worldPoint) => ThrowHelper.ThrowTranspiledMethod();
+    public void ZoomToExtents(CFrame boundingBoxCFrame, Vector3 boundingBoxSize) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal InterpolationFinished { get; private set; } = null!;
 }

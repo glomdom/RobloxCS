@@ -5,7 +5,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("Actor", RobloxNativeType.Instance)]
 public partial class Actor : Model  {
-    public RBXScriptConnection BindToMessage() => ThrowHelper.ThrowTranspiledMethod();
-    public RBXScriptConnection BindToMessageParallel() => ThrowHelper.ThrowTranspiledMethod();
-    public void SendMessage() => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptConnection BindToMessage(string topic, Delegate function) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptConnection BindToMessageParallel(string topic, Delegate function) => ThrowHelper.ThrowTranspiledMethod();
+    public void SendMessage(string topic, LuaTuple message) => ThrowHelper.ThrowTranspiledMethod();
 }

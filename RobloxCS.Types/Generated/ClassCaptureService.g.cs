@@ -4,20 +4,22 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("CaptureService", RobloxNativeType.Service)]
-public static partial class CaptureService {
-    public static void CaptureScreenshot() => ThrowHelper.ThrowTranspiledMethod();
-    public static Dictionary<string, object> GetDeviceInfo() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PromptSaveCapturesToGallery() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PromptShareCapture() => ThrowHelper.ThrowTranspiledMethod();
-    public static void StopVideoCapture() => ThrowHelper.ThrowTranspiledMethod();
-    public static void TakeScreenshotCaptureAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool InternalCheckPlayabilityAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static int InternalGetStartPlaceIdAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool PromptCaptureGalleryPermissionAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple ReadCapturesFromGalleryAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Enums.VideoCaptureStartedResult StartVideoCaptureAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple UploadCaptureAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptSignal<Enums.CaptureType> CaptureBegan { get; private set; } = null!;
-    public static RBXScriptSignal<Enums.CaptureType> CaptureEnded { get; private set; } = null!;
-    public static RBXScriptSignal<string> UserCaptureSaved { get; private set; } = null!;
+public partial class CaptureService : Instance  {
+    public void CaptureScreenshot(Delegate onCaptureReady) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetDeviceInfo() => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptSaveCapturesToGallery(List<object> captures, Delegate resultCallback) => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptShareCapture(string captureContent, string launchData, Delegate onAcceptedCallback, Delegate onDeniedCallback) => ThrowHelper.ThrowTranspiledMethod();
+    public void StopVideoCapture() => ThrowHelper.ThrowTranspiledMethod();
+    public void TakeScreenshotCaptureAsync(Delegate onCaptureReady, Dictionary<string, object> captureParams = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple CheckUploadCaptureStatusAsync(string token) => ThrowHelper.ThrowTranspiledMethod();
+    public bool InternalCheckPlayabilityAsync(long universeId) => ThrowHelper.ThrowTranspiledMethod();
+    public long InternalGetStartPlaceIdAsync(long universeId) => ThrowHelper.ThrowTranspiledMethod();
+    public bool PromptCaptureGalleryPermissionAsync(Enums.CaptureGalleryPermission captureGalleryPermission) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple ReadCapturesFromGalleryAsync(List<object> captureTypeFilters = default!, bool readFromAllEligibleExperiences = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple StartUploadCaptureAsync(Capture capture) => ThrowHelper.ThrowTranspiledMethod();
+    public Enums.VideoCaptureStartedResult StartVideoCaptureAsync(Delegate onCaptureReady, Dictionary<string, object> captureParams = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple UploadCaptureAsync(Capture capture) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal<Enums.CaptureType> CaptureBegan { get; private set; } = null!;
+    public RBXScriptSignal<Enums.CaptureType> CaptureEnded { get; private set; } = null!;
+    public RBXScriptSignal<string> UserCaptureSaved { get; private set; } = null!;
 }

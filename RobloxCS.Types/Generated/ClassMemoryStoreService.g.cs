@@ -4,8 +4,9 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("MemoryStoreService", RobloxNativeType.Service)]
-public static partial class MemoryStoreService {
-    public static MemoryStoreHashMap GetHashMap() => ThrowHelper.ThrowTranspiledMethod();
-    public static MemoryStoreQueue GetQueue() => ThrowHelper.ThrowTranspiledMethod();
-    public static MemoryStoreSortedMap GetSortedMap() => ThrowHelper.ThrowTranspiledMethod();
+public partial class MemoryStoreService : Instance  {
+    public MemoryStoreDistributedCounter GetDistributedCounter(string name) => ThrowHelper.ThrowTranspiledMethod();
+    public MemoryStoreHashMap GetHashMap(string name) => ThrowHelper.ThrowTranspiledMethod();
+    public MemoryStoreQueue GetQueue(string name, int invisibilityTimeout = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public MemoryStoreSortedMap GetSortedMap(string name) => ThrowHelper.ThrowTranspiledMethod();
 }

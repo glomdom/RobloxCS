@@ -4,6 +4,6 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("UniqueIdLookupService", RobloxNativeType.Service)]
-public static partial class UniqueIdLookupService {
-    public static string GetOrCreateUniqueIdRemoteCommand() => ThrowHelper.ThrowTranspiledMethod();
+public partial class UniqueIdLookupService : Instance  {
+    public string GetOrCreateUniqueIdRemoteCommand(Instance instance) => ThrowHelper.ThrowTranspiledMethod();
 }

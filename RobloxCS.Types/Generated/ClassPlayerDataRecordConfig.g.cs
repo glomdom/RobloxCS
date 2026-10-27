@@ -6,6 +6,6 @@ namespace RobloxCS.Types;
 [RobloxNative("PlayerDataRecordConfig", RobloxNativeType.Instance)]
 public partial class PlayerDataRecordConfig : Instance  {
     public string RecordName { get; set; } = default!;
-    public object GetDefaultValue() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetDefaultValue() => ThrowHelper.ThrowTranspiledMethod();
+    public object GetDefaultValue(string key) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetDefaultValue(string key, object value) => ThrowHelper.ThrowTranspiledMethod();
 }

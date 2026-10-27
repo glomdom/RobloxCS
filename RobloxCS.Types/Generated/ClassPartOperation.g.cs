@@ -5,9 +5,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("PartOperation", RobloxNativeType.Instance)]
 public partial class PartOperation : TriangleMeshPart  {
-    public Enums.RenderFidelity RenderFidelity { get; } = default!;
-    public float SmoothingAngle { get; } = default!;
-    public int TriangleCount { get; set; } = default!;
+    public Enums.RenderFidelity RenderFidelity { get; set; } = default!;
+    public float SmoothingAngle { get; set; } = default!;
+    public int TriangleCount { get; } = default!;
     public bool UsePartColor { get; set; } = default!;
-    public void SubstituteGeometry() => ThrowHelper.ThrowTranspiledMethod();
+    public void SubstituteGeometry(Instance source) => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -4,16 +4,16 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("ProximityPromptService", RobloxNativeType.Service)]
-public static partial class ProximityPromptService {
-    public static bool Enabled { get; set; } = default!;
-    public static int MaxIndicatorsVisible { get; set; } = default!;
-    public static int MaxPromptsVisible { get; set; } = default!;
-    public static RBXScriptSignal<ProximityPrompt> IndicatorHidden { get; private set; } = null!;
-    public static RBXScriptSignal<ProximityPrompt> IndicatorShown { get; private set; } = null!;
-    public static RBXScriptSignal<ProximityPrompt, Player> PromptButtonHoldBegan { get; private set; } = null!;
-    public static RBXScriptSignal<ProximityPrompt, Player> PromptButtonHoldEnded { get; private set; } = null!;
-    public static RBXScriptSignal<ProximityPrompt> PromptHidden { get; private set; } = null!;
-    public static RBXScriptSignal<ProximityPrompt, Enums.ProximityPromptInputType> PromptShown { get; private set; } = null!;
-    public static RBXScriptSignal<ProximityPrompt, Player> PromptTriggerEnded { get; private set; } = null!;
-    public static RBXScriptSignal<ProximityPrompt, Player> PromptTriggered { get; private set; } = null!;
+public partial class ProximityPromptService : Instance  {
+    public bool Enabled { get; set; } = default!;
+    public int MaxIndicatorsVisible { get; set; } = default!;
+    public int MaxPromptsVisible { get; set; } = default!;
+    public RBXScriptSignal<ProximityPrompt> IndicatorHidden { get; private set; } = null!;
+    public RBXScriptSignal<ProximityPrompt> IndicatorShown { get; private set; } = null!;
+    public RBXScriptSignal<ProximityPrompt, Player> PromptButtonHoldBegan { get; private set; } = null!;
+    public RBXScriptSignal<ProximityPrompt, Player> PromptButtonHoldEnded { get; private set; } = null!;
+    public RBXScriptSignal<ProximityPrompt> PromptHidden { get; private set; } = null!;
+    public RBXScriptSignal<ProximityPrompt, Enums.ProximityPromptInputType> PromptShown { get; private set; } = null!;
+    public RBXScriptSignal<ProximityPrompt, Player> PromptTriggerEnded { get; private set; } = null!;
+    public RBXScriptSignal<ProximityPrompt, Player> PromptTriggered { get; private set; } = null!;
 }

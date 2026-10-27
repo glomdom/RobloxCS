@@ -5,4 +5,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("StarterGear", RobloxNativeType.Instance)]
 public partial class StarterGear : Instance  {
+    public bool Loaded { get; set; } = default!;
 }

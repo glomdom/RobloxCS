@@ -7,5 +7,5 @@ namespace RobloxCS.Types;
 public partial class VideoSampler : Object  {
     public double TimeLength { get; set; } = default!;
     public string VideoContent { get; set; } = default!;
-    public List<object> GetSamplesAtTimesAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetSamplesAtTimesAsync(List<object> times) => ThrowHelper.ThrowTranspiledMethod();
 }

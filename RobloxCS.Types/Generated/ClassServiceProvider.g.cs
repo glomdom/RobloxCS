@@ -5,8 +5,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("ServiceProvider", RobloxNativeType.Instance)]
 public partial class ServiceProvider : Instance  {
-    public Instance FindService() => ThrowHelper.ThrowTranspiledMethod();
-    public Instance GetService() => ThrowHelper.ThrowTranspiledMethod();
+    public Instance FindService(string className) => ThrowHelper.ThrowTranspiledMethod();
+    public Instance GetService(string className) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal Close { get; private set; } = null!;
     public RBXScriptSignal<Instance> ServiceAdded { get; private set; } = null!;
     public RBXScriptSignal<Instance> ServiceRemoving { get; private set; } = null!;

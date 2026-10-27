@@ -51,5 +51,7 @@ public static partial class Enums {
         AICOOverlayButtonBackgroundHover = 44,
         AICOOverlayButtonBackgroundPressed = 45,
         IndentationRuler = 46,
+        ReviewableChangeAddedText = 47,
+        ReviewableChangeRemovedText = 48,
     }
 }

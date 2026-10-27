@@ -19,27 +19,56 @@ internal static class Program {
     private static readonly List<string> PatchedNames = ["Players::GetPlayers"];
     private static readonly List<string> EnumNames = [];
 
+    private static readonly HashSet<string> CSharpKeywords = [
+        "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked", "class", "const", "continue",
+        "decimal", "default", "delegate", "do", "double", "else", "enum", "event", "explicit", "extern", "false", "finally",
+        "fixed", "float", "for", "foreach", "goto", "if", "implicit", "in", "int", "interface", "internal", "is", "lock",
+        "long", "namespace", "new", "null", "object", "operator", "out", "override", "params", "private", "protected",
+        "public", "readonly", "ref", "return", "sbyte", "sealed", "short", "sizeof", "stackalloc", "static", "string",
+        "struct", "switch", "this", "throw", "true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort",
+        "using", "virtual", "void", "volatile", "while",
+    ];
+
     private static readonly JsonSerializerOptions Options = new() {
         Converters = { new JsonStringEnumConverter() },
     };
 
-    internal static async Task Main() {
+    internal static async Task Main(string[] args) {
         LoggerSetup.LevelSwitch.MinimumLevel = LogEventLevel.Information;
         LoggerSetup.Configure();
 
         var api = await DownloadAndDeserializeAsync();
-        var workingDirectory = Environment.CurrentDirectory;
-        var generatedDirectory = Path.Combine(workingDirectory, "Generated");
+        var generatedDirectory = args.Length > 0 ? Path.GetFullPath(args[0]) : FindGeneratedDirectory();
 
         Log.Information("Starting file generation in {CurrentDir}", generatedDirectory);
         Log.Debug("Creating directory for output");
         Directory.CreateDirectory(generatedDirectory);
 
+        foreach (var stale in Directory.EnumerateFiles(generatedDirectory, "*.g.cs")) {
+            File.Delete(stale);
+        }
+
         var enumFiles = GenerateEnumFiles(api);
-        var classFiles = GenerateClassFiles(api);
+        var classFiles = GenerateClassFiles(api, out var services);
+
+        classFiles["Services.g.cs"] = GenerateServicesFile(services);
 
         await WritePairPathSourceAsync(generatedDirectory, enumFiles);
         await WritePairPathSourceAsync(generatedDirectory, classFiles);
+    }
+
+    private static string FindGeneratedDirectory() {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "RobloxCS.slnx"))) {
+            directory = directory.Parent;
+        }
+
+        if (directory is null) {
+            throw new DirectoryNotFoundException("Could not find RobloxCS.slnx above the generator. Pass the output directory as the first argument.");
+        }
+
+        return Path.Combine(directory.FullName, "RobloxCS.Types", "Generated");
     }
 
     private static async Task WritePairPathSourceAsync(string path, Dictionary<string, string> pair) {
@@ -81,8 +110,9 @@ internal static class Program {
         return result;
     }
 
-    private static Dictionary<string, string> GenerateClassFiles(RobloxApiDump api) {
+    private static Dictionary<string, string> GenerateClassFiles(RobloxApiDump api, out List<string> services) {
         var result = new Dictionary<string, string>();
+        services = [];
         var builder = new StringBuilder();
 
         var watch = Stopwatch.StartNew();
@@ -92,15 +122,11 @@ internal static class Program {
             if (!IsClassAllowed(classDef)) continue;
 
             var isService = IsService(classDef);
-            var shouldAppendService = false;
-            if (isService && !classDef.Name.EndsWith("Service")) {
-                Log.Verbose("Will append Service to name for {ClassName}", classDef.Name);
+            if (isService) services.Add(classDef.Name);
 
-                shouldAppendService = true;
-            }
-
-            var outPath = $"Class{classDef.Name}{(shouldAppendService ? "Service" : string.Empty)}.g.cs";
+            var outPath = $"Class{classDef.Name}.g.cs";
             var superclass = classDef.Superclass == "<<<ROOT>>>" ? null : $" : {classDef.Superclass} ";
+            var nativeKind = isService ? "Service" : "Instance";
 
             Log.Verbose("Generating class {ClassName} with tags {Tags} to {OutputPath}", classDef.Name, classDef.Tags, outPath);
 
@@ -109,14 +135,8 @@ internal static class Program {
             builder.AppendLine("/// </auto-generated>");
             builder.AppendLine("#nullable enable");
             builder.AppendLine("namespace RobloxCS.Types;");
-
-            if (isService && classDef.Name != "Workspace") {
-                builder.AppendLine($"[RobloxNative(\"{classDef.Name}\", RobloxNativeType.Service)]");
-                builder.AppendLine($"public static partial class {classDef.Name}{(shouldAppendService ? "Service" : string.Empty)} {{");
-            } else {
-                builder.AppendLine($"[RobloxNative(\"{classDef.Name}\", RobloxNativeType.Instance)]");
-                builder.AppendLine($"public partial class {classDef.Name}{superclass} {{");
-            }
+            builder.AppendLine($"[RobloxNative(\"{classDef.Name}\", RobloxNativeType.{nativeKind})]");
+            builder.AppendLine($"public partial class {classDef.Name}{superclass} {{");
 
             foreach (var member in classDef.Members.Where(IsMemberAllowed)) {
                 switch (member.MemberType) {
@@ -131,15 +151,11 @@ internal static class Program {
 
                         var setter = prop.Security.Write == RobloxSecurityType.None ? " set;" : string.Empty;
 
-                        if (isService) {
-                            builder.AppendLine($"    public static {propType} {normalized} {{ get;{setter} }} = default!;");
+                        if (prop.Name == classDef.Name) {
+                            builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
+                            builder.AppendLine($"    public {propType} Value {{ get;{setter} }} = default!;");
                         } else {
-                            if (prop.Name == classDef.Name) {
-                                builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
-                                builder.AppendLine($"    public {propType} Value {{ get;{setter} }} = default!;");
-                            } else {
-                                builder.AppendLine($"    public {propType} {normalized} {{ get;{setter} }} = default!;");
-                            }
+                            builder.AppendLine($"    public {propType} {normalized} {{ get;{setter} }} = default!;");
                         }
 
                         break;
@@ -167,14 +183,13 @@ internal static class Program {
 
                         Log.Verbose("Generating function {FunctionName} with tags {Tags} and security {Security}", prop.Name, prop.Tags, prop.Security);
 
-                        if (isService) {
-                            builder.AppendLine(
-                                $"    public static {returnType} {prop.Name}() => {FunctionBody}"
-                            );
+                        var parameters = FormatParameters(prop.Parameters);
+
+                        if (prop.Name == classDef.Name) {
+                            builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
+                            builder.AppendLine($"    public {returnType} Invoke({parameters}) => {FunctionBody}");
                         } else {
-                            builder.AppendLine(
-                                $"    public {returnType} {prop.Name}() => {FunctionBody}"
-                            );
+                            builder.AppendLine($"    public {returnType} {prop.Name}({parameters}) => {FunctionBody}");
                         }
 
                         break;
@@ -196,11 +211,7 @@ internal static class Program {
                             modifier = "new public";
                         }
 
-                        if (isService) {
-                            builder.AppendLine($"    {modifier} static {eventType} {prop.Name} {{ get; private set; }} = null!;");
-                        } else {
-                            builder.AppendLine($"    {modifier} {eventType} {prop.Name} {{ get; private set; }} = null!;");
-                        }
+                        builder.AppendLine($"    {modifier} {eventType} {prop.Name} {{ get; private set; }} = null!;");
 
                         break;
                     }
@@ -217,11 +228,7 @@ internal static class Program {
 
                         Log.Verbose("Generating event {CallbackName} with tags {Tags} and security {Security}", callback.Name, callback.Tags, callback.Security);
 
-                        if (isService) {
-                            builder.AppendLine($"    public static {callbackType} {callback.Name} {{ get; set; }} = default!;");
-                        } else {
-                            builder.AppendLine($"    public {callbackType} {callback.Name} {{ get; set; }} = default!;");
-                        }
+                        builder.AppendLine($"    public {callbackType} {callback.Name} {{ get; set; }} = default!;");
 
                         break;
                     }
@@ -240,6 +247,48 @@ internal static class Program {
         return result;
     }
 
+    private static string GenerateServicesFile(List<string> services) {
+        var builder = new StringBuilder();
+
+        builder.AppendLine("/// <auto-generated>");
+        builder.AppendLine("/// Auto-generated by RobloxCS.TypeGenerator (https://github.com/glomdom/RobloxCS)");
+        builder.AppendLine("/// </auto-generated>");
+        builder.AppendLine("#nullable enable");
+        builder.AppendLine("namespace RobloxCS.Types;");
+        builder.AppendLine("public static class Services {");
+
+        foreach (var service in services.Order(StringComparer.Ordinal)) {
+            builder.AppendLine($"    [RobloxService(\"{service}\")]");
+            builder.AppendLine($"    public static {service} {service} {{ get; }} = null!;");
+        }
+
+        builder.AppendLine("}");
+
+        return builder.ToString();
+    }
+
+    private static string FormatParameters(List<RobloxParameter> parameters) {
+        var firstOptional = parameters.Count;
+        while (firstOptional > 0 && parameters[firstOptional - 1].Default is not null) {
+            firstOptional--;
+        }
+
+        return string.Join(", ", parameters.Select((parameter, index) => {
+            var type = RobloxTypeToCSharp(parameter.Type);
+            if (type == "void") type = "object?";
+
+            var optional = index >= firstOptional ? " = default!" : string.Empty;
+
+            return $"{type} {SafeName(parameter.Name)}{optional}";
+        }));
+    }
+
+    private static string SafeName(string name) {
+        var normalized = name.Replace(" ", string.Empty);
+
+        return CSharpKeywords.Contains(normalized) ? $"@{normalized}" : normalized;
+    }
+
     private static bool IsClassAllowed(RobloxClass member) =>
         member.Tags == null || !member.Tags.Any(t => t.EnumValue is RobloxTagKind.Hidden or RobloxTagKind.Deprecated);
 
@@ -251,46 +300,42 @@ internal static class Program {
     }
 
     private static string RobloxTypeToCSharp(RobloxType type) {
-        if (EnumNames.Contains(type.Name)) {
-            return $"Enums.{type.Name}";
-        }
+        var isOptional = type.Name.EndsWith('?');
+        var name = isOptional ? type.Name[..^1] : type.Name;
 
-        var csharpType = type.Name switch {
+        var csharpType = EnumNames.Contains(name) ? $"Enums.{name}" : name switch {
             "Array" => "List<object>", // this is so fucking chudded
             "Dictionary" => "Dictionary<string, object>", // chudded
             "Map" => "Dictionary<object, object>", // rofl
             "AdReward" => "Instance",
             "SecurityCapabilities" => "List<Enums.SecurityCapability>",
             "CoordinateFrame" => "CFrame",
-            "CoordinateFrame?" => "CFrame?",
+            "OptionalCoordinateFrame" => "CFrame?",
             "ClipEvaluator" => "Instance",
-            "string" => "string",
-            "int" => "int",
+            "CollectionHandle" => "object",
+            "QDir" => "string",
             "buffer" => "Buffer",
-            "int64" => "int",
-            "bool" => "bool",
+            "int64" => "long",
+            "User" => "long",
             "ContentId" => "string",
             "Content" => "string",
             "Instances" => "List<Instance>",
             "Objects" => "List<Instance>",
             "ProtectedString" => "string",
             "BinaryString" => "string",
+            "Function" => "Delegate",
             "null" => "void",
             "Tuple" => "LuaTuple",
             "Variant" => "object",
-            "Variant?" => "object?",
-            "Map?" => "Dictionary<string, object>?",
-            "Dictionary?" => "Dictionary<string, object>?", // chudded
-            "OptionalCoordinateFrame" => "CFrame?",
 
-            _ => type.Name,
+            _ => name,
         };
 
         if (csharpType.StartsWith("Dictionary") || csharpType.StartsWith("List") && csharpType != "List<Enums.SecurityCapability>") {
             Log.Warning("Unmapped container type {Type}. Manual patch required.", csharpType);
         }
 
-        return csharpType;
+        return isOptional && !csharpType.EndsWith('?') ? $"{csharpType}?" : csharpType;
     }
 
     // horribly optimized functions below especially cause its being called in a hot spot but i couldnt care less

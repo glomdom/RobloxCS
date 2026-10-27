@@ -10,7 +10,7 @@ public partial class HapticEffect : Instance  {
     public float Radius { get; set; } = default!;
     public Enums.HapticEffectType Type { get; set; } = default!;
     public void Play() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetWaveformKeys() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetWaveformKeys(List<object> keys) => ThrowHelper.ThrowTranspiledMethod();
     public void Stop() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal Ended { get; private set; } = null!;
 }

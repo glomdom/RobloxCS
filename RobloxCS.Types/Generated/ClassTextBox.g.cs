@@ -36,7 +36,7 @@ public partial class TextBox : GuiObject  {
     public Enums.TextYAlignment TextYAlignment { get; set; } = default!;
     public void CaptureFocus() => ThrowHelper.ThrowTranspiledMethod();
     public bool IsFocused() => ThrowHelper.ThrowTranspiledMethod();
-    public void ReleaseFocus() => ThrowHelper.ThrowTranspiledMethod();
+    public void ReleaseFocus(bool submitted = default!) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<bool, InputObject> FocusLost { get; private set; } = null!;
     public RBXScriptSignal Focused { get; private set; } = null!;
     public RBXScriptSignal ReturnPressedFromOnScreenKeyboard { get; private set; } = null!;

@@ -4,6 +4,9 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("MLService", RobloxNativeType.Service)]
-public static partial class MLService {
-    public static MLSession CreateSessionAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class MLService : Instance  {
+    public bool IsPostProcessReady() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetPostProcessEnabled(bool enabled) => ThrowHelper.ThrowTranspiledMethod();
+    public MLSession CreateSessionAsync(string assetId) => ThrowHelper.ThrowTranspiledMethod();
+    public void LoadPostProcessModelAsync(long assetId) => ThrowHelper.ThrowTranspiledMethod();
 }

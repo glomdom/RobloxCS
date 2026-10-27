@@ -4,6 +4,6 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("VideoService", RobloxNativeType.Service)]
-public static partial class VideoService {
-    public static VideoSampler CreateVideoSamplerAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class VideoService : Instance  {
+    public VideoSampler CreateVideoSamplerAsync(string content, Dictionary<string, object>? options) => ThrowHelper.ThrowTranspiledMethod();
 }

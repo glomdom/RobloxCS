@@ -5,4 +5,18 @@
 namespace RobloxCS.Types;
 [RobloxNative("AvatarClothingRules", RobloxNativeType.Instance)]
 public partial class AvatarClothingRules : Instance  {
+    public long ClassicPantsOverride { get; set; } = default!;
+    public long ClassicShirtOverride { get; set; } = default!;
+    public long ClassicTShirtOverride { get; set; } = default!;
+    public Enums.AvatarSettingsClothingMode ClothingMode { get; set; } = default!;
+    public long DressSkirtAccessoryOverride { get; set; } = default!;
+    public long JacketAccessoryOverride { get; set; } = default!;
+    public long LeftShoeAccessoryOverride { get; set; } = default!;
+    public Vector3 LimitBounds { get; set; } = default!;
+    public long PantsAccessoryOverride { get; set; } = default!;
+    public long RightShoeAccessoryOverride { get; set; } = default!;
+    public long ShirtAccessoryOverride { get; set; } = default!;
+    public long ShortsAccessoryOverride { get; set; } = default!;
+    public long SweaterAccessoryOverride { get; set; } = default!;
+    public long TShirtAccessoryOverride { get; set; } = default!;
 }

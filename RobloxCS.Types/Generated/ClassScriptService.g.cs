@@ -4,5 +4,6 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("ScriptService", RobloxNativeType.Service)]
-public static partial class ScriptService {
+public partial class ScriptService : Instance  {
+    public Instance ResolveModulePath(Instance relativeTo, string path) => ThrowHelper.ThrowTranspiledMethod();
 }

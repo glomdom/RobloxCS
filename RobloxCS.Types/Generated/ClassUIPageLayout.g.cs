@@ -15,8 +15,8 @@ public partial class UIPageLayout : UIGridStyleLayout  {
     public bool ScrollWheelInputEnabled { get; set; } = default!;
     public bool TouchInputEnabled { get; set; } = default!;
     public float TweenTime { get; set; } = default!;
-    public void JumpTo() => ThrowHelper.ThrowTranspiledMethod();
-    public void JumpToIndex() => ThrowHelper.ThrowTranspiledMethod();
+    public void JumpTo(Instance page) => ThrowHelper.ThrowTranspiledMethod();
+    public void JumpToIndex(int index) => ThrowHelper.ThrowTranspiledMethod();
     public void Next() => ThrowHelper.ThrowTranspiledMethod();
     public void Previous() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Instance> PageEnter { get; private set; } = null!;

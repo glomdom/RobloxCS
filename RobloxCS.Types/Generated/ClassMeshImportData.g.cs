@@ -25,4 +25,5 @@ public partial class MeshImportData : BaseImportData  {
     public bool OuterCageFarExtendedFromMeshPreview { get; set; } = default!;
     public float PolygonCount { get; set; } = default!;
     public bool UseImportedPivot { get; set; } = default!;
+    public long VersionedAssetId { get; set; } = default!;
 }

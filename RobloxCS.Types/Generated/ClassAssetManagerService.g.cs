@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("AssetManagerService", RobloxNativeType.Service)]
-public static partial class AssetManagerService {
+public partial class AssetManagerService : Instance  {
 }

@@ -4,8 +4,8 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("GamepadService", RobloxNativeType.Service)]
-public static partial class GamepadService {
-    public static bool GamepadCursorEnabled { get; } = default!;
-    public static void DisableGamepadCursor() => ThrowHelper.ThrowTranspiledMethod();
-    public static void EnableGamepadCursor() => ThrowHelper.ThrowTranspiledMethod();
+public partial class GamepadService : Instance  {
+    public bool GamepadCursorEnabled { get; } = default!;
+    public void DisableGamepadCursor() => ThrowHelper.ThrowTranspiledMethod();
+    public void EnableGamepadCursor(Instance guiObject) => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -4,22 +4,24 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("AvatarCreationService", RobloxNativeType.Service)]
-public static partial class AvatarCreationService {
-    public static Dictionary<string, object> GetValidationRules() => ThrowHelper.ThrowTranspiledMethod();
-    public static string AutoSetupAvatarAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static string GenerateAvatar2DPreviewAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static string GenerateAvatarAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetBatchTokenDetailsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static EditableImage LoadAvatar2DPreviewAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static HumanoidDescription LoadGeneratedAvatarAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PrepareAvatarForPreviewAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple PromptCreateAvatarAssetAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple PromptCreateAvatarAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static string PromptSelectAvatarGenerationImageAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple RequestAvatarGenerationSessionAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple ValidateUGCAccessoryAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple ValidateUGCBodyPartAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple ValidateUGCFullBodyAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptSignal<int, Enums.ModerationStatus> AvatarAssetModerationCompleted { get; private set; } = null!;
-    public static RBXScriptSignal<int, Enums.ModerationStatus> AvatarModerationCompleted { get; private set; } = null!;
+public partial class AvatarCreationService : Instance  {
+    public Dictionary<string, object> GetValidationRules() => ThrowHelper.ThrowTranspiledMethod();
+    public string AutoSetupAvatarAsync(Player player, Dictionary<string, object> autoSetupParams, Delegate? progressCallback) => ThrowHelper.ThrowTranspiledMethod();
+    public string GenerateAvatar2DPreviewAsync(Dictionary<string, object> avatarGeneration2dPreviewParams, Delegate? progressCallback) => ThrowHelper.ThrowTranspiledMethod();
+    public string GenerateAvatarAsync(Dictionary<string, object> avatarGenerationParams, Delegate? progressCallback) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetBatchTokenDetailsAsync(List<object> tokenIds) => ThrowHelper.ThrowTranspiledMethod();
+    public EditableImage LoadAvatar2DPreviewAsync(string previewId) => ThrowHelper.ThrowTranspiledMethod();
+    public HumanoidDescription LoadGeneratedAvatarAsync(string generationId) => ThrowHelper.ThrowTranspiledMethod();
+    public void PrepareAvatarForPreviewAsync(Model humanoidModel) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple PromptCreateAvatarAssetAsync(string tokenId, Player player, Instance assetInstance, Enums.AvatarAssetType assetType) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple PromptCreateAvatarAsync(string tokenId, Player player, HumanoidDescription humanoidDescription) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple PromptCreateMakeupAsync(Player player, List<object> makeupAssetEntries, Color3? thumbnailHeadColor = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public string PromptSelectAvatarGenerationImageAsync(Player player) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple RequestAvatarGenerationSessionAsync(Player player, Delegate callback) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple ValidateUGCAccessoryAsync(Player player, Instance accessory, Enums.AccessoryType accessoryType) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple ValidateUGCBodyPartAsync(Player player, Instance instance, Enums.BodyPart bodyPart) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple ValidateUGCFullBodyAsync(Player player, HumanoidDescription humanoidDescription) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal<long, Enums.ModerationStatus> AvatarAssetModerationCompleted { get; private set; } = null!;
+    public RBXScriptSignal<long, Enums.ModerationStatus> AvatarModerationCompleted { get; private set; } = null!;
+    public RBXScriptSignal<long, Enums.ModerationStatus, Enums.OutfitType> AvatarOutfitModerationCompleted { get; private set; } = null!;
 }

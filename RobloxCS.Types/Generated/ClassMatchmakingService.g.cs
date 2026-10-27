@@ -4,8 +4,8 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("MatchmakingService", RobloxNativeType.Service)]
-public static partial class MatchmakingService {
-    public static LuaTuple GetServerAttribute() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple InitializeServerAttributesForStudio() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple SetServerAttribute() => ThrowHelper.ThrowTranspiledMethod();
+public partial class MatchmakingService : Instance  {
+    public LuaTuple GetServerAttribute(string name) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple InitializeServerAttributesForStudio(Dictionary<string, object> serverAttributes) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple SetServerAttribute(string name, object value) => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -9,8 +9,12 @@ public partial class StyleQuery : Instance  {
     public bool IsActive { get; set; } = default!;
     public Vector2 MaxSize { get; set; } = default!;
     public Vector2 MinSize { get; set; } = default!;
-    public object GetCondition() => ThrowHelper.ThrowTranspiledMethod();
+    public Enums.PreferredInput PreferredInput { get; set; } = default!;
+    public Enums.PreferredTextSize PreferredTextSize { get; set; } = default!;
+    public bool ReducedMotionEnabled { get; set; } = default!;
+    public Enums.DisplaySize ViewportDisplaySize { get; set; } = default!;
+    public object GetCondition(string name) => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object> GetConditions() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetCondition() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetConditions() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetCondition(string name, object value) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetConditions(Dictionary<string, object> conditions) => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -4,6 +4,6 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("WebSocketService", RobloxNativeType.Service)]
-public static partial class WebSocketService {
-    public static WebSocketClient CreateClient() => ThrowHelper.ThrowTranspiledMethod();
+public partial class WebSocketService : Instance  {
+    public WebSocketClient CreateClient(string uri) => ThrowHelper.ThrowTranspiledMethod();
 }

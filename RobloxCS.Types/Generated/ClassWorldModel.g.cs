@@ -5,4 +5,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("WorldModel", RobloxNativeType.Instance)]
 public partial class WorldModel : WorldRoot  {
+    public bool UseWorkspaceCollisionGroups { get; set; } = default!;
 }

@@ -8,5 +8,5 @@ public partial class CustomLog : Instance  {
     public void Close() => ThrowHelper.ThrowTranspiledMethod();
     public string GetLogPath() => ThrowHelper.ThrowTranspiledMethod();
     public void Open() => ThrowHelper.ThrowTranspiledMethod();
-    public void WriteAppend() => ThrowHelper.ThrowTranspiledMethod();
+    public void WriteAppend(string append) => ThrowHelper.ThrowTranspiledMethod();
 }

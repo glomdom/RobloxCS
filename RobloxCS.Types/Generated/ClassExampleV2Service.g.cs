@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("ExampleV2Service", RobloxNativeType.Service)]
-public static partial class ExampleV2Service {
+public partial class ExampleV2Service : Instance  {
 }

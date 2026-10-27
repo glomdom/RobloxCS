@@ -4,13 +4,12 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("LocalizationService", RobloxNativeType.Service)]
-public static partial class LocalizationService {
-    public static string RobloxLocaleId { get; set; } = default!;
-    public static string SystemLocaleId { get; set; } = default!;
-    public static List<Instance> GetCorescriptLocalizations() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetTableEntries() => ThrowHelper.ThrowTranspiledMethod();
-    public static Instance GetTranslatorForPlayer() => ThrowHelper.ThrowTranspiledMethod();
-    public static string GetCountryRegionForPlayerAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Instance GetTranslatorForLocaleAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Instance GetTranslatorForPlayerAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class LocalizationService : Instance  {
+    public string RobloxLocaleId { get; set; } = default!;
+    public string SystemLocaleId { get; set; } = default!;
+    public List<Instance> GetCorescriptLocalizations() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetTableEntries(Instance instance = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public string GetCountryRegionForPlayerAsync(Instance player) => ThrowHelper.ThrowTranspiledMethod();
+    public Instance GetTranslatorForLocaleAsync(string locale) => ThrowHelper.ThrowTranspiledMethod();
+    public Instance GetTranslatorForPlayerAsync(Instance player) => ThrowHelper.ThrowTranspiledMethod();
 }

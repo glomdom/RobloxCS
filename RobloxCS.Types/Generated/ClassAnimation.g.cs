@@ -5,5 +5,6 @@
 namespace RobloxCS.Types;
 [RobloxNative("Animation", RobloxNativeType.Instance)]
 public partial class Animation : Instance  {
+    public string AnimationContent { get; set; } = default!;
     public string AnimationId { get; set; } = default!;
 }

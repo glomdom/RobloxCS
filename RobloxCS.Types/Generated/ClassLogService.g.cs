@@ -4,8 +4,15 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("LogService", RobloxNativeType.Service)]
-public static partial class LogService {
-    public static void ClearOutput() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetLogHistory() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptSignal<string, Enums.MessageType> MessageOut { get; private set; } = null!;
+public partial class LogService : Instance  {
+    public void ClearOutput() => ThrowHelper.ThrowTranspiledMethod();
+    public void Error(string message, Dictionary<string, object> context = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetLogHistory() => ThrowHelper.ThrowTranspiledMethod();
+    public Logger GetLogger(string name) => ThrowHelper.ThrowTranspiledMethod();
+    public void Info(string message, Dictionary<string, object> context = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void Log(Enums.MessageType messageType, string message, Dictionary<string, object> context = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void Output(string message, Dictionary<string, object> context = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void Warn(string message, Dictionary<string, object> context = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetLogHistoryAsync(long user) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal<string, Enums.MessageType, Dictionary<string, object>> MessageOut { get; private set; } = null!;
 }

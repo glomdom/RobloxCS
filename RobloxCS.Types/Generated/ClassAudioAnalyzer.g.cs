@@ -9,7 +9,7 @@ public partial class AudioAnalyzer : Instance  {
     public float RmsLevel { get; set; } = default!;
     public bool SpectrumEnabled { get; set; } = default!;
     public Enums.AudioWindowSize WindowSize { get; set; } = default!;
-    public List<Instance> GetConnectedWires() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetConnectedWires(string pin) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetInputPins() => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetOutputPins() => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetSpectrum() => ThrowHelper.ThrowTranspiledMethod();

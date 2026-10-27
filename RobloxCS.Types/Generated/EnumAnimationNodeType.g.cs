@@ -6,7 +6,7 @@ public static partial class Enums {
     public enum AnimationNodeType {
         InvalidNode = 0,
         AddNode = 1,
-        BlendNode = 2,
+        OverNode = 2,
         Blend1DNode = 3,
         Blend2DNode = 4,
         ClipNode = 5,
@@ -18,5 +18,7 @@ public static partial class Enums {
         SequenceNode = 11,
         SpeedNode = 12,
         SubtractNode = 13,
+        OneShotNode = 14,
+        StateMachineNode = 16,
     }
 }

@@ -5,9 +5,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("MemoryStoreHashMap", RobloxNativeType.Instance)]
 public partial class MemoryStoreHashMap : Instance  {
-    public object GetAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public MemoryStoreHashMapPages ListItemsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public void RemoveAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public bool SetAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public object UpdateAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public object GetAsync(string key) => ThrowHelper.ThrowTranspiledMethod();
+    public MemoryStoreHashMapPages ListItemsAsync(int count) => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveAsync(string key) => ThrowHelper.ThrowTranspiledMethod();
+    public bool SetAsync(string key, object value, long expiration) => ThrowHelper.ThrowTranspiledMethod();
+    public object UpdateAsync(string key, Delegate transformFunction, long expiration) => ThrowHelper.ThrowTranspiledMethod();
 }

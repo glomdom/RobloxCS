@@ -9,5 +9,8 @@ public partial class UIGradient : UIComponent  {
     public bool Enabled { get; set; } = default!;
     public Vector2 Offset { get; set; } = default!;
     public float Rotation { get; set; } = default!;
+    public float Scale { get; set; } = default!;
+    public Enums.GradientTileMode TileMode { get; set; } = default!;
     public NumberSequence Transparency { get; set; } = default!;
+    public Enums.GradientType Type { get; set; } = default!;
 }

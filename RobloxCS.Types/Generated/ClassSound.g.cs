@@ -5,6 +5,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("Sound", RobloxNativeType.Instance)]
 public partial class Sound : Instance  {
+    public bool AcousticSimulationEnabled { get; set; } = default!;
     public string AudioContent { get; set; } = default!;
     public bool IsLoaded { get; set; } = default!;
     public NumberRange LoopRegion { get; set; } = default!;

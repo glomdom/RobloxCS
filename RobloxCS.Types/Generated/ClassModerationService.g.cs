@@ -4,11 +4,11 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("ModerationService", RobloxNativeType.Service)]
-public static partial class ModerationService {
-    public static RBXScriptConnection BindReviewableContentEventProcessor() => ThrowHelper.ThrowTranspiledMethod();
-    public static string CreateReviewableContentKey() => ThrowHelper.ThrowTranspiledMethod();
-    public static string CreateReviewableContentAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static string InternalCreateReviewableContentAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static void InternalRequestReviewableContentReviewAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Func<Dictionary<string, object>> InternalProcessReviewableContentEvent { get; set; } = default!;
+public partial class ModerationService : Instance  {
+    public RBXScriptConnection BindReviewableContentEventProcessor(int priority, Delegate callback) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptConnection BindViolationProcessor(int priority, Delegate callback) => ThrowHelper.ThrowTranspiledMethod();
+    public string CreateReviewableContentKey(string content) => ThrowHelper.ThrowTranspiledMethod();
+    public void MockViolationCallbackAsync(Dictionary<string, object> report) => ThrowHelper.ThrowTranspiledMethod();
+    public string CreateReviewableContentAsync(Dictionary<string, object> config) => ThrowHelper.ThrowTranspiledMethod();
+    public void InternalRequestReviewableContentReviewAsync(Dictionary<string, object> config) => ThrowHelper.ThrowTranspiledMethod();
 }

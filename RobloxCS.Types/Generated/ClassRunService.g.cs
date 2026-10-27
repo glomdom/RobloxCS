@@ -4,24 +4,31 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("RunService", RobloxNativeType.Service)]
-public static partial class RunService {
-    public static int FrameNumber { get; set; } = default!;
-    public static void BindToRenderStep() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptConnection BindToSimulation() => ThrowHelper.ThrowTranspiledMethod();
-    public static Enums.PredictionStatus GetPredictionStatus() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool IsClient() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool IsRunMode() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool IsRunning() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool IsServer() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool IsStudio() => ThrowHelper.ThrowTranspiledMethod();
-    public static void SetPredictionMode() => ThrowHelper.ThrowTranspiledMethod();
-    public static void UnbindFromRenderStep() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptSignal<double> Heartbeat { get; private set; } = null!;
-    public static RBXScriptSignal<int, List<object>> Misprediction { get; private set; } = null!;
-    public static RBXScriptSignal<double> PostSimulation { get; private set; } = null!;
-    public static RBXScriptSignal<double> PreAnimation { get; private set; } = null!;
-    public static RBXScriptSignal<double> PreRender { get; private set; } = null!;
-    public static RBXScriptSignal<double> PreSimulation { get; private set; } = null!;
-    public static RBXScriptSignal<double> RenderStepped { get; private set; } = null!;
-    public static RBXScriptSignal<double, double> Stepped { get; private set; } = null!;
+public partial class RunService : Instance  {
+    public long FrameNumber { get; set; } = default!;
+    public Enums.RunState RunState { get; } = default!;
+    public RBXScriptConnection BindToAnimation(Delegate function, Enums.StepFrequency frequency = default!, int priority = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptConnection BindToAnimationParallel(Delegate function, Enums.StepFrequency frequency = default!, int priority = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void BindToRenderStep(string name, int priority, Delegate function) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptConnection BindToSimulation(Delegate function, Enums.StepFrequency frequency = default!, int priority = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptConnection BindToSimulationParallel(Delegate function, Enums.StepFrequency frequency = default!, int priority = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public Enums.PredictionStatus GetPredictionStatus(Instance context) => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsClient() => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsEdit() => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsResimulating() => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsRunMode() => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsRunning() => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsServer() => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsStudio() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetPredictionMode(Instance context, Enums.PredictionMode mode) => ThrowHelper.ThrowTranspiledMethod();
+    public void UnbindFromRenderStep(string name) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal<double> Heartbeat { get; private set; } = null!;
+    public RBXScriptSignal<double, List<object>, Dictionary<string, object>> Misprediction { get; private set; } = null!;
+    public RBXScriptSignal<double> PostSimulation { get; private set; } = null!;
+    public RBXScriptSignal<double> PreAnimation { get; private set; } = null!;
+    public RBXScriptSignal<double> PreRender { get; private set; } = null!;
+    public RBXScriptSignal<double> PreSimulation { get; private set; } = null!;
+    public RBXScriptSignal<double> RenderStepped { get; private set; } = null!;
+    public RBXScriptSignal<double> Rollback { get; private set; } = null!;
+    public RBXScriptSignal<double, double> Stepped { get; private set; } = null!;
 }

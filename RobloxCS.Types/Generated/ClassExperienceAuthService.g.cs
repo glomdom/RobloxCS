@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("ExperienceAuthService", RobloxNativeType.Service)]
-public static partial class ExperienceAuthService {
+public partial class ExperienceAuthService : Instance  {
 }

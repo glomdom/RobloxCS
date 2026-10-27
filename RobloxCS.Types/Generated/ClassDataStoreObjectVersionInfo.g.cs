@@ -5,7 +5,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("DataStoreObjectVersionInfo", RobloxNativeType.Instance)]
 public partial class DataStoreObjectVersionInfo : Instance  {
-    public int CreatedTime { get; set; } = default!;
+    public long CreatedTime { get; set; } = default!;
     public bool IsDeleted { get; set; } = default!;
     public string Version { get; set; } = default!;
 }

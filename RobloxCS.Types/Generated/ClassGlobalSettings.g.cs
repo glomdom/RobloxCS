@@ -5,6 +5,6 @@
 namespace RobloxCS.Types;
 [RobloxNative("GlobalSettings", RobloxNativeType.Instance)]
 public partial class GlobalSettings : GenericSettings  {
-    public bool GetFFlag() => ThrowHelper.ThrowTranspiledMethod();
-    public string GetFVariable() => ThrowHelper.ThrowTranspiledMethod();
+    public bool GetFFlag(string name) => ThrowHelper.ThrowTranspiledMethod();
+    public string GetFVariable(string name) => ThrowHelper.ThrowTranspiledMethod();
 }

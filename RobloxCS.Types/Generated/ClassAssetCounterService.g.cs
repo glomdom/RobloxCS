@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("AssetCounterService", RobloxNativeType.Service)]
-public static partial class AssetCounterService {
+public partial class AssetCounterService : Instance  {
 }

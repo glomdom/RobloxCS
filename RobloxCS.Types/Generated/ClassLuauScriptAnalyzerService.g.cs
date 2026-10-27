@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("LuauScriptAnalyzerService", RobloxNativeType.Service)]
-public static partial class LuauScriptAnalyzerService {
+public partial class LuauScriptAnalyzerService : Instance  {
 }

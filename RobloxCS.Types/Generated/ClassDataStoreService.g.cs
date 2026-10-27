@@ -4,10 +4,11 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("DataStoreService", RobloxNativeType.Service)]
-public static partial class DataStoreService {
-    public static DataStore GetDataStore() => ThrowHelper.ThrowTranspiledMethod();
-    public static DataStore GetGlobalDataStore() => ThrowHelper.ThrowTranspiledMethod();
-    public static OrderedDataStore GetOrderedDataStore() => ThrowHelper.ThrowTranspiledMethod();
-    public static int GetRequestBudgetForRequestType() => ThrowHelper.ThrowTranspiledMethod();
-    public static DataStoreListingPages ListDataStoresAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class DataStoreService : Instance  {
+    public DataStore GetDataStore(string name, string scope = default!, Instance options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public DataStore GetGlobalDataStore() => ThrowHelper.ThrowTranspiledMethod();
+    public OrderedDataStore GetOrderedDataStore(string name, string scope = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public int GetRequestBudgetForRequestType(Enums.DataStoreRequestType requestType) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetRateLimitForRequestType(Enums.DataStoreRequestType requestType, int baseLimit, int perPlayerLimit) => ThrowHelper.ThrowTranspiledMethod();
+    public DataStoreListingPages ListDataStoresAsync(string prefix = default!, int pageSize = default!, string cursor = default!) => ThrowHelper.ThrowTranspiledMethod();
 }

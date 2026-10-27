@@ -5,4 +5,18 @@
 namespace RobloxCS.Types;
 [RobloxNative("AvatarAccessoryRules", RobloxNativeType.Instance)]
 public partial class AvatarAccessoryRules : Instance  {
+    public Enums.AvatarSettingsAccessoryMode AccessoryMode { get; set; } = default!;
+    public long BackAccessoryOverride { get; set; } = default!;
+    public bool EnableEmissives { get; set; } = default!;
+    public bool EnableSound { get; set; } = default!;
+    public bool EnableVFX { get; set; } = default!;
+    public long FaceAccessoryOverride { get; set; } = default!;
+    public long FrontAccessoryOverride { get; set; } = default!;
+    public long HairAccessoryOverride { get; set; } = default!;
+    public long HeadAccessoryOverride { get; set; } = default!;
+    public Vector3 LimitBounds { get; set; } = default!;
+    public Enums.AvatarSettingsAccessoryLimitMethod LimitMethod { get; set; } = default!;
+    public long NeckAccessoryOverride { get; set; } = default!;
+    public long ShoulderAccessoryOverride { get; set; } = default!;
+    public long WaistAccessoryOverride { get; set; } = default!;
 }

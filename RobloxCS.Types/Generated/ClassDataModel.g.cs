@@ -5,20 +5,23 @@
 namespace RobloxCS.Types;
 [RobloxNative("DataModel", RobloxNativeType.Instance)]
 public partial class DataModel : ServiceProvider  {
-    public int CreatorId { get; set; } = default!;
+    public long CreatorId { get; set; } = default!;
     public Enums.CreatorType CreatorType { get; set; } = default!;
-    public int GameId { get; set; } = default!;
+    public long GameId { get; set; } = default!;
     public Enums.Genre Genre { get; set; } = default!;
     public string JobId { get; set; } = default!;
     public Enums.MatchmakingType MatchmakingType { get; set; } = default!;
-    public int PlaceId { get; set; } = default!;
+    public long PlaceId { get; set; } = default!;
     public int PlaceVersion { get; set; } = default!;
     public string PrivateServerId { get; set; } = default!;
-    public int PrivateServerOwnerId { get; set; } = default!;
-    public Instance RunService { get; set; } = default!;
+    public long PrivateServerOwnerId { get; set; } = default!;
     public Workspace Workspace { get; set; } = default!;
-    public void BindToClose() => ThrowHelper.ThrowTranspiledMethod();
+    public RunService RunService { get; set; } = default!;
+    public void BindToClose(Delegate function) => ThrowHelper.ThrowTranspiledMethod();
     public bool IsLoaded() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<bool> GraphicsQualityChangeRequest { get; private set; } = null!;
     public RBXScriptSignal Loaded { get; private set; } = null!;
+    public RBXScriptSignal<Dictionary<string, object>> ServerLifecycleChanged { get; private set; } = null!;
+    public RBXScriptSignal ServerLowMemoryWarning { get; private set; } = null!;
+    public RBXScriptSignal<DateTime, Enums.CloseReason, Dictionary<string, object>> ServerRestartScheduled { get; private set; } = null!;
 }

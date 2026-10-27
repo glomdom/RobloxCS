@@ -6,5 +6,5 @@ namespace RobloxCS.Types;
 [RobloxNative("DataStoreSetOptions", RobloxNativeType.Instance)]
 public partial class DataStoreSetOptions : Instance  {
     public Dictionary<string, object> GetMetadata() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetMetadata() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetMetadata(Dictionary<string, object> attributes) => ThrowHelper.ThrowTranspiledMethod();
 }

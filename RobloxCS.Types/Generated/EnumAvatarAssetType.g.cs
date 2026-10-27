@@ -30,7 +30,6 @@ public static partial class Enums {
         RunAnimation = 53,
         SwimAnimation = 54,
         WalkAnimation = 55,
-        MoodAnimation = 78,
         EmoteAnimation = 61,
         TShirtAccessory = 64,
         ShirtAccessory = 65,
@@ -43,9 +42,11 @@ public static partial class Enums {
         DressSkirtAccessory = 72,
         EyebrowAccessory = 76,
         EyelashAccessory = 77,
+        MoodAnimation = 78,
         DynamicHead = 79,
         FaceMakeup = 88,
         LipMakeup = 89,
         EyeMakeup = 90,
+        AvatarBackground = 92,
     }
 }

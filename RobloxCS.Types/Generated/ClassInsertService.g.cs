@@ -4,12 +4,11 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("InsertService", RobloxNativeType.Service)]
-public static partial class InsertService {
-    public static bool AllowClientInsertModels { get; set; } = default!;
-    public static MeshPart CreateMeshPartAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetFreeDecalsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetFreeModelsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static int GetLatestAssetVersionAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Instance LoadAsset() => ThrowHelper.ThrowTranspiledMethod();
-    public static Instance LoadAssetVersion() => ThrowHelper.ThrowTranspiledMethod();
+public partial class InsertService : Instance  {
+    public MeshPart CreateMeshPartAsync(string meshId, Enums.CollisionFidelity collisionFidelity, Enums.RenderFidelity renderFidelity) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetFreeDecalsAsync(string searchText, int pageNum) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetFreeModelsAsync(string searchText, int pageNum) => ThrowHelper.ThrowTranspiledMethod();
+    public long GetLatestAssetVersionAsync(long assetId) => ThrowHelper.ThrowTranspiledMethod();
+    public Instance LoadAsset(long assetId) => ThrowHelper.ThrowTranspiledMethod();
+    public Instance LoadAssetVersion(long assetVersionId) => ThrowHelper.ThrowTranspiledMethod();
 }

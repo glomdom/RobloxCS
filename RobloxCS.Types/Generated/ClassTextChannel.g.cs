@@ -5,11 +5,12 @@
 namespace RobloxCS.Types;
 [RobloxNative("TextChannel", RobloxNativeType.Instance)]
 public partial class TextChannel : Instance  {
+    public bool AddPlayersOnJoin { get; set; } = default!;
     public Player DirectChatRequester { get; set; } = default!;
-    public TextChatMessage DisplaySystemMessage() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetDirectChatRequester() => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple AddUserAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public TextChatMessage SendAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public TextChatMessage DisplaySystemMessage(string systemMessage, string metadata = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetDirectChatRequester(Player requester) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple AddUserAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();
+    public TextChatMessage SendAsync(string message, string metadata = default!) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<TextChatMessage> MessageReceived { get; private set; } = null!;
     public Func<TextChatMessage> OnIncomingMessage { get; set; } = default!;
     public Func<TextChatMessage, TextSource> ShouldDeliverCallback { get; set; } = default!;

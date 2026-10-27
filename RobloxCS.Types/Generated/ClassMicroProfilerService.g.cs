@@ -4,5 +4,9 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("MicroProfilerService", RobloxNativeType.Service)]
-public static partial class MicroProfilerService {
+public partial class MicroProfilerService : Instance  {
+    public int GetDataInRange(int slotId, int offset, int size, Buffer destBuffer, int destBufferOffset) => ThrowHelper.ThrowTranspiledMethod();
+    public int GetDataSize(int slotId) => ThrowHelper.ThrowTranspiledMethod();
+    public int ProcessCommand(Buffer cmdBuf, int cmdOffset, int cmdSize, Buffer respBuf, int respOffset, int respSize) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal<int, int> DataChanged { get; private set; } = null!;
 }

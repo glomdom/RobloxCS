@@ -4,13 +4,13 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("PhysicsService", RobloxNativeType.Service)]
-public static partial class PhysicsService {
-    public static void CollisionGroupSetCollidable() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool CollisionGroupsAreCollidable() => ThrowHelper.ThrowTranspiledMethod();
-    public static int GetMaxCollisionGroups() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetRegisteredCollisionGroups() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool IsCollisionGroupRegistered() => ThrowHelper.ThrowTranspiledMethod();
-    public static void RegisterCollisionGroup() => ThrowHelper.ThrowTranspiledMethod();
-    public static void RenameCollisionGroup() => ThrowHelper.ThrowTranspiledMethod();
-    public static void UnregisterCollisionGroup() => ThrowHelper.ThrowTranspiledMethod();
+public partial class PhysicsService : Instance  {
+    public void CollisionGroupSetCollidable(string name1, string name2, bool collidable) => ThrowHelper.ThrowTranspiledMethod();
+    public bool CollisionGroupsAreCollidable(string name1, string name2) => ThrowHelper.ThrowTranspiledMethod();
+    public int GetMaxCollisionGroups() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetRegisteredCollisionGroups() => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsCollisionGroupRegistered(string name) => ThrowHelper.ThrowTranspiledMethod();
+    public void RegisterCollisionGroup(string name) => ThrowHelper.ThrowTranspiledMethod();
+    public void RenameCollisionGroup(string from, string to) => ThrowHelper.ThrowTranspiledMethod();
+    public void UnregisterCollisionGroup(string name) => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -8,6 +8,6 @@ public partial class Capture : Object  {
     public DateTime CaptureTime { get; set; } = default!;
     public Enums.CaptureType CaptureType { get; set; } = default!;
     public string LocalId { get; set; } = default!;
-    public int SourcePlaceId { get; set; } = default!;
-    public int SourceUniverseId { get; set; } = default!;
+    public long SourcePlaceId { get; set; } = default!;
+    public long SourceUniverseId { get; set; } = default!;
 }

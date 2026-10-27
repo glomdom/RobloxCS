@@ -4,11 +4,14 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("GeometryService", RobloxNativeType.Service)]
-public static partial class GeometryService {
-    public static List<object> CalculateConstraintsToPreserve() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> FragmentAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> IntersectAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> SubtractAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static MeshPart SweepPartAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> UnionAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class GeometryService : Instance  {
+    public List<object> CalculateConstraintsToPreserve(Instance source, List<object> destination, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public MeshPart CreateBasicMeshPart(Enums.BasicMeshPartShape shape, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GenerateFragmentSites(BasePart part, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> FragmentAsync(BasePart part, List<object> sites, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> IntersectAsync(Instance part, List<object> parts, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> SubtractAsync(Instance part, List<object> parts, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public MeshPart SweepPartAsync(BasePart part, List<object> cframes, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> UnionAsync(Instance part, List<object> parts, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public MeshPart BakeToMeshAsync(Instance input, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
 }

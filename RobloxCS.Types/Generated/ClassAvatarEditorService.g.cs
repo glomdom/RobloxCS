@@ -4,33 +4,34 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("AvatarEditorService", RobloxNativeType.Service)]
-public static partial class AvatarEditorService {
-    public static Enums.AccessoryType GetAccessoryType() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PromptAllowInventoryReadAccess() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PromptCreateOutfit() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PromptDeleteOutfit() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PromptRenameOutfit() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PromptSaveAvatar() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PromptSetFavorite() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PromptUpdateOutfit() => ThrowHelper.ThrowTranspiledMethod();
-    public static HumanoidDescription CheckApplyDefaultClothingAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static HumanoidDescription ConformToAvatarRulesAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Dictionary<string, object> GetAvatarRulesAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetBatchItemDetailsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool GetFavoriteAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetHeadShapesAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static InventoryPages GetInventoryAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Dictionary<string, object> GetItemDetailsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Dictionary<string, object> GetOutfitDetailsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static OutfitPages GetOutfitsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetRecommendedAssetsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetRecommendedBundlesAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static CatalogPages SearchCatalogAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptSignal<Enums.AvatarPromptResult> PromptAllowInventoryReadAccessCompleted { get; private set; } = null!;
-    public static RBXScriptSignal<Enums.AvatarPromptResult, object> PromptCreateOutfitCompleted { get; private set; } = null!;
-    public static RBXScriptSignal<Enums.AvatarPromptResult> PromptDeleteOutfitCompleted { get; private set; } = null!;
-    public static RBXScriptSignal<Enums.AvatarPromptResult> PromptRenameOutfitCompleted { get; private set; } = null!;
-    public static RBXScriptSignal<Enums.AvatarPromptResult, HumanoidDescription> PromptSaveAvatarCompleted { get; private set; } = null!;
-    public static RBXScriptSignal<Enums.AvatarPromptResult> PromptSetFavoriteCompleted { get; private set; } = null!;
-    public static RBXScriptSignal<Enums.AvatarPromptResult> PromptUpdateOutfitCompleted { get; private set; } = null!;
+public partial class AvatarEditorService : Instance  {
+    public Enums.AccessoryType GetAccessoryType(Enums.AvatarAssetType avatarAssetType) => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptAllowInventoryReadAccess() => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptCreateOutfit(HumanoidDescription outfit, Enums.HumanoidRigType rigType, Dictionary<string, object> outfitOptions, object outfitType) => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptDeleteOutfit(long outfitId) => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptRenameOutfit(long outfitId) => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptSaveAvatar(HumanoidDescription humanoidDescription, Enums.HumanoidRigType rigType) => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptSetFavorite(long itemId, Enums.AvatarItemType itemType, bool shouldFavorite) => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptUpdateOutfit(long outfitId, HumanoidDescription updatedOutfit, Enums.HumanoidRigType rigType) => ThrowHelper.ThrowTranspiledMethod();
+    public HumanoidDescription CheckApplyDefaultClothingAsync(HumanoidDescription humanoidDescription) => ThrowHelper.ThrowTranspiledMethod();
+    public HumanoidDescription ConformToAvatarRulesAsync(HumanoidDescription humanoidDescription) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetAvatarRulesAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetBatchItemDetailsAsync(List<object> itemIds, Enums.AvatarItemType itemType) => ThrowHelper.ThrowTranspiledMethod();
+    public CatalogPages GetBundlesByAssetIdAsync(long assetId, long limit = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public bool GetFavoriteAsync(long itemId, Enums.AvatarItemType itemType) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetHeadShapesAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public InventoryPages GetInventoryAsync(List<object> assetTypes) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetItemDetailsAsync(long itemId, Enums.AvatarItemType itemType) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetOutfitDetailsAsync(long outfitId) => ThrowHelper.ThrowTranspiledMethod();
+    public OutfitPages GetOutfitsAsync(Enums.OutfitSource outfitSource = default!, Enums.OutfitType outfitType = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetRecommendedAssetsAsync(Enums.AvatarAssetType assetType, long contextAssetId = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetRecommendedBundlesAsync(long bundleId) => ThrowHelper.ThrowTranspiledMethod();
+    public CatalogPages SearchCatalogAsync(CatalogSearchParams searchParameters) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal<Enums.AvatarPromptResult> PromptAllowInventoryReadAccessCompleted { get; private set; } = null!;
+    public RBXScriptSignal<Enums.AvatarPromptResult, object> PromptCreateOutfitCompleted { get; private set; } = null!;
+    public RBXScriptSignal<Enums.AvatarPromptResult> PromptDeleteOutfitCompleted { get; private set; } = null!;
+    public RBXScriptSignal<Enums.AvatarPromptResult> PromptRenameOutfitCompleted { get; private set; } = null!;
+    public RBXScriptSignal<Enums.AvatarPromptResult, HumanoidDescription> PromptSaveAvatarCompleted { get; private set; } = null!;
+    public RBXScriptSignal<Enums.AvatarPromptResult> PromptSetFavoriteCompleted { get; private set; } = null!;
+    public RBXScriptSignal<Enums.AvatarPromptResult> PromptUpdateOutfitCompleted { get; private set; } = null!;
 }

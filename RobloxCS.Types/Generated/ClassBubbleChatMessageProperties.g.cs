@@ -10,5 +10,5 @@ public partial class BubbleChatMessageProperties : TextChatMessageProperties  {
     public Enums.Font FontFace { get; set; } = default!;
     public bool TailVisible { get; set; } = default!;
     public Color3 TextColor3 { get; set; } = default!;
-    public int TextSize { get; set; } = default!;
+    public long TextSize { get; set; } = default!;
 }

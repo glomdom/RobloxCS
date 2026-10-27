@@ -22,5 +22,6 @@ public static partial class Enums {
         CreatorEnvironmentsNotSupportedByService = 15,
         InactivityTimeout = 16,
         TooManyOutstandingRequests = 17,
+        InvalidRangeResponse = 18,
     }
 }

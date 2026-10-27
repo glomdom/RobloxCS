@@ -5,5 +5,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("OrderedDataStore", RobloxNativeType.Instance)]
 public partial class OrderedDataStore : GlobalDataStore  {
-    public DataStorePages GetSortedAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public DataStorePages GetSortedAsync(bool ascending, int pagesize, object minValue, object maxValue) => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -10,8 +10,8 @@ public partial class AudioFilter : Instance  {
     public float Frequency { get; set; } = default!;
     public float Gain { get; set; } = default!;
     public float Q { get; set; } = default!;
-    public List<Instance> GetConnectedWires() => ThrowHelper.ThrowTranspiledMethod();
-    public float GetGainAt() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetConnectedWires(string pin) => ThrowHelper.ThrowTranspiledMethod();
+    public float GetGainAt(float frequency) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetInputPins() => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetOutputPins() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<bool, string, Wire, Instance> WiringChanged { get; private set; } = null!;

@@ -8,5 +8,6 @@ public static partial class Enums {
         Avatar = 2,
         DynamicHead = 3,
         Shoes = 4,
+        Makeup = 5,
     }
 }

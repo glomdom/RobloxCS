@@ -5,4 +5,6 @@
 namespace RobloxCS.Types;
 [RobloxNative("AnimationImportData", RobloxNativeType.Instance)]
 public partial class AnimationImportData : BaseImportData  {
+    public bool ForceNewVersion { get; set; } = default!;
+    public long VersionedAssetId { get; set; } = default!;
 }

@@ -7,14 +7,14 @@ namespace RobloxCS.Types;
 public partial class LocalizationTable : Instance  {
     public string SourceLocaleId { get; set; } = default!;
     public List<object> GetEntries() => ThrowHelper.ThrowTranspiledMethod();
-    public Instance GetTranslator() => ThrowHelper.ThrowTranspiledMethod();
-    public void RemoveEntry() => ThrowHelper.ThrowTranspiledMethod();
-    public void RemoveEntryValue() => ThrowHelper.ThrowTranspiledMethod();
-    public void RemoveTargetLocale() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetEntries() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetEntryContext() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetEntryExample() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetEntryKey() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetEntrySource() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetEntryValue() => ThrowHelper.ThrowTranspiledMethod();
+    public Instance GetTranslator(string localeId) => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveEntry(string key, string source, string context) => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveEntryValue(string key, string source, string context, string localeId) => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveTargetLocale(string localeId) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEntries(object entries) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEntryContext(string key, string source, string context, string newContext) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEntryExample(string key, string source, string context, string example) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEntryKey(string key, string source, string context, string newKey) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEntrySource(string key, string source, string context, string newSource) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetEntryValue(string key, string source, string context, string localeId, string text) => ThrowHelper.ThrowTranspiledMethod();
 }

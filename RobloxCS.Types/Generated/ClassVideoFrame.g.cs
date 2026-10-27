@@ -9,6 +9,9 @@ public partial class VideoFrame : GuiObject  {
     public bool Looped { get; set; } = default!;
     public bool Playing { get; set; } = default!;
     public Vector2 Resolution { get; set; } = default!;
+    public float RollOffMaxDistance { get; set; } = default!;
+    public float RollOffMinDistance { get; set; } = default!;
+    public Enums.RollOffMode RollOffMode { get; set; } = default!;
     public double TimeLength { get; set; } = default!;
     public double TimePosition { get; set; } = default!;
     public string Video { get; set; } = default!;

@@ -9,5 +9,7 @@ public static partial class Enums {
         Add = 3,
         Multiply = 4,
         AlphaBlend = 5,
+        NormalMapBlend = 6,
+        Subtract = 7,
     }
 }

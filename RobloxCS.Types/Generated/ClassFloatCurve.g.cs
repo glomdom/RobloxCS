@@ -6,11 +6,11 @@ namespace RobloxCS.Types;
 [RobloxNative("FloatCurve", RobloxNativeType.Instance)]
 public partial class FloatCurve : Instance  {
     public int Length { get; set; } = default!;
-    public FloatCurveKey GetKeyAtIndex() => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> GetKeyIndicesAtTime() => ThrowHelper.ThrowTranspiledMethod();
+    public FloatCurveKey GetKeyAtIndex(int index) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetKeyIndicesAtTime(float time) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetKeys() => ThrowHelper.ThrowTranspiledMethod();
-    public float? GetValueAtTime() => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> InsertKey() => ThrowHelper.ThrowTranspiledMethod();
-    public int RemoveKeyAtIndex() => ThrowHelper.ThrowTranspiledMethod();
-    public int SetKeys() => ThrowHelper.ThrowTranspiledMethod();
+    public float? GetValueAtTime(float time) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> InsertKey(FloatCurveKey key) => ThrowHelper.ThrowTranspiledMethod();
+    public int RemoveKeyAtIndex(int startingIndex, int count = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public int SetKeys(List<object> keys) => ThrowHelper.ThrowTranspiledMethod();
 }

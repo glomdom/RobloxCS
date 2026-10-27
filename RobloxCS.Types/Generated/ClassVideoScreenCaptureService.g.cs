@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("VideoScreenCaptureService", RobloxNativeType.Service)]
-public static partial class VideoScreenCaptureService {
+public partial class VideoScreenCaptureService : Instance  {
 }

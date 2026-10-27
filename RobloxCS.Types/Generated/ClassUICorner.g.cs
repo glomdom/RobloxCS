@@ -5,5 +5,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("UICorner", RobloxNativeType.Instance)]
 public partial class UICorner : UIComponent  {
+    public UDim BottomLeftRadius { get; set; } = default!;
+    public UDim BottomRightRadius { get; set; } = default!;
     public UDim CornerRadius { get; set; } = default!;
+    public UDim TopLeftRadius { get; set; } = default!;
+    public UDim TopRightRadius { get; set; } = default!;
 }

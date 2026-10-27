@@ -5,11 +5,12 @@
 namespace RobloxCS.Types;
 [RobloxNative("MeshPart", RobloxNativeType.Instance)]
 public partial class MeshPart : TriangleMeshPart  {
-    public bool DoubleSided { get; } = default!;
+    public bool DoubleSided { get; set; } = default!;
     public string MeshContent { get; } = default!;
     public string MeshId { get; } = default!;
-    public Enums.RenderFidelity RenderFidelity { get; } = default!;
+    public Enums.RenderFidelity RenderFidelity { get; set; } = default!;
     public string TextureContent { get; set; } = default!;
     public string TextureID { get; set; } = default!;
-    public void ApplyMesh() => ThrowHelper.ThrowTranspiledMethod();
+    public void ApplyMesh(Instance meshPart) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetSurfaceSlotsAsync() => ThrowHelper.ThrowTranspiledMethod();
 }

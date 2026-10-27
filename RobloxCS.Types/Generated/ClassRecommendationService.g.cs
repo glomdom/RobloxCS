@@ -4,12 +4,13 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("RecommendationService", RobloxNativeType.Service)]
-public static partial class RecommendationService {
-    public static void LogActionEvent() => ThrowHelper.ThrowTranspiledMethod();
-    public static void LogImpressionEvent() => ThrowHelper.ThrowTranspiledMethod();
-    public static RecommendationPages GenerateItemListAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Dictionary<string, object> GetRecommendationItemAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Dictionary<string, object> RegisterItemAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static void RemoveItemAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static void UpdateItemAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class RecommendationService : Instance  {
+    public void LogActionEvent(Enums.RecommendationActionType actionType, string itemId, string tracingId, Dictionary<string, object> actionEventDetails = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void LogImpressionEvent(Enums.RecommendationImpressionType impressionType, string itemId, string tracingId, Dictionary<string, object> impressionEventDetails = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void LogPreferenceEvent(Enums.RecommendationPreferenceType preferenceType, Enums.RecommendationPreferenceTargetType targetType, string targetId, string tracingId = default!, string itemId = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public RecommendationPages GenerateItemListAsync(Dictionary<string, object> generateRecommendationItemListRequest) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetRecommendationItemAsync(string itemId) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> RegisterItemAsync(Player player, Dictionary<string, object> registerRecommendationItemsRequest) => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveItemAsync(string itemId) => ThrowHelper.ThrowTranspiledMethod();
+    public void UpdateItemAsync(Dictionary<string, object> updateRecommendationItemRequest) => ThrowHelper.ThrowTranspiledMethod();
 }

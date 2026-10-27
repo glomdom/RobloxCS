@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("IXPService", RobloxNativeType.Service)]
-public static partial class IXPService {
+public partial class IXPService : Instance  {
 }

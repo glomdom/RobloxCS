@@ -4,6 +4,6 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("HttpRbxApiService", RobloxNativeType.Service)]
-public static partial class HttpRbxApiService {
-    public static string RequestLimitedAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class HttpRbxApiService : Instance  {
+    public string RequestLimitedAsync(Dictionary<string, object> requestOptions, Enums.ThrottlingPriority priority = default!, Enums.HttpContentType content_type = default!, Enums.HttpRequestType httpRequestType = default!) => ThrowHelper.ThrowTranspiledMethod();
 }

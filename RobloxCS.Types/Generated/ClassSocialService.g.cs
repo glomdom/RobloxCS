@@ -4,24 +4,24 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("SocialService", RobloxNativeType.Service)]
-public static partial class SocialService {
-    public static List<Instance> GetPlayersByPartyId() => ThrowHelper.ThrowTranspiledMethod();
-    public static void HideSelfView() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PromptGameInvite() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PromptPhoneBook() => ThrowHelper.ThrowTranspiledMethod();
-    public static void ShowSelfView() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool CanSendCallInviteAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool CanSendGameInviteAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Enums.RsvpStatus GetEventRsvpStatusAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Dictionary<string, object>? GetExperienceEventAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetPartyAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetUpcomingExperienceEventsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PromptFeedbackSubmissionAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple PromptLinkSharingAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Enums.RsvpStatus PromptRsvpToEventAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptSignal<Instance, Enums.InviteState> CallInviteStateChanged { get; private set; } = null!;
-    public static RBXScriptSignal<Instance, List<object>> GameInvitePromptClosed { get; private set; } = null!;
-    public static RBXScriptSignal<Instance> PhoneBookPromptClosed { get; private set; } = null!;
-    public static RBXScriptSignal<Player> ShareSheetClosed { get; private set; } = null!;
-    public static Func<string, List<object>> OnCallInviteInvoked { get; set; } = default!;
+public partial class SocialService : Instance  {
+    public List<Instance> GetPlayersByPartyId(string partyId) => ThrowHelper.ThrowTranspiledMethod();
+    public void HideSelfView() => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptGameInvite(Instance player, Instance experienceInviteOptions = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptPhoneBook(Instance player, string tag) => ThrowHelper.ThrowTranspiledMethod();
+    public void ShowSelfView(Enums.SelfViewPosition selfViewPosition = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public bool CanSendCallInviteAsync(Instance player) => ThrowHelper.ThrowTranspiledMethod();
+    public bool CanSendGameInviteAsync(Instance player, long recipientId = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public Enums.RsvpStatus GetEventRsvpStatusAsync(string eventId) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object>? GetExperienceEventAsync(string eventId) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetPartyAsync(string partyId) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetUpcomingExperienceEventsAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptFeedbackSubmissionAsync(Dictionary<string, object>? options) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple PromptLinkSharingAsync(Player player, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public Enums.RsvpStatus PromptRsvpToEventAsync(string eventId) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal<Instance, Enums.InviteState> CallInviteStateChanged { get; private set; } = null!;
+    public RBXScriptSignal<Instance, List<object>> GameInvitePromptClosed { get; private set; } = null!;
+    public RBXScriptSignal<Instance> PhoneBookPromptClosed { get; private set; } = null!;
+    public RBXScriptSignal<Player> ShareSheetClosed { get; private set; } = null!;
+    public Func<string, List<object>> OnCallInviteInvoked { get; set; } = default!;
 }

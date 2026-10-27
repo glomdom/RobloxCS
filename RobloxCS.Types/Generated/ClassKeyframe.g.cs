@@ -6,10 +6,10 @@ namespace RobloxCS.Types;
 [RobloxNative("Keyframe", RobloxNativeType.Instance)]
 public partial class Keyframe : Instance  {
     public float Time { get; set; } = default!;
-    public void AddMarker() => ThrowHelper.ThrowTranspiledMethod();
-    public void AddPose() => ThrowHelper.ThrowTranspiledMethod();
+    public void AddMarker(Instance marker) => ThrowHelper.ThrowTranspiledMethod();
+    public void AddPose(Instance pose) => ThrowHelper.ThrowTranspiledMethod();
     public List<Instance> GetMarkers() => ThrowHelper.ThrowTranspiledMethod();
     public List<Instance> GetPoses() => ThrowHelper.ThrowTranspiledMethod();
-    public void RemoveMarker() => ThrowHelper.ThrowTranspiledMethod();
-    public void RemovePose() => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveMarker(Instance marker) => ThrowHelper.ThrowTranspiledMethod();
+    public void RemovePose(Instance pose) => ThrowHelper.ThrowTranspiledMethod();
 }

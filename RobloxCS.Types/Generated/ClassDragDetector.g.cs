@@ -32,11 +32,11 @@ public partial class DragDetector : ClickDetector  {
     public Enums.KeyCode VRSwitchKeyCode { get; set; } = default!;
     public Vector3 WorldAxis { get; set; } = default!;
     public Vector3 WorldSecondaryAxis { get; set; } = default!;
-    public RBXScriptConnection AddConstraintFunction() => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptConnection AddConstraintFunction(int priority, Delegate function) => ThrowHelper.ThrowTranspiledMethod();
     public CFrame GetReferenceFrame() => ThrowHelper.ThrowTranspiledMethod();
     public void RestartDrag() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetDragStyleFunction() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetPermissionPolicyFunction() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetDragStyleFunction(Delegate function) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetPermissionPolicyFunction(Delegate function) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Player, Ray, CFrame, CFrame?, bool> DragContinue { get; private set; } = null!;
     public RBXScriptSignal<Player> DragEnd { get; private set; } = null!;
     public RBXScriptSignal<Player, Ray, CFrame, CFrame, BasePart, CFrame?, bool> DragStart { get; private set; } = null!;

@@ -5,5 +5,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("BasePlayerGui", RobloxNativeType.Instance)]
 public partial class BasePlayerGui : Instance  {
-    public List<Instance> GetGuiObjectsAtPosition() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetGuiObjectsAtPosition(int x, int y) => ThrowHelper.ThrowTranspiledMethod();
 }

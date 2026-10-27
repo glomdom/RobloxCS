@@ -10,10 +10,10 @@ public partial class AudioDeviceInput : Instance  {
     public bool Muted { get; set; } = default!;
     public Player Player { get; set; } = default!;
     public float Volume { get; set; } = default!;
-    public List<Instance> GetConnectedWires() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetConnectedWires(string pin) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetInputPins() => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetOutputPins() => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetUserIdAccessList() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetUserIdAccessList() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetUserIdAccessList(List<object> userIds) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<bool, string, Wire, Instance> WiringChanged { get; private set; } = null!;
 }

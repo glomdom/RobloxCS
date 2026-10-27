@@ -5,4 +5,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("Folder", RobloxNativeType.Instance)]
 public partial class Folder : Instance  {
+    public Color3 IconTint { get; set; } = default!;
 }

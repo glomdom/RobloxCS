@@ -4,25 +4,29 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("AssetService", RobloxNativeType.Service)]
-public static partial class AssetService {
-    public static EditableImage CreateEditableImage() => ThrowHelper.ThrowTranspiledMethod();
-    public static EditableMesh CreateEditableMesh() => ThrowHelper.ThrowTranspiledMethod();
-    public static Decal ComposeDecalAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple CreateAssetAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple CreateAssetVersionAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static EditableImage CreateEditableImageAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static EditableMesh CreateEditableMeshAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static MeshPart CreateMeshPartAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static int CreatePlaceAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static int CreatePlaceInPlayerInventoryAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static SurfaceAppearance CreateSurfaceAppearanceAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetAssetIdsForPackageAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetAudioMetadataAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Dictionary<string, object> GetBundleDetailsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Instance GetGamePlacesAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Instance LoadAssetAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple PromptCreateAssetAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple PromptImportAnimationClipFromVideoAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static void SavePlaceAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static AudioPages SearchAudioAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class AssetService : Instance  {
+    public EditableImage CreateEditableImage(Dictionary<string, object>? editableImageOptions) => ThrowHelper.ThrowTranspiledMethod();
+    public EditableMesh CreateEditableMesh(Dictionary<string, object>? editableMeshOptions) => ThrowHelper.ThrowTranspiledMethod();
+    public void ComposeDecalAsync(Decal decal, List<object> layers) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple CreateAssetAsync(Object @object, Enums.AssetType assetType, Dictionary<string, object> requestParameters = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple CreateAssetVersionAsync(Object @object, Enums.AssetType assetType, long assetId, Dictionary<string, object> requestParameters = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple CreateDataModelContentAsync(string content, Dictionary<string, object>? options) => ThrowHelper.ThrowTranspiledMethod();
+    public Decal CreateDecalAsync(Dictionary<string, object> content) => ThrowHelper.ThrowTranspiledMethod();
+    public EditableImage CreateEditableImageAsync(string content, Dictionary<string, object>? editableImageOptions) => ThrowHelper.ThrowTranspiledMethod();
+    public EditableMesh CreateEditableMeshAsync(string content, Dictionary<string, object>? editableMeshOptions) => ThrowHelper.ThrowTranspiledMethod();
+    public MeshPart CreateMeshPartAsync(string meshContent, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public long CreatePlaceAsync(string placeName, long templatePlaceID, string description = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public long CreatePlaceInPlayerInventoryAsync(Instance player, string placeName, long templatePlaceID, string description = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public SurfaceAppearance CreateSurfaceAppearanceAsync(Dictionary<string, object> content) => ThrowHelper.ThrowTranspiledMethod();
+    public Texture CreateTextureAsync(Dictionary<string, object> content) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetAssetIdsForPackageAsync(long packageAssetId) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetAudioMetadataAsync(List<object> idList) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetBundleDetailsAsync(long bundleId) => ThrowHelper.ThrowTranspiledMethod();
+    public Instance GetGamePlacesAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public string GetLatestVersionUriAsync(string asset) => ThrowHelper.ThrowTranspiledMethod();
+    public Instance LoadAssetAsync(long assetId) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple PromptCreatePlatformContentAsync(Player player, Object @object, Enums.AssetType assetType) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple PromptImportAnimationClipFromVideoAsync(Player player, Delegate progressCallback) => ThrowHelper.ThrowTranspiledMethod();
+    public void SavePlaceAsync(Dictionary<string, object>? requestParameters) => ThrowHelper.ThrowTranspiledMethod();
+    public AudioPages SearchAudioAsync(AudioSearchParams searchParameters) => ThrowHelper.ThrowTranspiledMethod();
 }

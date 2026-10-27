@@ -8,8 +8,13 @@ public partial class StyleRule : StyleBase  {
     public int Priority { get; set; } = default!;
     public string Selector { get; set; } = default!;
     public string SelectorError { get; set; } = default!;
+    public object GetDefaultPropertyTransition() => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object> GetProperties() => ThrowHelper.ThrowTranspiledMethod();
-    public object GetProperty() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetProperties() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetProperty() => ThrowHelper.ThrowTranspiledMethod();
+    public object GetProperty(string name) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetPropertyTransitions() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetDefaultPropertyTransition(object transitionParams) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetProperties(Dictionary<string, object> styleProperties) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetProperty(string name, object value) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetPropertyTransition(string property, object transitionParams) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetPropertyTransitions(Dictionary<string, object> properties) => ThrowHelper.ThrowTranspiledMethod();
 }

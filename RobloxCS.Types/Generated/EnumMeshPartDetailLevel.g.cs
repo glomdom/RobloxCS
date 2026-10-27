@@ -10,5 +10,10 @@ public static partial class Enums {
         Level02 = 3,
         Level03 = 4,
         Level04 = 5,
+        Level05 = 6,
+        Level06 = 7,
+        Level07 = 8,
+        Level08 = 9,
+        Level09 = 10,
     }
 }

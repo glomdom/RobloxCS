@@ -5,9 +5,10 @@
 namespace RobloxCS.Types;
 [RobloxNative("GlobalDataStore", RobloxNativeType.Instance)]
 public partial class GlobalDataStore : Instance  {
-    public LuaTuple GetAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public object IncrementAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple RemoveAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public object SetAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple UpdateAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> BatchGetAsync(List<object> keys, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple GetAsync(string key, DataStoreGetOptions options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public object IncrementAsync(string key, int delta = default!, List<object> userIds = default!, DataStoreIncrementOptions options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple RemoveAsync(string key) => ThrowHelper.ThrowTranspiledMethod();
+    public object SetAsync(string key, object value, List<object> userIds = default!, DataStoreSetOptions options = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple UpdateAsync(string key, Delegate transformFunction) => ThrowHelper.ThrowTranspiledMethod();
 }

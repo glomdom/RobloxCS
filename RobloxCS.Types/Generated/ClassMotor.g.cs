@@ -8,5 +8,5 @@ public partial class Motor : JointInstance  {
     public float CurrentAngle { get; set; } = default!;
     public float DesiredAngle { get; set; } = default!;
     public float MaxVelocity { get; set; } = default!;
-    public void SetDesiredAngle() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetDesiredAngle(float value) => ThrowHelper.ThrowTranspiledMethod();
 }

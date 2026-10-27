@@ -16,7 +16,7 @@ public partial class VideoPlayer : Instance  {
     public double TimePosition { get; set; } = default!;
     public string VideoContent { get; set; } = default!;
     public float Volume { get; set; } = default!;
-    public List<Instance> GetConnectedWires() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetConnectedWires(string pin) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetInputPins() => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetOutputPins() => ThrowHelper.ThrowTranspiledMethod();
     public void Pause() => ThrowHelper.ThrowTranspiledMethod();

@@ -13,5 +13,7 @@ public static partial class Enums {
         PasswordShown = 6,
         Username = 7,
         OneTimePassword = 8,
+        NewPassword = 9,
+        NewPasswordShown = 10,
     }
 }

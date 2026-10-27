@@ -8,6 +8,6 @@ public partial class AdGui : SurfaceGuiBase  {
     public Enums.AdShape AdShape { get; set; } = default!;
     public bool EnableVideoAds { get; set; } = default!;
     public string FallbackImage { get; set; } = default!;
+    public string FallbackImageContent { get; set; } = default!;
     public Enums.AdUnitStatus Status { get; set; } = default!;
-    public Func<Dictionary<string, object>> OnAdEvent { get; set; } = default!;
 }

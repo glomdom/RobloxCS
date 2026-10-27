@@ -4,7 +4,7 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("MessagingService", RobloxNativeType.Service)]
-public static partial class MessagingService {
-    public static void PublishAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptConnection SubscribeAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class MessagingService : Instance  {
+    public void PublishAsync(string topic, object message) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptConnection SubscribeAsync(string topic, Delegate callback) => ThrowHelper.ThrowTranspiledMethod();
 }

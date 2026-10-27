@@ -5,8 +5,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("DataStoreKeyInfo", RobloxNativeType.Instance)]
 public partial class DataStoreKeyInfo : Instance  {
-    public int CreatedTime { get; set; } = default!;
-    public int UpdatedTime { get; set; } = default!;
+    public long CreatedTime { get; set; } = default!;
+    public long UpdatedTime { get; set; } = default!;
     public string Version { get; set; } = default!;
     public Dictionary<string, object> GetMetadata() => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetUserIds() => ThrowHelper.ThrowTranspiledMethod();

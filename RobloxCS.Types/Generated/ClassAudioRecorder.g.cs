@@ -8,7 +8,7 @@ public partial class AudioRecorder : Instance  {
     public bool IsRecording { get; } = default!;
     public double TimeLength { get; set; } = default!;
     public void Clear() => ThrowHelper.ThrowTranspiledMethod();
-    public List<Instance> GetConnectedWires() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetConnectedWires(string pin) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetInputPins() => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetOutputPins() => ThrowHelper.ThrowTranspiledMethod();
     public string GetTemporaryContent() => ThrowHelper.ThrowTranspiledMethod();

@@ -4,6 +4,7 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("VoiceChatService", RobloxNativeType.Service)]
-public static partial class VoiceChatService {
-    public static bool IsVoiceEnabledForUserIdAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class VoiceChatService : Instance  {
+    public List<object> GetChatGroupsAsync(List<Instance> players) => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsVoiceEnabledForUserIdAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();
 }

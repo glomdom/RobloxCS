@@ -17,6 +17,7 @@ public partial class Beam : Instance  {
     public float LightInfluence { get; set; } = default!;
     public int Segments { get; set; } = default!;
     public string Texture { get; set; } = default!;
+    public string TextureContent { get; set; } = default!;
     public float TextureLength { get; set; } = default!;
     public Enums.TextureMode TextureMode { get; set; } = default!;
     public float TextureSpeed { get; set; } = default!;
@@ -24,5 +25,5 @@ public partial class Beam : Instance  {
     public float Width0 { get; set; } = default!;
     public float Width1 { get; set; } = default!;
     public float ZOffset { get; set; } = default!;
-    public void SetTextureOffset() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetTextureOffset(float offset = default!) => ThrowHelper.ThrowTranspiledMethod();
 }

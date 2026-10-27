@@ -6,9 +6,14 @@ namespace RobloxCS.Types;
 [RobloxNative("MaterialImportData", RobloxNativeType.Instance)]
 public partial class MaterialImportData : BaseImportData  {
     public string DiffuseFilePath { get; set; } = default!;
+    public long DiffuseVersionedAssetId { get; set; } = default!;
     public string EmissiveFilePath { get; set; } = default!;
+    public long EmissiveVersionedAssetId { get; set; } = default!;
     public bool IsPbr { get; set; } = default!;
     public string MetalnessFilePath { get; set; } = default!;
+    public long MetalnessVersionedAssetId { get; set; } = default!;
     public string NormalFilePath { get; set; } = default!;
+    public long NormalVersionedAssetId { get; set; } = default!;
     public string RoughnessFilePath { get; set; } = default!;
+    public long RoughnessVersionedAssetId { get; set; } = default!;
 }

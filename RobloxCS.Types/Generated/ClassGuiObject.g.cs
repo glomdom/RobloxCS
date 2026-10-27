@@ -15,6 +15,7 @@ public partial class GuiObject : GuiBase2d  {
     public int BorderSizePixel { get; set; } = default!;
     public bool ClipsDescendants { get; set; } = default!;
     public Enums.GuiState GuiState { get; set; } = default!;
+    public Enums.InputSink InputSink { get; set; } = default!;
     public bool Interactable { get; set; } = default!;
     public int LayoutOrder { get; set; } = default!;
     public GuiObject NextSelectionDown { get; set; } = default!;
@@ -30,9 +31,6 @@ public partial class GuiObject : GuiBase2d  {
     public Enums.SizeConstraint SizeConstraint { get; set; } = default!;
     public bool Visible { get; set; } = default!;
     public int ZIndex { get; set; } = default!;
-    public bool TweenPosition() => ThrowHelper.ThrowTranspiledMethod();
-    public bool TweenSize() => ThrowHelper.ThrowTranspiledMethod();
-    public bool TweenSizeAndPosition() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<InputObject> InputBegan { get; private set; } = null!;
     public RBXScriptSignal<InputObject> InputChanged { get; private set; } = null!;
     public RBXScriptSignal<InputObject> InputEnded { get; private set; } = null!;

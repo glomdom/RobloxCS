@@ -12,5 +12,7 @@ public static partial class Enums {
         EmotesMenu = 5,
         SelfView = 6,
         Captures = 7,
+        AvatarSwitcher = 8,
+        ExperienceShop = 9,
     }
 }

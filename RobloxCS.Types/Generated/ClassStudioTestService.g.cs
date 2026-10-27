@@ -4,7 +4,10 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("StudioTestService", RobloxNativeType.Service)]
-public static partial class StudioTestService {
-    public static void EndTest() => ThrowHelper.ThrowTranspiledMethod();
-    public static object GetTestArgs() => ThrowHelper.ThrowTranspiledMethod();
+public partial class StudioTestService : Instance  {
+    public void AddPlayers(int numPlayers) => ThrowHelper.ThrowTranspiledMethod();
+    public bool CanLeaveTest() => ThrowHelper.ThrowTranspiledMethod();
+    public void EndTest(object value) => ThrowHelper.ThrowTranspiledMethod();
+    public object GetTestArgs() => ThrowHelper.ThrowTranspiledMethod();
+    public void LeaveTest() => ThrowHelper.ThrowTranspiledMethod();
 }

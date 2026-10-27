@@ -4,10 +4,13 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("AdService", RobloxNativeType.Service)]
-public static partial class AdService {
-    public static Instance CreateAdRewardFromDevProductId() => ThrowHelper.ThrowTranspiledMethod();
-    public static void UnregisterAdOpportunity() => ThrowHelper.ThrowTranspiledMethod();
-    public static object GetAdAvailabilityNowAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static void RegisterAdOpportunityAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Enums.ShowAdResult ShowRewardedVideoAdAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class AdService : Instance  {
+    public Instance CreateAdRewardFromDevProductId(long devProductId) => ThrowHelper.ThrowTranspiledMethod();
+    public void RegisterDisclosureButton(GuiButton disclosureButton, string adIntegrationPlacementId) => ThrowHelper.ThrowTranspiledMethod();
+    public void RegisterImpressionSource(Instance instance, string adIntegrationPlacementId) => ThrowHelper.ThrowTranspiledMethod();
+    public void UnregisterAdOpportunity(Instance instance) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetAdAvailabilityNowAsync(Enums.AdFormat adFormat) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetCampaignEligibilityAsync(string campaignId, Player player = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void RegisterAdOpportunityAsync(Instance instance, long? placementId) => ThrowHelper.ThrowTranspiledMethod();
+    public Enums.ShowAdResult ShowRewardedVideoAdAsync(Player player, Instance reward, long? placementId) => ThrowHelper.ThrowTranspiledMethod();
 }

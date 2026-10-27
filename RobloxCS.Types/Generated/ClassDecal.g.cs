@@ -5,11 +5,17 @@
 namespace RobloxCS.Types;
 [RobloxNative("Decal", RobloxNativeType.Instance)]
 public partial class Decal : FaceInstance  {
+    public bool AutoLocalize { get; set; } = default!;
     public Color3 Color3 { get; set; } = default!;
     public string ColorMap { get; set; } = default!;
     public string ColorMapContent { get; set; } = default!;
+    public string EmissiveMaskContent { get; } = default!;
+    public float EmissiveStrength { get; set; } = default!;
+    public Color3 EmissiveTint { get; set; } = default!;
     public string MetalnessMapContent { get; } = default!;
     public string NormalMapContent { get; } = default!;
+    public Enums.ResamplerMode ResampleMode { get; set; } = default!;
+    public float Rotation { get; set; } = default!;
     public string RoughnessMapContent { get; } = default!;
     public string Texture { get; set; } = default!;
     public string TextureContent { get; set; } = default!;

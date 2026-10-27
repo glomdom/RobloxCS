@@ -6,7 +6,9 @@ namespace RobloxCS.Types;
 [RobloxNative("AnimationNodeDefinition", RobloxNativeType.Instance)]
 public partial class AnimationNodeDefinition : Instance  {
     public Enums.AnimationNodeType NodeType { get; set; } = default!;
-    public List<Instance> GetConnectedWires() => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> GetInputPins() => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> GetOutputPins() => ThrowHelper.ThrowTranspiledMethod();
+    public void AddInputPin(string pin) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetOrderedInputPinNames() => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveInputPin(string pin) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetOrderedInputPinNames(List<object> pins) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal InputPinsChanged { get; private set; } = null!;
 }

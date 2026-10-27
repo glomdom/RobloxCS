@@ -14,7 +14,7 @@ public partial class ChannelTabsConfiguration : TextChatConfigurations  {
     public Color3 HoverBackgroundColor3 { get; set; } = default!;
     public Color3 SelectedTabTextColor3 { get; set; } = default!;
     public Color3 TextColor3 { get; set; } = default!;
-    public int TextSize { get; set; } = default!;
+    public long TextSize { get; set; } = default!;
     public Color3 TextStrokeColor3 { get; set; } = default!;
     public double TextStrokeTransparency { get; set; } = default!;
 }

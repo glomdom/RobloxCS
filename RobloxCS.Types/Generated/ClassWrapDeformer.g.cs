@@ -5,7 +5,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("WrapDeformer", RobloxNativeType.Instance)]
 public partial class WrapDeformer : BaseWrap  {
-    public void SetCageMeshContent() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetCageMeshContent(string content, CFrame? cageOrigin) => ThrowHelper.ThrowTranspiledMethod();
     public EditableMesh CreateEditableMeshAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public CFrame GetDeformedCFrameAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public CFrame GetDeformedCFrameAsync(CFrame originalCFrame) => ThrowHelper.ThrowTranspiledMethod();
 }

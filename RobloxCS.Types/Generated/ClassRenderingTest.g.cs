@@ -19,4 +19,5 @@ public partial class RenderingTest : Instance  {
     public string Ticket { get; set; } = default!;
     public int Timeout { get; set; } = default!;
     public void RenderdocTriggerCapture() => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal TestFramesCountdownAboutToStart { get; private set; } = null!;
 }

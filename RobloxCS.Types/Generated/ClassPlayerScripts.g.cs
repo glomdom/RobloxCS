@@ -9,8 +9,8 @@ public partial class PlayerScripts : Instance  {
     public void ClearComputerMovementModes() => ThrowHelper.ThrowTranspiledMethod();
     public void ClearTouchCameraMovementModes() => ThrowHelper.ThrowTranspiledMethod();
     public void ClearTouchMovementModes() => ThrowHelper.ThrowTranspiledMethod();
-    public void RegisterComputerCameraMovementMode() => ThrowHelper.ThrowTranspiledMethod();
-    public void RegisterComputerMovementMode() => ThrowHelper.ThrowTranspiledMethod();
-    public void RegisterTouchCameraMovementMode() => ThrowHelper.ThrowTranspiledMethod();
-    public void RegisterTouchMovementMode() => ThrowHelper.ThrowTranspiledMethod();
+    public void RegisterComputerCameraMovementMode(Enums.ComputerCameraMovementMode cameraMovementMode) => ThrowHelper.ThrowTranspiledMethod();
+    public void RegisterComputerMovementMode(Enums.ComputerMovementMode movementMode) => ThrowHelper.ThrowTranspiledMethod();
+    public void RegisterTouchCameraMovementMode(Enums.TouchCameraMovementMode cameraMovementMode) => ThrowHelper.ThrowTranspiledMethod();
+    public void RegisterTouchMovementMode(Enums.TouchMovementMode movementMode) => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -4,21 +4,17 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("TeleportService", RobloxNativeType.Service)]
-public static partial class TeleportService {
-    public static Instance GetArrivingTeleportGui() => ThrowHelper.ThrowTranspiledMethod();
-    public static object GetLocalPlayerTeleportData() => ThrowHelper.ThrowTranspiledMethod();
-    public static object GetTeleportSetting() => ThrowHelper.ThrowTranspiledMethod();
-    public static void SetTeleportGui() => ThrowHelper.ThrowTranspiledMethod();
-    public static void SetTeleportSetting() => ThrowHelper.ThrowTranspiledMethod();
-    public static void Teleport() => ThrowHelper.ThrowTranspiledMethod();
-    public static void TeleportToPlaceInstance() => ThrowHelper.ThrowTranspiledMethod();
-    public static void TeleportToPrivateServer() => ThrowHelper.ThrowTranspiledMethod();
-    public static void TeleportToSpawnByName() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple GetPlayerPlaceInstanceAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Enums.PromptExperienceDetailsResult PromptExperienceDetailsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static LuaTuple ReserveServerAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Instance TeleportAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static string TeleportPartyAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptSignal<Instance, object> LocalPlayerArrivedFromTeleport { get; private set; } = null!;
-    public static RBXScriptSignal<Instance, Enums.TeleportResult, string, int, Instance> TeleportInitFailed { get; private set; } = null!;
+public partial class TeleportService : Instance  {
+    public Instance GetArrivingTeleportGui() => ThrowHelper.ThrowTranspiledMethod();
+    public object GetLocalPlayerTeleportData() => ThrowHelper.ThrowTranspiledMethod();
+    public object GetTeleportSetting(string setting) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetTeleportGui(Instance gui) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetTeleportSetting(string setting, object value) => ThrowHelper.ThrowTranspiledMethod();
+    public void Teleport(long placeId, Instance player, object teleportData, Instance customLoadingScreen = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple GetPlayerPlaceInstanceAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();
+    public Enums.PromptExperienceDetailsResult PromptExperienceDetailsAsync(Player player, long universeId) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple ReserveServerAsync(long placeId) => ThrowHelper.ThrowTranspiledMethod();
+    public Instance TeleportAsync(long placeId, List<Instance> players, Instance teleportOptions = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal<Instance, object> LocalPlayerArrivedFromTeleport { get; private set; } = null!;
+    public RBXScriptSignal<Instance, Enums.TeleportResult, string, long, Instance> TeleportInitFailed { get; private set; } = null!;
 }

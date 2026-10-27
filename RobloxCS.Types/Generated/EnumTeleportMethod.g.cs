@@ -11,5 +11,7 @@ public static partial class Enums {
         TeleportToVIPServer = 4,
         TeleportToInstanceBack = 5,
         TeleportUnknown = 6,
+        Teleport = 7,
+        TeleportSwitchServer = 8,
     }
 }

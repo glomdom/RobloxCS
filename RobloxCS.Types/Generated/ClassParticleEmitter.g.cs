@@ -11,6 +11,7 @@ public partial class ParticleEmitter : Instance  {
     public float Drag { get; set; } = default!;
     public Enums.NormalId EmissionDirection { get; set; } = default!;
     public bool Enabled { get; set; } = default!;
+    public bool FlipbookBlendFrames { get; set; } = default!;
     public NumberRange FlipbookFramerate { get; set; } = default!;
     public string FlipbookIncompatible { get; set; } = default!;
     public Enums.ParticleFlipbookLayout FlipbookLayout { get; set; } = default!;
@@ -35,11 +36,12 @@ public partial class ParticleEmitter : Instance  {
     public Vector2 SpreadAngle { get; set; } = default!;
     public NumberSequence Squash { get; set; } = default!;
     public string Texture { get; set; } = default!;
+    public string TextureContent { get; set; } = default!;
     public float TimeScale { get; set; } = default!;
     public NumberSequence Transparency { get; set; } = default!;
     public float VelocityInheritance { get; set; } = default!;
     public bool WindAffectsDrag { get; set; } = default!;
     public float ZOffset { get; set; } = default!;
     public void Clear() => ThrowHelper.ThrowTranspiledMethod();
-    public void Emit() => ThrowHelper.ThrowTranspiledMethod();
+    public void Emit(int particleCount = default!) => ThrowHelper.ThrowTranspiledMethod();
 }

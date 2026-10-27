@@ -4,10 +4,11 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("GroupService", RobloxNativeType.Service)]
-public static partial class GroupService {
-    public static StandardPages GetAlliesAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static StandardPages GetEnemiesAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static object GetGroupInfoAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetGroupsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Enums.GroupMembershipStatus PromptJoinAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class GroupService : Instance  {
+    public StandardPages GetAlliesAsync(long groupId) => ThrowHelper.ThrowTranspiledMethod();
+    public StandardPages GetEnemiesAsync(long groupId) => ThrowHelper.ThrowTranspiledMethod();
+    public object GetGroupInfoAsync(long groupId) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetGroupsAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();
+    public object GetRolesInGroupAsync(long userId, long groupId) => ThrowHelper.ThrowTranspiledMethod();
+    public Enums.GroupMembershipStatus PromptJoinAsync(long groupId) => ThrowHelper.ThrowTranspiledMethod();
 }

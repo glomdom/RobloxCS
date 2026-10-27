@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("BugReporterService", RobloxNativeType.Service)]
-public static partial class BugReporterService {
+public partial class BugReporterService : Instance  {
 }

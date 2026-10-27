@@ -4,10 +4,10 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("CommerceService", RobloxNativeType.Service)]
-public static partial class CommerceService {
-    public static void PromptCommerceProductPurchase() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PromptRealWorldCommerceBrowser() => ThrowHelper.ThrowTranspiledMethod();
-    public static Dictionary<string, object> GetCommerceProductInfoAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool UserEligibleForRealWorldCommerceAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptSignal<Player, string> PromptCommerceProductPurchaseFinished { get; private set; } = null!;
+public partial class CommerceService : Instance  {
+    public void PromptCommerceProductPurchase(Player user, string commerceProductId) => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptRealWorldCommerceBrowser(Player player, string url) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetCommerceProductInfoAsync(string commerceProductId) => ThrowHelper.ThrowTranspiledMethod();
+    public bool UserEligibleForRealWorldCommerceAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal<Player, string> PromptCommerceProductPurchaseFinished { get; private set; } = null!;
 }

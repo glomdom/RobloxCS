@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("KeyboardService", RobloxNativeType.Service)]
-public static partial class KeyboardService {
+public partial class KeyboardService : Instance  {
 }

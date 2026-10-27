@@ -6,6 +6,10 @@ namespace RobloxCS.Types;
 [RobloxNative("InputBinding", RobloxNativeType.Instance)]
 public partial class InputBinding : Instance  {
     public Enums.KeyCode Backward { get; set; } = default!;
+    public bool ClampMagnitudeToOne { get; set; } = default!;
+    public NumberRange Deadzone { get; set; } = default!;
+    public string DisplayImage { get; set; } = default!;
+    public string DisplayName { get; set; } = default!;
     public Enums.KeyCode Down { get; set; } = default!;
     public Enums.KeyCode Forward { get; set; } = default!;
     public Enums.KeyCode KeyCode { get; set; } = default!;
@@ -18,8 +22,11 @@ public partial class InputBinding : Instance  {
     public Enums.KeyCode Right { get; set; } = default!;
     public float Scale { get; set; } = default!;
     public Enums.KeyCode SecondaryModifier { get; set; } = default!;
+    public Enums.InputBindingType Type { get; set; } = default!;
     public GuiButton UIButton { get; set; } = default!;
+    public GuiButton UIModifier { get; set; } = default!;
     public Enums.KeyCode Up { get; set; } = default!;
     public Vector2 Vector2Scale { get; set; } = default!;
     public Vector3 Vector3Scale { get; set; } = default!;
+    public void Fire(object state) => ThrowHelper.ThrowTranspiledMethod();
 }

@@ -7,12 +7,12 @@ namespace RobloxCS.Types;
 public partial class ValueCurve : Instance  {
     public int Length { get; set; } = default!;
     public string ValueType { get; set; } = default!;
-    public ValueCurveKey GetKeyAtIndex() => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> GetKeyIndicesAtTime() => ThrowHelper.ThrowTranspiledMethod();
+    public ValueCurveKey GetKeyAtIndex(int index) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetKeyIndicesAtTime(float time) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetKeys() => ThrowHelper.ThrowTranspiledMethod();
-    public object? GetValueAtTime() => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> InsertKey() => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> InsertKeyValue() => ThrowHelper.ThrowTranspiledMethod();
-    public int RemoveKeyAtIndex() => ThrowHelper.ThrowTranspiledMethod();
-    public int SetKeys() => ThrowHelper.ThrowTranspiledMethod();
+    public object? GetValueAtTime(float time) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> InsertKey(ValueCurveKey key) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> InsertKeyValue(float time, object value, Enums.KeyInterpolationMode keyInterpolationMode = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public int RemoveKeyAtIndex(int startingIndex, int count = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public int SetKeys(List<object> keys) => ThrowHelper.ThrowTranspiledMethod();
 }

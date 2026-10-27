@@ -4,16 +4,24 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("SoundService", RobloxNativeType.Service)]
-public static partial class SoundService {
-    public static bool AcousticSimulationEnabled { get; set; } = default!;
-    public static Enums.ReverbType AmbientReverb { get; set; } = default!;
-    public static Enums.RolloutState CharacterSoundsUseNewApi { get; } = default!;
-    public static float DistanceFactor { get; set; } = default!;
-    public static float DopplerScale { get; set; } = default!;
-    public static bool RespectFilteringEnabled { get; set; } = default!;
-    public static float RolloffScale { get; set; } = default!;
-    public static Enums.VolumetricAudio VolumetricAudio { get; set; } = default!;
-    public static LuaTuple GetListener() => ThrowHelper.ThrowTranspiledMethod();
-    public static void PlayLocalSound() => ThrowHelper.ThrowTranspiledMethod();
-    public static void SetListener() => ThrowHelper.ThrowTranspiledMethod();
+public partial class SoundService : Instance  {
+    public bool AcousticSimulationEnabled { get; set; } = default!;
+    public Enums.ReverbType AmbientReverb { get; set; } = default!;
+    public Enums.RolloutState CharacterSoundsUseNewApi { get; } = default!;
+    public bool DiffractionEnabled { get; set; } = default!;
+    public float DistanceFactor { get; set; } = default!;
+    public float DopplerScale { get; set; } = default!;
+    public CFrame ListenerCFrame { get; set; } = default!;
+    public Instance ListenerObject { get; set; } = default!;
+    public Enums.ListenerType ListenerType { get; set; } = default!;
+    public bool OcclusionEnabled { get; set; } = default!;
+    public bool RespectFilteringEnabled { get; set; } = default!;
+    public bool ReverbEnabled { get; set; } = default!;
+    public float RolloffScale { get; set; } = default!;
+    public Enums.VolumetricAudio VolumetricAudio { get; set; } = default!;
+    public LuaTuple GetListener() => ThrowHelper.ThrowTranspiledMethod();
+    public double GetMixerTime() => ThrowHelper.ThrowTranspiledMethod();
+    public void PlayLocalSound(Instance sound) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetInputDevice(object nameOrInstance, string guidOrPin) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetListener(Enums.ListenerType listenerType, LuaTuple listener) => ThrowHelper.ThrowTranspiledMethod();
 }

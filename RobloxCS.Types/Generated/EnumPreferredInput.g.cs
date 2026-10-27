@@ -7,5 +7,6 @@ public static partial class Enums {
         KeyboardAndMouse = 0,
         Gamepad = 1,
         Touch = 2,
+        MicroGamepad = 3,
     }
 }

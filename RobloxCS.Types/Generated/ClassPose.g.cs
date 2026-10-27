@@ -6,7 +6,7 @@ namespace RobloxCS.Types;
 [RobloxNative("Pose", RobloxNativeType.Instance)]
 public partial class Pose : PoseBase  {
     public CFrame CFrame { get; set; } = default!;
-    public void AddSubPose() => ThrowHelper.ThrowTranspiledMethod();
+    public void AddSubPose(Instance pose) => ThrowHelper.ThrowTranspiledMethod();
     public List<Instance> GetSubPoses() => ThrowHelper.ThrowTranspiledMethod();
-    public void RemoveSubPose() => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveSubPose(Instance pose) => ThrowHelper.ThrowTranspiledMethod();
 }

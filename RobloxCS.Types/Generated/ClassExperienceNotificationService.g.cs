@@ -4,8 +4,8 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("ExperienceNotificationService", RobloxNativeType.Service)]
-public static partial class ExperienceNotificationService {
-    public static void PromptOptIn() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool CanPromptOptInAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptSignal OptInPromptClosed { get; private set; } = null!;
+public partial class ExperienceNotificationService : Instance  {
+    public void PromptOptIn() => ThrowHelper.ThrowTranspiledMethod();
+    public bool CanPromptOptInAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal OptInPromptClosed { get; private set; } = null!;
 }

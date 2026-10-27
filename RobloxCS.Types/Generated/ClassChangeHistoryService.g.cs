@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("ChangeHistoryService", RobloxNativeType.Service)]
-public static partial class ChangeHistoryService {
+public partial class ChangeHistoryService : Instance  {
 }

@@ -9,5 +9,6 @@ public static partial class Enums {
         Cylinder = 2,
         Wedge = 3,
         CornerWedge = 4,
+        Capsule = 5,
     }
 }

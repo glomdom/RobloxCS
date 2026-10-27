@@ -45,6 +45,8 @@ public static partial class Enums {
         SwimAnimation = 54,
         WalkAnimation = 55,
         PoseAnimation = 56,
+        EarAccessory = 57,
+        EyeAccessory = 58,
         EmoteAnimation = 61,
         Video = 62,
         TShirtAccessory = 64,
@@ -64,7 +66,8 @@ public static partial class Enums {
         FaceMakeup = 88,
         LipMakeup = 89,
         EyeMakeup = 90,
-        EarAccessory = 57,
-        EyeAccessory = 58,
+        AvatarBackground = 92,
+        TextDocument = 93,
+        AnimatedImage = 95,
     }
 }

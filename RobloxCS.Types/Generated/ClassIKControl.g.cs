@@ -18,8 +18,8 @@ public partial class IKControl : Instance  {
     public float Weight { get; set; } = default!;
     public int GetChainCount() => ThrowHelper.ThrowTranspiledMethod();
     public float GetChainLength() => ThrowHelper.ThrowTranspiledMethod();
-    public CFrame GetNodeLocalCFrame() => ThrowHelper.ThrowTranspiledMethod();
-    public CFrame GetNodeWorldCFrame() => ThrowHelper.ThrowTranspiledMethod();
+    public CFrame GetNodeLocalCFrame(int index) => ThrowHelper.ThrowTranspiledMethod();
+    public CFrame GetNodeWorldCFrame(int index) => ThrowHelper.ThrowTranspiledMethod();
     public CFrame GetRawFinalTarget() => ThrowHelper.ThrowTranspiledMethod();
     public CFrame GetSmoothedFinalTarget() => ThrowHelper.ThrowTranspiledMethod();
 }

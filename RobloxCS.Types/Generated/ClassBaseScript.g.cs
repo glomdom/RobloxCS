@@ -7,5 +7,5 @@ namespace RobloxCS.Types;
 public partial class BaseScript : LuaSourceContainer  {
     public bool Disabled { get; set; } = default!;
     public bool Enabled { get; set; } = default!;
-    public Enums.RunContext RunContext { get; } = default!;
+    public Enums.RunContext RunContext { get; set; } = default!;
 }

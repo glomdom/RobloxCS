@@ -5,4 +5,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("AvatarCollisionRules", RobloxNativeType.Instance)]
 public partial class AvatarCollisionRules : Instance  {
+    public bool BodyPartsCollidableOnDeath { get; set; } = default!;
+    public Enums.AvatarSettingsCollisionMode CollisionMode { get; set; } = default!;
+    public Enums.AvatarSettingsHitAndTouchDetectionMode HitAndTouchDetectionMode { get; set; } = default!;
+    public Vector3 SingleColliderSize { get; set; } = default!;
 }

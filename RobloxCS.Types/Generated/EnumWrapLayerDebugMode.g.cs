@@ -19,5 +19,6 @@ public static partial class Enums {
         LayerCageFittedToBase = 12,
         LayerCageFittedToPrev = 13,
         PreWrapDeformerOuterCage = 14,
+        SkinningTransfer = 15,
     }
 }

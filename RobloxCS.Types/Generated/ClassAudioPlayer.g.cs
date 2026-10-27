@@ -18,12 +18,13 @@ public partial class AudioPlayer : Instance  {
     public double TimeLength { get; set; } = default!;
     public double TimePosition { get; set; } = default!;
     public float Volume { get; set; } = default!;
-    public List<Instance> GetConnectedWires() => ThrowHelper.ThrowTranspiledMethod();
+    public bool Cancel(long? actionId) => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetConnectedWires(string pin) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetInputPins() => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetOutputPins() => ThrowHelper.ThrowTranspiledMethod();
-    public void Play() => ThrowHelper.ThrowTranspiledMethod();
-    public void Stop() => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> GetWaveformAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public long? Play(double? atTime) => ThrowHelper.ThrowTranspiledMethod();
+    public long? Stop(double? atTime) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetWaveformAsync(NumberRange timeRange, int samples) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal Ended { get; private set; } = null!;
     public RBXScriptSignal Looped { get; private set; } = null!;
     public RBXScriptSignal<bool, string, Wire, Instance> WiringChanged { get; private set; } = null!;

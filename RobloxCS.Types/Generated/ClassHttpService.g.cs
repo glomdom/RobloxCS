@@ -4,15 +4,15 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("HttpService", RobloxNativeType.Service)]
-public static partial class HttpService {
-    public static bool HttpEnabled { get; } = default!;
-    public static WebStreamClient CreateWebStreamClient() => ThrowHelper.ThrowTranspiledMethod();
-    public static string GenerateGUID() => ThrowHelper.ThrowTranspiledMethod();
-    public static Secret GetSecret() => ThrowHelper.ThrowTranspiledMethod();
-    public static object JSONDecode() => ThrowHelper.ThrowTranspiledMethod();
-    public static string JSONEncode() => ThrowHelper.ThrowTranspiledMethod();
-    public static string UrlEncode() => ThrowHelper.ThrowTranspiledMethod();
-    public static string GetAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static string PostAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Dictionary<string, object> RequestAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class HttpService : Instance  {
+    public bool HttpEnabled { get; } = default!;
+    public WebStreamClient CreateWebStreamClient(Enums.WebStreamClientType streamClientType, Dictionary<string, object> requestOptions) => ThrowHelper.ThrowTranspiledMethod();
+    public string GenerateGUID(bool wrapInCurlyBraces = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public Secret GetSecret(string key) => ThrowHelper.ThrowTranspiledMethod();
+    public object JSONDecode(string input) => ThrowHelper.ThrowTranspiledMethod();
+    public string JSONEncode(object input) => ThrowHelper.ThrowTranspiledMethod();
+    public string UrlEncode(string input) => ThrowHelper.ThrowTranspiledMethod();
+    public string GetAsync(object url, bool nocache, object headers) => ThrowHelper.ThrowTranspiledMethod();
+    public string PostAsync(object url, string data, Enums.HttpContentType content_type, bool compress, object headers) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> RequestAsync(Dictionary<string, object> requestOptions) => ThrowHelper.ThrowTranspiledMethod();
 }

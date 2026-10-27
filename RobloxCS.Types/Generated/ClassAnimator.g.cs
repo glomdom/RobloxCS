@@ -9,9 +9,11 @@ public partial class Animator : Instance  {
     public bool PreferLodEnabled { get; set; } = default!;
     public CFrame RootMotion { get; set; } = default!;
     public float RootMotionWeight { get; set; } = default!;
-    public void ApplyJointVelocities() => ThrowHelper.ThrowTranspiledMethod();
+    public void ApplyJointVelocities(object motors) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetPlayingAnimationTracks() => ThrowHelper.ThrowTranspiledMethod();
-    public AnimationTrack LoadAnimation() => ThrowHelper.ThrowTranspiledMethod();
-    public void RegisterEvaluationParallelCallback() => ThrowHelper.ThrowTranspiledMethod();
+    public AnimationTrack GetTrackByAnimationId(string animationId) => ThrowHelper.ThrowTranspiledMethod();
+    public AnimationTrack LoadAnimation(Animation animation) => ThrowHelper.ThrowTranspiledMethod();
+    public void RegisterEvaluationParallelCallback(Delegate callback) => ThrowHelper.ThrowTranspiledMethod();
+    public void StepAnimations(float deltaTime) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<AnimationTrack> AnimationPlayed { get; private set; } = null!;
 }

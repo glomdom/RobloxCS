@@ -5,8 +5,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("ExecutedRemoteCommand", RobloxNativeType.Instance)]
 public partial class ExecutedRemoteCommand : Object  {
-    public void RunMoreCode() => ThrowHelper.ThrowTranspiledMethod();
-    public void SendUpdate() => ThrowHelper.ThrowTranspiledMethod();
+    public void RunMoreCode(string code, LuaTuple args) => ThrowHelper.ThrowTranspiledMethod();
+    public void SendUpdate(LuaTuple args) => ThrowHelper.ThrowTranspiledMethod();
     public void Stop() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<LuaTuple> ReceivedUpdate { get; private set; } = null!;
 }

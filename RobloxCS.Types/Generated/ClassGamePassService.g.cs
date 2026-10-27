@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("GamePassService", RobloxNativeType.Service)]
-public static partial class GamePassService {
+public partial class GamePassService : Instance  {
 }

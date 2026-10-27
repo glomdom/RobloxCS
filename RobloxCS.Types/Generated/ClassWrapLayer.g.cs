@@ -11,10 +11,11 @@ public partial class WrapLayer : BaseWrap  {
     public Enums.WrapLayerDebugMode DebugMode { get; set; } = default!;
     public bool Enabled { get; set; } = default!;
     public int Order { get; set; } = default!;
-    public float Puffiness { get; set; } = default!;
     public string ReferenceMeshContent { get; } = default!;
     public string ReferenceMeshId { get; } = default!;
     public CFrame ReferenceOrigin { get; } = default!;
     public CFrame ReferenceOriginWorld { get; set; } = default!;
-    public float ShrinkFactor { get; } = default!;
+    public string RotateScaleDeformationMap { get; } = default!;
+    public string ScaleOnlyDeformationMap { get; } = default!;
+    public float TargetShaping { get; } = default!;
 }

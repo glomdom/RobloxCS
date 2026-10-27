@@ -11,5 +11,9 @@
             <_Parameter1>RobloxCS.Lowering</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Patches\" />
+    </ItemGroup>
     
 </Project>

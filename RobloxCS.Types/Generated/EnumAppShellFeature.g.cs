@@ -11,5 +11,6 @@ public static partial class Enums {
         HomePage = 4,
         More = 5,
         Landing = 6,
+        WatchPage = 7,
     }
 }

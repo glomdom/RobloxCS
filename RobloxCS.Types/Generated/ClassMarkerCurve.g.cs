@@ -6,8 +6,8 @@ namespace RobloxCS.Types;
 [RobloxNative("MarkerCurve", RobloxNativeType.Instance)]
 public partial class MarkerCurve : Instance  {
     public int Length { get; set; } = default!;
-    public Dictionary<string, object> GetMarkerAtIndex() => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetMarkerAtIndex(int index) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetMarkers() => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> InsertMarkerAtTime() => ThrowHelper.ThrowTranspiledMethod();
-    public int RemoveMarkerAtIndex() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> InsertMarkerAtTime(float time, string marker) => ThrowHelper.ThrowTranspiledMethod();
+    public int RemoveMarkerAtIndex(int startingIndex, int count = default!) => ThrowHelper.ThrowTranspiledMethod();
 }

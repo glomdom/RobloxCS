@@ -13,8 +13,9 @@ public partial class ChatWindowConfiguration : TextChatConfigurations  {
     public Enums.Font FontFace { get; set; } = default!;
     public float HeightScale { get; set; } = default!;
     public Enums.HorizontalAlignment HorizontalAlignment { get; set; } = default!;
+    public Enums.TextChannelDisplayMode TextChannelDisplayMode { get; set; } = default!;
     public Color3 TextColor3 { get; set; } = default!;
-    public int TextSize { get; set; } = default!;
+    public long TextSize { get; set; } = default!;
     public Color3 TextStrokeColor3 { get; set; } = default!;
     public double TextStrokeTransparency { get; set; } = default!;
     public Enums.VerticalAlignment VerticalAlignment { get; set; } = default!;

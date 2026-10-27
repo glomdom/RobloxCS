@@ -5,6 +5,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("AnimationClip", RobloxNativeType.Instance)]
 public partial class AnimationClip : Instance  {
+    public float Length { get; set; } = default!;
     public bool Loop { get; set; } = default!;
     public Enums.AnimationPriority Priority { get; set; } = default!;
 }

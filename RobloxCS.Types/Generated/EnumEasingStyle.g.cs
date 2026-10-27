@@ -15,5 +15,7 @@ public static partial class Enums {
         Exponential = 8,
         Circular = 9,
         Cubic = 10,
+        Bezier = 11,
+        Spring = 12,
     }
 }

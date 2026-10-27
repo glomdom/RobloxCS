@@ -4,23 +4,23 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("VRService", RobloxNativeType.Service)]
-public static partial class VRService {
-    public static Enums.VRScaling AutomaticScaling { get; set; } = default!;
-    public static bool AvatarGestures { get; set; } = default!;
-    public static Enums.VRControllerModelMode ControllerModels { get; set; } = default!;
-    public static bool FadeOutViewOnCollision { get; set; } = default!;
-    public static Enums.UserCFrame GuiInputUserCFrame { get; set; } = default!;
-    public static Enums.VRLaserPointerMode LaserPointer { get; set; } = default!;
-    public static bool ThirdPersonFollowCamEnabled { get; set; } = default!;
-    public static bool VREnabled { get; set; } = default!;
-    public static Enums.VRTouchpadMode GetTouchpadMode() => ThrowHelper.ThrowTranspiledMethod();
-    public static CFrame GetUserCFrame() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool GetUserCFrameEnabled() => ThrowHelper.ThrowTranspiledMethod();
-    public static void RecenterUserHeadCFrame() => ThrowHelper.ThrowTranspiledMethod();
-    public static void RequestNavigation() => ThrowHelper.ThrowTranspiledMethod();
-    public static void SetTouchpadMode() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptSignal<CFrame, Enums.UserCFrame> NavigationRequested { get; private set; } = null!;
-    public static RBXScriptSignal<Enums.VRTouchpad, Enums.VRTouchpadMode> TouchpadModeChanged { get; private set; } = null!;
-    public static RBXScriptSignal<Enums.UserCFrame, CFrame> UserCFrameChanged { get; private set; } = null!;
-    public static RBXScriptSignal<Enums.UserCFrame, bool> UserCFrameEnabled { get; private set; } = null!;
+public partial class VRService : Instance  {
+    public Enums.VRScaling AutomaticScaling { get; set; } = default!;
+    public bool AvatarGestures { get; set; } = default!;
+    public Enums.VRControllerModelMode ControllerModels { get; set; } = default!;
+    public bool FadeOutViewOnCollision { get; set; } = default!;
+    public Enums.UserCFrame GuiInputUserCFrame { get; set; } = default!;
+    public Enums.VRLaserPointerMode LaserPointer { get; set; } = default!;
+    public bool ThirdPersonFollowCamEnabled { get; set; } = default!;
+    public bool VREnabled { get; set; } = default!;
+    public Enums.VRTouchpadMode GetTouchpadMode(Enums.VRTouchpad pad) => ThrowHelper.ThrowTranspiledMethod();
+    public CFrame GetUserCFrame(Enums.UserCFrame type) => ThrowHelper.ThrowTranspiledMethod();
+    public bool GetUserCFrameEnabled(Enums.UserCFrame type) => ThrowHelper.ThrowTranspiledMethod();
+    public void RecenterUserHeadCFrame() => ThrowHelper.ThrowTranspiledMethod();
+    public void RequestNavigation(CFrame cframe, Enums.UserCFrame inputUserCFrame) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetTouchpadMode(Enums.VRTouchpad pad, Enums.VRTouchpadMode mode) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal<CFrame, Enums.UserCFrame> NavigationRequested { get; private set; } = null!;
+    public RBXScriptSignal<Enums.VRTouchpad, Enums.VRTouchpadMode> TouchpadModeChanged { get; private set; } = null!;
+    public RBXScriptSignal<Enums.UserCFrame, CFrame> UserCFrameChanged { get; private set; } = null!;
+    public RBXScriptSignal<Enums.UserCFrame, bool> UserCFrameEnabled { get; private set; } = null!;
 }

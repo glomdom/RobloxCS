@@ -7,14 +7,21 @@ namespace RobloxCS.Types;
 public partial class AudioEmitter : Instance  {
     public bool AcousticSimulationEnabled { get; set; } = default!;
     public string AudioInteractionGroup { get; set; } = default!;
+    public Enums.SimulationMode DiffractionEnabled { get; set; } = default!;
+    public NumberRange DistanceAttenuationBounds { get; set; } = default!;
+    public Enums.DistanceAttenuationMode DistanceAttenuationMode { get; set; } = default!;
+    public Enums.SimulationMode OcclusionEnabled { get; set; } = default!;
+    public Instance PositionInstance { get; set; } = default!;
+    public Enums.EmitterPositionType PositionType { get; set; } = default!;
+    public Enums.SimulationMode ReverbEnabled { get; set; } = default!;
     public Dictionary<string, object> GetAngleAttenuation() => ThrowHelper.ThrowTranspiledMethod();
-    public float GetAudibilityFor() => ThrowHelper.ThrowTranspiledMethod();
-    public List<Instance> GetConnectedWires() => ThrowHelper.ThrowTranspiledMethod();
+    public float GetAudibilityFor(AudioListener listener) => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetConnectedWires(string pin) => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object> GetDistanceAttenuation() => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetInputPins() => ThrowHelper.ThrowTranspiledMethod();
     public List<Instance> GetInteractingListeners() => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetOutputPins() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetAngleAttenuation() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetDistanceAttenuation() => ThrowHelper.ThrowTranspiledMethod();
+    public void SetAngleAttenuation(Dictionary<string, object> curve) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetDistanceAttenuation(Dictionary<string, object> curve) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<bool, string, Wire, Instance> WiringChanged { get; private set; } = null!;
 }

@@ -5,13 +5,21 @@
 namespace RobloxCS.Types;
 [RobloxNative("WorldRoot", RobloxNativeType.Instance)]
 public partial class WorldRoot : Model  {
-    public bool ArePartsTouchingOthers() => ThrowHelper.ThrowTranspiledMethod();
-    public RaycastResult? Blockcast() => ThrowHelper.ThrowTranspiledMethod();
-    public void BulkMoveTo() => ThrowHelper.ThrowTranspiledMethod();
-    public List<Instance> GetPartBoundsInBox() => ThrowHelper.ThrowTranspiledMethod();
-    public List<Instance> GetPartBoundsInRadius() => ThrowHelper.ThrowTranspiledMethod();
-    public List<Instance> GetPartsInPart() => ThrowHelper.ThrowTranspiledMethod();
-    public RaycastResult? Raycast() => ThrowHelper.ThrowTranspiledMethod();
-    public RaycastResult? Shapecast() => ThrowHelper.ThrowTranspiledMethod();
-    public RaycastResult? Spherecast() => ThrowHelper.ThrowTranspiledMethod();
+    public bool ArePartsTouchingOthers(List<Instance> partList, float overlapIgnored = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public RaycastResult? Blockcast(CFrame cframe, Vector3 size, Vector3 direction, RaycastParams @params = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void BulkMoveTo(List<Instance> partList, List<object> cframeList, Enums.BulkMoveMode eventMode = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void CollisionGroupSetCollidable(string name1, string name2, bool collidable) => ThrowHelper.ThrowTranspiledMethod();
+    public bool CollisionGroupsAreCollidable(string name1, string name2) => ThrowHelper.ThrowTranspiledMethod();
+    public int GetMaxCollisionGroups() => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetPartBoundsInBox(CFrame cframe, Vector3 size, OverlapParams overlapParams = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetPartBoundsInRadius(Vector3 position, float radius, OverlapParams overlapParams = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetPartsInPart(BasePart part, OverlapParams overlapParams = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetRegisteredCollisionGroups() => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsCollisionGroupRegistered(string name) => ThrowHelper.ThrowTranspiledMethod();
+    public RaycastResult? Raycast(Vector3 origin, Vector3 direction, RaycastParams raycastParams = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void RegisterCollisionGroup(string name) => ThrowHelper.ThrowTranspiledMethod();
+    public void RenameCollisionGroup(string from, string to) => ThrowHelper.ThrowTranspiledMethod();
+    public RaycastResult? Shapecast(BasePart part, Vector3 direction, RaycastParams @params = default!, CFrame? cframeOverride = default!, Vector3? sizeOverride = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public RaycastResult? Spherecast(Vector3 position, float radius, Vector3 direction, RaycastParams @params = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void UnregisterCollisionGroup(string name) => ThrowHelper.ThrowTranspiledMethod();
 }

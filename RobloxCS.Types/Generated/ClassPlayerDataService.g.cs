@@ -4,7 +4,7 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("PlayerDataService", RobloxNativeType.Service)]
-public static partial class PlayerDataService {
-    public static Enums.PlayerDataLoadFailureBehavior LoadFailureBehavior { get; set; } = default!;
-    public static PlayerDataRecordConfig GetRecordConfig() => ThrowHelper.ThrowTranspiledMethod();
+public partial class PlayerDataService : Instance  {
+    public Enums.PlayerDataLoadFailureBehavior LoadFailureBehavior { get; set; } = default!;
+    public PlayerDataRecordConfig GetRecordConfig(string recordName = default!) => ThrowHelper.ThrowTranspiledMethod();
 }

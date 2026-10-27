@@ -4,9 +4,10 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("BadgeService", RobloxNativeType.Service)]
-public static partial class BadgeService {
-    public static bool AwardBadgeAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> CheckUserBadgesAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static Dictionary<string, object> GetBadgeInfoAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool UserHasBadgeAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class BadgeService : Instance  {
+    public bool AwardBadgeAsync(long userId, long badgeId) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> CheckUserBadgesAsync(long userId, List<object> badgeIds) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetBadgeInfoAsync(long badgeId) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetUserBadgesAsync(long userId, List<object> badgeIds) => ThrowHelper.ThrowTranspiledMethod();
+    public bool UserHasBadgeAsync(long userId, long badgeId) => ThrowHelper.ThrowTranspiledMethod();
 }

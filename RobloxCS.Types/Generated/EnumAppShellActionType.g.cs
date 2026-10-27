@@ -15,5 +15,6 @@ public static partial class Enums {
         GamePageLoaded = 8,
         HomePageLoaded = 9,
         AvatarEditorPageLoaded = 10,
+        HomePageInteractive = 11,
     }
 }

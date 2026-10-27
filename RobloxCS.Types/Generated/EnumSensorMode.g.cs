@@ -6,5 +6,7 @@ public static partial class Enums {
     public enum SensorMode {
         Floor = 0,
         Ladder = 1,
+        ClassicFloor = 2,
+        ClassicLadder = 3,
     }
 }

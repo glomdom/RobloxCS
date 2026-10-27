@@ -4,5 +4,5 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("SessionCheckService", RobloxNativeType.Service)]
-public static partial class SessionCheckService {
+public partial class SessionCheckService : Instance  {
 }

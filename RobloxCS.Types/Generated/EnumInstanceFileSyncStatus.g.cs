@@ -8,5 +8,6 @@ public static partial class Enums {
         Errored = 1,
         SyncedAsRoot = 2,
         SyncedAsDescendant = 3,
+        AncestorErrored = 4,
     }
 }

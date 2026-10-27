@@ -7,8 +7,8 @@ namespace RobloxCS.Types;
 public partial class Path : Instance  {
     public Enums.PathStatus Status { get; set; } = default!;
     public List<object> GetWaypoints() => ThrowHelper.ThrowTranspiledMethod();
-    public int CheckOcclusionAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public void ComputeAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public int CheckOcclusionAsync(int start) => ThrowHelper.ThrowTranspiledMethod();
+    public void ComputeAsync(Vector3 start, Vector3 finish) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<int> Blocked { get; private set; } = null!;
     public RBXScriptSignal<int> Unblocked { get; private set; } = null!;
 }

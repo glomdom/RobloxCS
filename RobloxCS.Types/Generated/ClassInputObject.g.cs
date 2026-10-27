@@ -10,5 +10,5 @@ public partial class InputObject : Instance  {
     public Vector3 Position { get; set; } = default!;
     public Enums.UserInputState UserInputState { get; set; } = default!;
     public Enums.UserInputType UserInputType { get; set; } = default!;
-    public bool IsModifierKeyDown() => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsModifierKeyDown(Enums.ModifierKey modifierKey) => ThrowHelper.ThrowTranspiledMethod();
 }

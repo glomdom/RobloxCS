@@ -17,6 +17,7 @@ public partial class Trail : Instance  {
     public float MaxLength { get; set; } = default!;
     public float MinLength { get; set; } = default!;
     public string Texture { get; set; } = default!;
+    public string TextureContent { get; set; } = default!;
     public float TextureLength { get; set; } = default!;
     public Enums.TextureMode TextureMode { get; set; } = default!;
     public NumberSequence Transparency { get; set; } = default!;

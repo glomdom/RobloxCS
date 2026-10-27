@@ -4,9 +4,9 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("ConfigService", RobloxNativeType.Service)]
-public static partial class ConfigService {
-    public static void ClearTestingValue() => ThrowHelper.ThrowTranspiledMethod();
-    public static void SetTestingValue() => ThrowHelper.ThrowTranspiledMethod();
-    public static ConfigSnapshot GetConfigAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public static ConfigSnapshot GetConfigForPlayerAsync() => ThrowHelper.ThrowTranspiledMethod();
+public partial class ConfigService : Instance  {
+    public void ClearTestingValue(string key) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetTestingValue(string key, object value) => ThrowHelper.ThrowTranspiledMethod();
+    public ConfigSnapshot GetConfigAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public ConfigSnapshot GetConfigForPlayerAsync(Player player) => ThrowHelper.ThrowTranspiledMethod();
 }

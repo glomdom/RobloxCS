@@ -8,5 +8,6 @@ public static partial class Enums {
         Desktop = 1,
         Tablet = 2,
         Phone = 3,
+        TV = 4,
     }
 }

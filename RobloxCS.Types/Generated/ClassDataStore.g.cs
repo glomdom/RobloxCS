@@ -5,9 +5,8 @@
 namespace RobloxCS.Types;
 [RobloxNative("DataStore", RobloxNativeType.Instance)]
 public partial class DataStore : GlobalDataStore  {
-    public LuaTuple GetVersionAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple GetVersionAtTimeAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public DataStoreKeyPages ListKeysAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public DataStoreVersionPages ListVersionsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public void RemoveVersionAsync() => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple GetVersionAsync(string key, string version) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple GetVersionAtTimeAsync(string key, long timestamp) => ThrowHelper.ThrowTranspiledMethod();
+    public DataStoreKeyPages ListKeysAsync(string prefix = default!, int pageSize = default!, string cursor = default!, bool excludeDeleted = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public DataStoreVersionPages ListVersionsAsync(string key, Enums.SortDirection sortDirection = default!, long minDate = default!, long maxDate = default!, int pageSize = default!) => ThrowHelper.ThrowTranspiledMethod();
 }

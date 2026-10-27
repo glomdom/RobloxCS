@@ -4,9 +4,8 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("RuntimeContentService", RobloxNativeType.Service)]
-public static partial class RuntimeContentService {
-    public static RBXScriptSignal<string> RuntimeContentFail { get; private set; } = null!;
-    public static RBXScriptSignal<string, string> RuntimeContentLRCleanup { get; private set; } = null!;
-    public static RBXScriptSignal<string, string, string> RuntimeContentQuery { get; private set; } = null!;
-    public static RBXScriptSignal<string, string, string> RuntimeContentShare { get; private set; } = null!;
+public partial class RuntimeContentService : Instance  {
+    public RBXScriptSignal<string> RuntimeContentFail { get; private set; } = null!;
+    public RBXScriptSignal<string, string, string> RuntimeContentQuery { get; private set; } = null!;
+    public RBXScriptSignal<string, string, string> RuntimeContentShare { get; private set; } = null!;
 }

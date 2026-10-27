@@ -5,22 +5,22 @@
 namespace RobloxCS.Types;
 [RobloxNative("PlayerDataRecord", RobloxNativeType.Instance)]
 public partial class PlayerDataRecord : Instance  {
-    public int CreatedTime { get; set; } = default!;
+    public long CreatedTime { get; set; } = default!;
     public bool DefaultRecordName { get; set; } = default!;
     public bool Dirty { get; set; } = default!;
     public Enums.PlayerDataErrorState Error { get; set; } = default!;
-    public int FlushedTime { get; set; } = default!;
-    public int LoadedTime { get; set; } = default!;
-    public int ModifiedTime { get; set; } = default!;
+    public long FlushedTime { get; set; } = default!;
+    public long LoadedTime { get; set; } = default!;
+    public long ModifiedTime { get; set; } = default!;
     public bool NewRecord { get; set; } = default!;
     public bool Readable { get; set; } = default!;
     public string RecordName { get; set; } = default!;
     public bool Writable { get; set; } = default!;
     public Player GetPlayer() => ThrowHelper.ThrowTranspiledMethod();
-    public object GetValue() => ThrowHelper.ThrowTranspiledMethod();
-    public RBXScriptSignal GetValueChangedSignal() => ThrowHelper.ThrowTranspiledMethod();
-    public void RemoveValue() => ThrowHelper.ThrowTranspiledMethod();
-    public void SetValue() => ThrowHelper.ThrowTranspiledMethod();
+    public object GetValue(string key) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal GetValueChangedSignal(string key) => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveValue(string key) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetValue(string key, object value) => ThrowHelper.ThrowTranspiledMethod();
     public void ReleaseAsync() => ThrowHelper.ThrowTranspiledMethod();
     public void RequestFlushAsync() => ThrowHelper.ThrowTranspiledMethod();
     new public RBXScriptSignal<string, object> Changed { get; private set; } = null!;

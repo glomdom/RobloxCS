@@ -8,5 +8,5 @@ public partial class PVInstance : Instance  {
     public CFrame Origin { get; set; } = default!;
     public CFrame PivotOffset { get; set; } = default!;
     public CFrame GetPivot() => ThrowHelper.ThrowTranspiledMethod();
-    public void PivotTo() => ThrowHelper.ThrowTranspiledMethod();
+    public void PivotTo(CFrame targetCFrame) => ThrowHelper.ThrowTranspiledMethod();
 }

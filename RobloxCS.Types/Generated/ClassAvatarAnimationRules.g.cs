@@ -5,4 +5,15 @@
 namespace RobloxCS.Types;
 [RobloxNative("AvatarAnimationRules", RobloxNativeType.Instance)]
 public partial class AvatarAnimationRules : Instance  {
+    public Enums.AvatarSettingsAnimationPacksMode AnimationPacksMode { get; set; } = default!;
+    public long ClimbAnimationOverride { get; set; } = default!;
+    public long FallAnimationOverride { get; set; } = default!;
+    public long IdleAltAnimationOverride { get; set; } = default!;
+    public long IdleAnimationOverride { get; set; } = default!;
+    public long JumpAnimationOverride { get; set; } = default!;
+    public long MoodAnimationOverride { get; set; } = default!;
+    public long RunAnimationOverride { get; set; } = default!;
+    public long SwimAnimationOverride { get; set; } = default!;
+    public long SwimIdleAnimationOverride { get; set; } = default!;
+    public long WalkAnimationOverride { get; set; } = default!;
 }

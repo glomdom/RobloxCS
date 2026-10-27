@@ -4,15 +4,17 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("CollectionService", RobloxNativeType.Service)]
-public static partial class CollectionService {
-    public static void AddTag() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetAllTags() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptSignal GetInstanceAddedSignal() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptSignal GetInstanceRemovedSignal() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<Instance> GetTagged() => ThrowHelper.ThrowTranspiledMethod();
-    public static List<object> GetTags() => ThrowHelper.ThrowTranspiledMethod();
-    public static bool HasTag() => ThrowHelper.ThrowTranspiledMethod();
-    public static void RemoveTag() => ThrowHelper.ThrowTranspiledMethod();
-    public static RBXScriptSignal<string> TagAdded { get; private set; } = null!;
-    public static RBXScriptSignal<string> TagRemoved { get; private set; } = null!;
+public partial class CollectionService : Instance  {
+    public void AddTag(Instance instance, string tag) => ThrowHelper.ThrowTranspiledMethod();
+    public object CreateCollection(string query, Instance root = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetAllTags() => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetCollections(Instance instance) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal GetInstanceAddedSignal(string tag) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal GetInstanceRemovedSignal(string tag) => ThrowHelper.ThrowTranspiledMethod();
+    public List<Instance> GetTagged(string tag) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetTags(Instance instance) => ThrowHelper.ThrowTranspiledMethod();
+    public bool HasTag(Instance instance, string tag) => ThrowHelper.ThrowTranspiledMethod();
+    public void RemoveTag(Instance instance, string tag) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptSignal<string> TagAdded { get; private set; } = null!;
+    public RBXScriptSignal<string> TagRemoved { get; private set; } = null!;
 }

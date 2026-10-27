@@ -4,13 +4,16 @@
 #nullable enable
 namespace RobloxCS.Types;
 [RobloxNative("AnalyticsService", RobloxNativeType.Service)]
-public static partial class AnalyticsService {
-    public static void LogCustomEvent() => ThrowHelper.ThrowTranspiledMethod();
-    public static void LogEconomyEvent() => ThrowHelper.ThrowTranspiledMethod();
-    public static void LogFunnelStepEvent() => ThrowHelper.ThrowTranspiledMethod();
-    public static void LogOnboardingFunnelStepEvent() => ThrowHelper.ThrowTranspiledMethod();
-    public static void LogProgressionCompleteEvent() => ThrowHelper.ThrowTranspiledMethod();
-    public static void LogProgressionEvent() => ThrowHelper.ThrowTranspiledMethod();
-    public static void LogProgressionFailEvent() => ThrowHelper.ThrowTranspiledMethod();
-    public static void LogProgressionStartEvent() => ThrowHelper.ThrowTranspiledMethod();
+public partial class AnalyticsService : Instance  {
+    public int GetDurationLoggerTimestamp() => ThrowHelper.ThrowTranspiledMethod();
+    public void LogCustomEvent(Player player, string eventName, double value = default!, Dictionary<string, object> customFields = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void LogEconomyEvent(Player player, Enums.AnalyticsEconomyFlowType flowType, string currencyType, float amount, float endingBalance, string transactionType, string itemSku = default!, Dictionary<string, object> customFields = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void LogFunnelStepEvent(Player player, string funnelName, string funnelSessionId = default!, int step = default!, string stepName = default!, Dictionary<string, object> customFields = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void LogJourneyEvent(Player player, string journeyName, string nodeName, string journeySessionId = default!, Dictionary<string, object> customFields = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void LogOnboardingFunnelStepEvent(Player player, int step, string stepName = default!, Dictionary<string, object> customFields = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void LogProgressionCompleteEvent(Player player, string progressionPathName, int level, string levelName = default!, Dictionary<string, object> customFields = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void LogProgressionEvent(Player player, string progressionPathName, Enums.AnalyticsProgressionType status, int level, string levelName = default!, Dictionary<string, object> customFields = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void LogProgressionFailEvent(Player player, string progressionPathName, int level, string levelName = default!, Dictionary<string, object> customFields = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void LogProgressionStartEvent(Player player, string progressionPathName, int level, string levelName = default!, Dictionary<string, object> customFields = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetPlayerSegmentsAsync(Player player) => ThrowHelper.ThrowTranspiledMethod();
 }
