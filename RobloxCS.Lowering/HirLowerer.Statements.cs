@@ -249,6 +249,16 @@ public sealed partial class HirLowerer {
                 return VarName.FromString(_names.NameFor(parameter.Symbol));
             }
 
+            case HirPropertyAccess prop: {
+                if (LowerPropertyAccess(prop) is Var var) {
+                    return var;
+                }
+
+                Unsupported($"Property '{prop.Symbol.Name}' cannot be assigned to.", prop.Location);
+
+                return null;
+            }
+
             case HirFieldAccess field: {
                 return LowerFieldAccess(field);
             }
