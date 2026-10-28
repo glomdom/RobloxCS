@@ -16,7 +16,7 @@ internal static class Program {
         var app = new CommandApp();
         app.Configure(config => {
             config.SetApplicationName("rbxcsc");
-            config.SetApplicationVersion("0.0.0a");
+            config.SetApplicationVersion("0.0.1a");
             config.UseStrictParsing();
             config.PropagateExceptions();
 
