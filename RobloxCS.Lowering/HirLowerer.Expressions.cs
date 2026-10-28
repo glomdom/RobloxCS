@@ -42,6 +42,14 @@ public sealed partial class HirLowerer {
             case HirObjectCreation creation: {
                 var type = creation.Constructor.ContainingType;
 
+                if (GetRobloxNative(type) is { } native) {
+                    if (native.Kind == RobloxNativeType.Instance) {
+                        return Call(Index("Instance", "new"), Str(native.Name));
+                    }
+                    
+                    Unsupported($"Instancing roblox type '{type.ToDisplayString()}' is not supported yet.", creation.Location);
+                }
+                
                 if (!IsTranspiledType(type)) {
                     Unsupported($"Creating '{type.ToDisplayString()}' is not supported yet.", creation.Location);
 
