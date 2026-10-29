@@ -50,12 +50,12 @@ jobs:
         if: startsWith(matrix.rid, 'osx-')
         shell: bash
         run: |
-          rcodesign="apple-codesign-${RCODESIGN_VERSION}-x86_64-unknown-linux-musl"
+          rcodesign="apple-codesign-${APPLE_CODESIGN_VERSION}-x86_64-unknown-linux-musl"
 
-          curl -fsSL "https://github.com/indygreg/apple-platform-rs/releases/download/apple-codesign%2F${RCODESIGN_VERSION}/${rcodesign}.tar.gz" | tar xz
+          curl -fsSL "https://github.com/indygreg/apple-platform-rs/releases/download/apple-codesign%2F${APPLE_CODESIGN_VERSION}/${rcodesign}.tar.gz" | tar xz
           "./${rcodesign}/rcodesign" sign publish/rbxcsc
         env:
-          RCODESIGN_VERSION: "0.29.0"
+          APPLE_CODESIGN_VERSION: "0.29.0"
 
       - name: Package
         shell: bash
