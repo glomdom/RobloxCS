@@ -46,7 +46,7 @@ jobs:
             -p:Version="$version" \
             -p:IncludeSourceRevisionInInformationalVersion=false
 
-      - name: [MAC] Sign
+      - name: Sign
         if: startsWith(matrix.rid, 'osx-')
         shell: bash
         run: |
