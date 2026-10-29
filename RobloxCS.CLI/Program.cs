@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using RobloxCS.CLI.Commands.Build;
 using RobloxCS.CLI.Commands.Emit;
@@ -16,7 +17,7 @@ internal static class Program {
         var app = new CommandApp();
         app.Configure(config => {
             config.SetApplicationName("rbxcsc");
-            config.SetApplicationVersion("0.0.1a");
+            config.SetApplicationVersion(typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "unk");
             config.UseStrictParsing();
             config.PropagateExceptions();
 

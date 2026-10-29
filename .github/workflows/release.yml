@@ -1,0 +1,91 @@
+﻿name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { runner: ubuntu-latest, rid: linux-x64, target: linux-x86_64 }
+          - { runner: ubuntu-latest, rid: linux-arm64, target: linux-aarch64 }
+          - { runner: ubuntu-latest, rid: win-x64, target: windows-x86_64 }
+          - { runner: ubuntu-latest, rid: win-arm64, target: windows-aarch64 }
+          - { runner: macos-latest, rid: osx-x64, target: macos-x86_64 }
+          - { runner: macos-latest, rid: osx-arm64, target: macos-aarch64 }
+
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Publish
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+
+          dotnet publish RobloxCS.CLI/RobloxCS.CLI.csproj \
+            -c Release \
+            -r ${{ matrix.rid }} \
+            --self-contained false \
+            -o publish \
+            -p:PublishSingleFile=true \
+            -p:IncludeAllContentForSelfExtract=true \
+            -p:DebugType=None \
+            -p:Version="$version" \
+            -p:IncludeSourceRevisionInInformationalVersion=false
+
+      - name: Package
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          name="rbxcsc-$version-${{ matrix.target }}"
+
+          if [[ "${{ matrix.rid }}" == win-* ]]; then
+            binary=rbxcsc.exe
+          else
+            binary=rbxcsc
+            chmod +x "publish/$binary"
+          fi
+
+          mkdir -p dist
+          (cd publish && zip -9 "../dist/$name.zip" "$binary")
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: dist/*.zip
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          flags=(--generate-notes --title "$GITHUB_REF_NAME")
+
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+            flags+=(--prerelease)
+          fi
+
+          gh release create "$GITHUB_REF_NAME" dist/*.zip --repo "$GITHUB_REPOSITORY" "${flags[@]}"
