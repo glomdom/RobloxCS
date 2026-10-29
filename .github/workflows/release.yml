@@ -18,8 +18,8 @@ jobs:
           - { runner: ubuntu-latest, rid: linux-arm64, target: linux-aarch64 }
           - { runner: ubuntu-latest, rid: win-x64, target: windows-x86_64 }
           - { runner: ubuntu-latest, rid: win-arm64, target: windows-aarch64 }
-          - { runner: macos-latest, rid: osx-x64, target: macos-x86_64 }
-          - { runner: macos-latest, rid: osx-arm64, target: macos-aarch64 }
+          - { runner: ubuntu-latest, rid: osx-x64, target: macos-x86_64 }
+          - { runner: ubuntu-latest, rid: osx-arm64, target: macos-aarch64 }
 
     runs-on: ${{ matrix.runner }}
 
@@ -45,6 +45,17 @@ jobs:
             -p:DebugType=None \
             -p:Version="$version" \
             -p:IncludeSourceRevisionInInformationalVersion=false
+
+      - name: [MAC] Sign
+        if: startsWith(matrix.rid, 'osx-')
+        shell: bash
+        run: |
+          rcodesign="apple-codesign-${RCODESIGN_VERSION}-x86_64-unknown-linux-musl"
+
+          curl -fsSL "https://github.com/indygreg/apple-platform-rs/releases/download/apple-codesign%2F${RCODESIGN_VERSION}/${rcodesign}.tar.gz" | tar xz
+          "./${rcodesign}/rcodesign" sign publish/rbxcsc
+        env:
+          RCODESIGN_VERSION: "0.29.0"
 
       - name: Package
         shell: bash
