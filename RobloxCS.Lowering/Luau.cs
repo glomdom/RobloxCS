@@ -140,6 +140,10 @@ internal static class Luau {
             return NamePrefix.FromString(symbol.Value);
         }
 
+        if (expression is not (VarExpression or FunctionCallExpression or ParenthesisExpression)) {
+            expression = new ParenthesisExpression { Expression = expression };
+        }
+
         return new ExpressionPrefix {
             Expression = expression,
         };
