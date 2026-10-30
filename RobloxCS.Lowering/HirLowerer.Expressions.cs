@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Statements;
 using RobloxCS.HIR;
 using RobloxCS.HIR.Expressions;
 using RobloxCS.Types;
@@ -124,12 +125,41 @@ public sealed partial class HirLowerer {
                 return LowerConditional(conditional);
             }
 
+            case HirCoalesce coalesce: {
+                return LowerCoalesce(coalesce);
+            }
+
             default: {
                 Unsupported($"Lowering '{expression.GetType().Name}' expressions are not supported yet.", expression.Location);
 
                 return Nil();
             }
         }
+    }
+    
+    private Expression LowerCoalesce(HirCoalesce coalesce) {
+        var value = LowerExpression(coalesce.Value);
+        var (whenNull, preludes) = LowerCaptured(coalesce.WhenNull);
+
+        if (preludes.Count == 0) {
+            var subject = Hoist(value, "value");
+            var notNil = new BinaryOperatorExpression { Left = subject, Op = BinOp.TildeEqual, Right = Nil() };
+
+            return IfExpression.From(notNil, subject, whenNull);
+        }
+
+        Log.Verbose("Right side of ?? needs temporareis, lowering to an if statement");
+
+        var type = LowerType(coalesce.Type, coalesce.Location);
+        var temp = _names.FreshTemp("value");
+
+        _names.Emit(Local(temp, Optional(type), value));
+        _names.Emit(new IfStatement {
+            Condition = new BinaryOperatorExpression { Left = Name(temp), Op = BinOp.TwoEqual, Right = Nil() },
+            Block = BlockOf([.. preludes, Assign(VarName.FromString(temp), whenNull)]),
+        });
+
+        return Cast(Name(temp), type);
     }
     
     private AnonymousFunctionExpression LowerLambda(HirLambda lambda) {
