@@ -280,6 +280,15 @@ public sealed class HirPrinter : HirVisitor {
         });
     }
 
+    protected override void VisitCoalesce(HirCoalesce node) {
+        Line($"[cyan]coalesce[/] [yellow]??[/] [grey]-> {Type(node.Type)}[/]");
+
+        Nested(() => {
+            Section("value", () => VisitExpression(node.Value));
+            Section("null", () => VisitExpression(node.WhenNull));
+        });
+    }
+
     protected override void VisitObjectCreation(HirObjectCreation node) {
         Line($"[cyan]new[/] [white]{Type(node.Constructor.ContainingType)}[/]");
 

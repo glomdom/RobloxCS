@@ -230,6 +230,10 @@ public sealed partial class HirLowerer {
     }
 
     private TypeInfo LowerType(ITypeSymbol type, Location location) {
+        if (type is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } nullable) {
+            return Optional(LowerType(nullable.TypeArguments[0], location));
+        }
+
         if (type is { IsReferenceType: true, NullableAnnotation: NullableAnnotation.Annotated }) {
             return Optional(LowerType(type.WithNullableAnnotation(NullableAnnotation.NotAnnotated), location));
         }

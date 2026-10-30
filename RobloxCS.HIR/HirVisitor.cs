@@ -38,6 +38,7 @@ public abstract class HirVisitor {
         switch (node) {
             case HirBinary n: VisitBinary(n); break;
             case HirCall n: VisitCall(n); break;
+            case HirCoalesce n: VisitCoalesce(n); break;
             case HirCollectionLiteral n: VisitCollectionLiteral(n); break;
             case HirConditional n: VisitConditional(n); break;
             case HirConversion n: VisitConversion(n); break;
@@ -146,6 +147,11 @@ public abstract class HirVisitor {
         if (node.Receiver is not null) VisitExpression(node.Receiver);
 
         foreach (var arg in node.Arguments) VisitArgument(arg);
+    }
+
+    protected virtual void VisitCoalesce(HirCoalesce node) {
+        VisitExpression(node.Value);
+        VisitExpression(node.WhenNull);
     }
 
     protected virtual void VisitCollectionLiteral(HirCollectionLiteral node) {
