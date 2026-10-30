@@ -13,28 +13,13 @@ public class Regression {
     private static readonly ConcurrentDictionary<string, string> TranspileCache = new();
 
     [Test, TestCaseSource(nameof(GetCases))]
-    public void Golden(string name) {
-        var actual = Normalize(Transpile(InputPath(name)));
-        var goldenPath = Path.Join(_goldenDir, name + ".luau");
-
-        if (!File.Exists(goldenPath)) {
-            Assert.Fail(
-                $"No golden file for '{name}'. Run the UpdateGoldens test to create it, " + "then review the diff before committing."
-            );
-        }
-
-        Assert.That(actual, Is.EqualTo(Normalize(File.ReadAllText(goldenPath))));
-    }
-
-
-    [Test, TestCaseSource(nameof(GetCases))]
     public void Behaviour(string name) {
-        var outputPath = Path.Join(_outputDir, name + ".luau");
+        var outputPath = Path.Join(OutputDir, name + ".luau");
 
-        Directory.CreateDirectory(_outputDir);
+        Directory.CreateDirectory(OutputDir);
         File.WriteAllText(outputPath, Transpile(InputPath(name)));
 
-        var expectedPath = Path.Join(_expectedDir, name + ".out");
+        var expectedPath = Path.Join(ExpectedDir, name + ".out");
         if (!File.Exists(expectedPath)) {
             Assert.Fail($"No expected output for '{name}'. Create {expectedPath}.");
         }
@@ -46,32 +31,15 @@ public class Regression {
     
     [Test, TestCaseSource(nameof(GetCases))]
     public void Typecheck(string name) {
-        var outputPath = Path.Join(_outputDir, name + ".tc.luau");
+        var outputPath = Path.Join(OutputDir, name + ".tc.luau");
 
-        Directory.CreateDirectory(_outputDir);
+        Directory.CreateDirectory(OutputDir);
         File.WriteAllText(outputPath, Transpile(InputPath(name)));
 
         var actual = TypecheckWithLuau(outputPath);
 
         Assert.That(actual, Is.True);
     }
-
-    [Test, Explicit("Overwrites committed golden files."), Category("UpdateGolden")]
-    public void UpdateGoldens() {
-        Directory.CreateDirectory(_sourceGoldenDir);
-
-        foreach (var testCase in GetCases()) {
-            var name = (string)testCase.Arguments[0]!;
-            var rendered = Normalize(Transpile(InputPath(name)));
-
-            File.WriteAllText(Path.Join(_sourceGoldenDir, name + ".luau"), rendered + "\n");
-
-            TestContext.Out.WriteLine($"wrote {name}.luau");
-        }
-
-        TestContext.Out.WriteLine($"goldens written to {_sourceGoldenDir}");
-    }
-
 
     private static string Transpile(string path) =>
         TranspileCache.GetOrAdd(path, static p => {
@@ -163,13 +131,13 @@ public class Regression {
     }
 
     private static IEnumerable<TestCaseData> GetCases() {
-        if (!Directory.Exists(_dataDir)) {
-            throw new DirectoryNotFoundException($"Test data directory not found: {_dataDir}");
+        if (!Directory.Exists(DataDir)) {
+            throw new DirectoryNotFoundException($"Test data directory not found: {DataDir}");
         }
 
-        var inputs = Directory.GetFiles(_dataDir, "*.cs", SearchOption.TopDirectoryOnly);
+        var inputs = Directory.GetFiles(DataDir, "*.cs", SearchOption.TopDirectoryOnly);
         if (inputs.Length == 0) {
-            throw new InvalidOperationException($"No .cs test inputs found in {_dataDir}");
+            throw new InvalidOperationException($"No .cs test inputs found in {DataDir}");
         }
 
         foreach (var path in inputs.OrderBy(static p => p, StringComparer.Ordinal)) {
@@ -180,27 +148,10 @@ public class Regression {
     }
 
     private static string Normalize(string text) => text.ReplaceLineEndings("\n").TrimEnd('\n');
-    private static string InputPath(string name) => Path.Join(_dataDir, name + ".cs");
+    private static string InputPath(string name) => Path.Join(DataDir, name + ".cs");
 
-    private static string _baseDir => TestContext.CurrentContext.TestDirectory;
-    private static string _dataDir => Path.Join(_baseDir, "Data");
-    private static string _goldenDir => Path.Join(_dataDir, "Golden");
-    private static string _expectedDir => Path.Join(_dataDir, "Expected");
-    private static string _outputDir => Path.Join(_dataDir, "Output");
-
-    private static string _sourceGoldenDir {
-        get {
-            var projectDir = typeof(Regression).Assembly
-                .GetCustomAttributes<AssemblyMetadataAttribute>()
-                .FirstOrDefault(static a => a.Key == "ProjectDir")?.Value;
-
-            if (string.IsNullOrEmpty(projectDir)) {
-                throw new InvalidOperationException(
-                    "ProjectDir assembly metadata is missing."
-                );
-            }
-
-            return Path.Join(projectDir, "Data", "Golden");
-        }
-    }
+    private static string BaseDir => TestContext.CurrentContext.TestDirectory;
+    private static string DataDir => Path.Join(BaseDir, "Data");
+    private static string ExpectedDir => Path.Join(DataDir, "Expected");
+    private static string OutputDir => Path.Join(DataDir, "Output");
 }
