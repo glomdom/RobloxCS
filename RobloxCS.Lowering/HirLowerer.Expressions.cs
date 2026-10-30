@@ -40,6 +40,10 @@ public sealed partial class HirLowerer {
             }
 
             case HirObjectCreation creation: {
+                if (TryLowerDataTypeCreation(creation, out var dataType)) {
+                    return dataType;
+                }
+                
                 var type = creation.Constructor.ContainingType;
 
                 if (GetRobloxNative(type) is { } native) {
@@ -84,6 +88,37 @@ public sealed partial class HirLowerer {
             case HirLambda lambda: {
                 return LowerLambda(lambda);
             }
+            
+            case HirUnary unary: {
+                if (TryLowerDataTypeOperator(unary, out var dataTypeUnary)) {
+                    return dataTypeUnary;
+                }
+
+                if (unary.OperatorMethod is not null) {
+                    Unsupported($"User-defined operator '{unary.OperatorMethod.ToDisplayString()}' is not supported yet.", unary.Location);
+
+                    return Nil();
+                }
+
+                UnOp? op = unary.Op switch {
+                    UnaryOperatorKind.Minus => UnOp.Minus,
+                    UnaryOperatorKind.Not => UnOp.Not,
+                    _ => null,
+                };
+
+                if (op is null) {
+                    if (unary.Op is not UnaryOperatorKind.Plus) {
+                        Unsupported($"Unary operator '{unary.Op}' is not supported yet.", unary.Location);
+                    }
+
+                    return LowerExpression(unary.Operand);
+                }
+
+                return new UnaryOperatorExpression {
+                    UnOp = op.Value,
+                    Expression = LowerExpression(unary.Operand),
+                };
+            }
 
             default: {
                 Unsupported($"Lowering '{expression.GetType().Name}' expressions are not supported yet.", expression.Location);
@@ -110,6 +145,10 @@ public sealed partial class HirLowerer {
     }
 
     private Expression LowerPropertyAccess(HirPropertyAccess access) {
+        if (TryLowerDataTypeProperty(access, out var dataTypeProperty)) {
+            return dataTypeProperty;
+        }
+        
         var property = access.Symbol;
         if (property.IsStatic && TryGetServiceName(property, out var service)) {
             return MethodCall(Name("game"), "GetService", Str(service));
@@ -124,12 +163,6 @@ public sealed partial class HirLowerer {
         Unsupported($"Static property '{property.ToDisplayString()}' is not supported yet.", access.Location);
 
         return Nil();
-    }
-    
-    private static string RobloxNameOf(ISymbol symbol) {
-        var attribute = symbol.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == "RobloxNameAttribute");
-
-        return attribute?.ConstructorArguments[0].Value as string ?? symbol.Name;
     }
     
     private static bool TryGetServiceName(IPropertySymbol property, out string name) {
@@ -164,6 +197,10 @@ public sealed partial class HirLowerer {
     }
 
     private FunctionCallExpression? LowerCall(HirCall call) {
+        if (TryLowerDataTypeCall(call, out var dataTypeCall)) {
+            return dataTypeCall;
+        }
+        
         var method = call.Method;
         var args = call.Arguments.Select(argument => LowerExpression(argument.Value)).ToList();
 
@@ -206,6 +243,10 @@ public sealed partial class HirLowerer {
     }
     
     private Expression LowerBinary(HirBinary binary) {
+        if (TryLowerDataTypeOperator(binary, out var dataTypeBinary)) {
+            return dataTypeBinary;
+        }
+        
         if (binary.OperatorMethod is not null) {
             Unsupported($"User-defined operator '{binary.OperatorMethod.ToDisplayString()}' is not supported yet.", binary.Location);
 
