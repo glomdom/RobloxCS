@@ -220,6 +220,19 @@ public sealed partial class HirBuilder {
                 };
             }
 
+            case OperationKind.Coalesce when operation is ICoalesceOperation coalesceOperation: {
+                if (coalesceOperation.Type is not { } type) {
+                    throw new InvalidOperationException("Coalesce operation has a null type.");
+                }
+
+                return new HirCoalesce {
+                    Location = coalesceOperation.Syntax.GetLocation(),
+                    Type = type,
+                    Value = BuildExpression(coalesceOperation.Value),
+                    WhenNull = BuildExpression(coalesceOperation.WhenNull),
+                };
+            }
+
             default: {
                 throw new NotSupportedException($"Expression operation kind '{operation.Kind}' is not supported.");
             }
