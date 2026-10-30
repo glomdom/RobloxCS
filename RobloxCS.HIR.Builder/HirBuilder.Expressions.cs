@@ -202,6 +202,24 @@ public sealed partial class HirBuilder {
                 }
             }
 
+            case OperationKind.Conditional when operation is IConditionalOperation conditionalOperation: {
+                if (conditionalOperation.IsRef) {
+                    throw new NotSupportedException("ref conditional expressions are not supported.");
+                }
+
+                if (conditionalOperation.WhenFalse is not { } whenFalse || conditionalOperation.Type is not { } type) {
+                    throw new InvalidOperationException("Conditional expression has no else branch or no type.");
+                }
+
+                return new HirConditional {
+                    Location = conditionalOperation.Syntax.GetLocation(),
+                    Type = type,
+                    Condition = BuildExpression(conditionalOperation.Condition),
+                    WhenTrue = BuildExpression(conditionalOperation.WhenTrue),
+                    WhenFalse = BuildExpression(whenFalse),
+                };
+            }
+
             default: {
                 throw new NotSupportedException($"Expression operation kind '{operation.Kind}' is not supported.");
             }
