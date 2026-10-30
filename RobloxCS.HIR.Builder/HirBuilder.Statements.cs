@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.HIR.Expressions;
 using RobloxCS.HIR.Statements;
@@ -222,6 +223,7 @@ public sealed partial class HirBuilder {
             return new HirVariableDeclarator {
                 Location = declOperation.Syntax.GetLocation(),
                 Symbol = declOperation.Symbol,
+                Type = ResolveLocalType(declOperation),
                 Initializer = initializer,
             };
         }
@@ -241,5 +243,30 @@ public sealed partial class HirBuilder {
             Statements = [BuildStatement(operation)],
             Locals = [],
         };
+    }
+    
+    private static ITypeSymbol ResolveLocalType(IVariableDeclaratorOperation declarator) {
+        var declared = declarator.Symbol.Type;
+
+        if (declarator.Syntax.Parent is not VariableDeclarationSyntax { Type.IsVar: true }) {
+            return declared;
+        }
+
+        if (declarator.Initializer?.Value is not { SemanticModel: { } model } value || !declared.IsReferenceType) {
+            return declared;
+        }
+
+        var info = model.GetTypeInfo(value.Syntax);
+        if (info.Type is null) {
+            return declared;
+        }
+
+        var annotation = info.Nullability.FlowState switch {
+            NullableFlowState.MaybeNull => NullableAnnotation.Annotated,
+            NullableFlowState.NotNull => NullableAnnotation.NotAnnotated,
+            _ => info.Type.NullableAnnotation,
+        };
+
+        return info.Type.WithNullableAnnotation(annotation);
     }
 }

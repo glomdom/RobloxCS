@@ -199,7 +199,7 @@ public sealed partial class HirLowerer {
     private List<Statement> LowerLocalDeclaration(HirLocalDeclaration declaration) {
         var declarators = declaration.Declarators;
         var names = declarators.Select(declarator => _names.NameFor(declarator.Symbol)).ToList();
-        var types = declarators.Select(declarator => LowerType(declarator.Symbol.Type, declarator.Location)).ToList();
+        var types = declarators.Select(declarator => LowerType(declarator.Type, declarator.Location)).ToList();
 
         for (var i = 0; i < declarators.Length; i++) {
             if (names[i] != declarators[i].Symbol.Name) {

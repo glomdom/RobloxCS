@@ -5,5 +5,6 @@ namespace RobloxCS.HIR.Statements;
 
 public sealed record HirVariableDeclarator : HirNode {
     public required ILocalSymbol Symbol { get; init; }
+    public required ITypeSymbol Type { get; init; }
     public required HirExpression? Initializer { get; init; }
 }
