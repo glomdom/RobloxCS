@@ -32,7 +32,7 @@ public sealed partial class HirLowerer {
         return statements;
     }
 
-    private List<Statement> LowerStatement(HirStatement statement) {
+    private List<Statement> LowerStatementCore(HirStatement statement) {
         Log.Verbose("Lowering statement {StatementKind}", statement.GetType().Name);
 
         switch (statement) {
@@ -153,10 +153,12 @@ public sealed partial class HirLowerer {
         );
 
         var initializers = loop.Initializers.SelectMany(LowerStatement).ToList();
-        var condition = loop.Condition is { } hirCondition ? LowerExpression(hirCondition) : Bool(true);
+        var (condition, bodyPrefix) = loop.Condition is { } hirCondition
+            ? LowerLoopCondition(hirCondition)
+            : (Bool(true), []);
 
         _continueIncrementors.Push([.. loop.Incrementors]);
-        var body = LowerBlock(loop.Body);
+        List<Statement> body = [.. bodyPrefix, .. LowerBlock(loop.Body)];
         _continueIncrementors.Pop();
 
         if (body.LastOrDefault() is not (BreakStatement or ContinueStatement or ReturnStatement)) {
@@ -182,10 +184,10 @@ public sealed partial class HirLowerer {
     private List<Statement> LowerWhile(HirWhile loop) {
         Log.Verbose("Lowering while loop");
 
-        var condition = LowerExpression(loop.Condition);
+        var (condition, bodyPrefix) = LowerLoopCondition(loop.Condition);
 
         _continueIncrementors.Push([]);
-        var body = LowerBlock(loop.Body);
+        List<Statement> body = [..bodyPrefix, ..LowerBlock(loop.Body)];
         _continueIncrementors.Pop();
 
         return [
