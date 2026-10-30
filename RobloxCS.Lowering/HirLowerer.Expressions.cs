@@ -277,6 +277,10 @@ public sealed partial class HirLowerer {
     }
     
     private Expression LowerBinary(HirBinary binary) {
+        if (binary.Op is BinaryOperatorKind.ConditionalAnd or BinaryOperatorKind.ConditionalOr) {
+            return LowerShortCircuit(binary);
+        }
+        
         if (TryLowerDataTypeOperator(binary, out var dataTypeBinary)) {
             return dataTypeBinary;
         }
