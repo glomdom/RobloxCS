@@ -6,14 +6,20 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <PackageId>RobloxCS.Types</PackageId>
+        <Authors>glomdom</Authors>
+        <Description>Roblox API type definitions for RobloxCS.</Description>
+        <PackageTags>robloxcs</PackageTags>
+        <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/glomdom/RobloxCS</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/glomdom/RobloxCS</PackageProjectUrl>
+    </PropertyGroup>
+
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>RobloxCS.Lowering</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Patches\" />
-    </ItemGroup>
-    
 </Project>
