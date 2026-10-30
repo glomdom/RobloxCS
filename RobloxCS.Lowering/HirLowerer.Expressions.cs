@@ -148,7 +148,7 @@ public sealed partial class HirLowerer {
             return IfExpression.From(notNil, subject, whenNull);
         }
 
-        Log.Verbose("Right side of ?? needs temporareis, lowering to an if statement");
+        Log.Verbose("Right side of ?? needs temporaries, lowering to an if statement");
 
         var type = LowerType(coalesce.Type, coalesce.Location);
         var temp = _names.FreshTemp("value");
