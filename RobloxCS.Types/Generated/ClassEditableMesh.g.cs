@@ -9,7 +9,7 @@ public partial class EditableMesh : Object  {
     public long AddBone(Dictionary<string, object> boneProperties) => ThrowHelper.ThrowTranspiledMethod();
     public long AddColor(Color3 color, float alpha) => ThrowHelper.ThrowTranspiledMethod();
     public long AddFace(LuaTuple vertexIds) => ThrowHelper.ThrowTranspiledMethod();
-    public long AddNormal(Vector3? normal) => ThrowHelper.ThrowTranspiledMethod();
+    public long AddNormal(Vector3? normal = default!) => ThrowHelper.ThrowTranspiledMethod();
     public long AddTriangle(long vertexId0, long vertexId1, long vertexId2) => ThrowHelper.ThrowTranspiledMethod();
     public long AddUV(Vector2 uv) => ThrowHelper.ThrowTranspiledMethod();
     public long AddVertex(Vector3 p) => ThrowHelper.ThrowTranspiledMethod();

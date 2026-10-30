@@ -5,5 +5,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("VideoService", RobloxNativeType.Service)]
 public partial class VideoService : Instance  {
-    public VideoSampler CreateVideoSamplerAsync(string content, Dictionary<string, object>? options) => ThrowHelper.ThrowTranspiledMethod();
+    public VideoSampler CreateVideoSamplerAsync(string content, Dictionary<string, object>? options = default!) => ThrowHelper.ThrowTranspiledMethod();
 }

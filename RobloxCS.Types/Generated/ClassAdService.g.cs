@@ -10,7 +10,7 @@ public partial class AdService : Instance  {
     public void RegisterImpressionSource(Instance instance, string adIntegrationPlacementId) => ThrowHelper.ThrowTranspiledMethod();
     public void UnregisterAdOpportunity(Instance instance) => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object> GetAdAvailabilityNowAsync(Enums.AdFormat adFormat) => ThrowHelper.ThrowTranspiledMethod();
-    public Dictionary<string, object> GetCampaignEligibilityAsync(string campaignId, Player player = default!) => ThrowHelper.ThrowTranspiledMethod();
-    public void RegisterAdOpportunityAsync(Instance instance, long? placementId) => ThrowHelper.ThrowTranspiledMethod();
-    public Enums.ShowAdResult ShowRewardedVideoAdAsync(Player player, Instance reward, long? placementId) => ThrowHelper.ThrowTranspiledMethod();
+    public Dictionary<string, object> GetCampaignEligibilityAsync(string campaignId, Player? player = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public void RegisterAdOpportunityAsync(Instance instance, long? placementId = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public Enums.ShowAdResult ShowRewardedVideoAdAsync(Player player, Instance reward, long? placementId = default!) => ThrowHelper.ThrowTranspiledMethod();
 }

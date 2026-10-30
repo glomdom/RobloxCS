@@ -7,5 +7,5 @@ namespace RobloxCS.Types;
 public partial class TweenService : Instance  {
     public Tween Create(Instance instance, TweenInfo tweenInfo, Dictionary<string, object> propertyTable) => ThrowHelper.ThrowTranspiledMethod();
     public float GetValue(float alpha, Enums.EasingStyle easingStyle, Enums.EasingDirection easingDirection) => ThrowHelper.ThrowTranspiledMethod();
-    public (object, object) SmoothDamp(object current, object target, object velocity, float smoothTime, float? maxSpeed, float? dt) => ThrowHelper.ThrowTranspiledMethod();
+    public (object, object) SmoothDamp(object current, object target, object velocity, float smoothTime, float? maxSpeed = default!, float? dt = default!) => ThrowHelper.ThrowTranspiledMethod();
 }

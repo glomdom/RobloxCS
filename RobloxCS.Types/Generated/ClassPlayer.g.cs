@@ -12,7 +12,7 @@ public partial class Player : Instance  {
     public float CameraMinZoomDistance { get; set; } = default!;
     public Enums.CameraMode CameraMode { get; set; } = default!;
     public bool CanLoadCharacterAppearance { get; set; } = default!;
-    public Model Character { get; set; } = default!;
+    public Model? Character { get; set; } = default!;
     public long CharacterAppearanceId { get; set; } = default!;
     public Enums.DevCameraOcclusionMode DevCameraOcclusionMode { get; set; } = default!;
     public Enums.DevComputerCameraMovementMode DevComputerCameraMode { get; set; } = default!;

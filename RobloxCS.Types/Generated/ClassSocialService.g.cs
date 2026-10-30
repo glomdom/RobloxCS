@@ -16,7 +16,7 @@ public partial class SocialService : Instance  {
     public Dictionary<string, object>? GetExperienceEventAsync(string eventId) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetPartyAsync(string partyId) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetUpcomingExperienceEventsAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public void PromptFeedbackSubmissionAsync(Dictionary<string, object>? options) => ThrowHelper.ThrowTranspiledMethod();
+    public void PromptFeedbackSubmissionAsync(Dictionary<string, object>? options = default!) => ThrowHelper.ThrowTranspiledMethod();
     public LuaTuple PromptLinkSharingAsync(Player player, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
     public Enums.RsvpStatus PromptRsvpToEventAsync(string eventId) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Instance, Enums.InviteState> CallInviteStateChanged { get; private set; } = null!;

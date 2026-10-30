@@ -6,7 +6,7 @@ namespace RobloxCS.Types;
 [RobloxNative("StyleBase", RobloxNativeType.Instance)]
 public partial class StyleBase : Instance  {
     public List<Instance> GetStyleRules() => ThrowHelper.ThrowTranspiledMethod();
-    public void InsertStyleRule(StyleRule rule, int? priority) => ThrowHelper.ThrowTranspiledMethod();
+    public void InsertStyleRule(StyleRule rule, int? priority = default!) => ThrowHelper.ThrowTranspiledMethod();
     public void SetStyleRules(List<Instance> rules) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal StyleRulesChanged { get; private set; } = null!;
 }

@@ -7,5 +7,5 @@ namespace RobloxCS.Types;
 public partial class GamepadService : Instance  {
     public bool GamepadCursorEnabled { get; } = default!;
     public void DisableGamepadCursor() => ThrowHelper.ThrowTranspiledMethod();
-    public void EnableGamepadCursor(Instance guiObject) => ThrowHelper.ThrowTranspiledMethod();
+    public void EnableGamepadCursor(Instance? guiObject = default!) => ThrowHelper.ThrowTranspiledMethod();
 }

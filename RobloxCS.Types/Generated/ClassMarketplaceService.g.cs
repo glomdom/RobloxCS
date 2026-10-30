@@ -5,7 +5,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("MarketplaceService", RobloxNativeType.Service)]
 public partial class MarketplaceService : Instance  {
-    public RBXScriptConnection BindReceiptHandler(Enums.ReceiptType transactionType, Delegate handler, List<object>? filter) => ThrowHelper.ThrowTranspiledMethod();
+    public RBXScriptConnection BindReceiptHandler(Enums.ReceiptType transactionType, Delegate handler, List<object>? filter = default!) => ThrowHelper.ThrowTranspiledMethod();
     public void OpenShop(Player player) => ThrowHelper.ThrowTranspiledMethod();
     public void PromptBulkPurchase(Player player, List<object> lineItems, Dictionary<string, object> options) => ThrowHelper.ThrowTranspiledMethod();
     public void PromptBundlePurchase(Instance player, long bundleId) => ThrowHelper.ThrowTranspiledMethod();

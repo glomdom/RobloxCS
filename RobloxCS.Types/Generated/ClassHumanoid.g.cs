@@ -29,8 +29,8 @@ public partial class Humanoid : Instance  {
     public bool PlatformStand { get; set; } = default!;
     public bool RequiresNeck { get; set; } = default!;
     public Enums.HumanoidRigType RigType { get; set; } = default!;
-    public BasePart RootPart { get; set; } = default!;
-    public BasePart SeatPart { get; set; } = default!;
+    public BasePart? RootPart { get; set; } = default!;
+    public BasePart? SeatPart { get; set; } = default!;
     public bool Sit { get; set; } = default!;
     public Vector3 TargetPoint { get; set; } = default!;
     public bool UseJumpPower { get; set; } = default!;

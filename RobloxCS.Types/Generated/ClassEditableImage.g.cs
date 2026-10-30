@@ -10,7 +10,7 @@ public partial class EditableImage : Object  {
     public void DrawCircle(Vector2 center, int radius, Color3 color, float transparency, Enums.ImageCombineType combineType, Enums.AntiAliasing antiAliasing = default!) => ThrowHelper.ThrowTranspiledMethod();
     public void DrawImage(Vector2 position, EditableImage image, Enums.ImageCombineType combineType) => ThrowHelper.ThrowTranspiledMethod();
     public void DrawImageProjected(Object projectionSource, Dictionary<string, object> projection, Dictionary<string, object> brushConfig) => ThrowHelper.ThrowTranspiledMethod();
-    public void DrawImageTransformed(Vector2 position, Vector2 scale, float rotation, EditableImage image, Dictionary<string, object>? options) => ThrowHelper.ThrowTranspiledMethod();
+    public void DrawImageTransformed(Vector2 position, Vector2 scale, float rotation, EditableImage image, Dictionary<string, object>? options = default!) => ThrowHelper.ThrowTranspiledMethod();
     public void DrawLine(Vector2 p1, Vector2 p2, Color3 color, float transparency, Enums.ImageCombineType combineType, Enums.AntiAliasing antiAliasing = default!) => ThrowHelper.ThrowTranspiledMethod();
     public void DrawRectangle(Vector2 position, Vector2 size, Color3 color, float transparency, Enums.ImageCombineType combineType) => ThrowHelper.ThrowTranspiledMethod();
     public Buffer ReadPixelsBuffer(Vector2 position, Vector2 size) => ThrowHelper.ThrowTranspiledMethod();

@@ -7,7 +7,7 @@ namespace RobloxCS.Types;
 public partial class Model : PVInstance  {
     public Enums.ModelLevelOfDetail LevelOfDetail { get; set; } = default!;
     public Enums.ModelStreamingMode ModelStreamingMode { get; set; } = default!;
-    public BasePart PrimaryPart { get; set; } = default!;
+    public BasePart? PrimaryPart { get; set; } = default!;
     public float Scale { get; set; } = default!;
     public CFrame WorldPivot { get; set; } = default!;
     public void AddPersistentPlayer(Player playerInstance = default!) => ThrowHelper.ThrowTranspiledMethod();

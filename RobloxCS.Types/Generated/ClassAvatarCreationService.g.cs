@@ -6,9 +6,9 @@ namespace RobloxCS.Types;
 [RobloxNative("AvatarCreationService", RobloxNativeType.Service)]
 public partial class AvatarCreationService : Instance  {
     public Dictionary<string, object> GetValidationRules() => ThrowHelper.ThrowTranspiledMethod();
-    public string AutoSetupAvatarAsync(Player player, Dictionary<string, object> autoSetupParams, Delegate? progressCallback) => ThrowHelper.ThrowTranspiledMethod();
-    public string GenerateAvatar2DPreviewAsync(Dictionary<string, object> avatarGeneration2dPreviewParams, Delegate? progressCallback) => ThrowHelper.ThrowTranspiledMethod();
-    public string GenerateAvatarAsync(Dictionary<string, object> avatarGenerationParams, Delegate? progressCallback) => ThrowHelper.ThrowTranspiledMethod();
+    public string AutoSetupAvatarAsync(Player player, Dictionary<string, object> autoSetupParams, Delegate? progressCallback = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public string GenerateAvatar2DPreviewAsync(Dictionary<string, object> avatarGeneration2dPreviewParams, Delegate? progressCallback = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public string GenerateAvatarAsync(Dictionary<string, object> avatarGenerationParams, Delegate? progressCallback = default!) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetBatchTokenDetailsAsync(List<object> tokenIds) => ThrowHelper.ThrowTranspiledMethod();
     public EditableImage LoadAvatar2DPreviewAsync(string previewId) => ThrowHelper.ThrowTranspiledMethod();
     public HumanoidDescription LoadGeneratedAvatarAsync(string generationId) => ThrowHelper.ThrowTranspiledMethod();

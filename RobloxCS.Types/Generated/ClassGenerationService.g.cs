@@ -7,12 +7,12 @@ namespace RobloxCS.Types;
 public partial class GenerationService : Instance  {
     public LuaTuple ConnectAsync(string sessionId, string sdp, string type, string relay) => ThrowHelper.ThrowTranspiledMethod();
     public bool DisconnectAsync(string sessionId) => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple GenerateMeshAsync(Dictionary<string, object> inputs, Player player, Dictionary<string, object> options, Delegate? intermediateResultCallback) => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple GenerateModelAsync(Dictionary<string, object> inputs, Dictionary<string, object> schema, Dictionary<string, object>? options) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple GenerateMeshAsync(Dictionary<string, object> inputs, Player player, Dictionary<string, object> options, Delegate? intermediateResultCallback = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple GenerateModelAsync(Dictionary<string, object> inputs, Dictionary<string, object> schema, Dictionary<string, object>? options = default!) => ThrowHelper.ThrowTranspiledMethod();
     public LuaTuple GetVideoGenSessionAsync() => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object> GetVideoGenTriggersAsync(string sessionId, int lookbackSeconds) => ThrowHelper.ThrowTranspiledMethod();
     public MeshPart LoadGeneratedMeshAsync(string generationId) => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple SegmentMeshAsync(MeshPart meshPart, Dictionary<string, object> schema, Dictionary<string, object>? options) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple SegmentMeshAsync(MeshPart meshPart, Dictionary<string, object> schema, Dictionary<string, object>? options = default!) => ThrowHelper.ThrowTranspiledMethod();
     public bool StartVideoGenSessionAsync(string sessionId, string prompt, string imageData, string imageS3Reference, Dictionary<string, object> triggers) => ThrowHelper.ThrowTranspiledMethod();
     public bool UpdateVideoGenSessionPromptAsync(string sessionId, string prompt, string imageData, string imageS3Reference, string mode) => ThrowHelper.ThrowTranspiledMethod();
     public bool UpdateVideoGenSessionTriggersAsync(string sessionId, Dictionary<string, object> triggers) => ThrowHelper.ThrowTranspiledMethod();

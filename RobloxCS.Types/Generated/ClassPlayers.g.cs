@@ -9,7 +9,7 @@ public partial class Players : Instance  {
     public bool BubbleChat { get; set; } = default!;
     public bool CharacterAutoLoads { get; set; } = default!;
     public bool ClassicChat { get; set; } = default!;
-    public Player LocalPlayer { get; set; } = default!;
+    public Player? LocalPlayer { get; set; } = default!;
     public int MaxPlayers { get; set; } = default!;
     public int PreferredPlayers { get; set; } = default!;
     public float RespawnTime { get; set; } = default!;

@@ -5,15 +5,15 @@
 namespace RobloxCS.Types;
 [RobloxNative("AssetService", RobloxNativeType.Service)]
 public partial class AssetService : Instance  {
-    public EditableImage CreateEditableImage(Dictionary<string, object>? editableImageOptions) => ThrowHelper.ThrowTranspiledMethod();
-    public EditableMesh CreateEditableMesh(Dictionary<string, object>? editableMeshOptions) => ThrowHelper.ThrowTranspiledMethod();
+    public EditableImage CreateEditableImage(Dictionary<string, object>? editableImageOptions = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public EditableMesh CreateEditableMesh(Dictionary<string, object>? editableMeshOptions = default!) => ThrowHelper.ThrowTranspiledMethod();
     public void ComposeDecalAsync(Decal decal, List<object> layers) => ThrowHelper.ThrowTranspiledMethod();
     public LuaTuple CreateAssetAsync(Object @object, Enums.AssetType assetType, Dictionary<string, object> requestParameters = default!) => ThrowHelper.ThrowTranspiledMethod();
     public LuaTuple CreateAssetVersionAsync(Object @object, Enums.AssetType assetType, long assetId, Dictionary<string, object> requestParameters = default!) => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple CreateDataModelContentAsync(string content, Dictionary<string, object>? options) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple CreateDataModelContentAsync(string content, Dictionary<string, object>? options = default!) => ThrowHelper.ThrowTranspiledMethod();
     public Decal CreateDecalAsync(Dictionary<string, object> content) => ThrowHelper.ThrowTranspiledMethod();
-    public EditableImage CreateEditableImageAsync(string content, Dictionary<string, object>? editableImageOptions) => ThrowHelper.ThrowTranspiledMethod();
-    public EditableMesh CreateEditableMeshAsync(string content, Dictionary<string, object>? editableMeshOptions) => ThrowHelper.ThrowTranspiledMethod();
+    public EditableImage CreateEditableImageAsync(string content, Dictionary<string, object>? editableImageOptions = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public EditableMesh CreateEditableMeshAsync(string content, Dictionary<string, object>? editableMeshOptions = default!) => ThrowHelper.ThrowTranspiledMethod();
     public MeshPart CreateMeshPartAsync(string meshContent, Dictionary<string, object> options = default!) => ThrowHelper.ThrowTranspiledMethod();
     public long CreatePlaceAsync(string placeName, long templatePlaceID, string description = default!) => ThrowHelper.ThrowTranspiledMethod();
     public long CreatePlaceInPlayerInventoryAsync(Instance player, string placeName, long templatePlaceID, string description = default!) => ThrowHelper.ThrowTranspiledMethod();
@@ -27,6 +27,6 @@ public partial class AssetService : Instance  {
     public Instance LoadAssetAsync(long assetId) => ThrowHelper.ThrowTranspiledMethod();
     public LuaTuple PromptCreatePlatformContentAsync(Player player, Object @object, Enums.AssetType assetType) => ThrowHelper.ThrowTranspiledMethod();
     public LuaTuple PromptImportAnimationClipFromVideoAsync(Player player, Delegate progressCallback) => ThrowHelper.ThrowTranspiledMethod();
-    public void SavePlaceAsync(Dictionary<string, object>? requestParameters) => ThrowHelper.ThrowTranspiledMethod();
+    public void SavePlaceAsync(Dictionary<string, object>? requestParameters = default!) => ThrowHelper.ThrowTranspiledMethod();
     public AudioPages SearchAudioAsync(AudioSearchParams searchParameters) => ThrowHelper.ThrowTranspiledMethod();
 }

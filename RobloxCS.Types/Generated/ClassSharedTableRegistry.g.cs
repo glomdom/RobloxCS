@@ -6,5 +6,5 @@ namespace RobloxCS.Types;
 [RobloxNative("SharedTableRegistry", RobloxNativeType.Service)]
 public partial class SharedTableRegistry : Instance  {
     public SharedTable GetSharedTable(string name) => ThrowHelper.ThrowTranspiledMethod();
-    public void SetSharedTable(string name, SharedTable? st) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetSharedTable(string name, SharedTable? st = default!) => ThrowHelper.ThrowTranspiledMethod();
 }

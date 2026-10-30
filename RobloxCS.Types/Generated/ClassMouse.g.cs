@@ -9,7 +9,7 @@ public partial class Mouse : Instance  {
     public string Icon { get; set; } = default!;
     public string IconContent { get; set; } = default!;
     public CFrame Origin { get; set; } = default!;
-    public BasePart Target { get; set; } = default!;
+    public BasePart? Target { get; set; } = default!;
     public Instance TargetFilter { get; set; } = default!;
     public Enums.NormalId TargetSurface { get; set; } = default!;
     public Ray UnitRay { get; set; } = default!;

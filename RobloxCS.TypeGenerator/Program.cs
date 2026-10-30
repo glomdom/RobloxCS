@@ -18,6 +18,14 @@ internal static class Program {
     // format is RawClassName::PatchedFunction
     private static readonly List<string> PatchedNames = ["Players::GetPlayers"];
     private static readonly List<string> EnumNames = [];
+    private static CreatorDocs _docs = CreatorDocs.Empty;
+
+    private static readonly HashSet<string> NullableProperties = [
+        "Instance.Parent", "Players.LocalPlayer", "Player.Character", "Model.PrimaryPart",
+        "ObjectValue.Value", "Humanoid.SeatPart", "Humanoid.RootPart", "Mouse.Target",
+    ];
+
+    private static readonly HashSet<string> OptionalParameters = ["Instance:WaitForChild.timeOut"];
 
     private static readonly HashSet<string> CSharpKeywords = [
         "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked", "class", "const", "continue",
@@ -38,6 +46,10 @@ internal static class Program {
         LoggerSetup.Configure();
 
         var api = await DownloadAndDeserializeAsync();
+        _docs = await CreatorDocs.LoadAsync(
+            api.Classes.Where(IsClassAllowed).Select(classDef => classDef.Name),
+            Path.Combine(Path.GetTempPath(), "robloxcs-creator-docs")
+        );
         var generatedDirectory = args.Length > 0 ? Path.GetFullPath(args[0]) : FindGeneratedDirectory();
 
         Log.Information("Starting file generation in {CurrentDir}", generatedDirectory);
@@ -146,6 +158,9 @@ internal static class Program {
 
                         Log.Verbose("Generating property {PropName} with tags {Tags} and security {Security}", prop.Name, prop.Tags, prop.Security);
                         var propType = RobloxTypeToCSharp(prop.ValueType);
+                        if (NullableProperties.Contains($"{classDef.Name}.{prop.Name}") || IsNullableDocType(_docs.FindProperty(classDef.Name, prop.Name)?.Type)) {
+                            propType = MakeNullable(propType);
+                        }
 
                         if (classDef.Name == "BasePart" && prop.Name == "PivotOffset") continue; // dont ask me, ask roblox why their type dump is inconsistent
 
@@ -166,6 +181,7 @@ internal static class Program {
 
                         if (PatchedNames.Contains($"{classDef.Name}::{prop.Name}")) continue;
 
+                        var docMethod = _docs.FindMethod(classDef.Name, prop.Name);
                         var isTupleReturn = prop.ReturnType.Count > 1;
                         string returnType;
                         if (!isTupleReturn) {
@@ -173,7 +189,9 @@ internal static class Program {
                                 returnType = "void";
                             } else {
                                 var stringifiedType = RobloxTypeToCSharp(prop.ReturnType[0]);
-                                returnType = stringifiedType;
+                                returnType = IsNullableDocType(docMethod?.Returns is [var docReturn] ? docReturn.Type : null)
+                                    ? MakeNullable(stringifiedType)
+                                    : stringifiedType;
                             }
                         } else {
                             var strings = prop.ReturnType.Select(RobloxTypeToCSharp);
@@ -183,7 +201,7 @@ internal static class Program {
 
                         Log.Verbose("Generating function {FunctionName} with tags {Tags} and security {Security}", prop.Name, prop.Tags, prop.Security);
 
-                        var parameters = FormatParameters(prop.Parameters);
+                        var parameters = FormatParameters($"{classDef.Name}:{prop.Name}", prop.Parameters, docMethod?.Parameters);
 
                         if (prop.Name == classDef.Name) {
                             builder.AppendLine($"    [RobloxName(\"{prop.Name}\")]");
@@ -267,9 +285,13 @@ internal static class Program {
         return builder.ToString();
     }
 
-    private static string FormatParameters(List<RobloxParameter> parameters) {
+    private static string FormatParameters(string owner, List<RobloxParameter> parameters, List<DocParameter>? docParameters) {
+        var docs = parameters
+            .Select(parameter => docParameters?.FirstOrDefault(doc => string.Equals(doc.Name, parameter.Name, StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+
         var firstOptional = parameters.Count;
-        while (firstOptional > 0 && parameters[firstOptional - 1].Default is not null) {
+        while (firstOptional > 0 && IsOptionalParameter(owner, parameters[firstOptional - 1], docs[firstOptional - 1])) {
             firstOptional--;
         }
 
@@ -277,11 +299,23 @@ internal static class Program {
             var type = RobloxTypeToCSharp(parameter.Type);
             if (type == "void") type = "object?";
 
+            if (IsNullableDocType(docs[index]?.Type)) {
+                type = MakeNullable(type);
+            }
+
             var optional = index >= firstOptional ? " = default!" : string.Empty;
 
             return $"{type} {SafeName(parameter.Name)}{optional}";
         }));
     }
+
+    private static bool IsOptionalParameter(string owner, RobloxParameter parameter, DocParameter? doc) {
+        return parameter.Default is not null || doc?.IsOptional == true || OptionalParameters.Contains($"{owner}.{parameter.Name}");
+    }
+
+    private static bool IsNullableDocType(string? type) => type?.TrimEnd().EndsWith('?') == true;
+
+    private static string MakeNullable(string type) => type == "void" || type.EndsWith('?') ? type : $"{type}?";
 
     private static string SafeName(string name) {
         var normalized = name.Replace(" ", string.Empty);
