@@ -120,12 +120,36 @@ public sealed partial class HirLowerer {
                 };
             }
 
+            case HirConditional conditional: {
+                return LowerConditional(conditional);
+            }
+
             default: {
                 Unsupported($"Lowering '{expression.GetType().Name}' expressions are not supported yet.", expression.Location);
 
                 return Nil();
             }
         }
+    }
+    
+    private IfExpression LowerConditional(HirConditional conditional) {
+        var condition = LowerExpression(conditional.Condition);
+        var whenTrue = LowerExpression(conditional.WhenTrue);
+
+        var elseIfs = new List<ElseIfExpression>();
+        var tail = conditional.WhenFalse;
+
+        while (tail is HirConditional nested) {
+            elseIfs.Add(ElseIfExpression.From(LowerExpression(nested.Condition), LowerExpression(nested.WhenTrue)));
+            tail = nested.WhenFalse;
+        }
+
+        return new IfExpression {
+            Condition = condition,
+            If = whenTrue,
+            ElseIfExpressions = elseIfs.Count > 0 ? elseIfs : null,
+            Else = LowerExpression(tail),
+        };
     }
 
     private AnonymousFunctionExpression LowerLambda(HirLambda lambda) {

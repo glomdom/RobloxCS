@@ -232,7 +232,9 @@ public class RendererWalker : AstVisitorBase {
         switch (node.UnOp) {
             case UnOp.Minus: {
                 _state.Builder.Append('-');
+                _precStack.Push(7);
                 Visit(node.Expression);
+                _precStack.Pop();
 
                 break;
             }
@@ -254,7 +256,9 @@ public class RendererWalker : AstVisitorBase {
 
             case UnOp.Hash: {
                 _state.Builder.Append('#');
+                _precStack.Push(7);
                 Visit(node.Expression);
+                _precStack.Pop();
 
                 break;
             }
@@ -370,14 +374,29 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.AppendLine();
     }
 
-    // TODO: Visit if else chains
     public override void VisitIfExpression(IfExpression node) {
+        var needParens = _precStack.Count > 0 && _precStack.Peek() != int.MaxValue;
+
+        if (needParens) _state.Builder.Append('(');
+        _precStack.Push(int.MaxValue);
+
         _state.Builder.Append("if ");
         Visit(node.Condition);
         _state.Builder.Append(" then ");
         Visit(node.If);
+
+        foreach (var elseIf in node.ElseIfExpressions ?? []) {
+            _state.Builder.Append(" elseif ");
+            Visit(elseIf.Condition);
+            _state.Builder.Append(" then ");
+            Visit(elseIf.Expression);
+        }
+
         _state.Builder.Append(" else ");
         Visit(node.Else);
+
+        _precStack.Pop();
+        if (needParens) _state.Builder.Append(')');
     }
 
     public override void VisitInterpolatedStringExpression(InterpolatedStringExpression node) {
