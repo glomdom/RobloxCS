@@ -7,5 +7,6 @@ public sealed record HirField : HirDeclaration {
     public required IFieldSymbol Symbol { get; init; }
 
     public required HirExpression? Initializer { get; init; }
+    public required string Name { get; init; }
     public required bool IsStatic { get; init; }
 }

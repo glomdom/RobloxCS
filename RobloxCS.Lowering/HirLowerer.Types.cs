@@ -74,7 +74,7 @@ public sealed partial class HirLowerer {
         var seen = new HashSet<string>(StringComparer.Ordinal);
 
         foreach (var method in type.Methods.Where(method => !method.IsConstructor)) {
-            if (method.Symbol.MethodKind != MethodKind.Ordinary) {
+            if (method.Symbol.MethodKind is not (MethodKind.Ordinary or MethodKind.PropertyGet or MethodKind.PropertySet)) {
                 Unsupported($"'{method.Symbol.MethodKind}' members are not supported yet.", method.Location);
 
                 continue;

@@ -183,13 +183,16 @@ public sealed partial class HirLowerer {
             return dataTypeProperty;
         }
         
+        if (access.Symbol.IsSourceProperty()) {
+            return LowerSourcePropertyRead(access);
+        }
+        
         var property = access.Symbol;
         if (property.IsStatic && TryGetServiceName(property, out var service)) {
             return MethodCall(Name("game"), "GetService", Str(service));
         }
-        
-        var name = RobloxNameOf(property);
 
+        var name = RobloxNameOf(property);
         if (!property.IsStatic) {
             return Index(access.Receiver is null ? Name("self") : LowerExpression(access.Receiver), name);
         }
@@ -220,14 +223,14 @@ public sealed partial class HirLowerer {
     private VarExpression LowerFieldAccess(HirFieldAccess access) {
         var field = access.Symbol;
         if (field.IsStatic) {
-            Log.Verbose("Lowering static field access {ClassName}.{FieldName}", field.ContainingType.Name, field.Name);
+            Log.Verbose("Lowering static field access {ClassName}.{FieldName}", field.ContainingType.Name, field.SlotName());
 
-            return Index(ReferenceType(field.ContainingType, access.Location), field.Name);
+            return Index(ReferenceType(field.ContainingType, access.Location), field.SlotName());
         }
 
         var receiver = access.Receiver is null ? Name("self") : LowerExpression(access.Receiver);
 
-        return Index(receiver, field.Name);
+        return Index(receiver, field.SlotName());
     }
 
     private FunctionCallExpression? LowerCall(HirCall call) {

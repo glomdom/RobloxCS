@@ -234,6 +234,10 @@ public sealed partial class HirLowerer {
     }
 
     private List<Statement> LowerAssignment(HirAssignment assignment) {
+        if (IsComputedSourceProperty(assignment.Target, out var propertyTarget)) {
+            return LowerSetterCall(propertyTarget, assignment.Value) is { } call ? [Stmt(call)] : [];
+        }
+        
         if (LowerAssignmentTarget(assignment.Target) is not { } target) {
             return [];
         }
