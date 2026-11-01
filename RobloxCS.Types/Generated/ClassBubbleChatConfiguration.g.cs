@@ -11,7 +11,7 @@ public partial class BubbleChatConfiguration : TextChatConfigurations  {
     public float BubbleDuration { get; set; } = default!;
     public float BubblesSpacing { get; set; } = default!;
     public bool Enabled { get; set; } = default!;
-    public Enums.Font FontFace { get; set; } = default!;
+    public Font FontFace { get; set; } = default!;
     public Vector3 LocalPlayerStudsOffset { get; set; } = default!;
     public float MaxBubbles { get; set; } = default!;
     public float MaxDistance { get; set; } = default!;

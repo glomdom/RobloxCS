@@ -6,7 +6,7 @@ namespace RobloxCS.Types;
 [RobloxNative("TextLabel", RobloxNativeType.Instance)]
 public partial class TextLabel : GuiLabel  {
     public string ContentText { get; set; } = default!;
-    public Enums.Font FontFace { get; set; } = default!;
+    public Font FontFace { get; set; } = default!;
     public float LineHeight { get; set; } = default!;
     public int MaxVisibleGraphemes { get; set; } = default!;
     public string OpenTypeFeatures { get; set; } = default!;

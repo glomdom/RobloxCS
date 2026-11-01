@@ -5,7 +5,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("InputActionLabel", RobloxNativeType.Instance)]
 public partial class InputActionLabel : GuiObject  {
-    public Enums.Font FontFace { get; set; } = default!;
+    public Font FontFace { get; set; } = default!;
     public Color3 ImageColor3 { get; set; } = default!;
     public float ImageTransparency { get; set; } = default!;
     public InputAction InputAction { get; set; } = default!;

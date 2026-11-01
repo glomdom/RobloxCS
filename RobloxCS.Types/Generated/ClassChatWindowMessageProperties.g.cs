@@ -5,7 +5,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("ChatWindowMessageProperties", RobloxNativeType.Instance)]
 public partial class ChatWindowMessageProperties : TextChatMessageProperties  {
-    public Enums.Font FontFace { get; set; } = default!;
+    public Font FontFace { get; set; } = default!;
     public ChatWindowMessageProperties PrefixTextProperties { get; set; } = default!;
     public Color3 TextColor3 { get; set; } = default!;
     public int TextSize { get; set; } = default!;

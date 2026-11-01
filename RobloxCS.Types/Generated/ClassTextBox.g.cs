@@ -8,7 +8,7 @@ public partial class TextBox : GuiObject  {
     public bool ClearTextOnFocus { get; set; } = default!;
     public string ContentText { get; set; } = default!;
     public int CursorPosition { get; set; } = default!;
-    public Enums.Font FontFace { get; set; } = default!;
+    public Font FontFace { get; set; } = default!;
     public float LineHeight { get; set; } = default!;
     public int MaxVisibleGraphemes { get; set; } = default!;
     public bool MultiLine { get; set; } = default!;

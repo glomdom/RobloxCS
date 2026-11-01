@@ -5,7 +5,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("TextChannelWindow", RobloxNativeType.Instance)]
 public partial class TextChannelWindow : GuiObject  {
-    public Enums.Font FontFace { get; set; } = default!;
+    public Font FontFace { get; set; } = default!;
     public TextChannel Target { get; set; } = default!;
     public bool UseDefaultFont { get; set; } = default!;
 }

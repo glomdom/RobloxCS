@@ -42,14 +42,15 @@ internal static class Program {
     };
 
     internal static async Task Main(string[] args) {
-        LoggerSetup.LevelSwitch.MinimumLevel = LogEventLevel.Information;
+        LoggerSetup.LevelSwitch.MinimumLevel = LogEventLevel.Debug;
         LoggerSetup.Configure();
 
         var api = await DownloadAndDeserializeAsync();
-        _docs = await CreatorDocs.LoadAsync(
-            api.Classes.Where(IsClassAllowed).Select(classDef => classDef.Name),
-            Path.Combine(Path.GetTempPath(), "robloxcs-creator-docs")
-        );
+        var docsCache = Path.Combine(Path.GetTempPath(), "robloxcs-creator-docs");
+        var classNames = api.Classes.Where(IsClassAllowed).Select(classDef => classDef.Name).ToHashSet(StringComparer.Ordinal);
+
+        _docs = await CreatorDocs.LoadAsync(classNames, docsCache);
+        var dataTypeDocs = await CreatorDocs.LoadDataTypesAsync(DataTypeNames(api), docsCache);
         var generatedDirectory = args.Length > 0 ? Path.GetFullPath(args[0]) : FindGeneratedDirectory();
 
         Log.Information("Starting file generation in {CurrentDir}", generatedDirectory);
@@ -65,8 +66,30 @@ internal static class Program {
 
         classFiles["Services.g.cs"] = GenerateServicesFile(services);
 
+        var dataTypeFiles = new DataTypeGenerator(
+            dataTypeDocs,
+            name => EnumNames.Contains(name) ? $"Enums.{name}" : classNames.Contains(name) ? name : null
+        ).Generate();
+
         await WritePairPathSourceAsync(generatedDirectory, enumFiles);
         await WritePairPathSourceAsync(generatedDirectory, classFiles);
+        await WritePairPathSourceAsync(generatedDirectory, dataTypeFiles);
+    }
+
+    private static IEnumerable<string> DataTypeNames(RobloxApiDump api) {
+        foreach (var member in api.Classes.SelectMany(classDef => classDef.Members)) {
+            IEnumerable<RobloxType> types = member switch {
+                RobloxProperty property => [property.ValueType],
+                RobloxFunction function => [.. function.ReturnType, .. function.Parameters.Select(parameter => parameter.Type)],
+                RobloxEvent @event => @event.Parameters.Select(parameter => parameter.Type),
+                RobloxCallback callback => [callback.ReturnType, .. callback.Parameters.Select(parameter => parameter.Type)],
+                _ => [],
+            };
+
+            foreach (var type in types.Where(type => type.Category == "DataType")) {
+                yield return type.Name.TrimEnd('?');
+            }
+        }
     }
 
     private static string FindGeneratedDirectory() {
@@ -337,7 +360,9 @@ internal static class Program {
         var isOptional = type.Name.EndsWith('?');
         var name = isOptional ? type.Name[..^1] : type.Name;
 
-        var csharpType = EnumNames.Contains(name) ? $"Enums.{name}" : name switch {
+        var isEnum = type.Category == "Enum" || type.Category.Length == 0 && EnumNames.Contains(name);
+
+        var csharpType = isEnum ? $"Enums.{name}" : name switch {
             "Array" => "List<object>", // this is so fucking chudded
             "Dictionary" => "Dictionary<string, object>", // chudded
             "Map" => "Dictionary<object, object>", // rofl

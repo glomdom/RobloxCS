@@ -10,5 +10,5 @@ public partial class TextService : Instance  {
     public TextFilterResult FilterStringAsync(string stringToFilter, long fromUserId, Enums.TextFilterContext textContext = default!) => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object> GetFamilyInfoAsync(string assetId) => ThrowHelper.ThrowTranspiledMethod();
     public Vector2 GetTextBoundsAsync(GetTextBoundsParams @params) => ThrowHelper.ThrowTranspiledMethod();
-    public float GetTextSizeOffsetAsync(int fontSize, Enums.Font font) => ThrowHelper.ThrowTranspiledMethod();
+    public float GetTextSizeOffsetAsync(int fontSize, Font font) => ThrowHelper.ThrowTranspiledMethod();
 }

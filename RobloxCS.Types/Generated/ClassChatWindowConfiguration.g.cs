@@ -10,7 +10,7 @@ public partial class ChatWindowConfiguration : TextChatConfigurations  {
     public Color3 BackgroundColor3 { get; set; } = default!;
     public double BackgroundTransparency { get; set; } = default!;
     public bool Enabled { get; set; } = default!;
-    public Enums.Font FontFace { get; set; } = default!;
+    public Font FontFace { get; set; } = default!;
     public float HeightScale { get; set; } = default!;
     public Enums.HorizontalAlignment HorizontalAlignment { get; set; } = default!;
     public Enums.TextChannelDisplayMode TextChannelDisplayMode { get; set; } = default!;
