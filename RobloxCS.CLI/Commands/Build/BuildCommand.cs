@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using RobloxCS.CLI.Reporting;
@@ -38,6 +39,16 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
         var reporter = new BuildReporter(_console, location.Root);
         var options = new EmitOptions(settings.PrintHir, settings.SkipDiagnostics);
 
+        if (NeedsRestore(location.Root)) {
+            reporter.Status("restoring");
+
+            if (!await RestoreAsync(location.SolutionFile, cancellation)) {
+                reporter.Status("[red]dotnet restore failed[/], run it yourself to see why");
+
+                return -1;
+            }
+        }
+
         if (settings.Watch) {
             return await new WatchLoop(reporter, location, options).RunAsync(cancellation);
         }
@@ -47,5 +58,26 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
         outcome.Session?.Dispose();
 
         return outcome.Ok ? 0 : -1;
+    }
+ 
+    private static bool NeedsRestore(string root) {
+        return Directory
+            .EnumerateFiles(root, "*.csproj", SearchOption.AllDirectories)
+            .Any(project => !File.Exists(Path.Combine(Path.GetDirectoryName(project)!, "obj", "project.assets.json")));
+    }
+
+    private static async Task<bool> RestoreAsync(string solution, CancellationToken cancellation) {
+        using var process = Process.Start(new ProcessStartInfo("dotnet", ["restore", solution]) {
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        });
+
+        if (process is null) {
+            return false;
+        }
+
+        await process.WaitForExitAsync(cancellation);
+
+        return process.ExitCode == 0;
     }
 }

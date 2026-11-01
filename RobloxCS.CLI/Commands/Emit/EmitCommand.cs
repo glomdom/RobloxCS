@@ -25,7 +25,7 @@ public sealed class EmitCommand : Command<EmitCommand.Settings> {
 
         [CommandOption("--types-file")]
         [Description("Path to the assembly containing the Roblox type definitions")]
-        public string TypesFilePath { get; init; } = "./RobloxCS.Types.dll";
+        public string? TypesFilePath { get; init; }
 
         [CommandOption("--no-diagnostics")]
         [Description("Don't run Roslyn diagnostics")]
@@ -41,7 +41,9 @@ public sealed class EmitCommand : Command<EmitCommand.Settings> {
 
         List<Diagnostic> diagnostics = [];
         var options = new EmitOptions(settings.PrintHir, settings.SkipDiagnostics);
-        var result = FileCompiler.Compile(settings.Path, settings.TypesFilePath, settings.SkipDiagnostics, options, diagnostics);
+        
+        var typesPath = settings.TypesFilePath ?? TypesInstall.EnsureInstalled();
+        var result = FileCompiler.Compile(settings.Path, typesPath, settings.SkipDiagnostics, options, diagnostics);
 
         DiagnosticMarkup.PrintAll(_console, diagnostics);
 

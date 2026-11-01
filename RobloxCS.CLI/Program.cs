@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text;
 using RobloxCS.CLI.Commands.Build;
 using RobloxCS.CLI.Commands.Emit;
+using RobloxCS.CLI.Commands.Init;
 using RobloxCS.Common;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -21,6 +22,10 @@ internal static class Program {
             config.UseStrictParsing();
             config.PropagateExceptions();
 
+            config.AddCommand<InitCommand>("init")
+                .WithExample("init")
+                .WithExample("init", "csthebest");
+            
             config.AddCommand<BuildCommand>("build")
                 .WithExample("build")
                 .WithExample("build", "--watch");

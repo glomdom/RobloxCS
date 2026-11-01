@@ -25,4 +25,16 @@
         <ProjectReference Include="..\RobloxCS.CompilerPipeline\RobloxCS.CompilerPipeline.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\RobloxCS.Types\RobloxCS.Types.csproj"
+                          ReferenceOutputAssembly="false"
+                          OutputItemType="RobloxTypesAssembly"/>
+    </ItemGroup>
+
+    <Target Name="EmbedRobloxTypes" AfterTargets="ResolveProjectReferences">
+        <ItemGroup>
+            <EmbeddedResource Include="@(RobloxTypesAssembly)" LogicalName="RobloxCS.Types.dll"/>
+        </ItemGroup>
+    </Target>
+
 </Project>
