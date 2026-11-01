@@ -11,7 +11,7 @@ public partial class TeleportService : Instance  {
     public void SetTeleportGui(Instance gui) => ThrowHelper.ThrowTranspiledMethod();
     public void SetTeleportSetting(string setting, object value) => ThrowHelper.ThrowTranspiledMethod();
     public void Teleport(long placeId, Instance player, object teleportData, Instance customLoadingScreen = default!) => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple GetPlayerPlaceInstanceAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple GetPlayerPlaceInstanceAsync(User userId) => ThrowHelper.ThrowTranspiledMethod();
     public Enums.PromptExperienceDetailsResult PromptExperienceDetailsAsync(Player player, long universeId) => ThrowHelper.ThrowTranspiledMethod();
     public LuaTuple ReserveServerAsync(long placeId) => ThrowHelper.ThrowTranspiledMethod();
     public Instance TeleportAsync(long placeId, List<Instance> players, Instance teleportOptions = default!) => ThrowHelper.ThrowTranspiledMethod();

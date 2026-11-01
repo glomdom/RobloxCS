@@ -16,7 +16,7 @@ public partial class MarketplaceService : Instance  {
     public void PromptRobloxSubscriptionPurchase(Player user) => ThrowHelper.ThrowTranspiledMethod();
     public void PromptSubscriptionPurchase(Player user, string subscriptionId) => ThrowHelper.ThrowTranspiledMethod();
     public void PromptVIPServerPurchase(Player player) => ThrowHelper.ThrowTranspiledMethod();
-    public Enums.RobuxTransferEligibility CanUsersTransferRobuxAsync(Player sender, long receiverUser) => ThrowHelper.ThrowTranspiledMethod();
+    public Enums.RobuxTransferEligibility CanUsersTransferRobuxAsync(Player sender, User receiverUser) => ThrowHelper.ThrowTranspiledMethod();
     public Instance GetDeveloperProductsAsync() => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object> GetPassOwnershipAsync(Player user, long gamePassId) => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object> GetProductInfoAsync(long assetId, Enums.InfoType infoType = default!) => ThrowHelper.ThrowTranspiledMethod();
@@ -31,7 +31,7 @@ public partial class MarketplaceService : Instance  {
     public string PromptRobuxTransferAsync(Player sender, long receiverUserId, long amount) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> RankProductsAsync(List<object> productIdentifiers) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> RecommendTopProductsAsync(List<object> infoTypes) => ThrowHelper.ThrowTranspiledMethod();
-    public bool UserOwnsGamePassAsync(long userId, long gamePassId) => ThrowHelper.ThrowTranspiledMethod();
+    public bool UserOwnsGamePassAsync(User userId, long gamePassId) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Instance, Enums.MarketplaceBulkPurchasePromptStatus, Dictionary<string, object>> PromptBulkPurchaseFinished { get; private set; } = null!;
     public RBXScriptSignal<Instance, long, bool> PromptBundlePurchaseFinished { get; private set; } = null!;
     public RBXScriptSignal<Instance, long, bool> PromptGamePassPurchaseFinished { get; private set; } = null!;

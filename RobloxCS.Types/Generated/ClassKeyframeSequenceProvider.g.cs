@@ -7,6 +7,6 @@ namespace RobloxCS.Types;
 public partial class KeyframeSequenceProvider : Instance  {
     public string RegisterActiveKeyframeSequence(Instance keyframeSequence) => ThrowHelper.ThrowTranspiledMethod();
     public string RegisterKeyframeSequence(Instance keyframeSequence) => ThrowHelper.ThrowTranspiledMethod();
-    public Instance GetAnimationsAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();
+    public Instance GetAnimationsAsync(User userId) => ThrowHelper.ThrowTranspiledMethod();
     public Instance GetKeyframeSequenceAsync(string assetId) => ThrowHelper.ThrowTranspiledMethod();
 }

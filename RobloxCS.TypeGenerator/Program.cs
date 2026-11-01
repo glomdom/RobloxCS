@@ -375,7 +375,6 @@ internal static class Program {
             "QDir" => "string",
             "buffer" => "Buffer",
             "int64" => "long",
-            "User" => "long",
             "ContentId" => "string",
             "Content" => "string",
             "Instances" => "List<Instance>",

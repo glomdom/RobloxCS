@@ -5,9 +5,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("BadgeService", RobloxNativeType.Service)]
 public partial class BadgeService : Instance  {
-    public bool AwardBadgeAsync(long userId, long badgeId) => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> CheckUserBadgesAsync(long userId, List<object> badgeIds) => ThrowHelper.ThrowTranspiledMethod();
+    public bool AwardBadgeAsync(User userId, long badgeId) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> CheckUserBadgesAsync(User userId, List<object> badgeIds) => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object> GetBadgeInfoAsync(long badgeId) => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> GetUserBadgesAsync(long userId, List<object> badgeIds) => ThrowHelper.ThrowTranspiledMethod();
-    public bool UserHasBadgeAsync(long userId, long badgeId) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetUserBadgesAsync(User userId, List<object> badgeIds) => ThrowHelper.ThrowTranspiledMethod();
+    public bool UserHasBadgeAsync(User userId, long badgeId) => ThrowHelper.ThrowTranspiledMethod();
 }

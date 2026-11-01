@@ -21,7 +21,7 @@ public partial class GuiService : Instance  {
     public Rect GetInsetArea(Enums.ScreenInsets screenInsets) => ThrowHelper.ThrowTranspiledMethod();
     public bool GetInspectMenuEnabled() => ThrowHelper.ThrowTranspiledMethod();
     public void InspectPlayerFromHumanoidDescription(Instance humanoidDescription, string name) => ThrowHelper.ThrowTranspiledMethod();
-    public void InspectPlayerFromUserId(long userId) => ThrowHelper.ThrowTranspiledMethod();
+    public void InspectPlayerFromUserId(User userId) => ThrowHelper.ThrowTranspiledMethod();
     public bool IsTenFootInterface() => ThrowHelper.ThrowTranspiledMethod();
     public void Select(Instance selectionParent) => ThrowHelper.ThrowTranspiledMethod();
     public string SendNotification(Dictionary<string, object> notificationInfo) => ThrowHelper.ThrowTranspiledMethod();

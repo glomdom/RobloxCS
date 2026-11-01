@@ -8,7 +8,7 @@ public partial class GroupService : Instance  {
     public StandardPages GetAlliesAsync(long groupId) => ThrowHelper.ThrowTranspiledMethod();
     public StandardPages GetEnemiesAsync(long groupId) => ThrowHelper.ThrowTranspiledMethod();
     public object GetGroupInfoAsync(long groupId) => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> GetGroupsAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();
-    public object GetRolesInGroupAsync(long userId, long groupId) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetGroupsAsync(User userId) => ThrowHelper.ThrowTranspiledMethod();
+    public object GetRolesInGroupAsync(User userId, long groupId) => ThrowHelper.ThrowTranspiledMethod();
     public Enums.GroupMembershipStatus PromptJoinAsync(long groupId) => ThrowHelper.ThrowTranspiledMethod();
 }

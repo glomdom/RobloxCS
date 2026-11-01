@@ -5,6 +5,6 @@
 namespace RobloxCS.Types;
 [RobloxNative("UserService", RobloxNativeType.Service)]
 public partial class UserService : Instance  {
-    public long GetUserFromGlobalUserIdAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();
+    public User GetUserFromGlobalUserIdAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetUserInfosByUserIdsAsync(List<object> userIds) => ThrowHelper.ThrowTranspiledMethod();
 }

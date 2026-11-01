@@ -33,7 +33,7 @@ public partial class Player : Instance  {
     public SpawnLocation RespawnLocation { get; set; } = default!;
     public Team Team { get; set; } = default!;
     public BrickColor TeamColor { get; set; } = default!;
-    public long User { get; } = default!;
+    public User User { get; } = default!;
     public long UserId { get; set; } = default!;
     public void AddReplicationFocus(BasePart part) => ThrowHelper.ThrowTranspiledMethod();
     public void ClearCachedAvatarAppearance() => ThrowHelper.ThrowTranspiledMethod();
@@ -54,7 +54,7 @@ public partial class Player : Instance  {
     public List<object> GetFriendsInUniverseAsync() => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetFriendsOnlineAsync(int maxFriends = default!) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetFriendsWhoPlayedAsync() => ThrowHelper.ThrowTranspiledMethod();
-    public bool IsFriendsWithAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();
+    public bool IsFriendsWithAsync(User userId) => ThrowHelper.ThrowTranspiledMethod();
     public bool IsInGroupAsync(long groupId) => ThrowHelper.ThrowTranspiledMethod();
     public void LoadCharacterAsync() => ThrowHelper.ThrowTranspiledMethod();
     public void LoadCharacterWithAvatarRulesAsync(object avatarRules) => ThrowHelper.ThrowTranspiledMethod();

@@ -9,7 +9,7 @@ public partial class TextChannel : Instance  {
     public Player DirectChatRequester { get; set; } = default!;
     public TextChatMessage DisplaySystemMessage(string systemMessage, string metadata = default!) => ThrowHelper.ThrowTranspiledMethod();
     public void SetDirectChatRequester(Player requester) => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple AddUserAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple AddUserAsync(User userId) => ThrowHelper.ThrowTranspiledMethod();
     public TextChatMessage SendAsync(string message, string metadata = default!) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<TextChatMessage> MessageReceived { get; private set; } = null!;
     public Func<TextChatMessage> OnIncomingMessage { get; set; } = default!;

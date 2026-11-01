@@ -13,6 +13,6 @@ public partial class LogService : Instance  {
     public void Log(Enums.MessageType messageType, string message, Dictionary<string, object> context = default!) => ThrowHelper.ThrowTranspiledMethod();
     public void Output(string message, Dictionary<string, object> context = default!) => ThrowHelper.ThrowTranspiledMethod();
     public void Warn(string message, Dictionary<string, object> context = default!) => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> GetLogHistoryAsync(long user) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> GetLogHistoryAsync(User user) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<string, Enums.MessageType, Dictionary<string, object>> MessageOut { get; private set; } = null!;
 }

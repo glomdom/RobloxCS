@@ -10,9 +10,9 @@ public partial class TextChatService : Instance  {
     public bool CreateDefaultCommands { get; } = default!;
     public bool CreateDefaultTextChannels { get; } = default!;
     public void DisplayBubble(Instance partOrCharacter, string message) => ThrowHelper.ThrowTranspiledMethod();
-    public bool CanUserChatAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();
-    public bool CanUsersChatAsync(long userIdFrom, long userIdTo) => ThrowHelper.ThrowTranspiledMethod();
-    public List<object> CanUsersDirectChatAsync(long requesterUserId, List<object> userIds) => ThrowHelper.ThrowTranspiledMethod();
+    public bool CanUserChatAsync(User userId) => ThrowHelper.ThrowTranspiledMethod();
+    public bool CanUsersChatAsync(User userIdFrom, User userIdTo) => ThrowHelper.ThrowTranspiledMethod();
+    public List<object> CanUsersDirectChatAsync(User requesterUserId, List<object> userIds) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetChatGroupsAsync(List<Instance> players) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<Instance, TextChatMessage> BubbleDisplayed { get; private set; } = null!;
     public RBXScriptSignal<TextChatMessage> MessageReceived { get; private set; } = null!;

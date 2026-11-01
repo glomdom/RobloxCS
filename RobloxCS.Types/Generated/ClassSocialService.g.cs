@@ -11,7 +11,7 @@ public partial class SocialService : Instance  {
     public void PromptPhoneBook(Instance player, string tag) => ThrowHelper.ThrowTranspiledMethod();
     public void ShowSelfView(Enums.SelfViewPosition selfViewPosition = default!) => ThrowHelper.ThrowTranspiledMethod();
     public bool CanSendCallInviteAsync(Instance player) => ThrowHelper.ThrowTranspiledMethod();
-    public bool CanSendGameInviteAsync(Instance player, long recipientId = default!) => ThrowHelper.ThrowTranspiledMethod();
+    public bool CanSendGameInviteAsync(Instance player, User recipientId = default!) => ThrowHelper.ThrowTranspiledMethod();
     public Enums.RsvpStatus GetEventRsvpStatusAsync(string eventId) => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object>? GetExperienceEventAsync(string eventId) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> GetPartyAsync(string partyId) => ThrowHelper.ThrowTranspiledMethod();

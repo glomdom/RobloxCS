@@ -8,6 +8,6 @@ public partial class AnimationClipProvider : Instance  {
     public string RegisterActiveAnimationClip(AnimationClip animationClip) => ThrowHelper.ThrowTranspiledMethod();
     public string RegisterAnimationClip(AnimationClip animationClip) => ThrowHelper.ThrowTranspiledMethod();
     public AnimationClip GetAnimationClipAsync(string assetId) => ThrowHelper.ThrowTranspiledMethod();
-    public Instance GetAnimationsAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();
+    public Instance GetAnimationsAsync(User userId) => ThrowHelper.ThrowTranspiledMethod();
     public Instance GetClipEvaluatorAsync(string assetId) => ThrowHelper.ThrowTranspiledMethod();
 }
