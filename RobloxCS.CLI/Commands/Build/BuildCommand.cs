@@ -29,6 +29,10 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
             return -1;
         }
 
+        if (!CheckTypes(located.Value.Root)) {
+            return -1;
+        }
+
         MsBuildRegister.RegisterDefaults();
 
         return await RunAsync(located.Value, settings, cancellation);
@@ -64,6 +68,38 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
         return Directory
             .EnumerateFiles(root, "*.csproj", SearchOption.AllDirectories)
             .Any(project => !File.Exists(Path.Combine(Path.GetDirectoryName(project)!, "obj", "project.assets.json")));
+    }
+    
+    private bool CheckTypes(string root) {
+        TypesInstall.EnsureInstalled();
+
+        var projectVersion = TypesInstall.FindProjectVersion(root);
+        if (projectVersion is null) {
+            _console.MarkupLine("[yellow]warning:[/] no [white]<RobloxCSVersion>[/] found in Directory.Build.props or any csproj, the version can't be checked");
+
+            return true;
+        }
+
+        if (projectVersion != TypesInstall.Version) {
+            _console.MarkupLine(
+                $"[red]error:[/] this project targets RobloxCS [white]{Markup.Escape(projectVersion)}[/] " +
+                $"but this is rbxcsc [white]{Markup.Escape(TypesInstall.Version)}[/]"
+            );
+
+            _console.MarkupLine("[cyan]note:[/] update [white]<RobloxCSVersion>[/] in Directory.Build.props, or switch rbxcsc with [white]rokit[/]");
+
+            return false;
+        }
+
+        var typesPath = Path.Combine(TypesInstall.Root, projectVersion, "RobloxCS.Types.dll");
+
+        if (!File.Exists(typesPath)) {
+            _console.MarkupLine($"[red]error:[/] RobloxCS.Types is missing at [white]{Markup.Escape(typesPath)}[/]");
+
+            return false;
+        }
+
+        return true;
     }
 
     private static async Task<bool> RestoreAsync(string solution, CancellationToken cancellation) {
