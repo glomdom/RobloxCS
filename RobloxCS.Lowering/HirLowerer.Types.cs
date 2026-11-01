@@ -55,7 +55,7 @@ public sealed partial class HirLowerer {
             if (instanceFields.Count > 0) {
                 Log.Verbose("Declaring {FieldsType} for {ClassName}", FieldsTypeName(name), name);
 
-                statements.Add(TypeDecl(FieldsTypeName(name), TableType(instanceFields.Select(field => (field.Symbol.Name, LowerFieldType(field))))));
+                statements.Add(TypeDecl(FieldsTypeName(name), TableType(instanceFields.Select(field => (field.Symbol.SlotName(), LowerFieldType(field))))));
             }
 
             statements.Add(TypeDecl(name, Typeof(NewInstance(name, instanceFields.Count > 0)), true));
@@ -64,7 +64,7 @@ public sealed partial class HirLowerer {
         foreach (var field in staticFields) {
             Log.Verbose("Assigning static field {ClassName}.{FieldName}", name, field.Symbol.Name);
 
-            statements.Add(Assign(Index(name, field.Symbol.Name), LowerFieldValue(field)));
+            statements.Add(Assign(Index(name, field.Symbol.SlotName()), LowerFieldValue(field)));
         }
 
         if (!symbol.IsStatic) {
@@ -117,10 +117,10 @@ public sealed partial class HirLowerer {
         foreach (var field in instanceFields) {
             Log.Verbose(
                 "Initializing field {ClassName}.{FieldName} from {Source}",
-                name, field.Symbol.Name, field.Initializer is null ? "its default value" : "its initializer"
+                name, field.Symbol.SlotName(), field.Initializer is null ? "its default value" : "its initializer"
             );
 
-            body.Add(Assign(Index("self", field.Symbol.Name), LowerFieldValue(field)));
+            body.Add(Assign(Index("self", field.Symbol.SlotName()), LowerFieldValue(field)));
         }
 
 
