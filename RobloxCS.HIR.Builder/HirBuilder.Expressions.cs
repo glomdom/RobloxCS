@@ -42,7 +42,7 @@ public sealed partial class HirBuilder {
                 if (creationOperation.Constructor is not { } ctor) {
                     throw new InvalidOperationException("Object creation called without a ctor.");
                 }
-
+                
                 var args = creationOperation.Arguments.Select(BuildArgument).ToImmutableArray();
 
                 return new HirObjectCreation {
@@ -50,6 +50,7 @@ public sealed partial class HirBuilder {
                     Type = type,
                     Constructor = ctor,
                     Arguments = args,
+                    Initializers = [..creationOperation.Initializer?.Initializers.Select(BuildStatement) ?? []],
                 };
             }
 
@@ -125,6 +126,13 @@ public sealed partial class HirBuilder {
             }
 
             case OperationKind.InstanceReference when operation is IInstanceReferenceOperation instanceReferenceOperation: {
+                if (instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.ImplicitReceiver) {
+                    return new HirImplicitReceiver {
+                        Location = instanceReferenceOperation.Syntax.GetLocation(),
+                        Type = instanceReferenceOperation.Type!,
+                    };
+                }
+                
                 if (instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance) {
                     return new HirThis {
                         Location = instanceReferenceOperation.Syntax.GetLocation(),

@@ -1,4 +1,5 @@
 using RobloxCS.AST;
+using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Prefixes;
 using RobloxCS.AST.Statements;
 using RobloxCS.HIR.Expressions;
@@ -286,6 +287,10 @@ public sealed partial class HirLowerer {
             case HirIncrementDecrement increment: {
                 return LowerIncrementStatement(increment);
             }
+        }
+        
+        if (statement.Expression is HirObjectCreation creation) {
+            return LowerExpression(creation) is FunctionCallExpression fn ? [Stmt(fn)] : [];
         }
 
         if (statement.Expression is not HirCall call) {

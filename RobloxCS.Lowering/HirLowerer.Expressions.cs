@@ -41,31 +41,7 @@ public sealed partial class HirLowerer {
             }
 
             case HirObjectCreation creation: {
-                if (TryLowerDataTypeCreation(creation, out var dataType)) {
-                    return dataType;
-                }
-                
-                var type = creation.Constructor.ContainingType;
-
-                if (GetRobloxNative(type) is { } native) {
-                    if (native.Kind == RobloxNativeType.Instance) {
-                        return Call(Index("Instance", "new"), Str(native.Name));
-                    }
-                    
-                    Unsupported($"Instancing roblox type '{type.ToDisplayString()}' is not supported yet.", creation.Location);
-                }
-                
-                if (!IsTranspiledType(type)) {
-                    Unsupported($"Creating '{type.ToDisplayString()}' is not supported yet.", creation.Location);
-
-                    return Nil();
-                }
-
-                var args = creation.Arguments.Select(argument => LowerExpression(argument.Value)).ToList();
-
-                Log.Verbose("Lowering object creation {ClassName}.new with {ArgumentCount} arguments", type.Name, args.Count);
-
-                return Call(Index(ReferenceType(type, creation.Location), "new"), args);
+                return LowerObjectCreation(creation);
             }
             
             case HirBinary binary: {
@@ -136,6 +112,10 @@ public sealed partial class HirLowerer {
             case HirConditionalReceiver receiver: {
                 return LowerConditionalReceiver(receiver);
             }
+            
+            case HirImplicitReceiver: {
+                return (Expression)_initializerTargets.Peek().DeepClone();
+            }
 
             default: {
                 Unsupported($"Lowering '{expression.GetType().Name}' expressions are not supported yet.", expression.Location);
@@ -143,6 +123,59 @@ public sealed partial class HirLowerer {
                 return Nil();
             }
         }
+    }
+    
+    private Expression LowerObjectCreation(HirObjectCreation creation) {
+        var created = LowerObjectCreationValue(creation);
+
+        if (creation.Initializers.IsEmpty) {
+            return created;
+        }
+
+        var temp = _names.FreshTemp(creation.Type.Name);
+        _names.Emit(Local(temp, created));
+
+        _initializerTargets.Push(Name(temp));
+
+        try {
+            foreach (var initializer in creation.Initializers) {
+                foreach (var lowered in LowerStatement(initializer)) {
+                    _names.Emit(lowered);
+                }
+            }
+        } finally {
+            _initializerTargets.Pop();
+        }
+
+        return Name(temp);
+    }
+
+    private Expression LowerObjectCreationValue(HirObjectCreation creation) {
+        if (TryLowerDataTypeCreation(creation, out var dataType)) {
+            return dataType;
+        }
+                
+        var type = creation.Constructor.ContainingType;
+
+        if (GetRobloxNative(type) is { } native) {
+            if (native.Kind == RobloxNativeType.Instance) {
+                return Call(Index("Instance", "new"), Str(native.Name));
+            }
+                    
+            Unsupported($"Instancing roblox type '{type.ToDisplayString()}' is not supported yet.", creation.Location);
+        }
+                
+        if (!IsTranspiledType(type)) {
+            Unsupported($"Creating '{type.ToDisplayString()}' is not supported yet.", creation.Location);
+
+            return Nil();
+        }
+
+        var args = creation.Arguments.Select(argument => LowerExpression(argument.Value)).ToList();
+
+        Log.Verbose("Lowering object creation {ClassName}.new with {ArgumentCount} arguments", type.Name, args.Count);
+
+        return Call(Index(ReferenceType(type, creation.Location), "new"), args);
     }
     
     private Expression LowerCoalesce(HirCoalesce coalesce) {

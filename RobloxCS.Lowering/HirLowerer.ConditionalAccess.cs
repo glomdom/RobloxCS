@@ -12,6 +12,7 @@ namespace RobloxCS.Lowering;
 
 public sealed partial class HirLowerer {
     private readonly Stack<Expression> _conditionalReceivers = new();
+    private readonly Stack<Expression> _initializerTargets = new();
 
     private Expression LowerConditionalAccess(HirConditionalAccess access) {
         var receiver = HoistUnlessCheap(LowerExpression(access.Receiver));
