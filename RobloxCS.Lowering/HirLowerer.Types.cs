@@ -274,6 +274,10 @@ public sealed partial class HirLowerer {
         if (IsTranspiledType(type)) {
             return Type(ReferenceType((INamedTypeSymbol)type, location));
         }
+        
+        if (IsRobloxEnum(type)) {
+            return Type($"Enum.{type.Name}");
+        }
 
         Unsupported($"Type '{type.ToDisplayString()}' is not supported yet.", location);
 

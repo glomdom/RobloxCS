@@ -230,6 +230,11 @@ public sealed partial class HirLowerer {
 
     private VarExpression LowerFieldAccess(HirFieldAccess access) {
         var field = access.Symbol;
+        
+        if (field.IsStatic && IsRobloxEnum(field.ContainingType)) {
+            return Index(Index("Enum", field.ContainingType.Name), field.Name);
+        }
+        
         if (field.IsStatic) {
             Log.Verbose("Lowering static field access {ClassName}.{FieldName}", field.ContainingType.Name, field.SlotName());
 

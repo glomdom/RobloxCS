@@ -10,6 +10,11 @@ public sealed partial class HirLowerer {
     private const string RobloxNativeAttributeName = "RobloxCS.Types.RobloxNativeAttribute";
     private const string RobloxNameAttributeName = "RobloxCS.Types.RobloxNameAttribute";
 
+    private static bool IsRobloxEnum(ITypeSymbol? type) {
+        return type is INamedTypeSymbol { TypeKind: TypeKind.Enum, ContainingType: { Name: "Enums" } container } &&
+               container.ContainingNamespace.ToDisplayString() == "RobloxCS.Types";
+    }
+
     private static (string Name, RobloxNativeType Kind)? GetRobloxNative(ITypeSymbol type) {
         foreach (var attribute in type.GetAttributes()) {
             if (attribute.AttributeClass?.ToDisplayString() != RobloxNativeAttributeName) {
@@ -23,16 +28,6 @@ public sealed partial class HirLowerer {
         }
 
         return null;
-    }
-
-    private static string RobloxMemberName(ISymbol member) {
-        foreach (var attribute in member.GetAttributes()) {
-            if (attribute.AttributeClass?.ToDisplayString() == RobloxNameAttributeName) {
-                return (string)attribute.ConstructorArguments[0].Value!;
-            }
-        }
-
-        return member.Name;
     }
 
     private static Expression GetService(string name) => MethodCall(Name("game"), "GetService", Str(name));
