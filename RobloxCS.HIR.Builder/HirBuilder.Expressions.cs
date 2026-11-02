@@ -232,6 +232,26 @@ public sealed partial class HirBuilder {
                     WhenNull = BuildExpression(coalesceOperation.WhenNull),
                 };
             }
+            
+            case OperationKind.ConditionalAccess when operation is IConditionalAccessOperation conditionalAccessOperation: {
+                if (conditionalAccessOperation.Type is not { } type) {
+                    throw new InvalidOperationException("Conditional access has a null type.");
+                }
+
+                return new HirConditionalAccess {
+                    Location = conditionalAccessOperation.Syntax.GetLocation(),
+                    Type = type,
+                    Receiver = BuildExpression(conditionalAccessOperation.Operation),
+                    WhenNotNull = BuildExpression(conditionalAccessOperation.WhenNotNull),
+                };
+            }
+
+            case OperationKind.ConditionalAccessInstance when operation is IConditionalAccessInstanceOperation instanceOperation: {
+                return new HirConditionalReceiver {
+                    Location = instanceOperation.Syntax.GetLocation(),
+                    Type = instanceOperation.Type!,
+                };
+            }
 
             default: {
                 throw new NotSupportedException($"Expression operation kind '{operation.Kind}' is not supported.");

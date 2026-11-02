@@ -278,10 +278,16 @@ public sealed partial class HirLowerer {
     }
 
     private List<Statement> LowerExpressionStatement(HirExpressionStatement statement) {
-        if (statement.Expression is HirIncrementDecrement increment) {
-            return LowerIncrementStatement(increment);
+        switch (statement.Expression) {
+            case HirConditionalAccess access: {
+                return LowerConditionalAccessStatement(access);
+            }
+
+            case HirIncrementDecrement increment: {
+                return LowerIncrementStatement(increment);
+            }
         }
-        
+
         if (statement.Expression is not HirCall call) {
             Unsupported($"'{statement.Expression.GetType().Name}' can't be used as a statement yet.", statement.Location);
 

@@ -128,6 +128,14 @@ public sealed partial class HirLowerer {
             case HirCoalesce coalesce: {
                 return LowerCoalesce(coalesce);
             }
+            
+            case HirConditionalAccess access: {
+                return LowerConditionalAccess(access);
+            }
+
+            case HirConditionalReceiver receiver: {
+                return LowerConditionalReceiver(receiver);
+            }
 
             default: {
                 Unsupported($"Lowering '{expression.GetType().Name}' expressions are not supported yet.", expression.Location);
