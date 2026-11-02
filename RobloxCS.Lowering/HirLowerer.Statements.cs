@@ -75,6 +75,10 @@ public sealed partial class HirLowerer {
             case HirReturn returnStatement: {
                 return LowerReturn(returnStatement);
             }
+            
+            case HirConditionalStatement conditional: {
+                return LowerConditionalStatement(conditional);
+            }
 
             default: {
                 Unsupported($"Lowering '{statement.GetType().Name}' statements are not supported yet.", statement.Location);
@@ -279,10 +283,6 @@ public sealed partial class HirLowerer {
 
     private List<Statement> LowerExpressionStatement(HirExpressionStatement statement) {
         switch (statement.Expression) {
-            case HirConditionalAccess access: {
-                return LowerConditionalAccessStatement(access);
-            }
-
             case HirIncrementDecrement increment: {
                 return LowerIncrementStatement(increment);
             }

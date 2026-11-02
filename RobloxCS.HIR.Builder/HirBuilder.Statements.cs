@@ -20,9 +20,18 @@ public sealed partial class HirBuilder {
             OperationKind.Conditional => HandleConditional((IConditionalOperation)operation),
             OperationKind.Branch => HandleBranch((IBranchOperation)operation),
             OperationKind.Return => HandleReturn((IReturnOperation)operation),
+            OperationKind.ConditionalAccess => HandleConditionalAccess((IConditionalAccessOperation)operation),
 
             _ => throw new NotSupportedException($"Statement operation of kind '{operation.Kind}' is not supported."),
         };
+
+        HirStatement HandleConditionalAccess(IConditionalAccessOperation conditionalAccessOperation) {
+            return new HirConditionalStatement {
+                Location = conditionalAccessOperation.Syntax.GetLocation(),
+                Receiver = BuildExpression(conditionalAccessOperation.Operation),
+                Body = BuildStatement(conditionalAccessOperation.WhenNotNull),
+            };
+        }
 
         HirStatement HandleReturn(IReturnOperation returnOperation) {
             var expr = returnOperation.ReturnedValue is not null ? BuildExpression(returnOperation.ReturnedValue) : null;

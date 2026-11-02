@@ -44,15 +44,15 @@ public sealed partial class HirLowerer {
         return Name(temp);
     }
 
-    private List<Statement> LowerConditionalAccessStatement(HirConditionalAccess access) {
-        var receiver = HoistUnlessCheap(LowerExpression(access.Receiver));
+    private List<Statement> LowerConditionalStatement(HirConditionalStatement statement) {
+        var receiver = HoistUnlessCheap(LowerExpression(statement.Receiver));
 
         _conditionalReceivers.Push(receiver);
 
         List<Statement> body;
 
         try {
-            body = LowerStatement(new HirExpressionStatement { Location = access.Location, Expression = access.WhenNotNull });
+            body = LowerStatement(statement.Body);
         } finally {
             _conditionalReceivers.Pop();
         }
