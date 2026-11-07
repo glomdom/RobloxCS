@@ -15,25 +15,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2026.2.0"/>
-        <PackageReference Include="Spectre.Console" Version="0.57.2"/>
-        <PackageReference Include="Spectre.Console.Cli" Version="0.55.0"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" />
+        <PackageReference Include="Spectre.Console" Version="0.57.2" />
+        <PackageReference Include="Spectre.Console.Cli" Version="0.55.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\RobloxCS.Common\RobloxCS.Common.csproj"/>
-        <ProjectReference Include="..\RobloxCS.CompilerPipeline\RobloxCS.CompilerPipeline.csproj"/>
+        <ProjectReference Include="..\RobloxCS.Common\RobloxCS.Common.csproj" />
+        <ProjectReference Include="..\RobloxCS.CompilerPipeline\RobloxCS.CompilerPipeline.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\RobloxCS.Types\RobloxCS.Types.csproj"
-                          ReferenceOutputAssembly="false"
-                          OutputItemType="RobloxTypesAssembly"/>
+        <ProjectReference Include="..\RobloxCS.Types\RobloxCS.Types.csproj" ReferenceOutputAssembly="false" OutputItemType="RobloxTypesAssembly" />
+        <ProjectReference Include="..\RobloxCS.Packages\RobloxCS.Packages.csproj" />
     </ItemGroup>
 
     <Target Name="EmbedRobloxTypes" AfterTargets="ResolveProjectReferences">
         <ItemGroup>
-            <EmbeddedResource Include="@(RobloxTypesAssembly)" LogicalName="RobloxCS.Types.dll"/>
+            <EmbeddedResource Include="@(RobloxTypesAssembly)" LogicalName="RobloxCS.Types.dll" />
         </ItemGroup>
     </Target>
 

@@ -2,9 +2,11 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
+using RobloxCS.CLI.Package;
 using RobloxCS.CLI.Reporting;
 using RobloxCS.Common;
 using RobloxCS.CompilerPipeline;
+using RobloxCS.Packages;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -14,6 +16,8 @@ namespace RobloxCS.CLI.Commands.Build;
 [UsedImplicitly]
 public sealed class BuildCommand : AsyncCommand<BuildSettings> {
     private readonly IAnsiConsole _console;
+
+    private static readonly string[] MaybeStaleFiles = ["rbxcs.toml", "rbxcs.lock"];
 
     public BuildCommand(IAnsiConsole console) {
         _console = console;
@@ -28,10 +32,10 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
 
             return -1;
         }
-
-        if (!CheckTypes(located.Value.Root)) {
         
         var reporter = new BuildReporter(_console, located.Value.Root);
+
+        if (!CheckTypes(located.Value.Root, reporter)) {
             return -1;
         }
 
@@ -59,28 +63,37 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
         }
 
         var outcome = await ProjectBuild.OpenAndCompileAsync(reporter, location, options, null, cancellation);
-
         outcome.Session?.Dispose();
 
         return outcome.Ok ? 0 : -1;
     }
- 
+
     private static bool NeedsRestore(string root) {
         return Directory
             .EnumerateFiles(root, "*.csproj", SearchOption.AllDirectories)
             .Any(project => !File.Exists(Path.Combine(Path.GetDirectoryName(project)!, "obj", "project.assets.json")));
     }
-    
-    private bool CheckTypes(string root) {
+
+    private bool CheckTypes(string root, BuildReporter reporter) {
         TypesInstall.EnsureInstalled();
 
-        var projectVersion = TypesInstall.FindProjectVersion(root);
-        if (projectVersion is null) {
-            _console.MarkupLine("[yellow]warning:[/] no [white]<RobloxCSVersion>[/] found in Directory.Build.props or any csproj, the version can't be checked");
+        ProjectManifest manifest;
+        try {
+            manifest = ProjectManifest.Load(root);
+        } catch (ManifestException ex) {
+            _console.MarkupLine($"[red]manifest error:[/] {Markup.Escape(ex.Message)}");
 
-            return true;
+            return false;
+        }
+        
+        if (PropsAreStale(root)) {
+            reporter.Status("updating props");
+            
+            Props.Write(root, manifest.RobloxCSVersion, []);
+            InvalidateRestore(root);
         }
 
+        var projectVersion = manifest.RobloxCSVersion;
         if (projectVersion != TypesInstall.Version) {
             _console.MarkupLine(
                 $"[red]error:[/] this project targets RobloxCS [white]{Markup.Escape(projectVersion)}[/] " +
@@ -124,7 +137,6 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
 
         await process.WaitForExitAsync(cancellation);
 
-        return process.ExitCode == 0;
         if (process.ExitCode == 0) {
             return true;
         }
@@ -134,5 +146,26 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
 
         return false;
     }
+
+    private static bool PropsAreStale(string root) {
+        var props = Path.Combine(root, "rbxcs.props");
+        if (!File.Exists(props)) {
+            return true;
+        }
+
+        var written = File.GetLastWriteTimeUtc(props);
+
+        return MaybeStaleFiles.Select(name => Path.Combine(root, name))
+            .Any(path => File.Exists(path) && File.GetLastWriteTimeUtc(path) > written);
+    }
+    
+    private static void InvalidateRestore(string root) {
+        foreach (var project in Directory.EnumerateFiles(root, "*.csproj", SearchOption.AllDirectories)) {
+            var assets = Path.Combine(Path.GetDirectoryName(project)!, "obj", "project.assets.json");
+
+            if (File.Exists(assets)) {
+                File.Delete(assets);
+            }
+        }
     }
 }
