@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.CodeAnalysis;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
@@ -21,6 +22,7 @@ public sealed partial class HirLowerer {
     private readonly LoweringContext _names = new();
     private readonly HashSet<INamedTypeSymbol> _moduleTypes = new(SymbolEqualityComparer.Default);
     private readonly HashSet<INamedTypeSymbol> _imports = new(SymbolEqualityComparer.Default);
+    private readonly HashSet<string> _importNames = [];
 
     public HirLowerer(ScriptType scriptType, ModuleGraph modules, DiagnosticBag diagnostics) {
         ScriptType = scriptType;
@@ -79,7 +81,7 @@ public sealed partial class HirLowerer {
 
         foreach (var group in byModule) {
             var path = group.First().Module.InstancePath;
-            var moduleLocal = string.Join('_', path.Skip(1));
+            var moduleLocal = UniqueImportName(string.Join('_', path.Skip(1)));
 
             statements.Add(Local(moduleLocal, Call("require", RequirePath(path))));
 
@@ -92,14 +94,8 @@ public sealed partial class HirLowerer {
         return statements;
     }
 
-    private static Expression RequirePath(IReadOnlyList<string> path) {
-        Expression current = MethodCall(Name("game"), "GetService", Str(path[0]));
-
-        foreach (var segment in path.Skip(1)) {
-            current = MethodCall(current, "WaitForChild", Str(segment));
-        }
-
-        return current;
+    private static StringExpression RequirePath(IReadOnlyList<string> path) {
+        return Str($"@game/{string.Join('/', path)}");
     }
 
     private List<Statement> LowerEntryPoint(HirModule module) {
@@ -179,5 +175,30 @@ public sealed partial class HirLowerer {
         Log.Debug("Reporting unsupported construct: {Message}", message);
 
         Diagnostics.Error(DiagnosticId.UnsupportedSyntax, message, location);
+    }
+    
+    private static string SafeIdentifier(string name) {
+        var builder = new StringBuilder(name.Length);
+
+        foreach (var character in name) {
+            builder.Append(char.IsAsciiLetterOrDigit(character) || character == '_' ? character : '_');
+        }
+
+        if (builder.Length == 0 || char.IsAsciiDigit(builder[0])) {
+            builder.Insert(0, '_');
+        }
+
+        return builder.ToString();
+    }
+    
+    private string UniqueImportName(string raw) {
+        var name = SafeIdentifier(raw);
+        var candidate = name;
+
+        for (var suffix = 2; !_importNames.Add(candidate); suffix++) {
+            candidate = $"{name}{suffix}";
+        }
+
+        return candidate;
     }
 }

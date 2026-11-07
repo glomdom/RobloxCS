@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using RobloxCS.Packages.Dependencies;
 
 namespace RobloxCS.CLI.Commands.Init;
 
@@ -37,6 +38,7 @@ internal static class ProjectTemplate {
             ["default.project.json"] = RojoProject,
             ["Directory.Build.props"] = BuildProps,
             ["rokit.toml"] = Rokit,
+            ["rbxcs.toml"] = RbxcsToml,
             [".gitignore"] = GitIgnore,
             [$"src/{name}.Shared/{name}.Shared.csproj"] = SharedProject,
             [$"src/{name}.Shared/Greeter.cs"] = Greeter,
@@ -69,6 +71,9 @@ internal static class ProjectTemplate {
             "ReplicatedStorage": {
               "Shared": {
                 "$path": "out/shared"
+              },
+              "Packages": {
+                "$path": { "optional": "out/packages" }
               }
             },
             "ServerScriptService": {
@@ -91,23 +96,7 @@ internal static class ProjectTemplate {
     private const string BuildProps = """
         <Project>
 
-            <PropertyGroup>
-                <TargetFramework>net10.0</TargetFramework>
-                <ImplicitUsings>enable</ImplicitUsings>
-                <Nullable>enable</Nullable>
-                <RobloxCSVersion>{{Version}}</RobloxCSVersion>
-                <RbxcsHome Condition="'$(RBXCS_HOME)' != ''">$(RBXCS_HOME)</RbxcsHome>
-                <RbxcsHome Condition="'$(RbxcsHome)' == ''">$([System.Environment]::GetFolderPath(SpecialFolder.UserProfile))/.rbxcs</RbxcsHome>
-            </PropertyGroup>
-
-            <ItemGroup>
-                <Reference Include="RobloxCS.Types">
-                    <HintPath>$(RbxcsHome)/$(RobloxCSVersion)/RobloxCS.Types.dll</HintPath>
-                    <Private>false</Private>
-                </Reference>
-                <Using Include="RobloxCS.Types" />
-                <Using Include="RobloxCS.Types.Attributes" />
-            </ItemGroup>
+            <Import Project="rbxcs.props" Condition="Exists('rbxcs.props')" />
 
         </Project>
 
@@ -116,6 +105,13 @@ internal static class ProjectTemplate {
     private const string Rokit = """
         [tools]
         rbxcsc = "glomdom/RobloxCS@{{Version}}"
+
+        """;
+    
+    private const string RbxcsToml = """
+        robloxcs = {{Version}}
+        
+        [dependencies]
 
         """;
 
