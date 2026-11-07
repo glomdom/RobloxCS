@@ -30,24 +30,25 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
         }
 
         if (!CheckTypes(located.Value.Root)) {
+        
+        var reporter = new BuildReporter(_console, located.Value.Root);
             return -1;
         }
 
         MsBuildRegister.RegisterDefaults();
 
-        return await RunAsync(located.Value, settings, cancellation);
+        return await RunAsync(located.Value, reporter, settings, cancellation);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private async Task<int> RunAsync(ProjectLocation location, BuildSettings settings, CancellationToken cancellation) {
-        var reporter = new BuildReporter(_console, location.Root);
+    private async Task<int> RunAsync(ProjectLocation location, BuildReporter reporter, BuildSettings settings, CancellationToken cancellation) {
         var options = new EmitOptions(settings.PrintHir, settings.SkipDiagnostics);
 
         if (NeedsRestore(location.Root)) {
             reporter.Status("restoring");
 
-            if (!await RestoreAsync(location.SolutionFile, cancellation)) {
-                reporter.Status("[red]dotnet restore failed[/], run it yourself to see why");
+            if (!await RestoreAsync(location.SolutionFile, reporter, cancellation)) {
+                reporter.Status("[red]dotnet restore failed[/]");
 
                 return -1;
             }
@@ -102,18 +103,36 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
         return true;
     }
 
-    private static async Task<bool> RestoreAsync(string solution, CancellationToken cancellation) {
-        using var process = Process.Start(new ProcessStartInfo("dotnet", ["restore", solution]) {
+    private async Task<bool> RestoreAsync(string solution, BuildReporter reporter, CancellationToken cancellation) {
+        var start = new ProcessStartInfo("dotnet", ["restore", solution]) {
             RedirectStandardOutput = true,
             RedirectStandardError = true,
-        });
+            UseShellExecute = false,
+        };
 
+        foreach (var key in start.Environment.Keys.Where(key => key.StartsWith("MSBuild", StringComparison.OrdinalIgnoreCase)).ToList()) {
+            start.Environment.Remove(key);
+        }
+
+        using var process = Process.Start(start);
         if (process is null) {
             return false;
         }
 
+        var stdout = process.StandardOutput.ReadToEndAsync(cancellation);
+        var stderr = process.StandardError.ReadToEndAsync(cancellation);
+
         await process.WaitForExitAsync(cancellation);
 
         return process.ExitCode == 0;
+        if (process.ExitCode == 0) {
+            return true;
+        }
+
+        _console.WriteLine((await stdout).Trim());
+        _console.WriteLine((await stderr).Trim());
+
+        return false;
+    }
     }
 }
