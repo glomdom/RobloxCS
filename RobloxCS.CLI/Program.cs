@@ -6,6 +6,7 @@ using RobloxCS.CLI.Commands.Init;
 using RobloxCS.CLI.Commands.Package;
 using RobloxCS.CLI.Commands.Package.Add;
 using RobloxCS.CLI.Commands.Package.Remove;
+using RobloxCS.CLI.Commands.Package.Restore;
 using RobloxCS.Common;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -34,6 +35,7 @@ internal static class Program {
 
                 package.AddCommand<PackageAddCommand>("add").WithDescription("Add a dependency to the project.");
                 package.AddCommand<PackageRemoveCommand>("remove").WithDescription("Remove a dependency from the project.");
+                package.AddCommand<PackageRestoreCommand>("restore").WithDescription("Installs all added dependencies from the project.");
             }).WithAlias("pkg");
         });
 
