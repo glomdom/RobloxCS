@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Serilog" Version="4.4.1-dev-02453" />
     <PackageReference Include="Tomlyn" Version="2.10.2" />
   </ItemGroup>
 

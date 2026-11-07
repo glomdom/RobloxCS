@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using RobloxCS.CLI.Package;
 
 namespace RobloxCS.Packages;
 
@@ -48,7 +47,7 @@ public static class Props {
         sb.AppendLine("    <ItemGroup>");
 
         foreach (var project in packageProjects) {
-            sb.AppendLine($"""        <ProjectReference Include="$(RbxcsHome)/packages/{project}" />""");
+            sb.AppendLine($"""        <ProjectReference Include="{project}" />""");
         }
         
         sb.AppendLine("    </ItemGroup>");

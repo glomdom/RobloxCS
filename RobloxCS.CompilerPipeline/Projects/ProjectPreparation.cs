@@ -18,12 +18,23 @@ public static class ProjectPreparation {
             );
         }
 
-        if (!RojoProject.TryResolveAnchor(project.Name, anchors, out var anchor))
+        RojoAnchor anchor;
+
+        if (RojoProject.TryResolvePackageAnchor(project.FilePath, anchors, out var packageAnchor)) {
+            if (packageAnchor is null) {
+                return Diagnostic.Error(
+                    DiagnosticId.NoAnchorFound,
+                    $"{project.Name} is a package, but the Rojo project has no \"Packages\" folder mapped to out/packages"
+                );
+            }
+
+            anchor = packageAnchor;
+        } else if (!RojoProject.TryResolveAnchor(project.Name, anchors, out anchor)) {
             return Diagnostic.Error(
                 DiagnosticId.NoAnchorFound,
                 $"No instance anchor found in rojo project for {project.Name}"
             );
-
+        }
 
         return new ProjectPlan(project, compilation.Value, anchor);
     }

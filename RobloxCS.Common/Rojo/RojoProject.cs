@@ -55,6 +55,33 @@ public static class RojoProject {
         }
     }
 
+    public static bool TryResolvePackageAnchor(string? projectFilePath, List<RojoAnchor> anchors, out RojoAnchor? anchor) {
+        anchor = null;
+
+        if (projectFilePath is null) {
+            return false;
+        }
+
+        var separator = Path.DirectorySeparatorChar;
+        var marker = $"{separator}.rbxcs{separator}packages{separator}";
+        var full = Path.GetFullPath(projectFilePath);
+        var index = full.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
+
+        if (index < 0) {
+            return false;
+        }
+
+        var rest = full[(index + marker.Length)..];
+        var packageDirectory = rest[..rest.IndexOf(separator)];
+        var packages = anchors.FirstOrDefault(a => string.Equals(AnchorFolderName(a), "packages", StringComparison.OrdinalIgnoreCase));
+
+        if (packages is not null) {
+            anchor = new RojoAnchor(Path.Combine(packages.FullPath, packageDirectory), [.. packages.InstancePath, packageDirectory]);
+        }
+
+        return true;
+    }
+
     private static string AnchorFolderName(RojoAnchor anchor) => Path.GetFileName(anchor.FullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
 
     private static void Walk(JsonElement node, List<string> instancePath, string projectDir, List<RojoAnchor> anchors) {
@@ -64,6 +91,7 @@ public static class RojoProject {
             if (prop.Name == "$path") {
                 var relative = prop.Value.ValueKind switch {
                     JsonValueKind.String => prop.Value.GetString(),
+                    JsonValueKind.Object when prop.Value.TryGetProperty("optional", out var optional) => optional.GetString(),
 
                     _ => null,
                 };

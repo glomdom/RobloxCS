@@ -1,7 +1,8 @@
-﻿using Tomlyn;
+﻿using RobloxCS.Packages.Dependencies;
+using Tomlyn;
 using Tomlyn.Model;
 
-namespace RobloxCS.CLI.Package;
+namespace RobloxCS.Packages;
 
 public sealed class ManifestException(string message) : Exception(message);
 

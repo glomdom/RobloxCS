@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using RobloxCS.Packages;
+using RobloxCS.Packages.Dependencies;
 
 namespace RobloxCS.CLI.Commands.Init;
 
@@ -71,6 +71,9 @@ internal static class ProjectTemplate {
             "ReplicatedStorage": {
               "Shared": {
                 "$path": "out/shared"
+              },
+              "Packages": {
+                "$path": { "optional": "out/packages" }
               }
             },
             "ServerScriptService": {

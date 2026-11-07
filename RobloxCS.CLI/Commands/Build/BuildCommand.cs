@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
-using RobloxCS.CLI.Package;
 using RobloxCS.CLI.Reporting;
 using RobloxCS.Common;
 using RobloxCS.CompilerPipeline;
@@ -17,7 +16,7 @@ namespace RobloxCS.CLI.Commands.Build;
 public sealed class BuildCommand : AsyncCommand<BuildSettings> {
     private readonly IAnsiConsole _console;
 
-    private static readonly string[] MaybeStaleFiles = ["rbxcs.toml", "rbxcs.lock"];
+    private static readonly string[] MaybeStaleFiles = [ProjectManifest.FileName, Lockfile.FileName];
 
     public BuildCommand(IAnsiConsole console) {
         _console = console;
@@ -32,10 +31,40 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
 
             return -1;
         }
-        
-        var reporter = new BuildReporter(_console, located.Value.Root);
 
-        if (!CheckTypes(located.Value.Root, reporter)) {
+        var root = located.Value.Root;
+        var reporter = new BuildReporter(_console, root);
+
+        ProjectManifest manifest;
+
+        try {
+            manifest = ProjectManifest.Load(root);
+        } catch (ManifestException ex) {
+            _console.MarkupLine($"[red]error:[/] {Markup.Escape(ex.Message)}");
+
+            return -1;
+        }
+
+        if (!CheckTypes(manifest)) {
+            return -1;
+        }
+
+        try {
+            if (PackageInstaller.NeedsRestore(root)) {
+                reporter.Status("restoring packages");
+
+                await PackageInstaller.RestoreAsync(root, TypesInstall.Root, manifest, cancellation);
+            } else if (PropsAreStale(root)) {
+                reporter.Status("updating props");
+
+                var packages = Lockfile.Load(root).Packages.Select(package => Path.GetFullPath(Path.Combine(root, package.Project)));
+
+                Props.Write(root, manifest.RobloxCSVersion, packages);
+                PackageInstaller.InvalidateRestore(root);
+            }
+        } catch (PackageException ex) {
+            _console.MarkupLine($"[red]error:[/] {Markup.Escape(ex.Message)}");
+
             return -1;
         }
 
@@ -48,10 +77,10 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
     private async Task<int> RunAsync(ProjectLocation location, BuildReporter reporter, BuildSettings settings, CancellationToken cancellation) {
         var options = new EmitOptions(settings.PrintHir, settings.SkipDiagnostics);
 
-        if (NeedsRestore(location.Root)) {
+        if (NeedsDotnetRestore(location.Root)) {
             reporter.Status("restoring");
 
-            if (!await RestoreAsync(location.SolutionFile, reporter, cancellation)) {
+            if (!await DotnetRestoreAsync(location.SolutionFile, cancellation)) {
                 reporter.Status("[red]dotnet restore failed[/]");
 
                 return -1;
@@ -68,42 +97,21 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
         return outcome.Ok ? 0 : -1;
     }
 
-    private static bool NeedsRestore(string root) {
-        return Directory
-            .EnumerateFiles(root, "*.csproj", SearchOption.AllDirectories)
-            .Any(project => !File.Exists(Path.Combine(Path.GetDirectoryName(project)!, "obj", "project.assets.json")));
-    }
-
-    private bool CheckTypes(string root, BuildReporter reporter) {
-        TypesInstall.EnsureInstalled();
-
-        ProjectManifest manifest;
-        try {
-            manifest = ProjectManifest.Load(root);
-        } catch (ManifestException ex) {
-            _console.MarkupLine($"[red]manifest error:[/] {Markup.Escape(ex.Message)}");
-
-            return false;
-        }
-        
-        if (PropsAreStale(root)) {
-            reporter.Status("updating props");
-            
-            Props.Write(root, manifest.RobloxCSVersion, []);
-            InvalidateRestore(root);
-        }
-
+    private bool CheckTypes(ProjectManifest manifest) {
         var projectVersion = manifest.RobloxCSVersion;
+
         if (projectVersion != TypesInstall.Version) {
             _console.MarkupLine(
                 $"[red]error:[/] this project targets RobloxCS [white]{Markup.Escape(projectVersion)}[/] " +
                 $"but this is rbxcsc [white]{Markup.Escape(TypesInstall.Version)}[/]"
             );
 
-            _console.MarkupLine("[cyan]note:[/] update [white]<RobloxCSVersion>[/] in Directory.Build.props, or switch rbxcsc with [white]rokit[/]");
+            _console.MarkupLine($"[cyan]note:[/] update [white]robloxcs[/] in {ProjectManifest.FileName}, or switch rbxcsc with [white]rokit[/]");
 
             return false;
         }
+
+        TypesInstall.EnsureInstalled();
 
         var typesPath = Path.Combine(TypesInstall.Root, projectVersion, "RobloxCS.Types.dll");
 
@@ -116,7 +124,13 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
         return true;
     }
 
-    private async Task<bool> RestoreAsync(string solution, BuildReporter reporter, CancellationToken cancellation) {
+    private static bool NeedsDotnetRestore(string root) {
+        return Directory
+            .EnumerateFiles(root, "*.csproj", SearchOption.AllDirectories)
+            .Any(project => !File.Exists(Path.Combine(Path.GetDirectoryName(project)!, "obj", "project.assets.json")));
+    }
+
+    private async Task<bool> DotnetRestoreAsync(string solution, CancellationToken cancellation) {
         var start = new ProcessStartInfo("dotnet", ["restore", solution]) {
             RedirectStandardOutput = true,
             RedirectStandardError = true,
@@ -155,17 +169,8 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
 
         var written = File.GetLastWriteTimeUtc(props);
 
-        return MaybeStaleFiles.Select(name => Path.Combine(root, name))
+        return MaybeStaleFiles
+            .Select(name => Path.Combine(root, name))
             .Any(path => File.Exists(path) && File.GetLastWriteTimeUtc(path) > written);
-    }
-    
-    private static void InvalidateRestore(string root) {
-        foreach (var project in Directory.EnumerateFiles(root, "*.csproj", SearchOption.AllDirectories)) {
-            var assets = Path.Combine(Path.GetDirectoryName(project)!, "obj", "project.assets.json");
-
-            if (File.Exists(assets)) {
-                File.Delete(assets);
-            }
-        }
     }
 }
