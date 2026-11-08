@@ -96,14 +96,14 @@ public sealed partial class HirLowerer {
 
     private List<Statement> LowerCompoundAssignment(HirCompoundAssignment compound) {
         if (IsComputedSourceProperty(compound.Target, out var access)) {
-            return LowerComputedCompound(access, compound.Op, compound.Value, null);
+            return LowerComputedCompound(access, compound.Op, compound.Value, compound.UserDefinedOperator);
         }
-
-        if (compound.UserDefinedOperator is null && ToCompoundOp(compound.Op, compound.Target.Type) is { } op) {
+ 
+        if (ToCompoundOp(compound) is { } op) {
             if (LowerAssignmentTarget(compound.Target) is not { } target) {
                 return [];
             }
-
+ 
             return [
                 new CompoundAssignmentStatement {
                     Left = target,
@@ -112,10 +112,26 @@ public sealed partial class HirLowerer {
                 },
             ];
         }
-
-        Unsupported("User-defined operators in compound assignments are not supported yet.", compound.Location);
-
-        return [];
+ 
+        Log.Verbose("Lowering compound {Operator} to a plain assignment", compound.Op);
+ 
+        return WithStableReceiver(compound.Target, target => {
+            if (LowerAssignmentTarget(target) is not { } lowered) {
+                return [];
+            }
+ 
+            var combined = new HirBinary {
+                Op = compound.Op,
+                Left = target,
+                Right = compound.Value,
+                OperatorMethod = compound.UserDefinedOperator,
+                IsChecked = false,
+                Type = target.Type,
+                Location = compound.Location,
+            };
+ 
+            return [Assign(lowered, LowerExpression(combined))];
+        });
     }
 
     private List<Statement> LowerReturn(HirReturn statement) {
@@ -363,5 +379,38 @@ public sealed partial class HirLowerer {
                 },
             },
         ];
+    }
+    
+    private List<Statement> WithStableReceiver(HirExpression target, Func<HirExpression, List<Statement>> lower) {
+        var receiver = target switch {
+            HirFieldAccess field => field.Receiver,
+            HirPropertyAccess property => property.Receiver,
+ 
+            _ => null,
+        };
+ 
+        if (receiver is null) {
+            return lower(target);
+        }
+ 
+        _conditionalReceivers.Push(HoistUnlessCheap(LowerExpression(receiver)));
+ 
+        try {
+            var stable = new HirConditionalReceiver {
+                Type = receiver.Type,
+                Location = receiver.Location,
+            };
+ 
+            HirExpression rebased = target switch {
+                HirFieldAccess field => field with { Receiver = stable },
+                HirPropertyAccess property => property with { Receiver = stable },
+ 
+                _ => target,
+            };
+ 
+            return lower(rebased);
+        } finally {
+            _conditionalReceivers.Pop();
+        }
     }
 }

@@ -7,6 +7,7 @@ using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.HIR;
 using RobloxCS.HIR.Expressions;
+using RobloxCS.HIR.Statements;
 using RobloxCS.Types;
 using Serilog;
 using static RobloxCS.Lowering.Luau;
@@ -420,14 +421,18 @@ public sealed partial class HirLowerer {
         };
     }
     
-    private static CompoundOp? ToCompoundOp(BinaryOperatorKind kind, ITypeSymbol type) {
+    private static CompoundOp? ToCompoundOp(HirCompoundAssignment compound) {
+        var type = compound.Target.Type;
         var integral = IsIntegral(type);
  
-        if (!integral && type.SpecialType is not (SpecialType.System_Single or SpecialType.System_Double)) {
+        var numeric = compound.UserDefinedOperator is null && (integral || type.SpecialType is SpecialType.System_Single or SpecialType.System_Double);
+        var dataType = compound.UserDefinedOperator is { } method && IsDataType(method.ContainingType, out _);
+ 
+        if (!numeric && !dataType) {
             return null;
         }
  
-        return kind switch {
+        return compound.Op switch {
             BinaryOperatorKind.Add => CompoundOp.PlusEqual,
             BinaryOperatorKind.Subtract => CompoundOp.MinusEqual,
             BinaryOperatorKind.Multiply => CompoundOp.StarEqual,
@@ -436,7 +441,6 @@ public sealed partial class HirLowerer {
             _ => null,
         };
     }
-
 
     private static bool IsIntegral(ITypeSymbol type) {
         return type.SpecialType is SpecialType.System_SByte or SpecialType.System_Byte
