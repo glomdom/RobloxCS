@@ -261,6 +261,16 @@ public sealed partial class HirBuilder {
                 };
             }
 
+            case OperationKind.Unary when operation is IUnaryOperation unaryOperation: {
+                return new HirUnary {
+                    Location = unaryOperation.Syntax.GetLocation(),
+                    Type = unaryOperation.Type!,
+                    Op = unaryOperation.OperatorKind,
+                    Operand = BuildExpression(unaryOperation.Operand),
+                    OperatorMethod = unaryOperation.OperatorMethod,
+                };
+            }
+
             default: {
                 throw new NotSupportedException($"Expression operation kind '{operation.Kind}' is not supported.");
             }
