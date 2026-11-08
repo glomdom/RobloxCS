@@ -21,9 +21,24 @@ public sealed partial class HirBuilder {
             OperationKind.Branch => HandleBranch((IBranchOperation)operation),
             OperationKind.Return => HandleReturn((IReturnOperation)operation),
             OperationKind.ConditionalAccess => HandleConditionalAccess((IConditionalAccessOperation)operation),
+            OperationKind.CompoundAssignment => HandleCompoundAssignment((ICompoundAssignmentOperation)operation),
 
             _ => throw new NotSupportedException($"Statement operation of kind '{operation.Kind}' is not supported."),
         };
+
+        HirStatement HandleCompoundAssignment(ICompoundAssignmentOperation compoundAssignmentOperation) {
+            if (compoundAssignmentOperation.IsLifted) {
+                throw new NotSupportedException("Compound assignment on nullable values is not supported yet.");
+            }
+
+            return new HirCompoundAssignment {
+                Location = compoundAssignmentOperation.Syntax.GetLocation(),
+                Target = BuildExpression(compoundAssignmentOperation.Target),
+                Op = compoundAssignmentOperation.OperatorKind,
+                Value = BuildExpression(compoundAssignmentOperation.Value),
+                UserDefinedOperator = compoundAssignmentOperation.OperatorMethod,
+            };
+        }
 
         HirStatement HandleConditionalAccess(IConditionalAccessOperation conditionalAccessOperation) {
             return new HirConditionalStatement {

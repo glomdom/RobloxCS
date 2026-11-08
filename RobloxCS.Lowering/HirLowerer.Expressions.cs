@@ -419,6 +419,24 @@ public sealed partial class HirLowerer {
             _ => null,
         };
     }
+    
+    private static CompoundOp? ToCompoundOp(BinaryOperatorKind kind, ITypeSymbol type) {
+        var integral = IsIntegral(type);
+ 
+        if (!integral && type.SpecialType is not (SpecialType.System_Single or SpecialType.System_Double)) {
+            return null;
+        }
+ 
+        return kind switch {
+            BinaryOperatorKind.Add => CompoundOp.PlusEqual,
+            BinaryOperatorKind.Subtract => CompoundOp.MinusEqual,
+            BinaryOperatorKind.Multiply => CompoundOp.StarEqual,
+            BinaryOperatorKind.Divide when !integral => CompoundOp.SlashEqual,
+ 
+            _ => null,
+        };
+    }
+
 
     private static bool IsIntegral(ITypeSymbol type) {
         return type.SpecialType is SpecialType.System_SByte or SpecialType.System_Byte
