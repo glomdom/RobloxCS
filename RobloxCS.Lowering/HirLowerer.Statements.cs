@@ -130,7 +130,7 @@ public sealed partial class HirLowerer {
         return [Return(LowerExpression(statement.Value))];
     }
 
-    private List<Statement> LowerContinue(HirContinue statement) {
+    private List<Statement> LowerContinue(HirContinue _) {
         var statements = new List<Statement>();
 
         if (_continueIncrementors.TryPeek(out var incrementors) && incrementors.Count > 0) {
