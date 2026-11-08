@@ -368,6 +368,8 @@ public class RendererWalker : AstVisitorBase {
         switch (node.Operator) {
             case CompoundOp.PlusEqual: _state.Builder.Append(" += "); break;
             case CompoundOp.MinusEqual: _state.Builder.Append(" -= "); break;
+            case CompoundOp.StarEqual: _state.Builder.Append(" *= "); break;
+            case CompoundOp.SlashEqual: _state.Builder.Append(" /= "); break;
 
             default: throw new ArgumentOutOfRangeException(nameof(node), node.Operator, "Unhandled compound operator in VisitCompoundAssignmentStatement");
         }
