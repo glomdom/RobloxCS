@@ -31,9 +31,6 @@ public sealed partial class HirLowerer {
     }
 
     public Chunk Lower(HirModule module) {
-        // TODO: prologue should require the runtime List:
-        //   local List = require(game:GetService("ReplicatedStorage"):WaitForChild("robloxcs"):WaitForChild("RuntimeLib"):WaitForChild("List"))
-
         using var _ = LoggerSetup.PushPass("Lowering");
 
         Log.Information("Lowering {SourcePath} as a {ScriptType} script ({TypeCount} types)", module.SourcePath, ScriptType, module.Types.Length);
@@ -43,7 +40,21 @@ public sealed partial class HirLowerer {
         }
 
         var statements = new List<Statement>();
+        var lowered = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
         foreach (var type in module.Types) {
+            LowerWithBase(type);
+        }
+
+        void LowerWithBase(RobloxCS.HIR.Declarations.HirType type) {
+            if (!lowered.Add(type.Symbol)) {
+                return;
+            }
+
+            var parent = module.Types.FirstOrDefault(candidate => SymbolEqualityComparer.Default.Equals(candidate.Symbol, type.Symbol.BaseType));
+            if (parent is not null) {
+                LowerWithBase(parent);
+            }
+
             statements.AddRange(LowerTopLevelType(type));
         }
 

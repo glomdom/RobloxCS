@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
+using RobloxCS.AST.Types;
 using RobloxCS.HIR;
 using RobloxCS.HIR.Declarations;
 using Serilog;
@@ -32,8 +33,8 @@ public sealed partial class HirLowerer {
             return [];
         }
 
-        if (symbol.BaseType is { SpecialType: not SpecialType.System_Object }) {
-            Unsupported("Inheritance is not supported yet.", type.Location);
+        if (symbol.BaseType is { SpecialType: not SpecialType.System_Object } baseType && !IsTranspiledType(baseType)) {
+            Unsupported("Inheriting from external classes is not supported yet.", type.Location);
 
             return [];
         }
@@ -49,6 +50,12 @@ public sealed partial class HirLowerer {
 
         var statements = new List<Statement> { Local(name, Table()) };
 
+        if (symbol.BaseType is { SpecialType: not SpecialType.System_Object } parent) {
+            var metatable = Table();
+            metatable.Fields.Add(new NameKey { Key = "__index", Value = Name(ReferenceType(parent, type.Location)) });
+            statements.Add(Stmt(Call("setmetatable", Name(name), metatable)));
+        }
+
         if (!symbol.IsStatic) {
             statements.Add(Assign(Index(name, "__index"), Name(name)));
 
@@ -58,7 +65,7 @@ public sealed partial class HirLowerer {
                 statements.Add(TypeDecl(FieldsTypeName(name), TableType(instanceFields.Select(field => (field.Symbol.SlotName(), LowerFieldType(field))))));
             }
 
-            statements.Add(TypeDecl(name, Typeof(NewInstance(name, instanceFields.Count > 0)), true));
+            statements.Add(TypeDecl(name, LowerInstanceType(symbol), true));
         }
 
         foreach (var field in staticFields) {
@@ -73,7 +80,7 @@ public sealed partial class HirLowerer {
 
         var seen = new HashSet<string>(StringComparer.Ordinal);
 
-        foreach (var method in type.Methods.Where(method => !method.IsConstructor)) {
+        foreach (var method in type.Methods.Where(method => !method.IsConstructor && !method.Symbol.IsAbstract)) {
             if (method.Symbol.MethodKind is not (MethodKind.Ordinary or MethodKind.PropertyGet or MethodKind.PropertySet)) {
                 Unsupported($"'{method.Symbol.MethodKind}' members are not supported yet.", method.Location);
 
@@ -90,6 +97,33 @@ public sealed partial class HirLowerer {
         }
 
         return statements;
+    }
+
+    private TypeInfo LowerInstanceType(INamedTypeSymbol symbol) {
+        var fields = new Dictionary<string, TypeInfo>(StringComparer.Ordinal);
+
+        for (var current = symbol; current is { SpecialType: not SpecialType.System_Object }; current = current.BaseType) {
+            foreach (var field in current.GetMembers().OfType<IFieldSymbol>().Where(field => !field.IsStatic)) {
+                fields.TryAdd(field.SlotName(), LowerType(field.Type, field.Locations.FirstOrDefault() ?? Location.None));
+            }
+
+            foreach (var method in current.GetMembers().OfType<IMethodSymbol>().Where(method => !method.IsStatic && method.MethodKind is MethodKind.Ordinary or MethodKind.PropertyGet or MethodKind.PropertySet)) {
+                if (method.AssociatedSymbol is IPropertySymbol property && property.IsAutoProperty() && !property.IsVirtual && !property.IsOverride) {
+                    continue;
+                }
+
+                fields.TryAdd(method.SlotName(), new CallbackTypeInfo {
+                    Arguments = [
+                        TypeArgument.From("self", Type("any")),
+                        .. method.Parameters.Select(parameter => TypeArgument.From(parameter.Name, LowerType(parameter.Type, parameter.Locations.FirstOrDefault() ?? Location.None))),
+                    ],
+                    ReturnType = LowerType(method.ReturnType, method.Locations.FirstOrDefault() ?? Location.None),
+                });
+            }
+        }
+
+        // Structural instance types allow derived values wherever a base instance is expected.
+        return TableType(fields.Select(field => (field.Key, field.Value)));
     }
 
     private List<Statement> LowerConstructor(HirType type, string name, List<HirField> instanceFields) {
@@ -112,7 +146,15 @@ public sealed partial class HirLowerer {
         _names.BeginFunction();
 
         var parameters = constructor is null ? [] : LowerParameters(constructor.Parameters);
-        var body = new List<Statement> { Local("self", NewInstance(name, instanceFields.Count > 0)) };
+        var arguments = constructor is null ? new List<Expression>() : constructor.Parameters.Select(parameter => (Expression)Name(_names.NameFor(parameter.Symbol))).ToList();
+        var factory = new List<Statement> {
+            Local("self", Cast(new ParenthesisExpression { Expression = Cast(NewInstance(name, instanceFields.Count > 0), Type("any")) }, Type(name))),
+            Stmt(Call(Index(name, "__init"), [Name("self"), .. arguments])),
+            Return(Name("self")),
+        };
+        var factoryMethod = Function(name, "new", [.. parameters], Type(name), factory);
+        parameters.Insert(0, ("self", Type("any")));
+        var body = new List<Statement>();
 
         foreach (var field in instanceFields) {
             Log.Verbose(
@@ -120,9 +162,14 @@ public sealed partial class HirLowerer {
                 name, field.Symbol.SlotName(), field.Initializer is null ? "its default value" : "its initializer"
             );
 
-            body.Add(Assign(Index("self", field.Symbol.SlotName()), LowerFieldValue(field)));
+            body.AddRange(_names.Capture(() => _names.Emit(Assign(Index("self", field.Symbol.SlotName()), LowerFieldValue(field)))));
         }
 
+        if (constructor?.Initializer is { } initializer) {
+            var args = new List<Expression> { Name("self") };
+            body.AddRange(_names.Capture(() => args.AddRange(initializer.Arguments.Select(argument => LowerExpression(argument.Value)))));
+            body.Add(Stmt(Call(Index(ReferenceType(initializer.Method.ContainingType, initializer.Location), "__init"), args)));
+        }
 
         if (constructor is { IsImplicit: false }) {
             _returnsSelf = true;
@@ -134,7 +181,7 @@ public sealed partial class HirLowerer {
 
         body.Add(Return(Name("self")));
 
-        return [Function(name, "new", parameters, Type(name), body)];
+        return [Function(name, "__init", parameters, Type("any"), body), factoryMethod];
     }
 
     private List<Statement> LowerMethod(string className, HirMethod method) {
@@ -161,7 +208,7 @@ public sealed partial class HirLowerer {
 
         Log.Verbose("Lowered {ClassName}.{MethodName} into {StatementCount} statements", className, method.Symbol.Name, body.Count);
 
-        return [Function(className, method.Symbol.Name, parameters, returnType, body)];
+        return [Function(className, method.Symbol.SlotName(), parameters, returnType, body)];
     }
 
     private List<(string Name, TypeInfo Type)> LowerParameters(ImmutableArray<HirParameter> hirParameters) {

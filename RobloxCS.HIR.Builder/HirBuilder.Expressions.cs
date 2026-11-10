@@ -135,6 +135,7 @@ public sealed partial class HirBuilder {
                 
                 if (instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance) {
                     return new HirThis {
+                        IsBase = instanceReferenceOperation.Syntax is BaseExpressionSyntax,
                         Location = instanceReferenceOperation.Syntax.GetLocation(),
                         Type = instanceReferenceOperation.Type!,
                     };

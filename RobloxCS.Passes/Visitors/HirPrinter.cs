@@ -429,7 +429,7 @@ public sealed class HirPrinter : HirVisitor {
     }
 
     protected override void VisitThis(HirThis node) {
-        Line("[cyan]this[/]");
+        Line(node.IsBase ? "[cyan]base[/]" : "[cyan]this[/]");
     }
 
     private void Line(string markup) {

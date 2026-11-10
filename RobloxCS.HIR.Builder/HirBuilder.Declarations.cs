@@ -31,11 +31,11 @@ public sealed partial class HirBuilder {
                     break;
                 }
 
-                case IMethodSymbol { MethodKind: MethodKind.PropertyGet or MethodKind.PropertySet, AssociatedSymbol: IPropertySymbol owner } when owner.IsAutoProperty(): {
+                case IMethodSymbol { MethodKind: MethodKind.PropertyGet or MethodKind.PropertySet, AssociatedSymbol: IPropertySymbol owner } when owner.IsAutoProperty() && !owner.IsVirtual && !owner.IsOverride: {
                     break;
                 }
                 
-                case IMethodSymbol { MethodKind: MethodKind.PropertyGet or MethodKind.PropertySet } accessor when !accessor.HasAccessorBody(): {
+                case IMethodSymbol { MethodKind: MethodKind.PropertyGet or MethodKind.PropertySet } accessor when !accessor.IsAbstract && !accessor.HasAccessorBody(): {
                     methods.Add(BuildSynthesizedAccessor(accessor));
 
                     break;
@@ -122,11 +122,12 @@ public sealed partial class HirBuilder {
         var isEntryPoint = IsEntryPoint(method);
 
         var parameters = method.Parameters.Select(BuildParameter).ToList();
-        var block = isImplicitCtor ? BuildImplicitConstructorBlock(method) : BuildMethodBlock(method);
+        var block = isImplicitCtor || method.IsAbstract ? new HirBlock { Location = Location.None, Statements = [], Locals = [] } : BuildMethodBlock(method);
 
         return new HirMethod {
             Location = method.Locations.ResolveSingle(),
             Symbol = method,
+            Initializer = isCtor ? BuildConstructorInitializer(method) : null,
             Parameters = [.. parameters],
             TypeParameters = [], // todo
             Block = block,
@@ -134,6 +135,40 @@ public sealed partial class HirBuilder {
             IsConstructor = isCtor,
             IsEntryPoint = isEntryPoint,
             IsImplicit = method is { IsImplicitlyDeclared: true },
+        };
+    }
+
+    private HirCall? BuildConstructorInitializer(IMethodSymbol method) {
+        var syntax = method.DeclaringSyntaxReferences.FirstOrDefault()?.GetSyntax();
+        if (syntax is ConstructorDeclarationSyntax constructor &&
+            Semantics.GetOperation(constructor) is IConstructorBodyOperation { Initializer: IExpressionStatementOperation { Operation: IInvocationOperation invocation } }) {
+            if (invocation.TargetMethod.ContainingType.SpecialType != SpecialType.System_Object) {
+                return (HirCall)BuildExpression(invocation);
+            }
+        }
+
+        if (method.ContainingType.BaseType is not { SpecialType: not SpecialType.System_Object } baseType) {
+            return null;
+        }
+
+        var target = baseType.InstanceConstructors.FirstOrDefault(ctor => ctor.Parameters.Length == 0)
+            ?? baseType.InstanceConstructors.First(ctor => ctor.Parameters.All(parameter => parameter.HasExplicitDefaultValue));
+
+        return new HirCall {
+            Location = method.Locations.ResolveSingle(),
+            Type = method.ReturnType,
+            Method = target,
+            Receiver = null,
+            Arguments = [.. target.Parameters.Select(parameter => new HirArgument {
+                Location = method.Locations.ResolveSingle(),
+                Symbol = parameter,
+                Value = new HirLiteral {
+                    Location = method.Locations.ResolveSingle(),
+                    Type = parameter.Type,
+                    Value = parameter.ExplicitDefaultValue,
+                },
+            })],
+            IsExtension = false,
         };
     }
 
@@ -167,41 +202,6 @@ public sealed partial class HirBuilder {
         };
     }
 
-    private HirBlock BuildImplicitConstructorBlock(IMethodSymbol method) {
-        Log.Debug("Reconstructing implicit constructor {MethodName}", method.Name);
-
-        if (method.DeclaringSyntaxReferences.FirstOrDefault() is not null) {
-            throw new InvalidOperationException("Implicit constructor contains a declaring syntax.");
-        }
-
-        if (method.ContainingSymbol is not INamedTypeSymbol cls) {
-            throw new NotSupportedException("Reconstructing implicit constructor is not supported for types other than classes.");
-        }
-
-        var statements = new List<HirStatement>();
-        var locals = new List<ILocalSymbol>();
-
-        foreach (var fieldSymbol in cls.GetMembers().OfType<IFieldSymbol>()) {
-            if (fieldSymbol.IsStatic || fieldSymbol.IsConst || fieldSymbol.IsImplicitlyDeclared) {
-                continue;
-            }
-
-            var syntax = Semantics.GetFirstSyntaxFromSymbol<VariableDeclaratorSyntax>(fieldSymbol);
-            if (syntax.Initializer is null) {
-                continue;
-            }
-
-            var fieldOperation = Semantics.CheckedGetOperation<IFieldInitializerOperation>(syntax.Initializer);
-
-            Log.Verbose("Added field {FieldSymbolName} to synthesized ctor ({LocalCount} locals)", fieldSymbol.Name, fieldOperation.Locals.Length);
-
-            locals.AddRange(fieldOperation.Locals);
-            statements.Add(BuildStatement(fieldOperation));
-        }
-
-        return new HirBlock { Location = Location.None, Statements = [.. statements], Locals = [.. locals] };
-    }
-    
     private HirField BuildBackingField(IFieldSymbol backing, IPropertySymbol property) {
         var syntax = Semantics.GetFirstSyntaxFromSymbol<PropertyDeclarationSyntax>(property);
 

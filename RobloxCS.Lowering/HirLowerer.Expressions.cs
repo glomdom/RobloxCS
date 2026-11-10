@@ -313,7 +313,7 @@ public sealed partial class HirLowerer {
         if (method.IsStatic) {
             Log.Verbose("Lowering static call {ClassName}.{MethodName} with {ArgumentCount} arguments", method.ContainingType.Name, method.Name, args.Count);
 
-            return Call(Index(ReferenceType(method.ContainingType, call.Location), method.Name), args);
+            return Call(Index(ReferenceType(method.ContainingType, call.Location), method.SlotName()), args);
         }
 
         Log.Verbose(
@@ -323,7 +323,11 @@ public sealed partial class HirLowerer {
 
         var receiver = call.Receiver is null ? Name("self") : LowerExpression(call.Receiver);
 
-        return MethodCall(receiver, method.Name, args);
+        if (call.Receiver is HirThis { IsBase: true } || !method.IsVirtual && !method.IsOverride && !method.IsAbstract) {
+            return Call(Index(ReferenceType(method.ContainingType, call.Location), method.SlotName()), [receiver, .. args]);
+        }
+
+        return MethodCall(receiver, method.SlotName(), args);
     }
     
     private Expression LowerBinary(HirBinary binary) {

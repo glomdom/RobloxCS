@@ -59,7 +59,7 @@ public class Regression {
     private static string RunWithLuau(string path) {
         var startInfo = new ProcessStartInfo {
             FileName = "luau",
-            Arguments = path,
+            ArgumentList = { path },
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
@@ -97,7 +97,7 @@ public class Regression {
     private static bool TypecheckWithLuau(string path) {
         var startInfo = new ProcessStartInfo {
             FileName = "luau-analyze",
-            Arguments = path,
+            ArgumentList = { path },
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
@@ -107,12 +107,13 @@ public class Regression {
         try {
             process = Process.Start(startInfo);
         } catch (Exception ex) {
-            throw new Exception("luau-analuze is not installed or not on PATH.", ex);
+            throw new Exception("luau-analyze is not installed or not on PATH.", ex);
         }
 
         if (process is null) throw new Exception("Failed to start luau.");
 
         // waiting first deadlocks >4kb
+        var stdoutTask = process.StandardOutput.ReadToEndAsync();
         var stderrTask = process.StandardError.ReadToEndAsync();
 
         if (!process.WaitForExit(30_000)) {
@@ -121,10 +122,11 @@ public class Regression {
             throw new Exception($"luau-analyze timed out after 30s running '{path}'.");
         }
 
+        var stdout = stdoutTask.GetAwaiter().GetResult();
         var stderr = stderrTask.GetAwaiter().GetResult();
 
         if (process.ExitCode != 0) {
-            throw new Exception($"luau-analyze failed running '{path}'.\n{stderr}");
+            throw new Exception($"luau-analyze failed running '{path}'.\n{stdout}\n{stderr}");
         }
 
         return true;
@@ -143,7 +145,7 @@ public class Regression {
         foreach (var path in inputs.OrderBy(static p => p, StringComparer.Ordinal)) {
             var name = Path.GetFileNameWithoutExtension(path);
 
-            yield return new TestCaseData(name).SetName(name);
+            yield return new TestCaseData(name).SetName($"{{m}}({name})");
         }
     }
 

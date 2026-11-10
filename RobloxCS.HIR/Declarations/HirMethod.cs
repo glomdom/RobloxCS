@@ -1,10 +1,13 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using RobloxCS.HIR.Statements;
+using RobloxCS.HIR.Expressions;
 
 namespace RobloxCS.HIR.Declarations;
 
 public sealed record HirMethod : HirDeclaration {
+    public HirCall? Initializer { get; init; }
+
     public required IMethodSymbol Symbol { get; init; }
 
     public required ImmutableArray<HirParameter> Parameters { get; init; }
