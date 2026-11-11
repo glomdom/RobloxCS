@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.HIR;
@@ -8,6 +9,8 @@ using static RobloxCS.Lowering.Luau;
 namespace RobloxCS.Lowering;
 
 public sealed partial class HirLowerer {
+    private IMethodSymbol? _initializingConstructor;
+
     private List<Statement> LowerConstructor(HirType type, string name, List<HirField> instanceFields) {
         var constructors = type.Methods.Where(method => method.IsConstructor).ToList();
         if (constructors.Count > 1) {
@@ -36,22 +39,7 @@ public sealed partial class HirLowerer {
         };
         var factoryMethod = Function(name, "new", [.. parameters], Type(name), factory);
         parameters.Insert(0, ("self", Type("any")));
-        var body = new List<Statement>();
-
-        foreach (var field in instanceFields) {
-            Log.Verbose(
-                "Initializing field {ClassName}.{FieldName} from {Source}",
-                name, field.Symbol.SlotName(), field.Initializer is null ? "its default value" : "its initializer"
-            );
-
-            body.AddRange(_names.Capture(() => _names.Emit(Assign(Index("self", field.Symbol.SlotName()), LowerFieldValue(field)))));
-        }
-
-        if (constructor?.Initializer is { } initializer) {
-            var args = new List<Expression> { Name("self") };
-            body.AddRange(_names.Capture(() => args.AddRange(LowerArguments(initializer.Arguments))));
-            body.Add(Stmt(Call(Index(ReferenceType(initializer.Method.ContainingType, initializer.Location), "__init"), args)));
-        }
+        var body = LowerConstructorInitializers(constructor, name, instanceFields);
 
         if (constructor is { IsImplicit: false }) {
             _returnsSelf = true;
@@ -64,6 +52,34 @@ public sealed partial class HirLowerer {
         body.Add(Return(Name("self")));
 
         return [Function(name, "__init", parameters, Type("any"), body), factoryMethod];
+    }
+
+    private List<Statement> LowerConstructorInitializers(HirMethod? constructor, string name, List<HirField> instanceFields) {
+        var previous = _initializingConstructor;
+        _initializingConstructor = constructor?.Symbol;
+
+        try {
+            var body = new List<Statement>();
+
+            foreach (var field in instanceFields.OrderBy(field => field.Symbol.CapturedPrimaryParameter() is null ? 1 : 0)) {
+                Log.Verbose(
+                    "Initializing field {ClassName}.{FieldName} from {Source}",
+                    name, field.Symbol.SlotName(), field.Initializer is null ? "its default value" : "its initializer"
+                );
+
+                body.AddRange(_names.Capture(() => _names.Emit(Assign(Index("self", field.Symbol.SlotName()), LowerFieldValue(field)))));
+            }
+
+            if (constructor?.Initializer is { } initializer) {
+                var args = new List<Expression> { Name("self") };
+                body.AddRange(_names.Capture(() => args.AddRange(LowerArguments(initializer.Arguments))));
+                body.Add(Stmt(Call(Index(ReferenceType(initializer.Method.ContainingType, initializer.Location), "__init"), args)));
+            }
+
+            return body;
+        } finally {
+            _initializingConstructor = previous;
+        }
     }
 
     private static Expression NewInstance(string name, bool hasFields) {

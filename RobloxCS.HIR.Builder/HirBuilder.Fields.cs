@@ -9,6 +9,20 @@ namespace RobloxCS.HIR.Builder;
 
 public sealed partial class HirBuilder {
     public HirField BuildField(IFieldSymbol field) {
+        if (field.CapturedPrimaryParameter() is { } parameter) {
+            return new HirField {
+                Location = parameter.Locations.ResolveSingle(),
+                Symbol = field,
+                Name = field.SlotName(),
+                IsStatic = false,
+                Initializer = new HirParameterRef {
+                    Location = parameter.Locations.ResolveSingle(),
+                    Type = parameter.Type,
+                    Symbol = parameter,
+                },
+            };
+        }
+
         if (field.IsImplicitlyDeclared) {
             Log.Verbose("Skipping {FieldName} as it is implicitly declared", field.Name);
         }
