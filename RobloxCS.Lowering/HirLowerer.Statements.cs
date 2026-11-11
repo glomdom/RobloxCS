@@ -62,6 +62,10 @@ public sealed partial class HirLowerer {
                 return LowerFor(loop);
             }
 
+            case HirDoWhile loop: {
+                return LowerDoWhile(loop);
+            }
+
             case HirWhile loop: {
                 return LowerWhile(loop);
             }
@@ -227,6 +231,35 @@ public sealed partial class HirLowerer {
         return [
             new DoStatement {
                 Block = new Block { Statements = [..initializers, whileLoop] },
+            },
+        ];
+    }
+
+    private List<Statement> LowerDoWhile(HirDoWhile loop) {
+        var first = _names.FreshTemp("firstIteration");
+        var (condition, preludes) = LowerCaptured(loop.Condition);
+        _continueIncrementors.Push([]);
+        var body = LowerBlock(loop.Body);
+        _continueIncrementors.Pop();
+
+        return [
+            Local(first, Bool(true)),
+            new WhileStatement {
+                Condition = Bool(true),
+                Block = BlockOf([
+                    new IfStatement {
+                        Condition = new UnaryOperatorExpression { UnOp = UnOp.Not, Expression = Name(first) },
+                        Block = BlockOf([
+                            ..preludes,
+                            new IfStatement {
+                                Condition = new UnaryOperatorExpression { UnOp = UnOp.Not, Expression = condition },
+                                Block = BlockOf([new BreakStatement()]),
+                            },
+                        ]),
+                    },
+                    Assign(VarName.FromString(first), Bool(false)),
+                    ..body,
+                ]),
             },
         ];
     }
