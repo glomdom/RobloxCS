@@ -23,7 +23,7 @@ public sealed partial class HirLowerer {
             }
 
             case HirParameterRef parameter: {
-                return Name(_names.NameFor(parameter.Symbol));
+                return LowerParameterReference(parameter.Symbol);
             }
 
             case HirThis: {

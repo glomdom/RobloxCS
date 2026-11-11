@@ -17,7 +17,7 @@ public sealed partial class HirBuilder {
         var isEntryPoint = IsEntryPoint(method);
 
         var parameters = method.Parameters.Select(BuildParameter).ToList();
-        var block = isImplicitCtor || method.IsAbstract ? new HirBlock { Location = Location.None, Statements = [], Locals = [] } : BuildMethodBlock(method);
+        var block = isImplicitCtor || method.IsPrimaryConstructor() || method.IsAbstract ? new HirBlock { Location = Location.None, Statements = [], Locals = [] } : BuildMethodBlock(method);
 
         return new HirMethod {
             Location = method.Locations.ResolveSingle(),
@@ -35,6 +35,17 @@ public sealed partial class HirBuilder {
 
     private HirCall? BuildConstructorInitializer(IMethodSymbol method) {
         var syntax = method.DeclaringSyntaxReferences.FirstOrDefault()?.GetSyntax();
+        if (syntax is ClassDeclarationSyntax { BaseList: { } baseList } && method.IsPrimaryConstructor()) {
+            var primaryBase = baseList.Types.OfType<PrimaryConstructorBaseTypeSyntax>().FirstOrDefault();
+            if (primaryBase is not null) {
+                var baseInvocation = Semantics.CheckedGetOperation<IInvocationOperation>(primaryBase);
+
+                if (baseInvocation.TargetMethod.ContainingType.SpecialType != SpecialType.System_Object) {
+                    return (HirCall)BuildExpression(baseInvocation);
+                }
+            }
+        }
+
         if (syntax is ConstructorDeclarationSyntax constructor &&
             Semantics.GetOperation(constructor) is IConstructorBodyOperation { Initializer: IExpressionStatementOperation { Operation: IInvocationOperation invocation } }) {
             if (invocation.TargetMethod.ContainingType.SpecialType != SpecialType.System_Object) {

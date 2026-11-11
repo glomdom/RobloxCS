@@ -6,6 +6,15 @@ public static class SymbolSlotExtensions {
     public static string InterfaceTypeName(this INamedTypeSymbol type) => "__interfaceType_" + EncodeSlot(type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
 
     public static string SlotName(this IFieldSymbol field) {
+        if (field.CapturedPrimaryParameter() is { } parameter) {
+            var slotName = "__primary_" + EncodeSlot(field.ContainingType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)) + "_" + EncodeSlot(parameter.Name);
+            while (HasMemberInHierarchy(field.ContainingType, slotName)) {
+                slotName += "_";
+            }
+
+            return slotName;
+        }
+
         if (field.AssociatedSymbol is IPropertySymbol { ExplicitInterfaceImplementations.Length: > 0 } explicitProperty) {
             return "__property_" + EncodeSlot(explicitProperty.ExplicitInterfaceImplementations[0].ToDisplayString());
         }
@@ -53,6 +62,16 @@ public static class SymbolSlotExtensions {
 
     private static string EncodeSlot(string value) =>
         string.Concat(value.Select(character => char.IsAsciiLetterOrDigit(character) ? character.ToString() : $"_{(int)character:x4}"));
+
+    private static bool HasMemberInHierarchy(INamedTypeSymbol type, string name) {
+        for (var current = type; current is not null; current = current.BaseType) {
+            if (current.GetMembers(name).Length > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     private static bool HidesBaseMember(INamedTypeSymbol type, string name) {
         for (var current = type.BaseType; current is { SpecialType: not SpecialType.System_Object }; current = current.BaseType) {

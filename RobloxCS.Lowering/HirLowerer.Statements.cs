@@ -323,7 +323,7 @@ public sealed partial class HirLowerer {
             }
 
             case HirParameterRef parameter: {
-                return VarName.FromString(_names.NameFor(parameter.Symbol));
+                return LowerParameterReference(parameter.Symbol);
             }
 
             case HirPropertyAccess prop: {
