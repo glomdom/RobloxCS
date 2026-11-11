@@ -9,6 +9,7 @@ internal class Enums {
 
     private static Access Fetch() {
         Console.WriteLine("fetch");
+
         return Access.Write;
     }
 
@@ -20,25 +21,33 @@ internal class Enums {
     internal void Run() {
         Console.WriteLine((int)Current);
         Current = Direction.West;
+
         Console.WriteLine((int)Echo(Current));
         Console.WriteLine((int)Direction.Alias);
         Console.WriteLine((int)Direction.Negative);
         Console.WriteLine((int)(Direction)42);
+
         Direction zero = 0;
+
         Console.WriteLine((int)zero);
         if (Direction.Alias == Direction.South) {
             Console.WriteLine("alias");
         }
+
         Direction? optional = Direction.East;
         Console.WriteLine((int)(optional ?? Direction.North));
+
         Permissions |= Fetch();
+
         Console.WriteLine((int)Permissions);
         Console.WriteLine((int)(Permissions & Access.Write));
         Console.WriteLine((int)(Permissions ^ Access.Read));
         Console.WriteLine((int)~Permissions);
         Console.WriteLine((int)~SignedBits.None);
         Console.WriteLine((int)(SignedBits.High | (SignedBits)1));
+
         var large = 258;
+
         Console.WriteLine((int)(Access)large);
         Console.WriteLine((int)(Direction)(-2.9));
         Console.WriteLine((long)Wide.Value);
@@ -54,6 +63,7 @@ internal class Enums {
         Console.WriteLine(SignedBits.All);
         Console.WriteLine((int)Initial);
         Console.WriteLine((uint)~UnsignedBits.None);
+
         var value = (Direction)3;
         if (value <= Direction.West && value >= Direction.North) {
             Console.WriteLine("range");
