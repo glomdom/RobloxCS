@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
@@ -120,5 +120,36 @@ public sealed partial class HirLowerer {
 
     private Expression LowerPropertyReceiver(HirPropertyAccess access) {
         return access.Receiver is null ? Name("self") : LowerExpression(access.Receiver);
+    }
+
+    private Expression LowerPropertyAccess(HirPropertyAccess access) {
+        if (TryLowerDataTypeProperty(access, out var dataTypeProperty)) {
+            return dataTypeProperty;
+        }
+
+        if (access.Symbol.IsSourceProperty()) {
+            return LowerSourcePropertyRead(access);
+        }
+
+        var property = access.Symbol;
+        if (property.IsStatic && TryGetServiceName(property, out var service)) {
+            return MethodCall(Name("game"), "GetService", Str(service));
+        }
+
+        var name = RobloxNameOf(property);
+        if (!property.IsStatic) {
+            return Index(access.Receiver is null ? Name("self") : LowerExpression(access.Receiver), name);
+        }
+
+        Unsupported($"Static property '{property.ToDisplayString()}' is not supported yet.", access.Location);
+
+        return Nil();
+    }
+
+    private static bool TryGetServiceName(IPropertySymbol property, out string name) {
+        var attribute = property.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == "RobloxServiceAttribute");
+        name = attribute?.ConstructorArguments[0].Value as string ?? string.Empty;
+
+        return attribute is not null;
     }
 }

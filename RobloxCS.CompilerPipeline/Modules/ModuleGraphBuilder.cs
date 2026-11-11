@@ -25,7 +25,7 @@ public static class ModuleGraphBuilder {
                 var model = plan.Compilation.GetSemanticModel(tree);
                 var location = LocationOf(plan, document);
 
-                foreach (var declaration in (await tree.GetRootAsync(cancellation)).DescendantNodes().OfType<TypeDeclarationSyntax>()) {
+                foreach (var declaration in (await tree.GetRootAsync(cancellation)).DescendantNodes().OfType<BaseTypeDeclarationSyntax>()) {
                     if (model.GetDeclaredSymbol(declaration, cancellation) is not { } symbol) {
                         continue;
                     }

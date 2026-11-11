@@ -10,6 +10,10 @@ namespace RobloxCS.HIR.Builder;
 public sealed partial class HirBuilder {
     public HirExpression BuildExpression(IOperation operation) {
         switch (operation.Kind) {
+            case OperationKind.DefaultValue: {
+                return new HirDefault { Location = operation.Syntax.GetLocation(), Type = operation.Type! };
+            }
+
             case OperationKind.Literal when operation is ILiteralOperation literalOperation: {
                 return HandleLiteralOperation(literalOperation);
             }
@@ -311,7 +315,7 @@ public sealed partial class HirBuilder {
                 : HirConversionKind.NullableUnwrap;
         }
 
-        if (conversion.IsNumeric || conversion.IsConstantExpression) {
+        if (conversion.IsNumeric || conversion.IsConstantExpression || conversion.IsEnumeration) {
             return HirConversionKind.Numeric;
         }
 

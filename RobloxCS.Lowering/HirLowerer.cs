@@ -1,4 +1,3 @@
-using System.Text;
 using Microsoft.CodeAnalysis;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
@@ -41,7 +40,7 @@ public sealed partial class HirLowerer {
 
         var statements = new List<Statement>();
         var lowered = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
-        foreach (var type in module.Types) {
+        foreach (var type in module.Types.OrderBy(type => type.Symbol.TypeKind == TypeKind.Enum ? 0 : 1)) {
             LowerWithBase(type);
         }
 
@@ -55,25 +54,25 @@ public sealed partial class HirLowerer {
                 LowerWithBase(parent);
             }
 
-            statements.AddRange(LowerTopLevelType(type));
+            statements.AddRange(LowerTypeDeclaration(type));
         }
 
         statements.AddRange(LowerEntryPoint(module));
-        
+
         if (ScriptType == ScriptType.Module) {
             statements.Add(Return(new TableConstructorExpression {
                 Fields = [
                     ..module.Types
-                        .Where(type => type.Symbol.TypeKind == TypeKind.Class)
-                        .Select(TableField (type) => new NameKey { Key = ClassName(type.Symbol), Value = Name(ClassName(type.Symbol)) }),
+                        .Where(type => type.Symbol.TypeKind is TypeKind.Class or TypeKind.Enum)
+                        .Select(TableField (type) => new NameKey { Key = TypeName(type.Symbol), Value = Name(TypeName(type.Symbol)) }),
                 ],
             }));
         }
 
         Log.Information("Lowered {SourcePath} into {StatementCount} top-level statements", module.SourcePath, statements.Count);
-        
+
         statements.InsertRange(0, LowerImports());
-        
+
         return new Chunk {
             Mode = TypeCheckMode.Strict,
             Block = new Block {
@@ -81,135 +80,12 @@ public sealed partial class HirLowerer {
             },
         };
     }
-    
-    private List<Statement> LowerImports() {
-        var statements = new List<Statement>();
 
-        var byModule = _imports
-            .Select(type => (Type: type, Module: Modules.TryGetModule(type, out var module) ? module : null!))
-            .GroupBy(entry => string.Join('/', entry.Module.InstancePath), StringComparer.Ordinal)
-            .OrderBy(group => group.Key, StringComparer.Ordinal);
-
-        foreach (var group in byModule) {
-            var path = group.First().Module.InstancePath;
-            var moduleLocal = UniqueImportName(string.Join('_', path.Skip(1)));
-
-            statements.Add(Local(moduleLocal, Call("require", RequirePath(path))));
-
-            foreach (var (type, _) in group.OrderBy(entry => entry.Type.Name, StringComparer.Ordinal)) {
-                statements.Add(Local(type.Name, Index(moduleLocal, type.Name)));
-                statements.Add(TypeDecl(type.Name, Type($"{moduleLocal}.{type.Name}")));
-            }
-        }
-
-        return statements;
-    }
-
-    private static StringExpression RequirePath(IReadOnlyList<string> path) {
-        return Str($"@game/{string.Join('/', path)}");
-    }
-
-    private List<Statement> LowerEntryPoint(HirModule module) {
-        var entryPoints = module.Types
-            .SelectMany(type => type.Methods.Where(method => method.IsEntryPoint).Select(method => (Type: type, Method: method)))
-            .ToList();
-
-        if (entryPoints.Count == 0) {
-            Log.Debug("No entry point found, skipping entry point call");
-
-            return [];
-        }
-
-        if (entryPoints.Count > 1) {
-            foreach (var (_, method) in entryPoints.Skip(1)) {
-                Unsupported("Only one [EntryPoint] per file is supported.", method.Location);
-            }
-
-            return [];
-        }
-
-        var (owner, entryPoint) = entryPoints[0];
-        var className = ClassName(owner.Symbol);
-
-        if (entryPoint.Parameters.Length > 0) {
-            Unsupported("Entry points can't take parameters.", entryPoint.Location);
-
-            return [];
-        }
-
-        if (entryPoint.IsStatic) {
-            Log.Debug("Calling static entry point {ClassName}.{MethodName}", className, entryPoint.Symbol.Name);
-
-            return [Stmt(Call(Index(className, entryPoint.Symbol.Name)))];
-        }
-
-        var constructor = owner.Methods.FirstOrDefault(method => method.IsConstructor);
-        if (constructor is { Parameters.Length: > 0 }) {
-            Unsupported("An instance entry point's class needs a parameterless constructor.", entryPoint.Location);
-
-            return [];
-        }
-
-        Log.Debug("Instantiating {ClassName} into {Local} to call entry point {MethodName}", className, EntryPointLocal, entryPoint.Symbol.Name);
-
-        return [
-            Local(EntryPointLocal, Call(Index(className, "new"))),
-            Stmt(MethodCall(Name(EntryPointLocal), entryPoint.Symbol.Name)),
-        ];
-    }
-    
-    private bool IsTranspiledType(ITypeSymbol type) {
-        return type is INamedTypeSymbol named && (_moduleTypes.Contains(named) || Modules.TryGetModule(named, out _));
-    }
-
-    private string ReferenceType(INamedTypeSymbol type, Location location) {
-        if (_moduleTypes.Contains(type) || !Modules.TryGetModule(type, out var module)) {
-            return ClassName(type);
-        }
-
-        if (module.IsScript) {
-            Diagnostics.Error(DiagnosticId.UnsupportedSyntax, $"'{type.Name}' is declared in a script and can't be required. Move it to a module file.", location);
-        } else if (ScriptType == ScriptType.Local && module.InstancePath[0] is "ServerScriptService" or "ServerStorage") {
-            Diagnostics.Error(DiagnosticId.UnsupportedSyntax, $"'{type.Name}' lives in {module.InstancePath[0]}, which clients can't see.", location);
-        }
-
-        if (_imports.Add(type)) {
-            Log.Debug("Importing {Type} from {Module}", type.Name, string.Join('.', module.InstancePath));
-        }
-
-        return ClassName(type);
-    }
-    
-    private static string ClassName(INamedTypeSymbol type) => type.Name;
+    private static string TypeName(INamedTypeSymbol type) => type.Name;
 
     private void Unsupported(string message, Location location) {
         Log.Debug("Reporting unsupported construct: {Message}", message);
 
         Diagnostics.Error(DiagnosticId.UnsupportedSyntax, message, location);
-    }
-    
-    private static string SafeIdentifier(string name) {
-        var builder = new StringBuilder(name.Length);
-
-        foreach (var character in name) {
-            builder.Append(char.IsAsciiLetterOrDigit(character) || character == '_' ? character : '_');
-        }
-
-        if (builder.Length == 0 || char.IsAsciiDigit(builder[0])) {
-            builder.Insert(0, '_');
-        }
-
-        return builder.ToString();
-    }
-    
-    private string UniqueImportName(string raw) {
-        var name = SafeIdentifier(raw);
-        var candidate = name;
-
-        for (var suffix = 2; !_importNames.Add(candidate); suffix++) {
-            candidate = $"{name}{suffix}";
-        }
-
-        return candidate;
     }
 }

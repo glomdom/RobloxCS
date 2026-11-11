@@ -24,20 +24,20 @@ public sealed partial class HirBuilder {
     }
 
     public HirModule Build() {
-        var types = Root.DescendantNodes().OfType<TypeDeclarationSyntax>();
-        var classes = new List<HirType>();
+        var types = Root.DescendantNodes().OfType<BaseTypeDeclarationSyntax>();
+        var declarations = new List<HirType>();
 
         foreach (var type in types) {
             var typeSymbol = Semantics.CheckedGetDeclaredSymbol<INamedTypeSymbol>(type);
             var result = BuildType(typeSymbol, type);
 
-            classes.Add(result);
+            declarations.Add(result);
         }
 
         return new HirModule {
             Location = Location.None,
             SourcePath = Compiler.FilePath,
-            Types = [.. classes],
+            Types = [.. declarations],
         };
     }
 

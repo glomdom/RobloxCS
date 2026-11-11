@@ -212,6 +212,8 @@ public class RendererWalker : AstVisitorBase {
             case BinOp.Plus: _state.Builder.Append(" + "); break;
             case BinOp.Star: _state.Builder.Append(" * "); break;
             case BinOp.Slash: _state.Builder.Append(" / "); break;
+            case BinOp.GreaterThanEqual: _state.Builder.Append(" >= "); break;
+            case BinOp.LessThanEqual: _state.Builder.Append(" <= "); break;
             case BinOp.GreaterThan: _state.Builder.Append(" > "); break;
             case BinOp.LessThan: _state.Builder.Append(" < "); break;
             case BinOp.TwoEqual: _state.Builder.Append(" == "); break;
