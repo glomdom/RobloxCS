@@ -56,7 +56,7 @@ public sealed partial class HirLowerer {
             return Nil();
         }
 
-        var args = creation.Arguments.Select(argument => LowerExpression(argument.Value)).ToList();
+        var args = LowerArguments(creation.Arguments);
 
         Log.Verbose("Lowering object creation {ClassName}.new with {ArgumentCount} arguments", type.Name, args.Count);
 
@@ -69,7 +69,7 @@ public sealed partial class HirLowerer {
         }
 
         var method = call.Method;
-        if (method.Name == "ToString" && call.Arguments.IsEmpty && call.Receiver is { } subject && IsSourceEnum(UnwrapEnumBox(subject).Type)) {
+        if (method.Name == "ToString" && call.Arguments.IsEmpty && call.Receiver is { } subject && IsSourceEnum(UnwrapBox(subject).Type)) {
             return (FunctionCallExpression)LowerDisplayValue(subject);
         }
 
@@ -85,10 +85,11 @@ public sealed partial class HirLowerer {
             return Call("print", call.Arguments.Select(argument => LowerDisplayValue(argument.Value)));
         }
 
-        var args = call.Arguments.Select(argument => LowerExpression(argument.Value)).ToList();
+        var receiver = method.IsStatic ? null : CaptureValue(call.Receiver is null ? Name("self") : LowerExpression(call.Receiver), "receiver");
+        var args = LowerArguments(call.Arguments);
 
         if (GetRobloxNative(method.ContainingType) is { } native) {
-            return LowerNativeCall(call, native, args) as FunctionCallExpression;
+            return LowerNativeCall(call, native, args, receiver) as FunctionCallExpression;
         }
 
         if (!IsTranspiledType(method.ContainingType)) {
@@ -108,13 +109,11 @@ public sealed partial class HirLowerer {
             method.Name, call.Receiver is null ? "implicit self" : call.Receiver.GetType().Name, args.Count
         );
 
-        var receiver = call.Receiver is null ? Name("self") : LowerExpression(call.Receiver);
-
-        if (call.Receiver is HirThis { IsBase: true } || !method.IsVirtual && !method.IsOverride && !method.IsAbstract) {
-            return Call(Index(ReferenceType(method.ContainingType, call.Location), method.SlotName()), [receiver, .. args]);
+        if (call.Receiver is HirThis { IsBase: true } || method.ContainingType.TypeKind != TypeKind.Interface && !method.IsVirtual && !method.IsOverride && !method.IsAbstract) {
+            return Call(Index(ReferenceType(method.ContainingType, call.Location), method.SlotName()), [receiver!, .. args]);
         }
 
-        return MethodCall(receiver, method.SlotName(), args);
+        return MethodCall(receiver!, method.SlotName(), args);
     }
 
     private static bool IsConsoleWrite(IMethodSymbol method) {
