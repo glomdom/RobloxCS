@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Globalization;
+using System.Runtime.Loader;
 using System.Reflection;
 using RobloxCS.Compiler;
 using RobloxCS.Lowering;
@@ -8,7 +10,7 @@ using RobloxCS.Transpiler;
 
 namespace RobloxCS.Tests;
 
-[TestFixture]
+[TestFixture, NonParallelizable]
 public class Regression {
     private static readonly ConcurrentDictionary<string, string> TranspileCache = new();
 
@@ -28,7 +30,7 @@ public class Regression {
 
         Assert.That(Normalize(actual), Is.EqualTo(Normalize(File.ReadAllText(expectedPath))));
     }
-    
+
     [Test, TestCaseSource(nameof(GetCases))]
     public void Typecheck(string name) {
         var outputPath = Path.Join(OutputDir, name + ".tc.luau");
@@ -41,12 +43,69 @@ public class Regression {
         Assert.That(actual, Is.True);
     }
 
+    [Test, TestCaseSource(nameof(GetCases))]
+    public void MatchesCSharp(string name) {
+        var outputPath = Path.Join(OutputDir, name + ".differential.luau");
+        Directory.CreateDirectory(OutputDir);
+        File.WriteAllText(outputPath, Transpile(InputPath(name)));
+
+        var expected = RunWithCSharp(InputPath(name));
+        File.WriteAllText(Path.Join(OutputDir, name + ".clr.out"), expected);
+
+        Assert.That(Normalize(RunWithLuau(outputPath)), Is.EqualTo(Normalize(expected)));
+    }
+
+    private static string RunWithCSharp(string path) {
+        var compiler = new CSharpCompiler(path, "RobloxCS.Types.dll", false);
+        Assert.That(compiler.HasErrors, Is.False, string.Join("\n", compiler.Diagnostics));
+
+        using var assemblyStream = new MemoryStream();
+        var emitted = compiler.Compilation.Emit(assemblyStream);
+
+        Assert.That(emitted.Success, Is.True, string.Join("\n", emitted.Diagnostics));
+        assemblyStream.Position = 0;
+
+        var context = new AssemblyLoadContext("Regression", isCollectible: true);
+        context.Resolving += (_, name) => name.Name == "RobloxCS.Types"
+            ? Assembly.LoadFrom(Path.GetFullPath("RobloxCS.Types.dll"))
+            : null;
+
+        try {
+            var assembly = context.LoadFromStream(assemblyStream);
+            var entry = assembly.GetTypes().SelectMany(type =>
+                    type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                )
+                .Single(method => method.CustomAttributes.Any(attribute => attribute.AttributeType.FullName == "RobloxCS.Types.Attributes.EntryPointAttribute"));
+
+            var previousOutput = Console.Out;
+            var previousCulture = CultureInfo.CurrentCulture;
+            using var output = new StringWriter(CultureInfo.InvariantCulture);
+
+            try {
+                Console.SetOut(output);
+                CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+
+                var instance = entry.IsStatic ? null : Activator.CreateInstance(entry.DeclaringType!, nonPublic: true);
+                entry.Invoke(instance, null);
+            } finally {
+                Console.SetOut(previousOutput);
+                CultureInfo.CurrentCulture = previousCulture;
+            }
+
+            return output.ToString();
+        } finally {
+            context.Unload();
+        }
+    }
+
     private static string Transpile(string path) =>
         TranspileCache.GetOrAdd(path, static p => {
             var transpiler = new CSharpTranspiler(
                 new TranspilerOptions(ScriptType.Local),
-                new CSharpCompiler(p, "RobloxCS.Types.dll", true)
+                new CSharpCompiler(p, "RobloxCS.Types.dll", false)
             );
+
+            Assert.That(transpiler.Compiler.HasErrors, Is.False, string.Join("\n", transpiler.Compiler.Diagnostics));
 
             var result = transpiler.Transpile();
             if (!result.Ok) {
@@ -93,7 +152,7 @@ public class Regression {
 
         return stdout;
     }
-    
+
     private static bool TypecheckWithLuau(string path) {
         var startInfo = new ProcessStartInfo {
             FileName = "luau-analyze",
