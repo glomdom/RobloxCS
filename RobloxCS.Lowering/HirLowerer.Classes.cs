@@ -41,7 +41,7 @@ public sealed partial class HirLowerer {
             symbol.IsStatic ? "static" : "instance", name, instanceFields.Count, staticFields.Count, type.Methods.Length
         );
 
-        var statements = new List<Statement> { Local(name, Table()) };
+        var statements = new List<Statement>();
 
         if (symbol.BaseType is { SpecialType: not SpecialType.System_Object } parent) {
             var metatable = Table();
@@ -64,7 +64,7 @@ public sealed partial class HirLowerer {
         foreach (var field in staticFields) {
             Log.Verbose("Assigning static field {ClassName}.{FieldName}", name, field.Symbol.Name);
 
-            statements.AddRange(_names.Capture(() => _names.Emit(Assign(Index(name, field.Symbol.SlotName()), LowerFieldValue(field)))));
+            statements.AddRange(_names.Capture(() => _names.Emit(Assign(Index(name, field.Symbol.SlotName()), Cast(new ParenthesisExpression { Expression = Cast(LowerFieldValue(field), Type("any")) }, LowerFieldType(field))))));
         }
 
         if (!symbol.IsStatic) {
@@ -74,13 +74,13 @@ public sealed partial class HirLowerer {
         var seen = new HashSet<string>(StringComparer.Ordinal);
 
         foreach (var method in type.Methods.Where(method => !method.IsConstructor && !method.Symbol.IsAbstract)) {
-            if (method.Symbol.MethodKind is not (MethodKind.Ordinary or MethodKind.PropertyGet or MethodKind.PropertySet)) {
+            if (method.Symbol.MethodKind is not (MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation or MethodKind.PropertyGet or MethodKind.PropertySet)) {
                 Unsupported($"'{method.Symbol.MethodKind}' members are not supported yet.", method.Location);
 
                 continue;
             }
 
-            if (!seen.Add(method.Symbol.Name)) {
+            if (!seen.Add(method.Symbol.SlotName())) {
                 Unsupported("Method overloads are not supported yet.", method.Location);
 
                 continue;
@@ -89,6 +89,7 @@ public sealed partial class HirLowerer {
             statements.AddRange(LowerMethod(name, method));
         }
 
+        statements.AddRange(LowerInterfaceBindings(type));
         return statements;
     }
 
@@ -100,18 +101,18 @@ public sealed partial class HirLowerer {
                 fields.TryAdd(field.SlotName(), LowerType(field.Type, field.Locations.FirstOrDefault() ?? Location.None));
             }
 
-            foreach (var method in current.GetMembers().OfType<IMethodSymbol>().Where(method => !method.IsStatic && method.MethodKind is MethodKind.Ordinary or MethodKind.PropertyGet or MethodKind.PropertySet)) {
+            foreach (var method in current.GetMembers().OfType<IMethodSymbol>().Where(method => !method.IsStatic && method.MethodKind is MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation or MethodKind.PropertyGet or MethodKind.PropertySet)) {
                 if (method.AssociatedSymbol is IPropertySymbol property && property.IsAutoProperty() && !property.IsVirtual && !property.IsOverride) {
                     continue;
                 }
 
-                fields.TryAdd(method.SlotName(), new CallbackTypeInfo {
-                    Arguments = [
-                        TypeArgument.From("self", Type("any")),
-                        .. method.Parameters.Select(parameter => TypeArgument.From(parameter.Name, LowerType(parameter.Type, parameter.Locations.FirstOrDefault() ?? Location.None))),
-                    ],
-                    ReturnType = LowerType(method.ReturnType, method.Locations.FirstOrDefault() ?? Location.None),
-                });
+                fields.TryAdd(method.SlotName(), LowerMethodType(method));
+            }
+        }
+
+        foreach (var contract in symbol.AllInterfaces) {
+            foreach (var method in InterfaceMethods(contract)) {
+                fields.TryAdd(method.SlotName(), LowerMethodType(method));
             }
         }
 
