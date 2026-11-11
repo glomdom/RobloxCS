@@ -28,7 +28,9 @@ public sealed partial class HirLowerer {
 
         foreach (var field in members) {
             body.Add(new IfStatement {
-                Condition = new BinaryOperatorExpression { Left = Name("value"), Op = BinOp.TwoEqual, Right = Num(Convert.ToDouble(field.Symbol.ConstantValue, CultureInfo.InvariantCulture)) },
+                Condition = new BinaryOperatorExpression {
+                    Left = Name("value"), Op = BinOp.TwoEqual, Right = Num(Convert.ToDouble(field.Symbol.ConstantValue, CultureInfo.InvariantCulture))
+                },
                 Block = BlockOf([Return(Str(field.Name))]),
             });
         }
@@ -64,25 +66,11 @@ public sealed partial class HirLowerer {
         return Function(TypeName(type.Symbol), EnumFormatterName(type.Symbol), [("value", Type("number"))], Type("string"), body);
     }
 
-    private static HirExpression UnwrapEnumBox(HirExpression expression) {
+    private static HirExpression UnwrapBox(HirExpression expression) {
         while (expression is HirConversion { Kind: HirConversionKind.Boxing } conversion) {
             expression = conversion.Operand;
         }
 
         return expression;
-    }
-
-    private Expression LowerDisplayValue(HirExpression expression) {
-        var value = UnwrapEnumBox(expression);
-        if (IsSourceEnum(value.Type)) {
-            var type = (INamedTypeSymbol)value.Type;
-            if (IsFlagsEnum(type) && type.EnumUnderlyingType!.SpecialType is SpecialType.System_Int64 or SpecialType.System_UInt64) {
-                Unsupported("Formatting 64-bit flags enums is not supported yet.", expression.Location);
-            }
-
-            return Call(Index(ReferenceType(type, expression.Location), EnumFormatterName(type)), LowerExpression(value));
-        }
-
-        return LowerExpression(expression);
     }
 }
