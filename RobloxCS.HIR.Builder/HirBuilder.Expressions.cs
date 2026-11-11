@@ -297,7 +297,7 @@ public sealed partial class HirBuilder {
             return HirConversionKind.UserDefined;
         }
 
-        if (conversion.IsIdentity) {
+        if (conversion.IsIdentity || conversion.IsConditionalExpression) {
             return HirConversionKind.Identity;
         }
 
