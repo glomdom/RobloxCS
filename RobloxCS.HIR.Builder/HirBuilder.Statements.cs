@@ -10,6 +10,7 @@ namespace RobloxCS.HIR.Builder;
 public sealed partial class HirBuilder {
     public HirStatement BuildStatement(IOperation operation) {
         return operation.Kind switch {
+            OperationKind.Block => BuildBlock(operation),
             OperationKind.VariableDeclarationGroup => HandleVariableDeclarationGroup((IVariableDeclarationGroupOperation)operation),
             OperationKind.ExpressionStatement => HandleExpressionStatement((IExpressionStatementOperation)operation),
             OperationKind.SimpleAssignment => HandleSimpleAssignment((ISimpleAssignmentOperation)operation),
