@@ -7,9 +7,6 @@ using RobloxCS.Passes;
 
 namespace RobloxCS.Transpiler;
 
-/// <summary>
-/// Runs a single file through the pipeline: Roslyn → HIR → passes → Luau AST.
-/// </summary>
 public sealed class CSharpTranspiler {
     public TranspilerOptions Options { get; }
     public CSharpCompiler Compiler { get; }
@@ -25,6 +22,10 @@ public sealed class CSharpTranspiler {
     }
 
     public TranspileResult Transpile() {
+        if (Compiler.HasErrors) {
+            return new TranspileResult(null, [..Compiler.Diagnostics.Select(Diagnostic.FromRoslyn)]);
+        }
+
         var diagnostics = new DiagnosticBag();
 
         HirModule module;
