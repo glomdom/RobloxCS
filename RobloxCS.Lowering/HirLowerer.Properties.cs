@@ -58,7 +58,7 @@ public sealed partial class HirLowerer {
             return Call(Index(ReferenceType(property.ContainingType, access.Location), setter.SlotName()), LowerExpression(value));
         }
 
-        var receiver = LowerPropertyReceiver(access);
+        var receiver = CaptureReceiver(LowerPropertyReceiver(access));
 
         return access.Receiver is HirThis { IsBase: true } || !setter.IsVirtual && !setter.IsOverride && !setter.IsAbstract
             ? Call(Index(ReferenceType(property.ContainingType, access.Location), setter.SlotName()), receiver, LowerExpression(value))
@@ -72,7 +72,7 @@ public sealed partial class HirLowerer {
             return LowerComputedCompoundOn(access, op, value, operatorMethod);
         }
 
-        _conditionalReceivers.Push(HoistUnlessCheap(LowerExpression(receiver)));
+        _conditionalReceivers.Push(CaptureReceiver(LowerExpression(receiver)));
 
         try {
             var target = access with {

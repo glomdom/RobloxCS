@@ -288,11 +288,13 @@ public sealed partial class HirLowerer {
             return LowerSetterCall(propertyTarget, assignment.Value) is { } call ? [Stmt(call)] : [];
         }
 
-        if (LowerAssignmentTarget(assignment.Target) is not { } target) {
-            return [];
-        }
+        return WithStableReceiver(assignment.Target, stable => {
+            if (LowerAssignmentTarget(stable) is not { } target) {
+                return [];
+            }
 
-        return [Assign(target, LowerExpression(assignment.Value))];
+            return [Assign(target, LowerExpression(assignment.Value))];
+        });
     }
 
     private Var? LowerAssignmentTarget(HirExpression target) {

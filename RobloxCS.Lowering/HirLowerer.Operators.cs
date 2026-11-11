@@ -16,6 +16,22 @@ public sealed partial class HirLowerer {
             return LowerShortCircuit(binary);
         }
 
+        if (binary.Type.SpecialType == SpecialType.System_Boolean && binary.Op is BinaryOperatorKind.And or BinaryOperatorKind.Or or BinaryOperatorKind.ExclusiveOr) {
+            var leftValue = CaptureValue(LowerExpression(binary.Left), "left");
+            var rightValue = CaptureValue(LowerExpression(binary.Right), "right");
+
+            return new BinaryOperatorExpression {
+                Left = Cast(leftValue, Type("boolean")),
+                Right = Cast(rightValue, Type("boolean")),
+                Op = binary.Op switch {
+                    BinaryOperatorKind.And => BinOp.And,
+                    BinaryOperatorKind.Or => BinOp.Or,
+
+                    _ => BinOp.TildeEqual,
+                },
+            };
+        }
+
         if (IsSourceEnum(binary.Left.Type) && binary.Op is BinaryOperatorKind.And or BinaryOperatorKind.Or or BinaryOperatorKind.ExclusiveOr) {
             var operation = binary.Op switch {
                 BinaryOperatorKind.And => "band",
@@ -23,7 +39,7 @@ public sealed partial class HirLowerer {
                 _ => "bxor",
             };
 
-            return LowerEnumBits(binary.Left.Type, operation, [LowerExpression(binary.Left), LowerExpression(binary.Right)], binary.Location);
+            return LowerEnumBits(binary.Left.Type, operation, [CaptureValue(LowerExpression(binary.Left), "left"), LowerExpression(binary.Right)], binary.Location);
         }
 
         if (TryLowerDataTypeOperator(binary, out var dataTypeBinary)) {
@@ -40,7 +56,7 @@ public sealed partial class HirLowerer {
             return LowerStringConcat(binary);
         }
 
-        var left = LowerExpression(binary.Left);
+        var left = CaptureValue(LowerExpression(binary.Left), "left");
         var right = LowerExpression(binary.Right);
 
         if (binary.Op is BinaryOperatorKind.Remainder) {
@@ -115,27 +131,6 @@ public sealed partial class HirLowerer {
             BinaryOperatorKind.GreaterThanOrEqual => BinOp.GreaterThanEqual,
             BinaryOperatorKind.ConditionalAnd => BinOp.And,
             BinaryOperatorKind.ConditionalOr => BinOp.Or,
-
-            _ => null,
-        };
-    }
-
-    private static CompoundOp? ToCompoundOp(HirCompoundAssignment compound) {
-        var type = compound.Target.Type;
-        var integral = IsIntegral(type);
-
-        var numeric = compound.UserDefinedOperator is null && (integral || type.SpecialType is SpecialType.System_Single or SpecialType.System_Double);
-        var dataType = compound.UserDefinedOperator is { } method && IsDataType(method.ContainingType, out _);
-
-        if (!numeric && !dataType) {
-            return null;
-        }
-
-        return compound.Op switch {
-            BinaryOperatorKind.Add => CompoundOp.PlusEqual,
-            BinaryOperatorKind.Subtract => CompoundOp.MinusEqual,
-            BinaryOperatorKind.Multiply => CompoundOp.StarEqual,
-            BinaryOperatorKind.Divide when !integral => CompoundOp.SlashEqual,
 
             _ => null,
         };

@@ -32,11 +32,11 @@ public sealed partial class HirLowerer {
 
     private static Expression GetService(string name) => MethodCall(Name("game"), "GetService", Str(name));
 
-    private Expression LowerNativeCall(HirCall call, (string Name, RobloxNativeType Kind) native, List<Expression> args) {
+    private Expression LowerNativeCall(HirCall call, (string Name, RobloxNativeType Kind) native, List<Expression> args, Expression? receiver) {
         var method = call.Method;
 
         if (!method.IsStatic) {
-            return MethodCall(LowerExpression(call.Receiver!), method.Name, args);
+            return MethodCall(receiver!, method.Name, args);
         }
 
         if (native.Kind == RobloxNativeType.Service) {
