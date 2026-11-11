@@ -101,6 +101,10 @@ public sealed partial class HirBuilder {
             var cond = BuildExpression(condOperation);
             var block = BuildBlock(loop.Body);
             
+            if (!loop.ConditionIsTop) {
+                return new HirDoWhile { Location = loop.Syntax.GetLocation(), Condition = cond, Body = block };
+            }
+
             return new HirWhile {
                 Location = loop.Syntax.GetLocation(),
                 Condition = cond,
