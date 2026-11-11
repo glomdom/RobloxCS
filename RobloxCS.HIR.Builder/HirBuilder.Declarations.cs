@@ -10,6 +10,13 @@ public sealed partial class HirBuilder {
             return BuildEnum(typeSymbol);
         }
 
+        if (typeSymbol.TypeKind == TypeKind.Interface) {
+            return new HirType {
+                Location = typeSymbol.Locations.ResolveSingle(), Symbol = typeSymbol, Base = null,
+                Fields = [], Methods = [], Properties = [],
+            };
+        }
+
         var methods = new List<HirMethod>();
         var fields = new List<HirField>();
 
@@ -31,7 +38,8 @@ public sealed partial class HirBuilder {
                     break;
                 }
 
-                case IMethodSymbol { MethodKind: MethodKind.PropertyGet or MethodKind.PropertySet, AssociatedSymbol: IPropertySymbol owner } when owner.IsAutoProperty() && !owner.IsVirtual && !owner.IsOverride: {
+                case IMethodSymbol { MethodKind: MethodKind.PropertyGet or MethodKind.PropertySet, AssociatedSymbol: IPropertySymbol owner }
+                    when owner.IsAutoProperty() && owner is { IsVirtual: false, IsOverride: false }: {
                     break;
                 }
 
@@ -66,10 +74,9 @@ public sealed partial class HirBuilder {
             Location = typeSymbol.Locations.ResolveSingle(),
             Symbol = typeSymbol,
             Base = typeSymbol.BaseType,
-            Fields = [.. fields],
-            Methods = [.. methods],
+            Fields = [..fields],
+            Methods = [..methods],
             Properties = [],
         };
     }
-
 }
