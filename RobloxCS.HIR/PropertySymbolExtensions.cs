@@ -40,38 +40,4 @@ public static class PropertySymbolExtensions {
             _ => false,
         };
     }
-
-    public static string SlotName(this IFieldSymbol field) {
-        var name = field.AssociatedSymbol is IPropertySymbol property
-            ? property.IsAutoProperty() ? property.Name : $"__{property.Name}"
-            : field.Name;
-
-        if (!field.IsStatic && HidesBaseMember(field.ContainingType, field.AssociatedSymbol?.Name ?? field.Name)) {
-            return $"__{field.ContainingType.Name}_{name}";
-        }
-
-        return name;
-    }
-
-    public static string SlotName(this IMethodSymbol method) {
-        if (method.OverriddenMethod is { } overridden) {
-            return overridden.SlotName();
-        }
-
-        if (!method.IsStatic && HidesBaseMember(method.ContainingType, method.AssociatedSymbol?.Name ?? method.Name)) {
-            return $"__{method.ContainingType.Name}_{method.Name}";
-        }
-
-        return method.Name;
-    }
-
-    private static bool HidesBaseMember(INamedTypeSymbol type, string name) {
-        for (var current = type.BaseType; current is { SpecialType: not SpecialType.System_Object }; current = current.BaseType) {
-            if (current.GetMembers(name).Length > 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }
