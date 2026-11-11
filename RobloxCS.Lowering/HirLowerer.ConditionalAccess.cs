@@ -15,7 +15,7 @@ public sealed partial class HirLowerer {
     private readonly Stack<Expression> _initializerTargets = new();
 
     private Expression LowerConditionalAccess(HirConditionalAccess access) {
-        var receiver = HoistUnlessCheap(LowerExpression(access.Receiver));
+        var receiver = CaptureReceiver(LowerExpression(access.Receiver));
 
         _conditionalReceivers.Push(receiver);
 
@@ -46,7 +46,7 @@ public sealed partial class HirLowerer {
     }
 
     private List<Statement> LowerConditionalStatement(HirConditionalStatement statement) {
-        var receiver = HoistUnlessCheap(LowerExpression(statement.Receiver));
+        var receiver = CaptureReceiver(LowerExpression(statement.Receiver));
 
         _conditionalReceivers.Push(receiver);
 
@@ -76,13 +76,7 @@ public sealed partial class HirLowerer {
         return (Expression)_conditionalReceivers.Peek().DeepClone();
     }
 
-    private Expression HoistUnlessCheap(Expression value) {
-        if (value is VarExpression { Prefix: NamePrefix } var && var.Suffixes.All(suffix => suffix is Dot)) {
-            return value;
-        }
-
-        return Hoist(value, "value");
-    }
+    private Expression CaptureReceiver(Expression value) => CaptureValue(value, "receiver");
 
     private static BinaryOperatorExpression NotNil(Expression value) {
         return new BinaryOperatorExpression {
