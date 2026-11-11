@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
+using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.HIR.Expressions;
 using Serilog;
@@ -39,7 +40,7 @@ public sealed partial class HirLowerer {
 
             segments.Add(new InterpolatedStringSegment {
                 Literal = text.ToString(),
-                Expression = LowerDisplayValue(operand),
+                Expression = CaptureValue(LowerDisplayValue(operand), "concat"),
             });
 
             text.Clear();
@@ -69,5 +70,29 @@ public sealed partial class HirLowerer {
 
             break;
         }
+    }
+
+    private Expression LowerDisplayValue(HirExpression expression) {
+        var value = UnwrapBox(expression);
+        if (IsSourceEnum(value.Type)) {
+            var type = (INamedTypeSymbol)value.Type;
+            if (IsFlagsEnum(type) && type.EnumUnderlyingType!.SpecialType is SpecialType.System_Int64 or SpecialType.System_UInt64) {
+                Unsupported("Formatting 64-bit flags enums is not supported yet.", expression.Location);
+            }
+
+            return Call(Index(ReferenceType(type, expression.Location), EnumFormatterName(type)), LowerExpression(value));
+        }
+
+        var lowered = LowerExpression(expression);
+        if (value.Type.SpecialType == SpecialType.System_Boolean) {
+            return IfExpression.From(lowered, Str("True"), Str("False"));
+        }
+
+        if (value.Type.IsReferenceType || value.Type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T) {
+            var subject = Hoist(lowered, "display");
+            return IfExpression.From(new BinaryOperatorExpression { Left = subject, Op = BinOp.TwoEqual, Right = Nil() }, Str(""), subject);
+        }
+
+        return lowered;
     }
 }
