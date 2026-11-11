@@ -49,7 +49,7 @@ public sealed partial class HirLowerer {
 
         if (constructor?.Initializer is { } initializer) {
             var args = new List<Expression> { Name("self") };
-            body.AddRange(_names.Capture(() => args.AddRange(initializer.Arguments.Select(argument => LowerExpression(argument.Value)))));
+            body.AddRange(_names.Capture(() => args.AddRange(LowerArguments(initializer.Arguments))));
             body.Add(Stmt(Call(Index(ReferenceType(initializer.Method.ContainingType, initializer.Location), "__init"), args)));
         }
 
