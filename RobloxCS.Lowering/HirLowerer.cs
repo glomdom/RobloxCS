@@ -38,9 +38,11 @@ public sealed partial class HirLowerer {
             _moduleTypes.Add(type.Symbol);
         }
 
-        var statements = new List<Statement>();
+        var statements = module.Types.Where(type => type.Symbol.TypeKind == TypeKind.Class)
+            .Select(type => (Statement)Local(TypeName(type.Symbol), Table())).ToList();
+
         var lowered = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
-        foreach (var type in module.Types.OrderBy(type => type.Symbol.TypeKind == TypeKind.Enum ? 0 : 1)) {
+        foreach (var type in module.Types.OrderBy(type => type.Symbol.TypeKind is TypeKind.Enum or TypeKind.Interface ? 0 : 1)) {
             LowerWithBase(type);
         }
 
@@ -81,7 +83,9 @@ public sealed partial class HirLowerer {
         };
     }
 
-    private static string TypeName(INamedTypeSymbol type) => type.Name;
+    private static string TypeName(INamedTypeSymbol type) => type.TypeKind == TypeKind.Interface
+        ? type.InterfaceTypeName()
+        : type.Name;
 
     private void Unsupported(string message, Location location) {
         Log.Debug("Reporting unsupported construct: {Message}", message);
