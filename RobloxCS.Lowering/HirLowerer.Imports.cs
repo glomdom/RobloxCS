@@ -24,8 +24,12 @@ public sealed partial class HirLowerer {
             statements.Add(Local(moduleLocal, Call("require", RequirePath(path))));
 
             foreach (var (type, _) in group.OrderBy(entry => entry.Type.Name, StringComparer.Ordinal)) {
-                statements.Add(Local(type.Name, Index(moduleLocal, type.Name)));
-                statements.Add(TypeDecl(type.Name, Type($"{moduleLocal}.{type.Name}")));
+                var name = TypeName(type);
+                if (type.TypeKind != TypeKind.Interface) {
+                    statements.Add(Local(name, Index(moduleLocal, name)));
+                }
+
+                statements.Add(TypeDecl(name, Type($"{moduleLocal}.{name}")));
             }
         }
 
