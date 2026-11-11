@@ -203,7 +203,7 @@ public class RendererWalker : AstVisitorBase {
 
         if (needParens && parentPrec != int.MaxValue) _state.Builder.Append('(');
 
-        _precStack.Push(prec);
+        _precStack.Push(prec + (assocRight ? 1 : 0));
         Visit(node.Left);
         _precStack.Pop();
 
@@ -225,7 +225,7 @@ public class RendererWalker : AstVisitorBase {
             default: throw new ArgumentOutOfRangeException(nameof(node), node.Op, null);
         }
 
-        _precStack.Push(prec - (assocRight ? 1 : 0));
+        _precStack.Push(prec + (assocRight ? 0 : 1));
         Visit(node.Right);
         _precStack.Pop();
 
@@ -235,7 +235,7 @@ public class RendererWalker : AstVisitorBase {
     public override void VisitUnaryOperatorExpression(UnaryOperatorExpression node) {
         switch (node.UnOp) {
             case UnOp.Minus: {
-                _state.Builder.Append('-');
+                _state.Builder.Append(node.Expression is UnaryOperatorExpression { UnOp: UnOp.Minus } ? "- " : "-");
                 _precStack.Push(7);
                 Visit(node.Expression);
                 _precStack.Pop();
@@ -408,12 +408,12 @@ public class RendererWalker : AstVisitorBase {
     public override void VisitInterpolatedStringExpression(InterpolatedStringExpression node) {
         _state.Builder.Append('`');
         RenderList(node.Segments);
-        _state.Builder.Append(node.LastString);
+        _state.Builder.Append(LuauStrings.Escape(node.LastString, interpolated: true));
         _state.Builder.Append('`');
     }
 
     public override void VisitInterpolatedStringSegment(InterpolatedStringSegment node) {
-        _state.Builder.Append(node.Literal);
+        _state.Builder.Append(LuauStrings.Escape(node.Literal, interpolated: true));
         _state.Builder.Append('{');
         Visit(node.Expression);
         _state.Builder.Append('}');
@@ -517,7 +517,9 @@ public class RendererWalker : AstVisitorBase {
     }
 
     public override void VisitStringExpression(StringExpression node) {
-        _state.Builder.Append($"\"{node.Value}\"");
+        _state.Builder.Append('"');
+        _state.Builder.Append(LuauStrings.Escape(node.Value));
+        _state.Builder.Append('"');
     }
 
     public override void VisitNameParameter(NameParameter node) {
