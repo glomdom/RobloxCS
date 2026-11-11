@@ -1,0 +1,21 @@
+False
+True
+False
+skip-and
+False
+skip-or
+True
+take-and
+right
+False
+take-or
+right
+True
+eager-left
+eager-right
+False
+eager-left
+eager-right
+True
+True
+bool: False

@@ -1,0 +1,10 @@
+end:and:self:type:print
+quote: " slash: \ tab:	end
+braces: {x} backtick: `
+line1
+line2
+value=15, negative=-12
+1212
+24
+5
+6

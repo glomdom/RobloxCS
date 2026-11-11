@@ -1,0 +1,17 @@
+choose:True
+yes
+1
+choose:False
+no
+4
+choose:True
+choose:False
+nested
+6
+fallback
+9
+0
+choose:False
+False
+choose:True
+True
