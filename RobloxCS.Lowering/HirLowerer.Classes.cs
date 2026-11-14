@@ -43,11 +43,7 @@ public sealed partial class HirLowerer {
 
         var statements = new List<Statement>();
 
-        if (symbol.BaseType is { SpecialType: not SpecialType.System_Object } parent) {
-            var metatable = Table();
-            metatable.Fields.Add(new NameKey { Key = "__index", Value = Name(ReferenceType(parent, type.Location)) });
-            statements.Add(Stmt(Call("setmetatable", Name(name), metatable)));
-        }
+        statements.Add(LowerClassMetadata(symbol, type.Location));
 
         if (!symbol.IsStatic) {
             statements.Add(Assign(Index(name, "__index"), Name(name)));
@@ -64,7 +60,11 @@ public sealed partial class HirLowerer {
         foreach (var field in staticFields) {
             Log.Verbose("Assigning static field {ClassName}.{FieldName}", name, field.Symbol.Name);
 
-            statements.AddRange(_names.Capture(() => _names.Emit(Assign(Index(name, field.Symbol.SlotName()), Cast(new ParenthesisExpression { Expression = Cast(LowerFieldValue(field), Type("any")) }, LowerFieldType(field))))));
+            statements.AddRange(_names.Capture(() => _names.Emit(
+                Assign(Index(name, field.Symbol.SlotName()),
+                    Cast(new ParenthesisExpression { Expression = Cast(LowerFieldValue(field), Type("any")) }, LowerFieldType(field))
+                )))
+            );
         }
 
         if (!symbol.IsStatic) {
@@ -101,7 +101,11 @@ public sealed partial class HirLowerer {
                 fields.TryAdd(field.SlotName(), LowerType(field.Type, field.Locations.FirstOrDefault() ?? Location.None));
             }
 
-            foreach (var method in current.GetMembers().OfType<IMethodSymbol>().Where(method => !method.IsStatic && method.MethodKind is MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation or MethodKind.PropertyGet or MethodKind.PropertySet)) {
+            foreach (
+                var method in current.GetMembers().OfType<IMethodSymbol>().Where(method => method is {
+                    IsStatic: false, MethodKind: MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation or MethodKind.PropertyGet or MethodKind.PropertySet
+                })
+            ) {
                 if (method.AssociatedSymbol is IPropertySymbol property && property.IsAutoProperty() && !property.IsVirtual && !property.IsOverride) {
                     continue;
                 }
@@ -110,13 +114,11 @@ public sealed partial class HirLowerer {
             }
         }
 
-        foreach (var contract in symbol.AllInterfaces) {
-            foreach (var method in InterfaceMethods(contract)) {
-                fields.TryAdd(method.SlotName(), LowerMethodType(method));
-            }
+        foreach (var method in symbol.AllInterfaces.SelectMany(InterfaceMethods)) {
+            fields.TryAdd(method.SlotName(), LowerMethodType(method));
         }
 
-        // Structural instance types allow derived values wherever a base instance is expected.
+        // structural instance types allow derived values wherever a base instance is expected
         return TableType(fields.Select(field => (field.Key, field.Value)));
     }
 }
