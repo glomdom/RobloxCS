@@ -67,11 +67,11 @@ internal class PrimaryOptionalBase(int value = 12) {
     }
 }
 
-internal class PrimaryImplicitBase() : PrimaryOptionalBase {}
+internal class PrimaryImplicitBase : PrimaryOptionalBase;
 
-internal class PrimaryForwardOnly(int value) : PrimaryOptionalBase(value) {}
+internal class PrimaryForwardOnly(int value) : PrimaryOptionalBase(value);
 
-internal class PrimaryObject() : object() {
+internal class PrimaryObject : object {
     public int Read() {
         return 4;
     }

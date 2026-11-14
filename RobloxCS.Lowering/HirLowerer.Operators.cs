@@ -56,8 +56,15 @@ public sealed partial class HirLowerer {
             return LowerStringConcat(binary);
         }
 
-        var left = CaptureValue(LowerExpression(binary.Left), "left");
-        var right = LowerExpression(binary.Right);
+        var left = LowerExpression(binary.Left);
+        var (right, preludes) = LowerCaptured(binary.Right);
+        if (preludes.Count > 0) {
+            left = CaptureValue(left, "left");
+
+            foreach (var statement in preludes) {
+                _names.Emit(statement);
+            }
+        }
 
         if (binary.Op is BinaryOperatorKind.Remainder) {
             Log.Verbose("Lowering % to math.fmod to keep C#'s truncated remainder");
@@ -90,9 +97,18 @@ public sealed partial class HirLowerer {
         }
 
         switch (conversion.Kind) {
-            case HirConversionKind.Identity:
-            case HirConversionKind.Boxing:
-            case HirConversionKind.Unboxing:
+            case HirConversionKind.TryCast: return LowerSafeCast(conversion);
+            case HirConversionKind.Boxing: return LowerBoxing(conversion.Operand);
+            case HirConversionKind.Unboxing: return LowerUnboxing(conversion);
+
+            case HirConversionKind.Identity: {
+                var value = LowerExpression(conversion.Operand);
+
+                return !conversion.IsImplicit && conversion.Type is { IsReferenceType: true, NullableAnnotation: NullableAnnotation.NotAnnotated }
+                    ? Cast(Cast(value, Type("any")), LowerType(conversion.Type, conversion.Location))
+                    : value;
+            }
+
             case HirConversionKind.Reference:
             case HirConversionKind.NullableWrap:
             case HirConversionKind.NullableUnwrap: {

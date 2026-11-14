@@ -16,7 +16,10 @@ internal static class Luau {
     public static NumberExpression Num(double value) => NumberExpression.From(value);
     public static BooleanExpression Bool(bool value) => new() { Value = value };
     public static TableConstructorExpression Table() => TableConstructorExpression.Empty();
-    public static TypeAssertionExpression Cast(Expression expression, TypeInfo type) => TypeAssertionExpression.From(expression, type);
+
+    public static TypeAssertionExpression Cast(Expression expression, TypeInfo type) =>
+        TypeAssertionExpression.From(expression is TypeAssertionExpression ? new ParenthesisExpression { Expression = expression } : expression, type);
+
     public static VarExpression Index(string obj, string field) => Index(Name(obj), field);
 
     public static VarExpression Index(Expression obj, string field) {
@@ -40,9 +43,14 @@ internal static class Luau {
     public static FunctionCallExpression Call(VarExpression function, params IEnumerable<Expression> args) {
         return new FunctionCallExpression {
             Prefix = function.Prefix,
-            Suffixes = [.. function.Suffixes, AnonymousCall.FromArgs(Args(args))],
+            Suffixes = [..function.Suffixes, AnonymousCall.FromArgs(Args(args))],
         };
     }
+
+    public static FunctionCallExpression Call(Expression function, params IEnumerable<Expression> args) => new() {
+        Prefix = PrefixOf(function),
+        Suffixes = [AnonymousCall.FromArgs(Args(args))],
+    };
 
     public static FunctionCallExpression MethodCall(Expression obj, string method, params IEnumerable<Expression> args) {
         return new FunctionCallExpression {
@@ -71,7 +79,7 @@ internal static class Luau {
         return value is null ? LocalAssignmentStatement.Naked(name, type) : LocalAssignmentStatement.Single(name, value, type);
     }
 
-    public static ReturnStatement Return(params IEnumerable<Expression> values) => ReturnStatement.FromExpressions([.. values]);
+    public static ReturnStatement Return(params IEnumerable<Expression> values) => ReturnStatement.FromExpressions([..values]);
 
     public static BasicTypeInfo Type(string name) => BasicTypeInfo.FromString(name);
     public static BasicTypeInfo VoidType() => BasicTypeInfo.Void();
@@ -82,7 +90,7 @@ internal static class Luau {
     public static TableTypeInfo TableType(IEnumerable<(string Name, TypeInfo Type)> fields) {
         return new TableTypeInfo {
             Fields = [
-                .. fields.Select(field => new TypeField {
+                ..fields.Select(field => new TypeField {
                     Key = NameTypeFieldKey.FromString(field.Name),
                     Value = field.Type,
                 }),
@@ -110,21 +118,8 @@ internal static class Luau {
                 Names = [owner, name],
             },
             Body = new FunctionBody {
-                Parameters = [.. parameters.Select(parameter => (Parameter)NameParameter.FromString(parameter.Name))],
-                TypeSpecifiers = [.. parameters.Select(parameter => parameter.Type)],
-                ReturnType = returnType,
-                Body = new Block {
-                    Statements = body,
-                },
-            },
-        };
-    }
-    
-    public static AnonymousFunctionExpression Lambda(List<(string Name, TypeInfo Type)> parameters, TypeInfo returnType, List<Statement> body) {
-        return new AnonymousFunctionExpression {
-            Body = new FunctionBody {
-                Parameters = [.. parameters.Select(parameter => (Parameter)NameParameter.FromString(parameter.Name))],
-                TypeSpecifiers = [.. parameters.Select(parameter => parameter.Type)],
+                Parameters = [..parameters.Select(parameter => (Parameter)NameParameter.FromString(parameter.Name))],
+                TypeSpecifiers = [..parameters.Select(parameter => parameter.Type)],
                 ReturnType = returnType,
                 Body = new Block {
                     Statements = body,
@@ -133,7 +128,20 @@ internal static class Luau {
         };
     }
 
-    private static FunctionArgs Args(IEnumerable<Expression> args) => new() { Arguments = [.. args] };
+    public static AnonymousFunctionExpression Lambda(List<(string Name, TypeInfo Type)> parameters, TypeInfo returnType, List<Statement> body) {
+        return new AnonymousFunctionExpression {
+            Body = new FunctionBody {
+                Parameters = [..parameters.Select(parameter => (Parameter)NameParameter.FromString(parameter.Name))],
+                TypeSpecifiers = [..parameters.Select(parameter => parameter.Type)],
+                ReturnType = returnType,
+                Body = new Block {
+                    Statements = body,
+                },
+            },
+        };
+    }
+
+    private static FunctionArgs Args(IEnumerable<Expression> args) => new() { Arguments = [..args] };
 
     private static Prefix PrefixOf(Expression expression) {
         if (expression is SymbolExpression symbol) {

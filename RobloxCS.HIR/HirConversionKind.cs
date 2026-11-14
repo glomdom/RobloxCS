@@ -3,6 +3,7 @@
 // yanked from Microsoft.CodeAnalysis.CSharp.Conversion
 public enum HirConversionKind {
     Identity,
+    TryCast,
     Numeric,
     Boxing,
     Unboxing,

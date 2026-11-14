@@ -15,6 +15,12 @@ public sealed partial class HirLowerer {
         }
 
         switch (type.SpecialType) {
+            case SpecialType.System_Object:
+            case SpecialType.System_ValueType:
+            case SpecialType.System_Enum: {
+                return Type("any");
+            }
+
             case SpecialType.System_Void: {
                 return VoidType();
             }

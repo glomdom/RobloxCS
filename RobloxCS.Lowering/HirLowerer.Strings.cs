@@ -83,7 +83,11 @@ public sealed partial class HirLowerer {
             return Call(Index(ReferenceType(type, expression.Location), EnumFormatterName(type)), LowerExpression(value));
         }
 
-        var lowered = LowerExpression(expression);
+        var lowered = LowerExpression(value);
+        if (value.Type.SpecialType is SpecialType.System_Object or SpecialType.System_ValueType or SpecialType.System_Enum) {
+            return LowerRuntimeDisplay(lowered);
+        }
+
         if (value.Type.SpecialType == SpecialType.System_Boolean) {
             return IfExpression.From(lowered, Str("True"), Str("False"));
         }

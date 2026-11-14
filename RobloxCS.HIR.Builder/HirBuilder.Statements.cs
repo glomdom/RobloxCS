@@ -249,10 +249,15 @@ public sealed partial class HirBuilder {
                 initializer = BuildExpression(init);
             }
 
+            var type = ResolveLocalType(declOperation);
+            if (type.IsReferenceType && initializer?.Type.NullableAnnotation == NullableAnnotation.Annotated) {
+                type = type.WithNullableAnnotation(NullableAnnotation.Annotated);
+            }
+
             return new HirVariableDeclarator {
                 Location = declOperation.Syntax.GetLocation(),
                 Symbol = declOperation.Symbol,
-                Type = ResolveLocalType(declOperation),
+                Type = type,
                 Initializer = initializer,
             };
         }

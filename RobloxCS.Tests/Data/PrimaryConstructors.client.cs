@@ -35,9 +35,9 @@ internal class PrimaryInitializerOnly(int value) {
     public int Property { get; } = value * 2;
 }
 
-internal class PrimaryUnused(int ignored) {}
+internal class PrimaryUnused(int ignored);
 
-internal class PrimaryEmpty() {
+internal class PrimaryEmpty {
     public int Value = 7;
 }
 

@@ -9,6 +9,28 @@ namespace RobloxCS.HIR.Builder;
 
 public sealed partial class HirBuilder {
     public HirExpression BuildExpression(IOperation operation) {
+        var expression = BuildExpressionCore(operation);
+        var syntax = operation.Syntax;
+        while (syntax.Parent is ParenthesizedExpressionSyntax parentheses) {
+            syntax = parentheses;
+        }
+
+        var suppressed = syntax is PostfixUnaryExpressionSyntax postfix && postfix.IsKind(SyntaxKind.SuppressNullableWarningExpression) ||
+                         syntax.Parent is PostfixUnaryExpressionSyntax parent && parent.IsKind(SyntaxKind.SuppressNullableWarningExpression);
+
+        return suppressed && expression.Type is { IsReferenceType: true }
+            ? new HirConversion {
+                Location = syntax.GetLocation(),
+                Type = expression.Type.WithNullableAnnotation(NullableAnnotation.NotAnnotated),
+                Operand = expression,
+                Kind = HirConversionKind.Identity,
+                Method = null,
+                IsImplicit = false,
+            }
+            : expression;
+    }
+
+    private HirExpression BuildExpressionCore(IOperation operation) {
         switch (operation.Kind) {
             case OperationKind.DefaultValue: {
                 return new HirDefault { Location = operation.Syntax.GetLocation(), Type = operation.Type! };
@@ -46,7 +68,7 @@ public sealed partial class HirBuilder {
                 if (creationOperation.Constructor is not { } ctor) {
                     throw new InvalidOperationException("Object creation called without a ctor.");
                 }
-                
+
                 var args = creationOperation.Arguments.Select(BuildArgument).ToImmutableArray();
 
                 return new HirObjectCreation {
@@ -94,10 +116,6 @@ public sealed partial class HirBuilder {
             }
 
             case OperationKind.Conversion when operation is IConversionOperation conversionOperation: {
-                if (conversionOperation.IsTryCast) {
-                    throw new NotSupportedException("Try casts are not supported yet.");
-                }
-
                 if (conversionOperation.Type is not { } type) {
                     throw new InvalidOperationException("Conversion operation does not produce a type.");
                 }
@@ -106,9 +124,9 @@ public sealed partial class HirBuilder {
 
                 return new HirConversion {
                     Location = conversionOperation.Syntax.GetLocation(),
-                    Type = conversionOperation.Type,
+                    Type = conversionOperation.IsTryCast && type.IsReferenceType ? type.WithNullableAnnotation(NullableAnnotation.Annotated) : type,
                     Operand = BuildExpression(conversionOperation.Operand),
-                    Kind = ClassifyConversion(conversion, type),
+                    Kind = conversionOperation.IsTryCast ? HirConversionKind.TryCast : ClassifyConversion(conversion, type),
                     Method = conversionOperation.OperatorMethod,
                     IsImplicit = conversion.IsImplicit,
                 };
@@ -136,7 +154,7 @@ public sealed partial class HirBuilder {
                         Type = instanceReferenceOperation.Type!,
                     };
                 }
-                
+
                 if (instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance) {
                     return new HirThis {
                         IsBase = instanceReferenceOperation.Syntax is BaseExpressionSyntax,
@@ -159,7 +177,7 @@ public sealed partial class HirBuilder {
 
                 var receiver = invocationOperation.Instance is not null ? BuildExpression(invocationOperation.Instance) : null;
                 var args = invocationOperation.Arguments.Select(BuildArgument).ToImmutableArray();
-                
+
                 return new HirCall {
                     Location = invocationOperation.Syntax.GetLocation(),
                     Type = type,
@@ -176,7 +194,7 @@ public sealed partial class HirBuilder {
                 }
 
                 var receiver = propertyReferenceOperation.Instance is not null ? BuildExpression(propertyReferenceOperation.Instance) : null;
-                
+
                 return new HirPropertyAccess {
                     Location = propertyReferenceOperation.Syntax.GetLocation(),
                     Type = type,
@@ -200,7 +218,7 @@ public sealed partial class HirBuilder {
                             Location = anon.Syntax.GetLocation(),
                             Type = delegateType,
                             Symbol = anon.Symbol,
-                            Parameters = [.. anon.Symbol.Parameters.Select(BuildParameter)],
+                            Parameters = [..anon.Symbol.Parameters.Select(BuildParameter)],
                             Body = BuildBlock(anon.Body),
                         };
                     }
@@ -224,12 +242,20 @@ public sealed partial class HirBuilder {
                     throw new InvalidOperationException("Conditional expression has no else branch or no type.");
                 }
 
+                var condition = BuildExpression(conditionalOperation.Condition);
+                var trueValue = BuildExpression(conditionalOperation.WhenTrue);
+                var falseValue = BuildExpression(whenFalse);
+                if (type.IsReferenceType &&
+                    (trueValue.Type.NullableAnnotation == NullableAnnotation.Annotated || falseValue.Type.NullableAnnotation == NullableAnnotation.Annotated)) {
+                    type = type.WithNullableAnnotation(NullableAnnotation.Annotated);
+                }
+
                 return new HirConditional {
                     Location = conditionalOperation.Syntax.GetLocation(),
                     Type = type,
-                    Condition = BuildExpression(conditionalOperation.Condition),
-                    WhenTrue = BuildExpression(conditionalOperation.WhenTrue),
-                    WhenFalse = BuildExpression(whenFalse),
+                    Condition = condition,
+                    WhenTrue = trueValue,
+                    WhenFalse = falseValue,
                 };
             }
 
@@ -245,7 +271,7 @@ public sealed partial class HirBuilder {
                     WhenNull = BuildExpression(coalesceOperation.WhenNull),
                 };
             }
-            
+
             case OperationKind.ConditionalAccess when operation is IConditionalAccessOperation conditionalAccessOperation: {
                 if (conditionalAccessOperation.Type is not { } type) {
                     throw new InvalidOperationException("Conditional access has a null type.");
