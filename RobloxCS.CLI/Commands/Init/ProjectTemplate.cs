@@ -109,7 +109,7 @@ internal static class ProjectTemplate {
         """;
     
     private const string RbxcsToml = """
-        robloxcs = {{Version}}
+        robloxcs = "{{Version}}"
         
         [dependencies]
 

@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using JetBrains.Annotations;
+using RobloxCS.CLI.Reporting;
 using RobloxCS.Common;
+using RobloxCS.Packages;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -18,12 +19,13 @@ public sealed class InitCommand : Command<InitSettings> {
 
     protected override int Execute(CommandContext context, InitSettings settings, CancellationToken cancellation) {
         LoggerSetup.ApplyVerbosity(settings.Verbosity);
+        var output = new TerminalOutput(_console);
 
         var target = settings.Name is null ? Environment.CurrentDirectory : Path.GetFullPath(settings.Name);
         var rawName = settings.Name ?? Path.GetFileName(Path.TrimEndingDirectorySeparator(target));
 
         if (ProjectTemplate.SanitizeName(rawName) is not { } name) {
-            _console.MarkupLine($"[red]error:[/] '{Markup.Escape(rawName)}' can't be turned into a project name. Pass one explicitly: [white]rbxcsc init MyGame[/]");
+            output.Write("error", "red", $"'{Markup.Escape(rawName)}' can't be turned into a project name. Pass one explicitly: [white]rbxcsc init MyGame[/]");
 
             return -1;
         }
@@ -36,13 +38,13 @@ public sealed class InitCommand : Command<InitSettings> {
             .ToList();
 
         if (conflicts.Count > 0 && !settings.Force) {
-            _console.MarkupLine($"[red]error:[/] {Markup.Escape(target)} already contains a project:");
+            output.Write("error", "red", $"{Markup.Escape(target)} already contains a project:");
 
             foreach (var conflict in conflicts) {
                 _console.MarkupLine($"  [grey]{Markup.Escape(conflict)}[/]");
             }
 
-            _console.MarkupLine("[cyan]note:[/] pass [white]--force[/] to overwrite them");
+            output.Write("note", "cyan", "Pass [white]--force[/] to overwrite them");
 
             return -1;
         }
@@ -59,20 +61,19 @@ public sealed class InitCommand : Command<InitSettings> {
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             File.WriteAllText(path, content);
 
-            _console.MarkupLine($"[green]created[/] [grey]{Markup.Escape(relative)}[/]");
+            output.Write("created", "green", Markup.Escape(relative));
         }
         
-        var restore = Process.Start(new ProcessStartInfo("dotnet", ["restore", Path.Combine(target, $"{name}.slnx")]) {
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-        });
+        Props.Write(target, TypesInstall.Version, []);
 
-        restore?.WaitForExit();
-        
-        _console.MarkupLine($"[green]restored[/] [grey]{Markup.Escape(target)}[/]");
+        if (!DotnetRestore.RunAsync(_console, Path.Combine(target, $"{name}.slnx"), cancellation).GetAwaiter().GetResult()) {
+            return -1;
+        }
+
+        output.Write("success", "green", $"[bold]{Markup.Escape(name)}[/] is ready");
 
         _console.WriteLine();
-        _console.MarkupLine($"[green]{Markup.Escape(name)}[/] is ready. Next:");
+        output.Write("next", "cyan", "Start building and serving:");
 
         if (settings.Name is not null) {
             _console.MarkupLine($"  [white]cd {Markup.Escape(settings.Name)}[/]");

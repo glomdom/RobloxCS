@@ -8,7 +8,6 @@ namespace RobloxCS.CLI.Commands.Build;
 internal sealed class WatchLoop {
     private static readonly TimeSpan Debounce = TimeSpan.FromMilliseconds(150);
     private const string ReloadMarker = "\0reload";
-    private const string WatchingSuffix = "watching for changes";
 
     private readonly BuildReporter _reporter;
     private readonly ProjectLocation _location;
@@ -44,7 +43,7 @@ internal sealed class WatchLoop {
                         session?.Dispose();
                         session = null;
 
-                        _reporter.Status("[grey]project files changed, reloading[/]");
+                        _reporter.Reloading();
 
                         session = await OpenAsync(cancellation);
 
@@ -56,30 +55,27 @@ internal sealed class WatchLoop {
                         continue;
                     }
 
-                    var update = await session.ApplyChangeAsync(sources, cancellation);
+                    var update = await _reporter.RunAsync("build", "Rebuilding changed sources", _ => session.ApplyChangeAsync(sources, cancellation), announce: false);
 
                     _reporter.Update(update, stopwatch.Elapsed);
                 } catch (OperationCanceledException) when (cancellation.IsCancellationRequested) {
                     break;
                 } catch (Exception ex) {
-                    _reporter.Status("[red]internal error while rebuilding[/]");
-                    Console.Error.WriteLine(ex);
-                    _reporter.Status("[cyan]note:[/] this may be a compiler bug, please report it at https://github.com/glomdom/RobloxCS");
+                    _reporter.InternalError(ex);
                 }
             }
         } finally {
             session?.Dispose();
+            _reporter.Stopped();
         }
 
         return 0;
     }
 
     private async Task<ProjectSession?> OpenAsync(CancellationToken cancellation) {
-        var outcome = await ProjectBuild.OpenAndCompileAsync(_reporter, _location, _options, WatchingSuffix, cancellation);
+        var outcome = await ProjectBuild.OpenAndCompileAsync(_reporter, _location, _options, cancellation);
 
-        if (outcome.Session is null) {
-            _reporter.Status("[grey]waiting for changes to retry[/]");
-        }
+        _reporter.Watching(outcome.Session is null);
 
         return outcome.Session;
     }

@@ -5,6 +5,6 @@ namespace RobloxCS.CLI.Commands;
 
 public class CommonSettings : CommandSettings {
     [CommandOption("-v|--verbose")]
-    [Description("Verbose output for commands")]
+    [Description("Show compiler trace details alongside command progress")]
     public bool Verbosity { get; init; }
 }

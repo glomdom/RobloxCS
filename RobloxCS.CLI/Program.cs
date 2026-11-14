@@ -8,6 +8,7 @@ using RobloxCS.CLI.Commands.Package.Add;
 using RobloxCS.CLI.Commands.Package.Remove;
 using RobloxCS.CLI.Commands.Package.Restore;
 using RobloxCS.Common;
+using Serilog;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -17,10 +18,14 @@ internal static class Program {
     private static int Main(string[] args) {
         Console.OutputEncoding = new UTF8Encoding();
 
-        LoggerSetup.Configure();
+        var console = AnsiConsole.Create(new AnsiConsoleSettings { Out = new AnsiConsoleOutput(Console.Error) });
+        AnsiConsole.Console = console;
+        LoggerSetup.Configure(console);
+        var output = new TerminalOutput(console);
 
         var app = new CommandApp();
         app.Configure(config => {
+            config.Settings.Console = console;
             config.SetApplicationName("rbxcsc");
             config.SetApplicationVersion(typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "unk");
             config.UseStrictParsing();
@@ -45,7 +50,7 @@ internal static class Program {
             if (ex.Pretty is { } pretty) {
                 AnsiConsole.Write(pretty);
             } else {
-                AnsiConsole.MarkupLine($"[red]error:[/] {Markup.Escape(ex.Message)}");
+                output.Write("error", "red", Markup.Escape(ex.Message));
             }
 
             return -1;
@@ -53,22 +58,28 @@ internal static class Program {
             app.Run([..args, "--help"]);
 
             AnsiConsole.WriteLine();
-            AnsiConsole.MarkupLine($"[red]error:[/] {Markup.Escape(ex.Message)}");
+            output.Write("error", "red", Markup.Escape(ex.Message));
 
             return -1;
         } catch (CommandAppException ex) {
             if (ex.Pretty is { } pretty) {
                 AnsiConsole.Write(pretty);
             } else {
-                AnsiConsole.MarkupLine($"[red]error:[/] {Markup.Escape(ex.Message)}");
+                output.Write("error", "red", Markup.Escape(ex.Message));
             }
 
             return -1;
+        } catch (OperationCanceledException) {
+            output.Write("stopped", "grey", "Operation cancelled.");
+
+            return 130;
         } catch (Exception ex) {
-            AnsiConsole.WriteException(ex);
-            AnsiConsole.MarkupLine("[cyan]note:[/] this may be a compiler bug, please report it at https://github.com/glomdom/RobloxCS");
+            Log.Error(ex, "Unexpected compiler failure");
+            output.Write("note", "cyan", "This may be a compiler bug. Please report it at https://github.com/glomdom/RobloxCS");
 
             return -1;
+        } finally {
+            Log.CloseAndFlush();
         }
     }
 }

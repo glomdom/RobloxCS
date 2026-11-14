@@ -18,6 +18,7 @@ public sealed class PackageRestoreCommand : AsyncCommand<PackageSettings> {
 
     protected override async Task<int> ExecuteAsync(CommandContext context, PackageSettings settings, CancellationToken cancellationToken) {
         LoggerSetup.ApplyVerbosity(settings.Verbosity);
+        var output = new TerminalOutput(_console);
 
         var root = Path.GetFullPath(settings.ProjectPath ?? Environment.CurrentDirectory);
 
@@ -26,13 +27,13 @@ public sealed class PackageRestoreCommand : AsyncCommand<PackageSettings> {
 
             TypesInstall.EnsureInstalled();
 
-            var packages = await PackageInstaller.RestoreAsync(root, TypesInstall.Root, manifest, cancellationToken);
+            var packages = await output.RunAsync("restore", "Restoring packages", _ => PackageInstaller.RestoreAsync(root, TypesInstall.Root, manifest, cancellationToken));
 
-            _console.MarkupLine($"[green]restored[/] {packages.Count} {(packages.Count == 1 ? "package" : "packages")}");
+            output.Write("success", "green", $"Restored {packages.Count} {(packages.Count == 1 ? "package" : "packages")}");
 
             return 0;
         } catch (Exception ex) when (ex is ManifestException or PackageException) {
-            _console.MarkupLine($"[red]error:[/] {Markup.Escape(ex.Message)}");
+            output.Write("error", "red", Markup.Escape(ex.Message));
 
             return -1;
         }

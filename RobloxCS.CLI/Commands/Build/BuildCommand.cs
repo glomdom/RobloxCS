@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using RobloxCS.CLI.Reporting;
@@ -40,7 +39,7 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
         try {
             manifest = ProjectManifest.Load(root);
         } catch (ManifestException ex) {
-            _console.MarkupLine($"[red]error:[/] {Markup.Escape(ex.Message)}");
+            new TerminalOutput(_console).Write("error", "red", Markup.Escape(ex.Message));
 
             return -1;
         }
@@ -51,11 +50,9 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
 
         try {
             if (PackageInstaller.NeedsRestore(root)) {
-                reporter.Status("restoring packages");
-
-                await PackageInstaller.RestoreAsync(root, TypesInstall.Root, manifest, cancellation);
+                await reporter.RunAsync("restore", "Restoring packages", _ => PackageInstaller.RestoreAsync(root, TypesInstall.Root, manifest, cancellation));
             } else if (PropsAreStale(root)) {
-                reporter.Status("updating props");
+                reporter.Status("Updating project references");
 
                 var packages = Lockfile.Load(root).Packages.Select(package => Path.GetFullPath(Path.Combine(root, package.Project)));
 
@@ -63,7 +60,7 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
                 PackageInstaller.InvalidateRestore(root);
             }
         } catch (PackageException ex) {
-            _console.MarkupLine($"[red]error:[/] {Markup.Escape(ex.Message)}");
+            new TerminalOutput(_console).Write("error", "red", Markup.Escape(ex.Message));
 
             return -1;
         }
@@ -78,11 +75,7 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
         var options = new EmitOptions(settings.PrintHir, settings.SkipDiagnostics);
 
         if (NeedsDotnetRestore(location.Root)) {
-            reporter.Status("restoring");
-
-            if (!await DotnetRestoreAsync(location.SolutionFile, cancellation)) {
-                reporter.Status("[red]dotnet restore failed[/]");
-
+            if (!await DotnetRestore.RunAsync(_console, location.SolutionFile, cancellation)) {
                 return -1;
             }
         }
@@ -91,22 +84,23 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
             return await new WatchLoop(reporter, location, options).RunAsync(cancellation);
         }
 
-        var outcome = await ProjectBuild.OpenAndCompileAsync(reporter, location, options, null, cancellation);
+        var outcome = await ProjectBuild.OpenAndCompileAsync(reporter, location, options, cancellation);
         outcome.Session?.Dispose();
 
         return outcome.Ok ? 0 : -1;
     }
 
     private bool CheckTypes(ProjectManifest manifest) {
+        var output = new TerminalOutput(_console);
         var projectVersion = manifest.RobloxCSVersion;
 
         if (projectVersion != TypesInstall.Version) {
-            _console.MarkupLine(
-                $"[red]error:[/] this project targets RobloxCS [white]{Markup.Escape(projectVersion)}[/] " +
+            output.Write("error", "red",
+                $"This project targets RobloxCS [white]{Markup.Escape(projectVersion)}[/] " +
                 $"but this is rbxcsc [white]{Markup.Escape(TypesInstall.Version)}[/]"
             );
 
-            _console.MarkupLine($"[cyan]note:[/] update [white]robloxcs[/] in {ProjectManifest.FileName}, or switch rbxcsc with [white]rokit[/]");
+            output.Write("note", "cyan", $"Update [white]robloxcs[/] in {ProjectManifest.FileName}, or switch rbxcsc with [white]rokit[/]");
 
             return false;
         }
@@ -116,7 +110,7 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
         var typesPath = Path.Combine(TypesInstall.Root, projectVersion, "RobloxCS.Types.dll");
 
         if (!File.Exists(typesPath)) {
-            _console.MarkupLine($"[red]error:[/] RobloxCS.Types is missing at [white]{Markup.Escape(typesPath)}[/]");
+            output.Write("error", "red", $"RobloxCS.Types is missing at [white]{Markup.Escape(typesPath)}[/]");
 
             return false;
         }
@@ -128,37 +122,6 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
         return Directory
             .EnumerateFiles(root, "*.csproj", SearchOption.AllDirectories)
             .Any(project => !File.Exists(Path.Combine(Path.GetDirectoryName(project)!, "obj", "project.assets.json")));
-    }
-
-    private async Task<bool> DotnetRestoreAsync(string solution, CancellationToken cancellation) {
-        var start = new ProcessStartInfo("dotnet", ["restore", solution]) {
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-        };
-
-        foreach (var key in start.Environment.Keys.Where(key => key.StartsWith("MSBuild", StringComparison.OrdinalIgnoreCase)).ToList()) {
-            start.Environment.Remove(key);
-        }
-
-        using var process = Process.Start(start);
-        if (process is null) {
-            return false;
-        }
-
-        var stdout = process.StandardOutput.ReadToEndAsync(cancellation);
-        var stderr = process.StandardError.ReadToEndAsync(cancellation);
-
-        await process.WaitForExitAsync(cancellation);
-
-        if (process.ExitCode == 0) {
-            return true;
-        }
-
-        _console.WriteLine((await stdout).Trim());
-        _console.WriteLine((await stderr).Trim());
-
-        return false;
     }
 
     private static bool PropsAreStale(string root) {

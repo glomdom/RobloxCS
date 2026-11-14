@@ -18,6 +18,7 @@ public sealed class PackageRemoveCommand : AsyncCommand<PackageRemoveSettings> {
 
     protected override async Task<int> ExecuteAsync(CommandContext context, PackageRemoveSettings settings, CancellationToken cancellationToken) {
         LoggerSetup.ApplyVerbosity(settings.Verbosity);
+        var output = new TerminalOutput(_console);
 
         var root = Path.GetFullPath(settings.ProjectPath ?? Environment.CurrentDirectory);
         var name = settings.Package.Trim().ToLowerInvariant();
@@ -33,18 +34,18 @@ public sealed class PackageRemoveCommand : AsyncCommand<PackageRemoveSettings> {
 
             var dependencies = ProjectManifest.Load(root).Dependencies;
             var resolver = new Resolver(root, TypesInstall.Root, manifest.Sources, manifest.RobloxCSVersion, Lockfile.Load(root));
-            var packages = await resolver.ResolveAllAsync(dependencies, cancellationToken);
+            var packages = await output.RunAsync("resolve", "Updating dependencies", _ => resolver.ResolveAllAsync(dependencies, cancellationToken));
             var pruned = PackageInstaller.Apply(root, manifest.RobloxCSVersion, packages);
 
-            _console.MarkupLine($"[green]removed[/] {Markup.Escape(name)}");
+            output.Write("removed", "green", Markup.Escape(name));
 
             if (pruned > 1) {
-                _console.MarkupLine($"[grey]+ {pruned - 1} transitive {(pruned == 2 ? "dependency" : "dependencies")} no longer needed[/]");
+                output.Write("removed", "grey", $"{pruned - 1} transitive {(pruned == 2 ? "dependency" : "dependencies")} no longer needed");
             }
 
             return 0;
         } catch (Exception ex) when (ex is ManifestException or PackageException) {
-            _console.MarkupLine($"[red]error:[/] {Markup.Escape(ex.Message)}");
+            output.Write("error", "red", Markup.Escape(ex.Message));
 
             return -1;
         }

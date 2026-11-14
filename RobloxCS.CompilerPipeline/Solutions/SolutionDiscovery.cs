@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.FileSystemGlobbing;
 using RobloxCS.Common;
 using RobloxCS.Common.Diagnostics;
-using Serilog;
 
 namespace RobloxCS.CompilerPipeline.Solutions;
 
@@ -13,8 +12,6 @@ public static class SolutionDiscovery {
         var slnCandidates = candidateMatcher.GetResultsInFullPath(fullCwd).ToList();
 
         if (slnCandidates.Count == 0) {
-            Log.Error("Failed to find a .slnx file in {SearchDirectory}.", fullCwd);
-
             return Diagnostic.Error(DiagnosticId.NoSolutionFound, $"Failed to find a .slnx file in '{fullCwd}'.");
         }
 

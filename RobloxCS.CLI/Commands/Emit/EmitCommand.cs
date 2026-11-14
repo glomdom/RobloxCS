@@ -48,7 +48,9 @@ public sealed class EmitCommand : Command<EmitCommand.Settings> {
         DiagnosticMarkup.PrintAll(_console, diagnostics);
 
         if (!result.Ok) {
-            DiagnosticMarkup.Print(_console, result.Diagnostic);
+            if (!diagnostics.Any(diagnostic => diagnostic.IsError) || result.Diagnostic.Id is not (DiagnosticId.SourceDidNotCompile or DiagnosticId.TranspilationFailed)) {
+                DiagnosticMarkup.Print(_console, result.Diagnostic);
+            }
 
             return -1;
         }

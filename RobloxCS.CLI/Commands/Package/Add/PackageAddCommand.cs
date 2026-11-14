@@ -18,6 +18,7 @@ public sealed class PackageAddCommand : AsyncCommand<PackageAddSettings> {
 
     protected override async Task<int> ExecuteAsync(CommandContext context, PackageAddSettings settings, CancellationToken cancellationToken) {
         LoggerSetup.ApplyVerbosity(settings.Verbosity);
+        var output = new TerminalOutput(_console);
 
         var root = Path.GetFullPath(settings.ProjectPath ?? Environment.CurrentDirectory);
 
@@ -35,9 +36,7 @@ public sealed class PackageAddCommand : AsyncCommand<PackageAddSettings> {
 
             var resolver = new Resolver(root, TypesInstall.Root, manifest.Sources, manifest.RobloxCSVersion, Lockfile.Load(root));
 
-            _console.MarkupLine($"[grey]resolving[/] {Markup.Escape(name)}");
-
-            var added = await resolver.ResolveOneAsync(name, spec, cancellationToken);
+            var added = await output.RunAsync("resolve", $"Resolving [white]{Markup.Escape(name)}[/]", _ => resolver.ResolveOneAsync(name, spec, cancellationToken));
 
             if (spec.Git is null && spec.Version is null) {
                 spec = spec with { Version = $"^{added.Version}" };
@@ -46,24 +45,24 @@ public sealed class PackageAddCommand : AsyncCommand<PackageAddSettings> {
             ManifestEditor.SetDependency(root, added.Name, spec);
 
             var dependencies = ProjectManifest.Load(root).Dependencies;
-            var packages = await resolver.ResolveAllAsync(dependencies, cancellationToken);
+            var packages = await output.RunAsync("resolve", "Updating dependencies", _ => resolver.ResolveAllAsync(dependencies, cancellationToken));
 
             var pruned = PackageInstaller.Apply(root, manifest.RobloxCSVersion, packages);
 
-            _console.MarkupLine($"[green]added[/] {Markup.Escape(added.Name)} [white]{Markup.Escape(added.Version)}[/] [grey]({added.Commit[..12]})[/]");
+            output.Write("added", "green", $"{Markup.Escape(added.Name)} [white]{Markup.Escape(added.Version)}[/] [grey]({added.Commit[..12]})[/]");
 
             var transitive = packages.Count - dependencies.Count;
             if (transitive > 0) {
-                _console.MarkupLine($"[grey]+ {transitive} transitive {(transitive == 1 ? "dependency" : "dependencies")}[/]");
+                output.Write("detail", "grey", $"{transitive} transitive {(transitive == 1 ? "dependency" : "dependencies")}");
             }
 
             if (pruned > 0) {
-                _console.MarkupLine($"[grey]removed {pruned} unused {(pruned == 1 ? "package" : "packages")}[/]");
+                output.Write("removed", "grey", $"{pruned} unused {(pruned == 1 ? "package" : "packages")}");
             }
 
             return 0;
         } catch (Exception ex) when (ex is ManifestException or PackageSpecException or PackageException) {
-            _console.MarkupLine($"[red]error:[/] {Markup.Escape(ex.Message)}");
+            output.Write("error", "red", Markup.Escape(ex.Message));
 
             return -1;
         }
