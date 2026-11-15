@@ -16,6 +16,7 @@ public static class DiagnosticId {
     public const string NoSyntaxTree = "RBXCS0008";
     public const string SourceDidNotCompile = "RBXCS0009";
     public const string TranspilationFailed = "RBXCS0010";
+    public const string NoRuntimeAnchor = "RBXCS0011";
 
     public const string UnsupportedSyntax = "RBXCS0100";
 

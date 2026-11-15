@@ -20,6 +20,7 @@ public sealed record SessionUpdate(List<DocumentResult> Results, List<string> De
 public sealed class ProjectSession : IDisposable {
     private readonly LoadedSolution _loaded;
     private readonly List<RojoAnchor> _anchors;
+    private readonly RojoAnchor? _runtimeAnchor;
 
     public Solution Solution { get; private set; }
     public IReadOnlyList<ProjectPlan> Plans { get; private set; } = [];
@@ -30,6 +31,7 @@ public sealed class ProjectSession : IDisposable {
     private ProjectSession(LoadedSolution loaded, List<RojoAnchor> anchors, EmitOptions options) {
         _loaded = loaded;
         _anchors = anchors;
+        _runtimeAnchor = RojoProject.ResolveRuntimeAnchor(anchors);
         Options = options;
 
         Solution = loaded.Solution;
@@ -62,6 +64,8 @@ public sealed class ProjectSession : IDisposable {
             return failure;
         }
 
+        session.InstallRuntime();
+
         return session;
     }
 
@@ -78,10 +82,6 @@ public sealed class ProjectSession : IDisposable {
         var output = await DocumentCompiler.CompileDocument(document, plan, Options, diagnostics, cancellation);
 
         if (output.Ok) {
-            if (output.Value.UsesCollections) {
-                RuntimeLibrary.InstallCollections(Path.Join(plan.RuntimeAnchor.FullPath, RuntimeLibrary.DirectoryName));
-            }
-
             Directory.CreateDirectory(Path.GetDirectoryName(output.Value.OutPath)!);
 
             await File.WriteAllTextAsync(output.Value.OutPath, output.Value.Code, cancellation);
@@ -146,6 +146,8 @@ public sealed class ProjectSession : IDisposable {
             File.Delete(output);
         }
 
+        InstallRuntime();
+
         var toCompile = new HashSet<DocumentId>(changed);
 
         if (GraphChanged(oldGraph, Graph)) {
@@ -172,6 +174,12 @@ public sealed class ProjectSession : IDisposable {
         }
 
         return new SessionUpdate(results, deletedOutputs, diagnostics, null);
+    }
+
+    private void InstallRuntime() {
+        if (_runtimeAnchor is not null) {
+            RuntimeLibrary.Install(_runtimeAnchor.FullPath);
+        }
     }
 
     private ProjectPlan? PlanFor(ProjectId id) => Plans.FirstOrDefault(plan => plan.Project.Id == id);
@@ -224,7 +232,7 @@ public sealed class ProjectSession : IDisposable {
                 return prepared.Diagnostic;
             }
 
-            plans.Add(prepared.Value);
+            plans.Add(prepared.Value with { RuntimeAnchor = _runtimeAnchor });
         }
 
         Plans = plans;

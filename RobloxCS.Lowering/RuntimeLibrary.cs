@@ -1,16 +1,12 @@
 ﻿namespace RobloxCS.Lowering;
 
 public static class RuntimeLibrary {
-    public const string CollectionsRequirePath = "@game/ReplicatedStorage/Shared/__RobloxCS/Collections";
-    public const string DirectoryName = "__RobloxCS";
+    public const string CollectionsRequirePath = "@game/ReplicatedStorage/rbxcs_include/Collections";
 
-    public static void InstallCollections(string directory) {
-        using var stream = typeof(RuntimeLibrary).Assembly.GetManifestResourceStream("RobloxCS.RuntimeLib.Collections.luau")
-                           ?? throw new InvalidOperationException("The collections runtime is missing from the compiler.");
+    private static readonly Lazy<string> CollectionsCode = new(ReadCollections);
 
-        using var reader = new StreamReader(stream);
-
-        var code = reader.ReadToEnd();
+    public static void Install(string directory) {
+        var code = CollectionsCode.Value;
         var path = Path.Join(directory, "Collections.luau");
         if (File.Exists(path) && File.ReadAllText(path) == code) {
             return;
@@ -18,5 +14,14 @@ public static class RuntimeLibrary {
 
         Directory.CreateDirectory(directory);
         File.WriteAllText(path, code);
+    }
+
+    private static string ReadCollections() {
+        using var stream = typeof(RuntimeLibrary).Assembly.GetManifestResourceStream("RobloxCS.RuntimeLib.Collections.luau")
+                           ?? throw new InvalidOperationException("The collections runtime is missing from the compiler.");
+
+        using var reader = new StreamReader(stream);
+
+        return reader.ReadToEnd();
     }
 }

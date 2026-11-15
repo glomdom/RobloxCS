@@ -82,6 +82,12 @@ public static class RojoProject {
         return true;
     }
 
+    public static RojoAnchor? ResolveRuntimeAnchor(List<RojoAnchor> anchors) {
+        return anchors.FirstOrDefault(a =>
+            a.InstancePath.FirstOrDefault() == "ReplicatedStorage" && string.Equals(AnchorFolderName(a), "include", StringComparison.OrdinalIgnoreCase)
+        );
+    }
+
     private static string AnchorFolderName(RojoAnchor anchor) => Path.GetFileName(anchor.FullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
 
     private static void Walk(JsonElement node, List<string> instancePath, string projectDir, List<RojoAnchor> anchors) {

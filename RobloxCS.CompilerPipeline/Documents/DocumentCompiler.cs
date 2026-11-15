@@ -33,12 +33,21 @@ public static class DocumentCompiler {
 
         var transpilerOptions = new TranspilerOptions(ScriptTypeResolver.FromFileName(document.Name), options.PrintHir) {
             Modules = options.Modules,
-            CollectionRuntimePath = $"@game/{string.Join('/', plan.RuntimeAnchor.InstancePath)}/{RuntimeLibrary.DirectoryName}/Collections",
+            CollectionRuntimePath = plan.RuntimeAnchor is { } runtimeAnchor
+                ? $"@game/{string.Join('/', runtimeAnchor.InstancePath)}/Collections"
+                : RuntimeLibrary.CollectionsRequirePath,
         };
 
         var code = LuauEmitter.Emit(compiler, transpilerOptions, diagnostics, out var usesCollections);
         if (!code.Ok) {
             return code.Diagnostic;
+        }
+
+        if (usesCollections && plan.RuntimeAnchor is null) {
+            return Diagnostic.Error(
+                DiagnosticId.NoRuntimeAnchor,
+                $"'{document.Name}' uses collections, but the Rojo project doesn't map an \"include\" folder under ReplicatedStorage. Add \"rbxcs_include\": {{ \"$path\": \"include\" }} to it."
+            );
         }
 
         var outPath = OutPathFor(document, plan);

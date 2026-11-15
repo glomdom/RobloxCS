@@ -116,7 +116,7 @@ public class Regression {
             }
 
             if (result.UsesCollections) {
-                RuntimeLibrary.InstallCollections(Path.Join(OutputDir, "RuntimeLib"));
+                RuntimeLibrary.Install(Path.Join(OutputDir, "RuntimeLib"));
             }
 
             return new RendererWalker().Render(result.Chunk!);

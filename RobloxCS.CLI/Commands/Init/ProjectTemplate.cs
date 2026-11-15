@@ -74,6 +74,9 @@ internal static class ProjectTemplate {
               },
               "Packages": {
                 "$path": { "optional": "out/packages" }
+              },
+              "rbxcs_include": {
+                "$path": { "optional": "include" }
               }
             },
             "ServerScriptService": {
@@ -119,6 +122,7 @@ internal static class ProjectTemplate {
         bin/
         obj/
         out/
+        include/
         sourcemap.json
         *.rbxl
         *.rbxlx
