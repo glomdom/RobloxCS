@@ -43,6 +43,14 @@ public sealed partial class HirLowerer {
             }
 
             case HirCall call: {
+                if (IsLuaTuple(call.Method.ContainingType)) {
+                    return LowerTupleCall(call);
+                }
+
+                if (ReturnsMultipleValues(call.Method)) {
+                    return LowerCall(call) is { } multiple ? PackTuple([multiple]) : Nil();
+                }
+
                 var value = LowerCall(call) ?? (Expression)Nil();
                 if (IsList(call.Method.ContainingType) && call.Method.Name is "Find" or "FindLast") {
                     return Cast(value, LowerType(call.Type, call.Location));
@@ -144,15 +152,35 @@ public sealed partial class HirLowerer {
         Log.Verbose("Lowering lambda with {ParameterCount} parameters", lambda.Parameters.Length);
 
         var parameters = LowerParameters(lambda.Parameters);
-        var returnType = LowerType(lambda.Symbol.ReturnType, lambda.Location);
+        var returnsTuple = IsLuaTuple(lambda.Symbol.ReturnType);
+        var returnType = returnsTuple ? TuplePackType() : LowerType(lambda.Symbol.ReturnType, lambda.Location);
         var outerReturnsSelf = _returnsSelf;
+        var outerReturnsTuple = _returnsTuple;
 
         _returnsSelf = false;
+        _returnsTuple = returnsTuple;
 
         var body = LowerBlock(lambda.Body);
 
         _returnsSelf = outerReturnsSelf;
+        _returnsTuple = outerReturnsTuple;
 
-        return Lambda(parameters, returnType, body);
+        var function = Lambda(parameters, returnType, body);
+
+        for (var i = 0; i < lambda.Parameters.Length; i++) {
+            if (!IsLuaTuple(lambda.Parameters[i].Symbol.Type)) {
+                continue;
+            }
+
+            if (i != lambda.Parameters.Length - 1) {
+                Unsupported("A LuaTuple parameter must be the last parameter of a lambda.", lambda.Parameters[i].Location);
+
+                continue;
+            }
+
+            MakeVariadic(function, parameters[i].Name);
+        }
+
+        return function;
     }
 }

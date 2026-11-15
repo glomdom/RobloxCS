@@ -141,6 +141,10 @@ public sealed partial class HirLowerer {
             };
         }
 
+        if (access.Receiver is { } tuple && IsLuaTuple(tuple.Type)) {
+            return LowerTupleProperty(access, tuple);
+        }
+
         if (access is { Symbol.Name: "Length", Receiver: { Type.SpecialType: SpecialType.System_String } text }) {
             return new UnaryOperatorExpression { UnOp = UnOp.Hash, Expression = LowerExpression(text) };
         }

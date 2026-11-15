@@ -194,6 +194,26 @@ public sealed class HirPrinter : HirVisitor {
         });
     }
 
+    protected override void VisitDeconstruction(HirDeconstruction node) {
+        Line("[magenta]deconstruct[/]");
+
+        Nested(() => {
+            Section("targets", () => {
+                foreach (var target in node.Targets) {
+                    if (target.Declared is { } local) {
+                        Line($"[blue]declare[/] {Escape(local.Name)}");
+                    } else if (target.Target is not null) {
+                        VisitExpression(target.Target);
+                    } else {
+                        Line("[grey italic]discard[/]");
+                    }
+                }
+            });
+
+            Section("value", () => VisitExpression(node.Value));
+        });
+    }
+
     protected override void VisitDoWhile(HirDoWhile node) {
         Line("[magenta]do-while[/]");
 

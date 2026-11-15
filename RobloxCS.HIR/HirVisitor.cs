@@ -21,6 +21,7 @@ public abstract class HirVisitor {
             case HirBreak n: VisitBreak(n); break;
             case HirCompoundAssignment n: VisitCompoundAssignment(n); break;
             case HirContinue n: VisitContinue(n); break;
+            case HirDeconstruction n: VisitDeconstruction(n); break;
             case HirDoWhile n: VisitDoWhile(n); break;
             case HirErrorStatement n: VisitErrorStatement(n); break;
             case HirExpressionStatement n: VisitExpressionStatement(n); break;
@@ -100,6 +101,14 @@ public abstract class HirVisitor {
     }
 
     protected virtual void VisitContinue(HirContinue node) { } // leaf
+
+    protected virtual void VisitDeconstruction(HirDeconstruction node) {
+        foreach (var target in node.Targets) {
+            if (target.Target is not null) VisitExpression(target.Target);
+        }
+
+        VisitExpression(node.Value);
+    }
 
     protected virtual void VisitDoWhile(HirDoWhile node) {
         VisitExpression(node.Condition);

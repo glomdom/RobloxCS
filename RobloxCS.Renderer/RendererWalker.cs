@@ -118,6 +118,12 @@ public class RendererWalker : AstVisitorBase {
         _state.Builder.Append(node.Name);
     }
 
+    public override void VisitIndexSignatureFieldKey(IndexSignatureTypeFieldKey node) {
+        _state.Builder.Append('[');
+        Visit(node.Inner);
+        _state.Builder.Append(']');
+    }
+
     public override void VisitCallbackTypeInfo(CallbackTypeInfo node) {
         _state.Builder.Append('(');
 
@@ -153,8 +159,11 @@ public class RendererWalker : AstVisitorBase {
     }
 
     public override void VisitTypeArgument(TypeArgument node) {
-        _state.Builder.Append(node.Name);
-        _state.Builder.Append(": ");
+        if (node.HasName) {
+            _state.Builder.Append(node.Name);
+            _state.Builder.Append(": ");
+        }
+
         Visit(node.TypeInfo);
     }
 

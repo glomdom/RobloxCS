@@ -45,6 +45,10 @@ public sealed partial class HirLowerer {
             return LowerListCreation(creation);
         }
 
+        if (IsLuaTuple(type)) {
+            return LowerTupleCreation(creation);
+        }
+
         if (GetRobloxNative(type) is { } native) {
             if (native.Kind == RobloxNativeType.Instance) {
                 return Call(Index("Instance", "new"), Str(native.Name));
@@ -94,13 +98,22 @@ public sealed partial class HirLowerer {
 
         var expandsArrayArguments = method.ContainingType.SpecialType == SpecialType.System_Array && call.Arguments.Length == 1 && method.Name is "Sort" or "Clear";
         var native = GetRobloxNative(method.ContainingType);
-        var args = LowerArguments(native is null ? call.Arguments : NativeArguments(call.Arguments), (hasPreludes, hasEffects) => {
+        var spreadsTuple = false;
+        var arguments = native is not null ? NativeArguments(call.Arguments)
+            : method.MethodKind == MethodKind.DelegateInvoke ? SpreadTupleArgument(call.Arguments, out spreadsTuple)
+            : call.Arguments;
+
+        var args = LowerArguments(arguments, (hasPreludes, hasEffects) => {
             if (receiver is not null && (hasPreludes || repeatsReceiver && (hasEffects || receiver is not SymbolExpression))) {
                 receiver = CaptureValue(receiver, "receiver");
             }
         }, materialize: repeatsReceiver || expandsArrayArguments);
 
         if (method.MethodKind == MethodKind.DelegateInvoke) {
+            if (!spreadsTuple && method.Parameters is [.., var last] && IsLuaTuple(last.Type) && args.Count == method.Parameters.Length) {
+                args[^1] = UnpackTuple(args[^1]);
+            }
+
             return Call(receiver!, args);
         }
 

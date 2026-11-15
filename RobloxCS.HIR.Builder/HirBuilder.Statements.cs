@@ -23,6 +23,7 @@ public sealed partial class HirBuilder {
             OperationKind.Return => HandleReturn((IReturnOperation)operation),
             OperationKind.ConditionalAccess => HandleConditionalAccess((IConditionalAccessOperation)operation),
             OperationKind.CompoundAssignment => HandleCompoundAssignment((ICompoundAssignmentOperation)operation),
+            OperationKind.DeconstructionAssignment => HandleDeconstruction((IDeconstructionAssignmentOperation)operation),
 
             _ => throw new NotSupportedException($"Statement operation of kind '{operation.Kind}' is not supported."),
         };
@@ -237,6 +238,34 @@ public sealed partial class HirBuilder {
                 Location = assignOperation.Syntax.GetLocation(),
                 Target = target,
                 Value = value,
+            };
+        }
+
+        HirDeconstruction HandleDeconstruction(IDeconstructionAssignmentOperation deconstructionOperation) {
+            var elements = deconstructionOperation.Target switch {
+                IDeclarationExpressionOperation { Expression: ITupleOperation tuple } => tuple.Elements,
+                ITupleOperation tuple => tuple.Elements,
+
+                _ => throw new NotSupportedException("Deconstruction target is not supported."),
+            };
+
+            return new HirDeconstruction {
+                Location = deconstructionOperation.Syntax.GetLocation(),
+                Targets = [..elements.Select(HandleDeconstructionTarget)],
+                Value = BuildExpression(deconstructionOperation.Value),
+            };
+        }
+
+        HirDeconstructionTarget HandleDeconstructionTarget(IOperation element) {
+            var location = element.Syntax.GetLocation();
+
+            return element switch {
+                IDiscardOperation => new HirDeconstructionTarget { Location = location, Type = element.Type },
+                IDeclarationExpressionOperation { Expression: ILocalReferenceOperation local } => new HirDeconstructionTarget { Location = location, Type = local.Type, Declared = local.Local },
+                ILocalReferenceOperation { IsDeclaration: true } local => new HirDeconstructionTarget { Location = location, Type = local.Type, Declared = local.Local },
+                ITupleOperation or IDeclarationExpressionOperation => throw new NotSupportedException("Nested deconstruction is not supported yet."),
+
+                _ => new HirDeconstructionTarget { Location = location, Type = element.Type, Target = BuildExpression(element) },
             };
         }
 

@@ -10,6 +10,8 @@ public sealed class LuaTuple : IEnumerable<object> {
         Values = values;
     }
 
+    public int Count => Values.Length;
+
     public T Get<T>(int index) => (T)Values[index];
 
     public void Deconstruct(out object a, out object b) {

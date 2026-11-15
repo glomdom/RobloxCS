@@ -49,10 +49,16 @@ public sealed partial class HirLowerer {
             }
         }
 
+        if (IsLuaTuple(type)) {
+            return TupleType();
+        }
+
         if (type is INamedTypeSymbol { DelegateInvokeMethod: { } invoke }) {
             return new RobloxCS.AST.Types.CallbackTypeInfo {
-                Arguments = [..invoke.Parameters.Select(parameter => RobloxCS.AST.Types.TypeArgument.From(parameter.Name, LowerType(parameter.Type, location)))],
-                ReturnType = LowerType(invoke.ReturnType, location),
+                Arguments = [..invoke.Parameters.Select(parameter => IsLuaTuple(parameter.Type)
+                    ? new RobloxCS.AST.Types.TypeArgument { TypeInfo = TuplePackType() }
+                    : RobloxCS.AST.Types.TypeArgument.From(parameter.Name, LowerType(parameter.Type, location)))],
+                ReturnType = IsLuaTuple(invoke.ReturnType) ? TuplePackType() : LowerType(invoke.ReturnType, location),
             };
         }
 

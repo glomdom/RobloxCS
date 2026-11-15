@@ -94,6 +94,10 @@ public sealed partial class HirLowerer {
                 return LowerCompoundAssignment(compoundAssignment);
             }
 
+            case HirDeconstruction deconstruction: {
+                return LowerDeconstruction(deconstruction);
+            }
+
             default: {
                 Unsupported($"Lowering '{statement.GetType().Name}' statements are not supported yet.", statement.Location);
 
@@ -143,6 +147,10 @@ public sealed partial class HirLowerer {
 
         if (statement.Value is null) {
             return [Return()];
+        }
+
+        if (_returnsTuple) {
+            return [Return(LowerTupleValues(statement.Value))];
         }
 
         return [Return(LowerExpression(statement.Value))];
