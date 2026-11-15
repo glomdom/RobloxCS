@@ -141,6 +141,10 @@ public sealed partial class HirLowerer {
             };
         }
 
+        if (access is { Symbol.Name: "Length", Receiver: { Type.SpecialType: SpecialType.System_String } text }) {
+            return new UnaryOperatorExpression { UnOp = UnOp.Hash, Expression = LowerExpression(text) };
+        }
+
         if (TryLowerDataTypeProperty(access, out var dataTypeProperty)) {
             return dataTypeProperty;
         }
