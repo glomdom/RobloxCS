@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.HIR.Expressions;
 
@@ -9,13 +10,13 @@ public sealed partial class HirBuilder {
             throw new NotSupportedException("__arglist is not supported");
         }
 
-        // TODO: ArgumentKind.DefaultValue: the value is a synthesized default and currently goes through BuildExpression like any other.
         var value = BuildExpression(operation.Value);
 
         return new HirArgument {
             Symbol = operation.Parameter,
             Location = operation.Syntax.GetLocation(),
             Value = value,
+            IsDefault = operation.ArgumentKind == ArgumentKind.DefaultValue,
             // IsParams = argumentOperation.Parameter.IsParams,
             // RefKind = argumentOperation.Parameter.RefKind,
         };

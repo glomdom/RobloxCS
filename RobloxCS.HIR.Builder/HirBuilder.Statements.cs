@@ -51,7 +51,7 @@ public sealed partial class HirBuilder {
 
         HirStatement HandleReturn(IReturnOperation returnOperation) {
             var expr = returnOperation.ReturnedValue is not null ? BuildExpression(returnOperation.ReturnedValue) : null;
-            
+
             return new HirReturn {
                 Location = returnOperation.Syntax.GetLocation(),
                 Value = expr,
@@ -63,11 +63,11 @@ public sealed partial class HirBuilder {
                 BranchKind.Continue => new HirContinue {
                     Location = branchOperation.Syntax.GetLocation(),
                 },
-                
+
                 BranchKind.Break => new HirBreak {
                     Location = branchOperation.Syntax.GetLocation(),
                 },
-                
+
                 _ => throw new NotSupportedException($"Branch operation of kind '{branchOperation.BranchKind}' is not supported."),
             };
         }
@@ -76,7 +76,7 @@ public sealed partial class HirBuilder {
             var cond = BuildExpression(conditionalOperation.Condition);
             var thenExpr = BuildBlock(conditionalOperation.WhenTrue);
             var elseExpr = conditionalOperation.WhenFalse is not null ? BuildStatement(conditionalOperation.WhenFalse) : null;
-            
+
             return new HirIf {
                 Location = conditionalOperation.Syntax.GetLocation(),
                 Condition = cond,
@@ -90,11 +90,11 @@ public sealed partial class HirBuilder {
                 LoopKind.ForEach => HandleForEachLoop((IForEachLoopOperation)loopOperation),
                 LoopKind.For => HandleForLoop((IForLoopOperation)loopOperation),
                 LoopKind.While => HandleWhileLoop((IWhileLoopOperation)loopOperation),
-                
+
                 _ => throw new NotSupportedException($"Loop operation of kind '{loopOperation.LoopKind}' is not supported."),
             };
         }
-        
+
         HirStatement HandleForEachLoop(IForEachLoopOperation loop) {
             if (loop.IsAsynchronous || loop.LoopControlVariable is not IVariableDeclaratorOperation variable) {
                 throw new NotSupportedException("Only synchronous foreach loops with a local variable are supported.");
@@ -117,10 +117,10 @@ public sealed partial class HirBuilder {
             if (loop.Condition is not { } condOperation) {
                 throw new InvalidOperationException("While loop operation does not have a condition.");
             }
-            
+
             var cond = BuildExpression(condOperation);
             var block = BuildBlock(loop.Body);
-            
+
             if (!loop.ConditionIsTop) {
                 return new HirDoWhile { Location = loop.Syntax.GetLocation(), Condition = cond, Body = block };
             }
@@ -131,13 +131,13 @@ public sealed partial class HirBuilder {
                 Body = block,
             };
         }
-        
+
         HirStatement HandleForLoop(IForLoopOperation loop) {
             var inits = loop.Before.Select(BuildStatement).ToImmutableArray();
             var incrementors = loop.AtLoopBottom.Select(BuildStatement).ToImmutableArray();
             var cond = loop.Condition is not null ? BuildExpression(loop.Condition) : null;
             var block = BuildBlock(loop.Body);
-            
+
             return new HirFor {
                 Location = loop.Syntax.GetLocation(),
                 Initializers = inits,
@@ -210,17 +210,12 @@ public sealed partial class HirBuilder {
 
             var isExtension = invocationOperation.TargetMethod.ReducedFrom is not null;
 
-            var args = invocationOperation.Arguments
-                .Where(argument => argument.ArgumentKind != ArgumentKind.DefaultValue)
-                .Select(BuildArgument)
-                .ToList();
-
             var call = new HirCall {
                 Location = invocationOperation.Syntax.GetLocation(),
                 Type = invocationOperation.Type,
                 Method = invocationOperation.TargetMethod,
                 Receiver = receiver,
-                Arguments = [.. args],
+                Arguments = [..invocationOperation.Arguments.Select(BuildArgument)],
                 IsExtension = isExtension,
             };
 
@@ -258,7 +253,7 @@ public sealed partial class HirBuilder {
 
             return new HirLocalDeclaration {
                 Location = operation.Syntax.GetLocation(),
-                Declarators = [.. declarators],
+                Declarators = [..declarators],
             };
         }
 
@@ -281,13 +276,13 @@ public sealed partial class HirBuilder {
             };
         }
     }
-    
+
     private HirBlock BuildBlock(IOperation operation) {
         if (operation is IBlockOperation block) {
             return new HirBlock {
                 Location = block.Syntax.GetLocation(),
-                Statements = [.. block.Operations.Select(BuildStatement)],
-                Locals = [.. block.Locals],
+                Statements = [..block.Operations.Select(BuildStatement)],
+                Locals = [..block.Locals],
             };
         }
 
@@ -297,7 +292,7 @@ public sealed partial class HirBuilder {
             Locals = [],
         };
     }
-    
+
     private static ITypeSymbol ResolveLocalType(IVariableDeclaratorOperation declarator) {
         var declared = declarator.Symbol.Type;
 

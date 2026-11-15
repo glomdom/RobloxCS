@@ -35,8 +35,17 @@ public sealed partial class HirLowerer {
 
     private ImmutableArray<HirArgument> NativeArguments(ImmutableArray<HirArgument> arguments) {
         var flattened = ImmutableArray.CreateBuilder<HirArgument>(arguments.Length);
+        var lastExplicit = arguments.Where(argument => !argument.IsDefault).Select(argument => argument.Symbol.Ordinal).DefaultIfEmpty(-1).Max();
 
         foreach (var argument in arguments) {
+            if (argument.IsDefault) {
+                if (argument.Symbol.Ordinal < lastExplicit) {
+                    flattened.Add(argument with { Value = new HirLiteral { Location = argument.Location, Type = argument.Value.Type, Value = null } });
+                }
+
+                continue;
+            }
+
             if (!argument.Symbol.IsParams) {
                 flattened.Add(argument with { Value = UnwrapBox(argument.Value) });
 
