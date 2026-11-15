@@ -93,7 +93,8 @@ public sealed partial class HirLowerer {
                               method.Name is "Sort" or "FindIndex" or "FindLastIndex" or "CopyTo" or "ConvertAll";
 
         var expandsArrayArguments = method.ContainingType.SpecialType == SpecialType.System_Array && call.Arguments.Length == 1 && method.Name is "Sort" or "Clear";
-        var args = LowerArguments(call.Arguments, (hasPreludes, hasEffects) => {
+        var native = GetRobloxNative(method.ContainingType);
+        var args = LowerArguments(native is null ? call.Arguments : NativeArguments(call.Arguments), (hasPreludes, hasEffects) => {
             if (receiver is not null && (hasPreludes || repeatsReceiver && (hasEffects || receiver is not SymbolExpression))) {
                 receiver = CaptureValue(receiver, "receiver");
             }
@@ -107,8 +108,8 @@ public sealed partial class HirLowerer {
             return collectionCall;
         }
 
-        if (GetRobloxNative(method.ContainingType) is { } native) {
-            return LowerNativeCall(call, native, args, receiver) as FunctionCallExpression;
+        if (native is not null) {
+            return LowerNativeCall(call, native.Value, args, receiver) as FunctionCallExpression;
         }
 
         if (!IsTranspiledType(method.ContainingType)) {

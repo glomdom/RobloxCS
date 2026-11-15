@@ -46,7 +46,7 @@ public sealed partial class HirLowerer {
 
         Log.Verbose("Lowering datatype creation {DataType}.new", name);
 
-        result = Call(Index(name, "new"), creation.Arguments.Select(argument => LowerExpression(argument.Value)));
+        result = Call(Index(name, "new"), NativeArguments(creation.Arguments).Select(argument => LowerExpression(argument.Value)));
 
         return true;
     }
@@ -87,7 +87,7 @@ public sealed partial class HirLowerer {
         }
 
         var member = RobloxNameOf(method);
-        var args = call.Arguments.Select(argument => LowerExpression(argument.Value)).ToList();
+        var args = NativeArguments(call.Arguments).Select(argument => LowerExpression(argument.Value)).ToList();
 
         if (method.IsStatic) {
             Log.Verbose("Lowering datatype static call {DataType}.{Member}", name, member);
