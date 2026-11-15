@@ -265,6 +265,7 @@ internal static class Program {
 
                         var callbackType = isVoid ? "Action" : "Func";
                         var parameters = callback.Parameters.Select(p => RobloxTypeToCSharp(p.Type)).ToList();
+                        if (!isVoid) parameters.Add(returnType);
                         if (parameters.Count > 0) callbackType += $"<{string.Join(", ", parameters)}>";
 
                         Log.Verbose("Generating event {CallbackName} with tags {Tags} and security {Security}", callback.Name, callback.Tags, callback.Security);
