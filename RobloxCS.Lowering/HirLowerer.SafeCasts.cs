@@ -76,27 +76,7 @@ public sealed partial class HirLowerer {
             return LowerExpression(conversion.Operand);
         }
 
-        var value = LowerExpression(conversion.Operand);
-        var result = LowerBoxCast(Name("value"), underlying, true);
-
-        Expression? nativeCheck = null;
-        if (GetRobloxNative(underlying) is { } native) {
-            nativeCheck = Equal(Call("typeof", Name("value")), Str(native.Name));
-        } else if (IsRobloxEnum(underlying)) {
-            nativeCheck = new BinaryOperatorExpression {
-                Left = Equal(Call("typeof", Name("value")), Str("EnumItem")),
-                Op = BinOp.And,
-                Right = Equal(Index("value", "EnumType"), Index("Enum", underlying.Name)),
-            };
-        }
-
-        if (nativeCheck is null) {
-            return Cast(LowerBoxCast(value, underlying, true), LowerType(target, conversion.Location));
-        }
-
-        result = IfExpression.From(nativeCheck, Name("value"), result);
-
-        return Cast(Call(Lambda([("value", Type("any"))], Type("any"), [Return(result)]), value), LowerType(target, conversion.Location));
+        return Cast(LowerBoxCast(LowerExpression(conversion.Operand), underlying, true), LowerType(target, conversion.Location));
     }
 
     private Expression LowerReferenceSafeCast(Expression value, INamedTypeSymbol target, Location location) {

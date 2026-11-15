@@ -48,10 +48,14 @@ public sealed partial class HirLowerer {
         return Cast(LowerBoxCast(LowerExpression(conversion.Operand), underlying, false, nullable), LowerType(target, conversion.Location));
     }
 
-    private static Expression LowerBoxCast(Expression value, ITypeSymbol target, bool safe, bool allowNull = false) {
+    private Expression LowerBoxCast(Expression value, ITypeSymbol target, bool safe, bool allowNull = false) {
         var body = new List<Statement>();
         if (allowNull) {
             body.Add(new IfStatement { Condition = Equal(Name("value"), Nil()), Block = BlockOf([Return(Nil())]) });
+        }
+
+        if (RawValueCheck(target) is { } raw) {
+            body.Add(new IfStatement { Condition = raw, Block = BlockOf([Return(Name("value"))]) });
         }
 
         body.AddRange([
@@ -70,6 +74,29 @@ public sealed partial class HirLowerer {
         return Call(Lambda([("value", Type("any")), ("target", Type("string"))], Type("any"), body), value, Str(RuntimeTypeKey(target)));
 
         ReturnStatement Failure() => Return(safe ? Nil() : Call("error", Str("Invalid unboxing cast")));
+    }
+
+    private Expression? RawValueCheck(ITypeSymbol target) {
+        var type = Call("typeof", Name("value"));
+
+        if (IsRobloxEnum(target)) {
+            return Binary(Equal(type, Str("EnumItem")), BinOp.And, Equal(Index("value", "EnumType"), Index("Enum", target.Name)));
+        }
+
+        if (GetRobloxNative(target) is { } native) {
+            return Equal(type, Str(native.Name));
+        }
+
+        if (IsIntegral(target) || IsSourceEnum(target)) {
+            return Binary(Equal(type, Str("number")), BinOp.And, Equal(Call(Index("math", "floor"), Name("value")), Name("value")));
+        }
+
+        return target.SpecialType switch {
+            SpecialType.System_Single or SpecialType.System_Double or SpecialType.System_Decimal => Equal(type, Str("number")),
+            SpecialType.System_Boolean => Equal(type, Str("boolean")),
+
+            _ => null,
+        };
     }
 
     private static Expression LowerBoxReferenceCast(Expression value, bool enumOnly) {
