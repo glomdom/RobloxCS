@@ -320,6 +320,10 @@ internal static class Program {
 
         return string.Join(", ", parameters.Select((parameter, index) => {
             var type = RobloxTypeToCSharp(parameter.Type);
+            if (type == "LuaTuple") {
+                return $"params object?[] {SafeName(parameter.Name)}";
+            }
+
             if (type == "void") type = "object?";
 
             if (IsNullableDocType(docs[index]?.Type)) {
