@@ -7,5 +7,5 @@ namespace RobloxCS.Types;
 public partial class Actor : Model  {
     public RBXScriptConnection BindToMessage(string topic, Delegate function) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptConnection BindToMessageParallel(string topic, Delegate function) => ThrowHelper.ThrowTranspiledMethod();
-    public void SendMessage(string topic, LuaTuple message) => ThrowHelper.ThrowTranspiledMethod();
+    public void SendMessage(string topic, params object?[] message) => ThrowHelper.ThrowTranspiledMethod();
 }

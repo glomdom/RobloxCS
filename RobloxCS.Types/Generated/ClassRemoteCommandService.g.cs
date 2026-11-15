@@ -8,5 +8,5 @@ public partial class RemoteCommandService : Instance  {
     public Player GetExecutingPlayer() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal GetReceivedUpdateSignal() => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal GetStoppingSignal() => ThrowHelper.ThrowTranspiledMethod();
-    public void SendUpdate(LuaTuple args) => ThrowHelper.ThrowTranspiledMethod();
+    public void SendUpdate(params object?[] args) => ThrowHelper.ThrowTranspiledMethod();
 }

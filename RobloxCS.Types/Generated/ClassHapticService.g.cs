@@ -8,5 +8,5 @@ public partial class HapticService : Instance  {
     public LuaTuple GetMotor(Enums.UserInputType inputType, Enums.VibrationMotor vibrationMotor) => ThrowHelper.ThrowTranspiledMethod();
     public bool IsMotorSupported(Enums.UserInputType inputType, Enums.VibrationMotor vibrationMotor) => ThrowHelper.ThrowTranspiledMethod();
     public bool IsVibrationSupported(Enums.UserInputType inputType) => ThrowHelper.ThrowTranspiledMethod();
-    public void SetMotor(Enums.UserInputType inputType, Enums.VibrationMotor vibrationMotor, LuaTuple vibrationValues) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetMotor(Enums.UserInputType inputType, Enums.VibrationMotor vibrationMotor, params object?[] vibrationValues) => ThrowHelper.ThrowTranspiledMethod();
 }

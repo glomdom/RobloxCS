@@ -5,9 +5,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("ContextActionService", RobloxNativeType.Service)]
 public partial class ContextActionService : Instance  {
-    public void BindAction(string actionName, Delegate functionToBind, bool createTouchButton, LuaTuple inputTypes) => ThrowHelper.ThrowTranspiledMethod();
-    public void BindActionAtPriority(string actionName, Delegate functionToBind, bool createTouchButton, int priorityLevel, LuaTuple inputTypes) => ThrowHelper.ThrowTranspiledMethod();
-    public void BindActivate(Enums.UserInputType userInputTypeForActivation, LuaTuple keyCodesForActivation) => ThrowHelper.ThrowTranspiledMethod();
+    public void BindAction(string actionName, Delegate functionToBind, bool createTouchButton, params object?[] inputTypes) => ThrowHelper.ThrowTranspiledMethod();
+    public void BindActionAtPriority(string actionName, Delegate functionToBind, bool createTouchButton, int priorityLevel, params object?[] inputTypes) => ThrowHelper.ThrowTranspiledMethod();
+    public void BindActivate(Enums.UserInputType userInputTypeForActivation, params object?[] keyCodesForActivation) => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object> GetAllBoundActionInfo() => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object> GetBoundActionInfo(string actionName) => ThrowHelper.ThrowTranspiledMethod();
     public string GetCurrentLocalToolIcon() => ThrowHelper.ThrowTranspiledMethod();

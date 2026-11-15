@@ -23,5 +23,5 @@ public partial class SoundService : Instance  {
     public double GetMixerTime() => ThrowHelper.ThrowTranspiledMethod();
     public void PlayLocalSound(Instance sound) => ThrowHelper.ThrowTranspiledMethod();
     public void SetInputDevice(object nameOrInstance, string guidOrPin) => ThrowHelper.ThrowTranspiledMethod();
-    public void SetListener(Enums.ListenerType listenerType, LuaTuple listener) => ThrowHelper.ThrowTranspiledMethod();
+    public void SetListener(Enums.ListenerType listenerType, params object?[] listener) => ThrowHelper.ThrowTranspiledMethod();
 }

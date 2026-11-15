@@ -6,7 +6,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("Axes", RobloxNativeType.DataType)]
 public readonly struct Axes {
-    public Axes(LuaTuple axes) { }
+    public Axes(params object[] axes) { }
     public bool X => ThrowHelper.ThrowTranspiledMethod();
     public bool Y => ThrowHelper.ThrowTranspiledMethod();
     public bool Z => ThrowHelper.ThrowTranspiledMethod();

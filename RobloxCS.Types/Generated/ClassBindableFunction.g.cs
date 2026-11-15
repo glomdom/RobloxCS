@@ -5,6 +5,6 @@
 namespace RobloxCS.Types;
 [RobloxNative("BindableFunction", RobloxNativeType.Instance)]
 public partial class BindableFunction : Instance  {
-    public LuaTuple Invoke(LuaTuple arguments) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple Invoke(params object?[] arguments) => ThrowHelper.ThrowTranspiledMethod();
     public Func<LuaTuple> OnInvoke { get; set; } = default!;
 }

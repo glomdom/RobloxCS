@@ -6,7 +6,7 @@
 namespace RobloxCS.Types;
 [RobloxNative("Faces", RobloxNativeType.DataType)]
 public readonly struct Faces {
-    public Faces(LuaTuple normalIds) { }
+    public Faces(params object[] normalIds) { }
     public bool Top => ThrowHelper.ThrowTranspiledMethod();
     public bool Bottom => ThrowHelper.ThrowTranspiledMethod();
     public bool Left => ThrowHelper.ThrowTranspiledMethod();

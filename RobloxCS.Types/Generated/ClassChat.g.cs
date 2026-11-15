@@ -9,7 +9,7 @@ public partial class Chat : Instance  {
     public bool LoadDefaultChat { get; } = default!;
     [RobloxName("Chat")]
     public void Invoke(Instance partOrCharacter, string message, Enums.ChatColor color = default!) => ThrowHelper.ThrowTranspiledMethod();
-    public LuaTuple InvokeChatCallback(Enums.ChatCallbackType callbackType, LuaTuple callbackArguments) => ThrowHelper.ThrowTranspiledMethod();
+    public LuaTuple InvokeChatCallback(Enums.ChatCallbackType callbackType, params object?[] callbackArguments) => ThrowHelper.ThrowTranspiledMethod();
     public void RegisterChatCallback(Enums.ChatCallbackType callbackType, Delegate callbackFunction) => ThrowHelper.ThrowTranspiledMethod();
     public void SetBubbleChatSettings(object settings) => ThrowHelper.ThrowTranspiledMethod();
     public bool CanUserChatAsync(long userId) => ThrowHelper.ThrowTranspiledMethod();

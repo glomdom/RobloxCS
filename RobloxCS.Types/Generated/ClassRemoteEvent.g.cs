@@ -5,9 +5,9 @@
 namespace RobloxCS.Types;
 [RobloxNative("RemoteEvent", RobloxNativeType.Instance)]
 public partial class RemoteEvent : BaseRemoteEvent  {
-    public void FireAllClients(LuaTuple arguments) => ThrowHelper.ThrowTranspiledMethod();
-    public void FireClient(Player player, LuaTuple arguments) => ThrowHelper.ThrowTranspiledMethod();
-    public void FireServer(LuaTuple arguments) => ThrowHelper.ThrowTranspiledMethod();
+    public void FireAllClients(params object?[] arguments) => ThrowHelper.ThrowTranspiledMethod();
+    public void FireClient(Player player, params object?[] arguments) => ThrowHelper.ThrowTranspiledMethod();
+    public void FireServer(params object?[] arguments) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<LuaTuple> OnClientEvent { get; private set; } = null!;
     public RBXScriptSignal<Player, LuaTuple> OnServerEvent { get; private set; } = null!;
 }

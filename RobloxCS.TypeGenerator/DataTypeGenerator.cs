@@ -238,7 +238,7 @@ internal sealed class DataTypeGenerator {
         var list = parameters ?? [];
 
         var firstOptional = list.Count;
-        while (firstOptional > 0 && (list[firstOptional - 1].IsOptional || list[firstOptional - 1].Name == "...")) {
+        while (firstOptional > 0 && (list[firstOptional - 1].IsOptional || IsVariadic(list[firstOptional - 1]))) {
             firstOptional--;
         }
 
@@ -248,10 +248,11 @@ internal sealed class DataTypeGenerator {
         for (var index = 0; index < list.Count; index++) {
             var parameter = list[index];
 
-            if (parameter.Name == "...") {
+            if (IsVariadic(parameter)) {
                 var element = TupleElement(parameter.Type);
+                var name = parameter.Name == "..." ? "values" : SafeName(parameter.Name);
 
-                parts.Add($"params {element}[] values");
+                parts.Add($"params {element}[] {name}");
                 types.Add($"{element}[]");
 
                 break;
@@ -270,6 +271,8 @@ internal sealed class DataTypeGenerator {
 
         return (string.Join(", ", parts), string.Join(",", types));
     }
+
+    private bool IsVariadic(DocParameter parameter) => parameter.Name == "..." || DocType(parameter.Type) == "LuaTuple";
 
     private string ReturnType(List<DocReturn>? returns) {
         var types = (returns ?? [])

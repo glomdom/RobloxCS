@@ -27,8 +27,8 @@ public readonly struct Vector2 {
     public double Angle(Vector2 other, bool isSigned = default!) => ThrowHelper.ThrowTranspiledMethod();
     public double Dot(Vector2 v) => ThrowHelper.ThrowTranspiledMethod();
     public Vector2 Lerp(Vector2 v, double alpha) => ThrowHelper.ThrowTranspiledMethod();
-    public Vector2 Max(LuaTuple others) => ThrowHelper.ThrowTranspiledMethod();
-    public Vector2 Min(LuaTuple others) => ThrowHelper.ThrowTranspiledMethod();
+    public Vector2 Max(params object[] others) => ThrowHelper.ThrowTranspiledMethod();
+    public Vector2 Min(params object[] others) => ThrowHelper.ThrowTranspiledMethod();
     public bool FuzzyEq(Vector2 other, double epsilon = default!) => ThrowHelper.ThrowTranspiledMethod();
     public static Vector2 operator +(Vector2 a, Vector2 b) => ThrowHelper.ThrowTranspiledMethod();
     public static Vector2 operator -(Vector2 a, Vector2 b) => ThrowHelper.ThrowTranspiledMethod();
