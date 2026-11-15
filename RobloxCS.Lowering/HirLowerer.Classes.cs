@@ -1,7 +1,6 @@
 using Microsoft.CodeAnalysis;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
-using RobloxCS.AST.Types;
 using RobloxCS.HIR;
 using RobloxCS.HIR.Declarations;
 using Serilog;
@@ -73,7 +72,7 @@ public sealed partial class HirLowerer {
 
         var seen = new HashSet<string>(StringComparer.Ordinal);
 
-        foreach (var method in type.Methods.Where(method => !method.IsConstructor && !method.Symbol.IsAbstract)) {
+        foreach (var method in type.Methods.Where(method => method is { IsConstructor: false, Symbol.IsAbstract: false })) {
             if (method.Symbol.MethodKind is not (MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation or MethodKind.PropertyGet or MethodKind.PropertySet)) {
                 Unsupported($"'{method.Symbol.MethodKind}' members are not supported yet.", method.Location);
 
@@ -106,7 +105,7 @@ public sealed partial class HirLowerer {
                     IsStatic: false, MethodKind: MethodKind.Ordinary or MethodKind.ExplicitInterfaceImplementation or MethodKind.PropertyGet or MethodKind.PropertySet
                 })
             ) {
-                if (method.AssociatedSymbol is IPropertySymbol property && property.IsAutoProperty() && !property.IsVirtual && !property.IsOverride) {
+                if (method.AssociatedSymbol is IPropertySymbol property && property.IsAutoProperty() && property is { IsVirtual: false, IsOverride: false }) {
                     continue;
                 }
 

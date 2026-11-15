@@ -1,4 +1,4 @@
-using RobloxCS.AST;
+﻿using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
 using RobloxCS.AST.Parameters;
@@ -95,6 +95,7 @@ public class RendererWalker : AstVisitorBase {
         }
 
         _state.PopIndent();
+        _state.AppendIndent();
         _state.Builder.Append('}');
     }
 
@@ -129,6 +130,11 @@ public class RendererWalker : AstVisitorBase {
 
     public override void VisitBasicTypeInfo(BasicTypeInfo node) {
         _state.Builder.Append(node.Name);
+        if (node.TypeArguments.Count > 0) {
+            _state.Builder.Append('<');
+            RenderDelimited(node.TypeArguments, ", ");
+            _state.Builder.Append('>');
+        }
     }
 
     public override void VisitTypeofTypeInfo(TypeofTypeInfo node) {
@@ -209,6 +215,7 @@ public class RendererWalker : AstVisitorBase {
 
         switch (node.Op) {
             case BinOp.Minus: _state.Builder.Append(" - "); break;
+            case BinOp.TwoDots: _state.Builder.Append(" .. "); break;
             case BinOp.Plus: _state.Builder.Append(" + "); break;
             case BinOp.Star: _state.Builder.Append(" * "); break;
             case BinOp.Slash: _state.Builder.Append(" / "); break;
@@ -549,6 +556,12 @@ public class RendererWalker : AstVisitorBase {
 
     public override void VisitNumberExpression(NumberExpression node) {
         _state.Builder.Append(node.Value);
+    }
+
+    public override void VisitUnionTypeInfo(UnionTypeInfo node) {
+        _state.Builder.Append('(');
+        RenderDelimited(node.Types, " | ");
+        _state.Builder.Append(')');
     }
 
     public override void VisitIntersectionTypeInfo(IntersectionTypeInfo node) {

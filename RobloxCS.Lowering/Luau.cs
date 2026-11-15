@@ -1,4 +1,4 @@
-using RobloxCS.AST;
+﻿using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
 using RobloxCS.AST.Parameters;
@@ -32,6 +32,11 @@ internal static class Luau {
             ],
         };
     }
+
+    public static VarExpression Index(Expression obj, Expression key) => new() {
+        Prefix = PrefixOf(obj),
+        Suffixes = [new BracketsIndex { Expression = key }],
+    };
 
     public static FunctionCallExpression Call(string function, params IEnumerable<Expression> args) {
         return new FunctionCallExpression {
@@ -84,7 +89,9 @@ internal static class Luau {
     public static BasicTypeInfo Type(string name) => BasicTypeInfo.FromString(name);
     public static BasicTypeInfo VoidType() => BasicTypeInfo.Void();
 
-    public static TypeInfo Optional(TypeInfo type) => type is BasicTypeInfo basic && !basic.Name.EndsWith('?') ? Type($"{basic.Name}?") : type;
+    public static TypeInfo Optional(TypeInfo type) => type is BasicTypeInfo { TypeArguments.Count: 0 } basic
+        ? basic.Name.EndsWith('?') ? type : Type($"{basic.Name}?")
+        : UnionTypeInfo.FromInfos(type, Type("nil"));
     public static TypeofTypeInfo Typeof(Expression expression) => new() { Expression = expression };
 
     public static TableTypeInfo TableType(IEnumerable<(string Name, TypeInfo Type)> fields) {

@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis.Operations;
+﻿using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Prefixes;
@@ -11,7 +11,7 @@ using static RobloxCS.Lowering.Luau;
 namespace RobloxCS.Lowering;
 
 public sealed partial class HirLowerer {
-    private readonly Stack<List<HirStatement>> _continueIncrementors = new();
+    private readonly Stack<Func<List<Statement>>> _continueIncrementors = new();
     private bool _returnsSelf;
 
     private List<Statement> LowerBlock(HirBlock? block) {
@@ -58,6 +58,10 @@ public sealed partial class HirLowerer {
                 return LowerIf(compare);
             }
 
+            case HirForEach loop: {
+                return LowerForEach(loop);
+            }
+
             case HirFor loop: {
                 return LowerFor(loop);
             }
@@ -99,6 +103,14 @@ public sealed partial class HirLowerer {
     }
 
     private List<Statement> LowerCompoundAssignment(HirCompoundAssignment compound) {
+        if (compound.Target is HirPropertyAccess { Symbol.Name: "Capacity", Receiver: { } collection } capacity && IsList(collection.Type)) {
+            return LowerCapacityCompound(capacity, compound.Op, compound.Value);
+        }
+
+        if (compound.Target is HirIndexAccess index) {
+            return LowerCollectionWrite(index, compound.Value, compound.Op);
+        }
+
         if (IsComputedSourceProperty(compound.Target, out var access)) {
             return LowerComputedCompound(access, compound.Op, compound.Value, compound.UserDefinedOperator);
         }
@@ -139,10 +151,8 @@ public sealed partial class HirLowerer {
     private List<Statement> LowerContinue(HirContinue _) {
         var statements = new List<Statement>();
 
-        if (_continueIncrementors.TryPeek(out var incrementors) && incrementors.Count > 0) {
-            Log.Verbose("Running {IncrementorCount} incrementors before continue", incrementors.Count);
-
-            statements.AddRange(incrementors.SelectMany(LowerStatement));
+        if (_continueIncrementors.TryPeek(out var incrementors)) {
+            statements.AddRange(incrementors());
         }
 
         statements.Add(new ContinueStatement());
@@ -197,7 +207,7 @@ public sealed partial class HirLowerer {
             ? LowerLoopCondition(hirCondition)
             : (Bool(true), []);
 
-        _continueIncrementors.Push([..loop.Incrementors]);
+        _continueIncrementors.Push(() => [..loop.Incrementors.SelectMany(LowerStatement)]);
         List<Statement> body = [..bodyPrefix, ..LowerBlock(loop.Body)];
         _continueIncrementors.Pop();
 
@@ -224,7 +234,7 @@ public sealed partial class HirLowerer {
     private List<Statement> LowerDoWhile(HirDoWhile loop) {
         var first = _names.FreshTemp("firstIteration");
         var (condition, preludes) = LowerCaptured(loop.Condition);
-        _continueIncrementors.Push([]);
+        _continueIncrementors.Push(() => []);
         var body = LowerBlock(loop.Body);
         _continueIncrementors.Pop();
 
@@ -255,7 +265,7 @@ public sealed partial class HirLowerer {
 
         var (condition, bodyPrefix) = LowerLoopCondition(loop.Condition);
 
-        _continueIncrementors.Push([]);
+        _continueIncrementors.Push(() => []);
         List<Statement> body = [..bodyPrefix, ..LowerBlock(loop.Body)];
         _continueIncrementors.Pop();
 
@@ -303,6 +313,15 @@ public sealed partial class HirLowerer {
     }
 
     private List<Statement> LowerAssignment(HirAssignment assignment) {
+        if (assignment.Target is HirIndexAccess index) {
+            return LowerCollectionWrite(index, assignment.Value);
+        }
+
+        if (assignment.Target is HirPropertyAccess { Symbol.Name: "Capacity", Receiver: { } collection } && IsList(collection.Type)) {
+            var receiver = CaptureValue(LowerExpression(collection), "list");
+            return [Stmt(CollectionCall("capacity", receiver, LowerExpression(assignment.Value)))];
+        }
+
         if (IsComputedSourceProperty(assignment.Target, out var propertyTarget)) {
             return LowerSetterCall(propertyTarget, assignment.Value) is { } call ? [Stmt(call)] : [];
         }
@@ -373,6 +392,18 @@ public sealed partial class HirLowerer {
     }
 
     private List<Statement> LowerIncrementStatement(HirIncrementDecrement increment) {
+        if (increment.Target is HirPropertyAccess { Symbol.Name: "Capacity", Receiver: { } collection } capacity && IsList(collection.Type)) {
+            return LowerCapacityCompound(capacity, increment.IsIncrement ? BinaryOperatorKind.Add : BinaryOperatorKind.Subtract,
+                new HirLiteral { Value = 1, Type = capacity.Type, Location = increment.Location }
+            );
+        }
+
+        if (increment.Target is HirIndexAccess index) {
+            return LowerCollectionWrite(index, new HirLiteral { Value = 1, Type = index.Type, Location = increment.Location },
+                increment.IsIncrement ? BinaryOperatorKind.Add : BinaryOperatorKind.Subtract
+            );
+        }
+
         if (IsComputedSourceProperty(increment.Target, out var access)) {
             var one = new HirLiteral {
                 Value = 1,
@@ -422,7 +453,7 @@ public sealed partial class HirLowerer {
                 Location = receiver.Location,
             };
 
-            HirExpression rebased = target switch {
+            var rebased = target switch {
                 HirFieldAccess field => field with { Receiver = stable },
                 HirPropertyAccess property => property with { Receiver = stable },
 

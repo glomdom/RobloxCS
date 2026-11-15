@@ -20,7 +20,7 @@ public sealed partial class HirLowerer {
 
         Log.Verbose("Emitting {Count} prelude statements before {StatementKind}", preludes.Count, statement.GetType().Name);
 
-        return [.. preludes, .. lowered];
+        return [..preludes, ..lowered];
     }
 
     private Expression Hoist(Expression value, string hint = "t") {
@@ -65,7 +65,7 @@ public sealed partial class HirLowerer {
 
         _names.Emit(new IfStatement {
             Condition = check,
-            Block = BlockOf([.. preludes, Assign(VarName.FromString(temp), right)]),
+            Block = BlockOf([..preludes, Assign(VarName.FromString(temp), right)]),
         });
 
         return Name(temp);
@@ -81,7 +81,7 @@ public sealed partial class HirLowerer {
                 return new IfExpression {
                     Condition = condition,
                     If = whenTrue,
-                    ElseIfExpressions = [ElseIfExpression.From(nested.Condition, nested.If), .. nested.ElseIfExpressions ?? []],
+                    ElseIfExpressions = [ElseIfExpression.From(nested.Condition, nested.If), ..nested.ElseIfExpressions ?? []],
                     Else = nested.Else,
                 };
             }
@@ -95,8 +95,8 @@ public sealed partial class HirLowerer {
         _names.Emit(LocalAssignmentStatement.Naked(temp, LowerType(conditional.Type, conditional.Location)));
         _names.Emit(new IfStatement {
             Condition = condition,
-            Block = BlockOf([.. truePreludes, Assign(VarName.FromString(temp), whenTrue)]),
-            Else = BlockOf([.. falsePreludes, Assign(VarName.FromString(temp), whenFalse)]),
+            Block = BlockOf([..truePreludes, Assign(VarName.FromString(temp), whenTrue)]),
+            Else = BlockOf([..falsePreludes, Assign(VarName.FromString(temp), whenFalse)]),
         });
 
         return Name(temp);
@@ -116,7 +116,7 @@ public sealed partial class HirLowerer {
             Block = BlockOf([new BreakStatement()]),
         };
 
-        return (Bool(true), [.. preludes, exit]);
+        return (Bool(true), [..preludes, exit]);
     }
 
     private static Block BlockOf(List<Statement> statements) => new() { Statements = statements };

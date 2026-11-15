@@ -1,4 +1,4 @@
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using RobloxCS.AST.Statements;
 using RobloxCS.HIR;
@@ -45,8 +45,8 @@ public sealed partial class HirLowerer {
                 Unsupported("ref, out and in parameters are not supported yet.", parameter.Location);
             }
 
-            if (parameter.IsParams) {
-                Unsupported("params parameters are not supported yet.", parameter.Location);
+            if (parameter.IsParams && CollectionElement(parameter.Symbol.Type) is null) {
+                Unsupported("params parameters require an array or a supported generic collection.", parameter.Location);
             }
 
             var parameterName = _names.NameFor(parameter.Symbol);

@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.HIR;
@@ -41,6 +41,9 @@ public sealed partial class HirLowerer {
         }
 
         var type = creation.Constructor.ContainingType;
+        if (IsList(type)) {
+            return LowerListCreation(creation);
+        }
 
         if (GetRobloxNative(type) is { } native) {
             if (native.Kind == RobloxNativeType.Instance) {
@@ -85,8 +88,24 @@ public sealed partial class HirLowerer {
             return Call("print", call.Arguments.Select(argument => LowerDisplayValue(argument.Value)));
         }
 
-        var receiver = method.IsStatic ? null : CaptureValue(call.Receiver is null ? Name("self") : LowerExpression(call.Receiver), "receiver");
-        var args = LowerArguments(call.Arguments);
+        var receiver = method.IsStatic ? null : call.Receiver is null ? Name("self") : LowerExpression(call.Receiver);
+        var repeatsReceiver = receiver is not null && CollectionElement(call.Receiver?.Type ?? method.ContainingType) is not null &&
+                              method.Name is "Sort" or "FindIndex" or "FindLastIndex" or "CopyTo" or "ConvertAll";
+
+        var expandsArrayArguments = method.ContainingType.SpecialType == SpecialType.System_Array && call.Arguments.Length == 1 && method.Name is "Sort" or "Clear";
+        var args = LowerArguments(call.Arguments, (hasPreludes, hasEffects) => {
+            if (receiver is not null && (hasPreludes || repeatsReceiver && (hasEffects || receiver is not SymbolExpression))) {
+                receiver = CaptureValue(receiver, "receiver");
+            }
+        }, materialize: repeatsReceiver || expandsArrayArguments);
+
+        if (method.MethodKind == MethodKind.DelegateInvoke) {
+            return Call(receiver!, args);
+        }
+
+        if (TryLowerCollectionCall(call, receiver, args, out var collectionCall)) {
+            return collectionCall;
+        }
 
         if (GetRobloxNative(method.ContainingType) is { } native) {
             return LowerNativeCall(call, native, args, receiver) as FunctionCallExpression;
@@ -109,8 +128,11 @@ public sealed partial class HirLowerer {
             method.Name, call.Receiver is null ? "implicit self" : call.Receiver.GetType().Name, args.Count
         );
 
-        if (call.Receiver is HirThis { IsBase: true } || method.ContainingType.TypeKind != TypeKind.Interface && !method.IsVirtual && !method.IsOverride && !method.IsAbstract) {
-            return Call(Index(ReferenceType(method.ContainingType, call.Location), method.SlotName()), [receiver!, .. args]);
+        if (
+            call.Receiver is HirThis { IsBase: true } ||
+            method.ContainingType.TypeKind != TypeKind.Interface && method is { IsVirtual: false, IsOverride: false, IsAbstract: false }
+        ) {
+            return Call(Index(ReferenceType(method.ContainingType, call.Location), method.SlotName()), [receiver!, ..args]);
         }
 
         return MethodCall(receiver!, method.SlotName(), args);

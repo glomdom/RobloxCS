@@ -3,6 +3,7 @@ using RobloxCS.Common.Diagnostics;
 using RobloxCS.Compiler;
 using RobloxCS.CompilerPipeline.Projects;
 using RobloxCS.Transpiler;
+using RobloxCS.Lowering;
 using Document = Microsoft.CodeAnalysis.Document;
 
 namespace RobloxCS.CompilerPipeline.Documents;
@@ -32,16 +33,17 @@ public static class DocumentCompiler {
 
         var transpilerOptions = new TranspilerOptions(ScriptTypeResolver.FromFileName(document.Name), options.PrintHir) {
             Modules = options.Modules,
+            CollectionRuntimePath = $"@game/{string.Join('/', plan.RuntimeAnchor.InstancePath)}/{RuntimeLibrary.DirectoryName}/Collections",
         };
 
-        var code = LuauEmitter.Emit(compiler, transpilerOptions, diagnostics);
+        var code = LuauEmitter.Emit(compiler, transpilerOptions, diagnostics, out var usesCollections);
         if (!code.Ok) {
             return code.Diagnostic;
         }
 
         var outPath = OutPathFor(document, plan);
 
-        return new CompiledFile(outPath, code.Value);
+        return new CompiledFile(outPath, code.Value) { UsesCollections = usesCollections };
     }
     
     public static string OutPathFor(Document document, ProjectPlan plan) {

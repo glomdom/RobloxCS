@@ -24,6 +24,11 @@ public sealed partial class HirLowerer {
         }
 
         var value = LowerExpression(conversion.Operand);
+
+        if (CollectionElement(target) is not null) {
+            return Cast(LowerCollectionSafeCast(value, target), Optional(LowerType(target, conversion.Location)));
+        }
+
         Expression result;
 
         switch (target.SpecialType) {

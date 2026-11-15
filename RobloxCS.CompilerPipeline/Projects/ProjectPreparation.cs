@@ -36,7 +36,9 @@ public static class ProjectPreparation {
             );
         }
 
-        return new ProjectPlan(project, compilation.Value, anchor);
+        return new ProjectPlan(project, compilation.Value, anchor) {
+            RuntimeAnchor = anchors.FirstOrDefault(candidate => candidate.InstancePath.FirstOrDefault() == "ReplicatedStorage") ?? anchor,
+        };
     }
 
     private static async Task<Result<Compilation>> GetProjectCompilationAsync(Project project, CancellationToken cancellation) {

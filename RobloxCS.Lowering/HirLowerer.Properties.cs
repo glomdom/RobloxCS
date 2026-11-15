@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
@@ -14,7 +14,7 @@ public sealed partial class HirLowerer {
     private Expression LowerSourcePropertyRead(HirPropertyAccess access) {
         var property = access.Symbol;
 
-        if (property.IsAutoProperty() && !property.IsVirtual && !property.IsOverride) {
+        if (property.IsAutoProperty() && property is { IsVirtual: false, IsOverride: false }) {
             return SourcePropertySlot(access);
         }
 
@@ -31,7 +31,7 @@ public sealed partial class HirLowerer {
         }
 
         var receiver = LowerPropertyReceiver(access);
-        return access.Receiver is HirThis { IsBase: true } || !getter.IsVirtual && !getter.IsOverride && !getter.IsAbstract
+        return access.Receiver is HirThis { IsBase: true } || getter is { IsVirtual: false, IsOverride: false, IsAbstract: false }
             ? Call(Index(ReferenceType(property.ContainingType, access.Location), getter.SlotName()), receiver)
             : MethodCall(receiver, getter.SlotName());
     }
@@ -60,7 +60,7 @@ public sealed partial class HirLowerer {
 
         var receiver = CaptureReceiver(LowerPropertyReceiver(access));
 
-        return access.Receiver is HirThis { IsBase: true } || !setter.IsVirtual && !setter.IsOverride && !setter.IsAbstract
+        return access.Receiver is HirThis { IsBase: true } || setter is { IsVirtual: false, IsOverride: false, IsAbstract: false }
             ? Call(Index(ReferenceType(property.ContainingType, access.Location), setter.SlotName()), receiver, LowerExpression(value))
             : MethodCall(receiver, setter.SlotName(), LowerExpression(value));
     }
@@ -109,7 +109,12 @@ public sealed partial class HirLowerer {
     private static bool IsComputedSourceProperty(HirExpression target, out HirPropertyAccess access) {
         access = null!;
 
-        if (target is not HirPropertyAccess { Symbol: var property } candidate || !property.IsSourceProperty() || property.IsAutoProperty() && !property.IsVirtual && !property.IsOverride) {
+        if (
+            target is not HirPropertyAccess { Symbol: var property } candidate ||
+            !property.IsSourceProperty() ||
+            property.IsAutoProperty() &&
+            property is { IsVirtual: false, IsOverride: false }
+        ) {
             return false;
         }
 
@@ -123,6 +128,19 @@ public sealed partial class HirLowerer {
     }
 
     private Expression LowerPropertyAccess(HirPropertyAccess access) {
+        if (access.Receiver is { } collection && CollectionElement(collection.Type) is not null) {
+            var receiver = LowerExpression(collection);
+
+            return access.Symbol.Name switch {
+                "Length" or "LongLength" or "Count" => Index(receiver, "count"),
+                "Capacity" => Index(receiver, "capacity"),
+                "Rank" => Num(1),
+                "IsReadOnly" => Binary(Index(receiver, "array"), BinOp.Or, Index(receiver, "readonly")),
+
+                _ => UnsupportedCollectionProperty(access),
+            };
+        }
+
         if (TryLowerDataTypeProperty(access, out var dataTypeProperty)) {
             return dataTypeProperty;
         }

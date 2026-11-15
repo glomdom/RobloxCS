@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
@@ -12,6 +12,8 @@ using static RobloxCS.Lowering.Luau;
 namespace RobloxCS.Lowering;
 
 public sealed partial class HirLowerer {
+    private readonly string _collectionRuntimePath;
+
     private const string EntryPointLocal = "__entrypointCls";
 
     public ScriptType ScriptType { get; }
@@ -23,7 +25,8 @@ public sealed partial class HirLowerer {
     private readonly HashSet<INamedTypeSymbol> _imports = new(SymbolEqualityComparer.Default);
     private readonly HashSet<string> _importNames = [];
 
-    public HirLowerer(ScriptType scriptType, ModuleGraph modules, DiagnosticBag diagnostics) {
+    public HirLowerer(ScriptType scriptType, ModuleGraph modules, DiagnosticBag diagnostics, string collectionRuntimePath = RuntimeLibrary.CollectionsRequirePath) {
+        _collectionRuntimePath = collectionRuntimePath;
         ScriptType = scriptType;
         Diagnostics = diagnostics;
         Modules = modules;
@@ -37,6 +40,19 @@ public sealed partial class HirLowerer {
         foreach (var type in module.Types) {
             _moduleTypes.Add(type.Symbol);
         }
+
+        _collectionsName = "__collections";
+
+        var identifiers = module.Types.SelectMany(type => type.Symbol.DeclaringSyntaxReferences)
+            .Select(reference => reference.SyntaxTree).Distinct()
+            .SelectMany(tree => tree.GetRoot().DescendantTokens()).Select(token => token.ValueText).ToHashSet();
+
+        while (identifiers.Contains(_collectionsName)) {
+            _collectionsName += "_";
+        }
+
+        _names.ReserveGlobal(_collectionsName);
+        _importNames.Add(_collectionsName);
 
         var statements = module.Types.Where(type => type.Symbol.TypeKind == TypeKind.Class)
             .Select(type => (Statement)Local(TypeName(type.Symbol), Table())).ToList();
@@ -74,6 +90,10 @@ public sealed partial class HirLowerer {
         Log.Information("Lowered {SourcePath} into {StatementCount} top-level statements", module.SourcePath, statements.Count);
 
         statements.InsertRange(0, LowerImports());
+
+        if (_usesCollections) {
+            statements.Insert(0, Local(_collectionsName, Call("require", Str(_collectionRuntimePath))));
+        }
 
         return new Chunk {
             Mode = TypeCheckMode.Strict,

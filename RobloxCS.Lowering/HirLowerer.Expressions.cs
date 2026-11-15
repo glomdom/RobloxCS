@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis.Operations;
+﻿using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.HIR.Expressions;
@@ -10,6 +10,14 @@ namespace RobloxCS.Lowering;
 public sealed partial class HirLowerer {
     private Expression LowerExpression(HirExpression expression) {
         switch (expression) {
+            case HirCollectionLiteral collection: {
+                return LowerCollection(collection);
+            }
+
+            case HirIndexAccess index: {
+                return LowerCollectionIndex(index);
+            }
+
             case HirDefault value: {
                 return DefaultValue(value.Type);
             }
@@ -35,7 +43,12 @@ public sealed partial class HirLowerer {
             }
 
             case HirCall call: {
-                return LowerCall(call) ?? (Expression)Nil();
+                var value = LowerCall(call) ?? (Expression)Nil();
+                if (IsList(call.Method.ContainingType) && call.Method.Name is "Find" or "FindLast") {
+                    return Cast(value, LowerType(call.Type, call.Location));
+                }
+
+                return value;
             }
 
             case HirObjectCreation creation: {

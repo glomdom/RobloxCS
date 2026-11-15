@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
@@ -17,6 +17,10 @@
       <ProjectReference Include="..\RobloxCS.HIR\RobloxCS.HIR.csproj" />
       <ProjectReference Include="..\RobloxCS.Modules\RobloxCS.Modules.csproj" />
       <ProjectReference Include="..\RobloxCS.Types\RobloxCS.Types.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="..\RuntimeLib\Collections.luau" LogicalName="RobloxCS.RuntimeLib.Collections.luau" />
     </ItemGroup>
 
 </Project>

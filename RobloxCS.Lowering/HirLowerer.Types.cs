@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using static RobloxCS.Lowering.Luau;
 using TypeInfo = RobloxCS.AST.Types.TypeInfo;
 
@@ -47,6 +47,22 @@ public sealed partial class HirLowerer {
             case SpecialType.System_Decimal: {
                 return Type("number");
             }
+        }
+
+        if (type is INamedTypeSymbol { DelegateInvokeMethod: { } invoke }) {
+            return new RobloxCS.AST.Types.CallbackTypeInfo {
+                Arguments = [..invoke.Parameters.Select(parameter => RobloxCS.AST.Types.TypeArgument.From(parameter.Name, LowerType(parameter.Type, location)))],
+                ReturnType = LowerType(invoke.ReturnType, location),
+            };
+        }
+
+        if (CollectionElement(type) is { } element) {
+            _usesCollections = true;
+
+            return new RobloxCS.AST.Types.BasicTypeInfo {
+                Name = $"{_collectionsName}.Sequence",
+                TypeArguments = [LowerType(element, location)],
+            };
         }
 
         if (GetRobloxNative(type) is { } native) {

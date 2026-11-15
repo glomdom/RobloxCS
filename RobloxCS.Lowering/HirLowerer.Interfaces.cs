@@ -4,7 +4,6 @@ using RobloxCS.AST.Statements;
 using RobloxCS.AST.Types;
 using RobloxCS.HIR;
 using RobloxCS.HIR.Declarations;
-using RobloxCS.HIR.Expressions;
 using static RobloxCS.Lowering.Luau;
 using TypeInfo = RobloxCS.AST.Types.TypeInfo;
 
@@ -12,7 +11,7 @@ namespace RobloxCS.Lowering;
 
 public sealed partial class HirLowerer {
     private static IEnumerable<IMethodSymbol> InterfaceMethods(INamedTypeSymbol contract) => contract.GetMembers().OfType<IMethodSymbol>()
-        .Where(method => !method.IsStatic && method.MethodKind is MethodKind.Ordinary or MethodKind.PropertyGet or MethodKind.PropertySet);
+        .Where(method => method is { IsStatic: false, MethodKind: MethodKind.Ordinary or MethodKind.PropertyGet or MethodKind.PropertySet });
 
     private TypeInfo LowerMethodType(IMethodSymbol method) => new CallbackTypeInfo {
         Arguments = [
@@ -96,8 +95,9 @@ public sealed partial class HirLowerer {
 
                 List<Statement> body;
 
-                if (autoProperty && !implementation.IsVirtual && !implementation.IsOverride) {
+                if (autoProperty && implementation is { IsVirtual: false, IsOverride: false }) {
                     var backing = ((IPropertySymbol)implementation.AssociatedSymbol!).BackingField()!;
+
                     body = member.MethodKind == MethodKind.PropertyGet
                         ? [Return(Index("self", backing.SlotName()))]
                         : [Assign(Index("self", backing.SlotName()), arguments[0])];

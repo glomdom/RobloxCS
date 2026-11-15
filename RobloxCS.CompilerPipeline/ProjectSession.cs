@@ -8,6 +8,7 @@ using RobloxCS.CompilerPipeline.Modules;
 using RobloxCS.CompilerPipeline.Projects;
 using RobloxCS.CompilerPipeline.Solutions;
 using RobloxCS.Modules;
+using RobloxCS.Lowering;
 using Diagnostic = RobloxCS.Common.Diagnostics.Diagnostic;
 
 namespace RobloxCS.CompilerPipeline;
@@ -77,7 +78,12 @@ public sealed class ProjectSession : IDisposable {
         var output = await DocumentCompiler.CompileDocument(document, plan, Options, diagnostics, cancellation);
 
         if (output.Ok) {
+            if (output.Value.UsesCollections) {
+                RuntimeLibrary.InstallCollections(Path.Join(plan.RuntimeAnchor.FullPath, RuntimeLibrary.DirectoryName));
+            }
+
             Directory.CreateDirectory(Path.GetDirectoryName(output.Value.OutPath)!);
+
             await File.WriteAllTextAsync(output.Value.OutPath, output.Value.Code, cancellation);
         }
 

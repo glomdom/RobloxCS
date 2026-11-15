@@ -1,4 +1,4 @@
-using RobloxCS.Common.Diagnostics;
+﻿using RobloxCS.Common.Diagnostics;
 using RobloxCS.Compiler;
 using RobloxCS.HIR;
 using RobloxCS.HIR.Builder;
@@ -47,11 +47,12 @@ public sealed class CSharpTranspiler {
             return new TranspileResult(null, diagnostics.All);
         }
 
-        var chunk = new HirLowerer(Options.ScriptType, Options.Modules, diagnostics).Lower(module);
+        var lowerer = new HirLowerer(Options.ScriptType, Options.Modules, diagnostics, Options.CollectionRuntimePath);
+        var chunk = lowerer.Lower(module);
         if (diagnostics.HasErrors) {
             return new TranspileResult(null, diagnostics.All);
         }
 
-        return new TranspileResult(chunk, diagnostics.All);
+        return new TranspileResult(chunk, diagnostics.All) { UsesCollections = lowerer.UsesCollections };
     }
 }

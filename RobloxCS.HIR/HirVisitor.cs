@@ -24,6 +24,7 @@ public abstract class HirVisitor {
             case HirDoWhile n: VisitDoWhile(n); break;
             case HirErrorStatement n: VisitErrorStatement(n); break;
             case HirExpressionStatement n: VisitExpressionStatement(n); break;
+            case HirForEach n: VisitForEach(n); break;
             case HirFor n: VisitFor(n); break;
             case HirIf n: VisitIf(n); break;
             case HirLocalDeclaration n: VisitLocalDeclaration(n); break;
@@ -54,6 +55,7 @@ public abstract class HirVisitor {
             case HirObjectCreation n: VisitObjectCreation(n); break;
             case HirParameterRef n: VisitParameterRef(n); break;
             case HirPropertyAccess n: VisitPropertyAccess(n); break;
+            case HirSpread n: VisitSpread(n); break;
             case HirThis n: VisitThis(n); break;
             case HirUnary n: VisitUnary(n); break;
 
@@ -110,6 +112,13 @@ public abstract class HirVisitor {
         VisitExpression(node.Expression);
     }
 
+    protected virtual void VisitForEach(HirForEach node) {
+        VisitExpression(node.Collection);
+        VisitBlock(node.Body);
+    }
+
+    protected virtual void VisitSpread(HirSpread node) => VisitExpression(node.Operand);
+
     protected virtual void VisitFor(HirFor node) {
         foreach (var x in node.Initializers) VisitStatement(x);
         if (node.Condition is not null) VisitExpression(node.Condition);
@@ -155,6 +164,8 @@ public abstract class HirVisitor {
     }
 
     protected virtual void VisitCollectionLiteral(HirCollectionLiteral node) {
+        if (node.Length is not null) VisitExpression(node.Length);
+
         foreach (var element in node.Elements) VisitExpression(element);
     }
 
@@ -183,7 +194,7 @@ public abstract class HirVisitor {
     protected virtual void VisitIndexAccess(HirIndexAccess node) {
         VisitExpression(node.Receiver);
 
-        foreach (var arg in node.Arguments) VisitArgument(arg);
+        foreach (var index in node.Indices) VisitExpression(index);
     }
 
     protected virtual void VisitInterpolatedString(HirInterpolatedString node) {

@@ -1,4 +1,4 @@
-using System.Collections.Frozen;
+﻿using System.Collections.Frozen;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using RobloxCS.AST.Statements;
@@ -25,6 +25,13 @@ public sealed class LoweringContext {
     private readonly Dictionary<ISymbol, string> _names = new(SymbolEqualityComparer.Default);
     private readonly HashSet<string> _taken = new(StringComparer.Ordinal);
 
+    private readonly HashSet<string> _globals = [];
+
+    public void ReserveGlobal(string name) {
+        _globals.Add(name);
+        _taken.Add(name);
+    }
+
     private int _tempCounter;
 
     public void Emit(Statement stmt) {
@@ -38,6 +45,7 @@ public sealed class LoweringContext {
     public void BeginFunction() {
         _names.Clear();
         _taken.Clear();
+        _taken.UnionWith(_globals);
 
         _tempCounter = 0;
     }

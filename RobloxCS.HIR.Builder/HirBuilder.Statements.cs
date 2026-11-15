@@ -1,4 +1,4 @@
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
@@ -87,6 +87,7 @@ public sealed partial class HirBuilder {
 
         HirStatement HandleLoop(ILoopOperation loopOperation) {
             return loopOperation.LoopKind switch {
+                LoopKind.ForEach => HandleForEachLoop((IForEachLoopOperation)loopOperation),
                 LoopKind.For => HandleForLoop((IForLoopOperation)loopOperation),
                 LoopKind.While => HandleWhileLoop((IWhileLoopOperation)loopOperation),
                 
@@ -94,6 +95,24 @@ public sealed partial class HirBuilder {
             };
         }
         
+        HirStatement HandleForEachLoop(IForEachLoopOperation loop) {
+            if (loop.IsAsynchronous || loop.LoopControlVariable is not IVariableDeclaratorOperation variable) {
+                throw new NotSupportedException("Only synchronous foreach loops with a local variable are supported.");
+            }
+
+            var collection = loop.Collection;
+            while (collection is IConversionOperation { IsImplicit: true } conversion) {
+                collection = conversion.Operand;
+            }
+
+            return new HirForEach {
+                Location = loop.Syntax.GetLocation(),
+                Variable = variable.Symbol,
+                Collection = BuildExpression(collection),
+                Body = BuildBlock(loop.Body),
+            };
+        }
+
         HirStatement HandleWhileLoop(IWhileLoopOperation loop) {
             if (loop.Condition is not { } condOperation) {
                 throw new InvalidOperationException("While loop operation does not have a condition.");

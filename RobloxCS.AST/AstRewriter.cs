@@ -1,4 +1,4 @@
-using RobloxCS.AST.Expressions;
+﻿using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Functions;
 using RobloxCS.AST.Generics;
 using RobloxCS.AST.Parameters;
@@ -254,7 +254,11 @@ public class AstRewriter : IAstVisitor<AstNode> {
         return node;
     }
 
-    public virtual AstNode VisitBasicTypeInfo(BasicTypeInfo node) => node;
+    public virtual AstNode VisitBasicTypeInfo(BasicTypeInfo node) {
+        VisitList(node.TypeArguments, node);
+
+        return node;
+    }
     public virtual AstNode VisitBooleanTypeInfo(BooleanTypeInfo node) => node;
     public virtual AstNode VisitStringTypeInfo(StringTypeInfo node) => node;
 

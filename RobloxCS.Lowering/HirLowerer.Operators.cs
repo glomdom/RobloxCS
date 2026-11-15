@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
@@ -36,6 +36,7 @@ public sealed partial class HirLowerer {
             var operation = binary.Op switch {
                 BinaryOperatorKind.And => "band",
                 BinaryOperatorKind.Or => "bor",
+
                 _ => "bxor",
             };
 
@@ -104,12 +105,25 @@ public sealed partial class HirLowerer {
             case HirConversionKind.Identity: {
                 var value = LowerExpression(conversion.Operand);
 
-                return !conversion.IsImplicit && conversion.Type is { IsReferenceType: true, NullableAnnotation: NullableAnnotation.NotAnnotated }
+                return conversion is { IsImplicit: false, Type: { IsReferenceType: true, NullableAnnotation: NullableAnnotation.NotAnnotated } }
                     ? Cast(Cast(value, Type("any")), LowerType(conversion.Type, conversion.Location))
                     : value;
             }
 
-            case HirConversionKind.Reference:
+            case HirConversionKind.Reference: {
+                var value = LowerExpression(conversion.Operand);
+                if (CollectionElement(conversion.Type) is not null) {
+                    if (!conversion.IsImplicit) {
+                        value = CaptureValue(value, "cast");
+                        return Cast(CollectionCall("requireCast", LowerCollectionSafeCast(value, conversion.Type), value), LowerType(conversion.Type, conversion.Location));
+                    }
+
+                    return Cast(Cast(value, Type("any")), LowerType(conversion.Type, conversion.Location));
+                }
+
+                return value;
+            }
+
             case HirConversionKind.NullableWrap:
             case HirConversionKind.NullableUnwrap: {
                 return LowerExpression(conversion.Operand);

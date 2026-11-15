@@ -10,9 +10,12 @@ public static class LuauEmitter {
     /// <summary>
     /// Transpiles and renders one file. Transpiler diagnostics are appended to <paramref name="diagnostics"/>.
     /// </summary>
-    public static Result<string> Emit(CSharpCompiler compiler, TranspilerOptions options, List<Diagnostic> diagnostics) {
+    public static Result<string> Emit(CSharpCompiler compiler, TranspilerOptions options, List<Diagnostic> diagnostics) => Emit(compiler, options, diagnostics, out _);
+
+    public static Result<string> Emit(CSharpCompiler compiler, TranspilerOptions options, List<Diagnostic> diagnostics, out bool usesCollections) {
         var result = new CSharpTranspiler(options, compiler).Transpile();
         diagnostics.AddRange(result.Diagnostics);
+        usesCollections = result.UsesCollections;
 
         if (!result.Ok) {
             return Diagnostic.Error(DiagnosticId.TranspilationFailed, $"Failed to transpile '{compiler.FilePath}', check above for errors.");

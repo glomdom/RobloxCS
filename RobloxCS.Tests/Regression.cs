@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.Loader;
@@ -55,7 +55,7 @@ public class Regression {
         Assert.That(Normalize(RunWithLuau(outputPath)), Is.EqualTo(Normalize(expected)));
     }
 
-    private static string RunWithCSharp(string path) {
+    internal static string RunWithCSharp(string path) {
         var compiler = new CSharpCompiler(path, "RobloxCS.Types.dll", false);
         Assert.That(compiler.HasErrors, Is.False, string.Join("\n", compiler.Diagnostics));
 
@@ -63,6 +63,7 @@ public class Regression {
         var emitted = compiler.Compilation.Emit(assemblyStream);
 
         Assert.That(emitted.Success, Is.True, string.Join("\n", emitted.Diagnostics));
+
         assemblyStream.Position = 0;
 
         var context = new AssemblyLoadContext("Regression", isCollectible: true);
@@ -98,10 +99,12 @@ public class Regression {
         }
     }
 
-    private static string Transpile(string path) =>
+    internal static string Transpile(string path) =>
         TranspileCache.GetOrAdd(path, static p => {
             var transpiler = new CSharpTranspiler(
-                new TranspilerOptions(ScriptType.Local),
+                new TranspilerOptions(ScriptType.Local) {
+                    CollectionRuntimePath = "./RuntimeLib/Collections",
+                },
                 new CSharpCompiler(p, "RobloxCS.Types.dll", false)
             );
 
@@ -112,10 +115,14 @@ public class Regression {
                 Assert.Fail($"Failed to transpile '{p}':\n" + string.Join("\n", result.Diagnostics.Select(d => d.Render())));
             }
 
+            if (result.UsesCollections) {
+                RuntimeLibrary.InstallCollections(Path.Join(OutputDir, "RuntimeLib"));
+            }
+
             return new RendererWalker().Render(result.Chunk!);
         });
 
-    private static string RunWithLuau(string path) {
+    internal static string RunWithLuau(string path) {
         var startInfo = new ProcessStartInfo {
             FileName = "luau",
             ArgumentList = { path },

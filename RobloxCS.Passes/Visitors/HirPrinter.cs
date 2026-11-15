@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.HIR;
 using RobloxCS.HIR.Declarations;
@@ -366,8 +366,8 @@ public sealed class HirPrinter : HirVisitor {
         Nested(() => {
             Section("receiver", () => VisitExpression(node.Receiver));
 
-            foreach (var argument in node.Arguments) {
-                VisitArgument(argument);
+            foreach (var argument in node.Indices) {
+                VisitExpression(argument);
             }
         });
     }

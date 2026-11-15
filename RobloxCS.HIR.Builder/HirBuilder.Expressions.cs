@@ -1,4 +1,4 @@
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -32,6 +32,46 @@ public sealed partial class HirBuilder {
 
     private HirExpression BuildExpressionCore(IOperation operation) {
         switch (operation.Kind) {
+            case OperationKind.ArrayCreation when operation is IArrayCreationOperation array: {
+                if (array.Type is not IArrayTypeSymbol { Rank: 1 }) {
+                    throw new NotSupportedException("Only one-dimensional and jagged arrays are supported.");
+                }
+
+                return new HirCollectionLiteral {
+                    Location = array.Syntax.GetLocation(),
+                    Type = array.Type,
+                    Length = BuildExpression(array.DimensionSizes[0]),
+                    Elements = [..array.Initializer?.ElementValues.Select(BuildExpression) ?? []],
+                };
+            }
+
+            case OperationKind.CollectionExpression when operation is ICollectionExpressionOperation collection: {
+                return new HirCollectionLiteral {
+                    Location = collection.Syntax.GetLocation(),
+                    Type = collection.Type!,
+                    Elements = [..collection.Elements.Select(BuildExpression)],
+                };
+            }
+
+            case OperationKind.Spread when operation is ISpreadOperation spread: {
+                return new HirSpread {
+                    Location = spread.Syntax.GetLocation(),
+                    Type = spread.Operand.Type!,
+                    Operand = BuildExpression(spread.Operand),
+                    ElementType = spread.ElementType!,
+                };
+            }
+
+            case OperationKind.ArrayElementReference when operation is IArrayElementReferenceOperation index: {
+                return new HirIndexAccess {
+                    Location = index.Syntax.GetLocation(),
+                    Type = index.Type!,
+                    Receiver = BuildExpression(index.ArrayReference),
+                    Indexer = null,
+                    Indices = [..index.Indices.Select(BuildExpression)],
+                };
+            }
+
             case OperationKind.DefaultValue: {
                 return new HirDefault { Location = operation.Syntax.GetLocation(), Type = operation.Type! };
             }
@@ -195,6 +235,16 @@ public sealed partial class HirBuilder {
 
                 var receiver = propertyReferenceOperation.Instance is not null ? BuildExpression(propertyReferenceOperation.Instance) : null;
 
+                if (propertyReferenceOperation.Property.IsIndexer) {
+                    return new HirIndexAccess {
+                        Location = propertyReferenceOperation.Syntax.GetLocation(),
+                        Type = type,
+                        Receiver = receiver!,
+                        Indexer = propertyReferenceOperation.Property,
+                        Indices = [..propertyReferenceOperation.Arguments.Select(argument => BuildExpression(argument.Value))],
+                    };
+                }
+
                 return new HirPropertyAccess {
                     Location = propertyReferenceOperation.Syntax.GetLocation(),
                     Type = type,
@@ -323,7 +373,7 @@ public sealed partial class HirBuilder {
             return HirConversionKind.UserDefined;
         }
 
-        if (conversion.IsIdentity || conversion.IsConditionalExpression) {
+        if (conversion.IsIdentity || conversion.IsConditionalExpression || conversion.IsCollectionExpression || conversion.IsObjectCreation) {
             return HirConversionKind.Identity;
         }
 
