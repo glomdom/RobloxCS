@@ -40,5 +40,5 @@ public partial class MarketplaceService : Instance  {
     public RBXScriptSignal<Instance, long, bool> PromptPurchaseFinished { get; private set; } = null!;
     public RBXScriptSignal<Player, bool> PromptRobloxSubscriptionPurchaseFinished { get; private set; } = null!;
     public RBXScriptSignal<Player, string, bool> PromptSubscriptionPurchaseFinished { get; private set; } = null!;
-    public Func<Dictionary<string, object>> ProcessReceipt { get; set; } = default!;
+    public Func<Dictionary<string, object>, Enums.ProductPurchaseDecision> ProcessReceipt { get; set; } = default!;
 }

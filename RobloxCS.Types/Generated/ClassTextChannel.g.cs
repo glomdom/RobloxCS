@@ -12,6 +12,6 @@ public partial class TextChannel : Instance  {
     public LuaTuple AddUserAsync(User userId) => ThrowHelper.ThrowTranspiledMethod();
     public TextChatMessage SendAsync(string message, string metadata = default!) => ThrowHelper.ThrowTranspiledMethod();
     public RBXScriptSignal<TextChatMessage> MessageReceived { get; private set; } = null!;
-    public Func<TextChatMessage> OnIncomingMessage { get; set; } = default!;
-    public Func<TextChatMessage, TextSource> ShouldDeliverCallback { get; set; } = default!;
+    public Func<TextChatMessage, LuaTuple> OnIncomingMessage { get; set; } = default!;
+    public Func<TextChatMessage, TextSource, LuaTuple> ShouldDeliverCallback { get; set; } = default!;
 }

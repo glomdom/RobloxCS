@@ -17,7 +17,7 @@ public partial class TextChatService : Instance  {
     public RBXScriptSignal<Instance, TextChatMessage> BubbleDisplayed { get; private set; } = null!;
     public RBXScriptSignal<TextChatMessage> MessageReceived { get; private set; } = null!;
     public RBXScriptSignal<TextChatMessage> SendingMessage { get; private set; } = null!;
-    public Func<TextChatMessage, Instance> OnBubbleAdded { get; set; } = default!;
-    public Func<TextChatMessage> OnChatWindowAdded { get; set; } = default!;
-    public Func<TextChatMessage> OnIncomingMessage { get; set; } = default!;
+    public Func<TextChatMessage, Instance, LuaTuple> OnBubbleAdded { get; set; } = default!;
+    public Func<TextChatMessage, LuaTuple> OnChatWindowAdded { get; set; } = default!;
+    public Func<TextChatMessage, LuaTuple> OnIncomingMessage { get; set; } = default!;
 }

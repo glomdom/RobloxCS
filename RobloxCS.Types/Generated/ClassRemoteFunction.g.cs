@@ -7,6 +7,6 @@ namespace RobloxCS.Types;
 public partial class RemoteFunction : Instance  {
     public LuaTuple InvokeClient(Player player, params object?[] arguments) => ThrowHelper.ThrowTranspiledMethod();
     public LuaTuple InvokeServer(params object?[] arguments) => ThrowHelper.ThrowTranspiledMethod();
-    public Func<LuaTuple> OnClientInvoke { get; set; } = default!;
-    public Func<Player, LuaTuple> OnServerInvoke { get; set; } = default!;
+    public Func<LuaTuple, LuaTuple> OnClientInvoke { get; set; } = default!;
+    public Func<Player, LuaTuple, LuaTuple> OnServerInvoke { get; set; } = default!;
 }

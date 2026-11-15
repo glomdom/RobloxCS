@@ -5,5 +5,5 @@
 namespace RobloxCS.Types;
 [RobloxNative("IntegrityService", RobloxNativeType.Service)]
 public partial class IntegrityService : Instance  {
-    public Func<Player, Dictionary<string, object>> EvaluatePlayerDeviceTrust { get; set; } = default!;
+    public Func<Player, Dictionary<string, object>, object> EvaluatePlayerDeviceTrust { get; set; } = default!;
 }
