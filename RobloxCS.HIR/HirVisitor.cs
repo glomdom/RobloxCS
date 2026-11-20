@@ -31,6 +31,7 @@ public abstract class HirVisitor {
             case HirIf n: VisitIf(n); break;
             case HirLocalDeclaration n: VisitLocalDeclaration(n); break;
             case HirReturn n: VisitReturn(n); break;
+            case HirSwitch n: VisitSwitch(n); break;
             case HirWhile n: VisitWhile(n); break;
 
             default: throw new InvalidOperationException($"Unhandled statement '{node.GetType().Name}'");
@@ -57,8 +58,10 @@ public abstract class HirVisitor {
             case HirLocalRef n: VisitLocalRef(n); break;
             case HirObjectCreation n: VisitObjectCreation(n); break;
             case HirParameterRef n: VisitParameterRef(n); break;
+            case HirPatternInput n: VisitPatternInput(n); break;
             case HirPropertyAccess n: VisitPropertyAccess(n); break;
             case HirSpread n: VisitSpread(n); break;
+            case HirSwitchExpression n: VisitSwitchExpression(n); break;
             case HirThis n: VisitThis(n); break;
             case HirUnary n: VisitUnary(n); break;
 
@@ -82,6 +85,7 @@ public abstract class HirVisitor {
             case HirBinaryPattern n: VisitBinaryPattern(n); break;
             case HirConstantPattern n: VisitConstantPattern(n); break;
             case HirNotPattern n: VisitNotPattern(n); break;
+            case HirRecursivePattern n: VisitRecursivePattern(n); break;
             case HirRelationalPattern n: VisitRelationalPattern(n); break;
             case HirTypePattern n: VisitTypePattern(n); break;
             case HirVarPattern n: VisitVarPattern(n); break;
@@ -240,6 +244,38 @@ public abstract class HirVisitor {
     protected virtual void VisitNotPattern(HirNotPattern node) => VisitPattern(node.Pattern);
 
     protected virtual void VisitRelationalPattern(HirRelationalPattern node) => VisitExpression(node.Value);
+
+    protected virtual void VisitRecursivePattern(HirRecursivePattern node) {
+        foreach (var property in node.Properties) {
+            VisitExpression(property.Member);
+            VisitPattern(property.Pattern);
+        }
+    }
+
+    protected virtual void VisitPatternInput(HirPatternInput node) { } // leaf
+
+    protected virtual void VisitSwitchExpression(HirSwitchExpression node) {
+        VisitExpression(node.Value);
+
+        foreach (var arm in node.Arms) {
+            VisitPattern(arm.Pattern);
+            if (arm.Guard is not null) VisitExpression(arm.Guard);
+            VisitExpression(arm.Value);
+        }
+    }
+
+    protected virtual void VisitSwitch(HirSwitch node) {
+        VisitExpression(node.Value);
+
+        foreach (var section in node.Sections) {
+            foreach (var label in section.Labels) {
+                if (label.Pattern is not null) VisitPattern(label.Pattern);
+                if (label.Guard is not null) VisitExpression(label.Guard);
+            }
+
+            VisitBlock(section.Body);
+        }
+    }
 
     protected virtual void VisitTypePattern(HirTypePattern node) { } // leaf
 

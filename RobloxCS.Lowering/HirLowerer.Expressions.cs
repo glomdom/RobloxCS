@@ -89,6 +89,14 @@ public sealed partial class HirLowerer {
                 return LowerIsPattern(isPattern);
             }
 
+            case HirSwitchExpression switchExpression: {
+                return LowerSwitchExpression(switchExpression);
+            }
+
+            case HirPatternInput: {
+                return (Expression)_patternInputs.Peek().DeepClone();
+            }
+
             case HirUnary unary: {
                 if (IsSourceEnum(unary.Type) && unary.Op == UnaryOperatorKind.BitwiseNegation) {
                     return LowerEnumBits(unary.Type, "bnot", [LowerExpression(unary.Operand)], unary.Location);

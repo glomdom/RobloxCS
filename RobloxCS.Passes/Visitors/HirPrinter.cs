@@ -392,6 +392,64 @@ public sealed class HirPrinter : HirVisitor {
         Nested(() => base.VisitNotPattern(node));
     }
 
+    protected override void VisitRecursivePattern(HirRecursivePattern node) {
+        var type = node.MatchedType is { } matched ? $" [grey]{Type(matched)}[/]" : string.Empty;
+        var declared = node.Declared is { } local ? $" [blue]declare[/] {Escape(local.Name)}" : string.Empty;
+
+        Line($"[magenta]properties[/]{type}{declared}");
+
+        Nested(() => {
+            foreach (var property in node.Properties) {
+                Section("member", () => VisitExpression(property.Member));
+                Section("pattern", () => VisitPattern(property.Pattern));
+            }
+        });
+    }
+
+    protected override void VisitPatternInput(HirPatternInput node) {
+        Line($"[cyan]pattern input[/] [grey]{Type(node.Type)}[/]");
+    }
+
+    protected override void VisitSwitchExpression(HirSwitchExpression node) {
+        Line("[cyan]switch[/]");
+
+        Nested(() => {
+            Section("value", () => VisitExpression(node.Value));
+
+            foreach (var arm in node.Arms) {
+                Section("arm", () => {
+                    VisitPattern(arm.Pattern);
+                    if (arm.Guard is not null) Section("when", () => VisitExpression(arm.Guard));
+                    Section("value", () => VisitExpression(arm.Value));
+                });
+            }
+        });
+    }
+
+    protected override void VisitSwitch(HirSwitch node) {
+        Line("[magenta]switch[/]");
+
+        Nested(() => {
+            Section("value", () => VisitExpression(node.Value));
+
+            foreach (var section in node.Sections) {
+                Section("section", () => {
+                    foreach (var label in section.Labels) {
+                        if (label.Pattern is null) {
+                            Line("[magenta]default[/]");
+                        } else {
+                            VisitPattern(label.Pattern);
+                        }
+
+                        if (label.Guard is not null) Section("when", () => VisitExpression(label.Guard));
+                    }
+
+                    Section("body", () => VisitBlock(section.Body));
+                });
+            }
+        });
+    }
+
     protected override void VisitRelationalPattern(HirRelationalPattern node) {
         Line($"[magenta]relational[/] [yellow]{node.Op}[/]");
 

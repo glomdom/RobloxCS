@@ -98,6 +98,10 @@ public sealed partial class HirLowerer {
                 return LowerDeconstruction(deconstruction);
             }
 
+            case HirSwitch switchStatement: {
+                return LowerSwitch(switchStatement);
+            }
+
             default: {
                 Unsupported($"Lowering '{statement.GetType().Name}' statements are not supported yet.", statement.Location);
 

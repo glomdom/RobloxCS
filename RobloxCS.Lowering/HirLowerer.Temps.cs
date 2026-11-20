@@ -48,8 +48,11 @@ public sealed partial class HirLowerer {
     private Expression LowerShortCircuit(HirBinary binary) {
         var left = LowerExpression(binary.Left);
         var (right, preludes) = LowerCaptured(binary.Right);
-        var op = binary.Op is BinaryOperatorKind.ConditionalAnd ? BinOp.And : BinOp.Or;
 
+        return ShortCircuit(left, binary.Op is BinaryOperatorKind.ConditionalAnd ? BinOp.And : BinOp.Or, right, preludes);
+    }
+
+    private Expression ShortCircuit(Expression left, BinOp op, Expression right, List<Statement> preludes) {
         if (preludes.Count == 0) {
             return new BinaryOperatorExpression {
                 Left = left,

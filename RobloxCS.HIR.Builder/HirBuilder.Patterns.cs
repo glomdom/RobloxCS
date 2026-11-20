@@ -43,6 +43,7 @@ public sealed partial class HirBuilder {
             },
 
             IDiscardPatternOperation => new HirVarPattern { Location = location },
+            IRecursivePatternOperation recursive => BuildRecursivePattern(recursive),
             IConstantPatternOperation constant => new HirConstantPattern { Location = location, Value = BuildExpression(constant.Value) },
             IRelationalPatternOperation relational => new HirRelationalPattern { Location = location, Op = relational.OperatorKind, Value = BuildExpression(relational.Value) },
             INegatedPatternOperation negated => new HirNotPattern { Location = location, Pattern = BuildPattern(negated.Pattern) },

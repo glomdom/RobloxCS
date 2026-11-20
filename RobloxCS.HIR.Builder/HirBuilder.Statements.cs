@@ -24,6 +24,7 @@ public sealed partial class HirBuilder {
             OperationKind.ConditionalAccess => HandleConditionalAccess((IConditionalAccessOperation)operation),
             OperationKind.CompoundAssignment => HandleCompoundAssignment((ICompoundAssignmentOperation)operation),
             OperationKind.DeconstructionAssignment => HandleDeconstruction((IDeconstructionAssignmentOperation)operation),
+            OperationKind.Switch => BuildSwitch((ISwitchOperation)operation),
 
             _ => throw new NotSupportedException($"Statement operation of kind '{operation.Kind}' is not supported."),
         };
@@ -64,6 +65,10 @@ public sealed partial class HirBuilder {
                 BranchKind.Continue => new HirContinue {
                     Location = branchOperation.Syntax.GetLocation(),
                 },
+
+                BranchKind.Break when _switchExits.Contains(branchOperation.Target) => throw new NotSupportedException(
+                    "Leaving a switch with a break from inside nested statements is not supported yet."
+                ),
 
                 BranchKind.Break => new HirBreak {
                     Location = branchOperation.Syntax.GetLocation(),

@@ -40,6 +40,10 @@ public sealed partial class HirBuilder {
                 return BuildIsPattern(isPattern);
             }
 
+            case OperationKind.SwitchExpression when operation is ISwitchExpressionOperation switchExpression: {
+                return BuildSwitchExpression(switchExpression);
+            }
+
             case OperationKind.ArrayCreation when operation is IArrayCreationOperation array: {
                 if (array.Type is not IArrayTypeSymbol { Rank: 1 }) {
                     throw new NotSupportedException("Only one-dimensional and jagged arrays are supported.");
@@ -198,6 +202,13 @@ public sealed partial class HirBuilder {
             case OperationKind.InstanceReference when operation is IInstanceReferenceOperation instanceReferenceOperation: {
                 if (instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.ImplicitReceiver) {
                     return new HirImplicitReceiver {
+                        Location = instanceReferenceOperation.Syntax.GetLocation(),
+                        Type = instanceReferenceOperation.Type!,
+                    };
+                }
+
+                if (instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.PatternInput) {
+                    return new HirPatternInput {
                         Location = instanceReferenceOperation.Syntax.GetLocation(),
                         Type = instanceReferenceOperation.Type!,
                     };

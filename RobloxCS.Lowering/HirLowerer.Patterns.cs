@@ -11,6 +11,7 @@ namespace RobloxCS.Lowering;
 
 public sealed partial class HirLowerer {
     private readonly Stack<List<Statement>> _patternLocals = new();
+    private readonly Stack<Expression> _patternInputs = new();
 
     private Expression LowerIsPattern(HirIsPattern isPattern) {
         var subject = LowerExpression(isPattern.Operand);
@@ -65,9 +66,13 @@ public sealed partial class HirLowerer {
 
             case HirBinaryPattern binary: {
                 var left = LowerPattern(subject, subjectType, binary.Left);
-                var right = LowerPattern(subject, subjectType, binary.Right);
+                var (right, preludes) = LowerCapturedPattern(subject, subjectType, binary.Right);
 
-                return Binary(left, binary.IsAnd ? BinOp.And : BinOp.Or, right);
+                return ShortCircuit(left, binary.IsAnd ? BinOp.And : BinOp.Or, right, preludes);
+            }
+
+            case HirRecursivePattern recursive: {
+                return LowerRecursivePattern(subject, subjectType, recursive);
             }
 
             default: {
@@ -76,6 +81,71 @@ public sealed partial class HirLowerer {
                 return Bool(false);
             }
         }
+    }
+
+    private (Expression Condition, List<Statement> Preludes) LowerCapturedPattern(Expression subject, ITypeSymbol subjectType, HirPattern pattern) {
+        Expression condition = Nil();
+        var preludes = _names.Capture(() => condition = LowerPattern(subject, subjectType, pattern));
+
+        return (condition, preludes);
+    }
+
+    private Expression LowerRecursivePattern(Expression subject, ITypeSymbol subjectType, HirRecursivePattern pattern) {
+        var matched = pattern.MatchedType ?? subjectType;
+        var name = pattern.Declared is { } local ? DeclarePatternLocal(local, pattern.Location) : null;
+
+        Expression input;
+        Expression condition;
+
+        if (SymbolEqualityComparer.Default.Equals(Underlying(subjectType), Underlying(matched))) {
+            if (name is not null) {
+                _names.Emit(Assign(VarName.FromString(name), subject));
+            }
+
+            input = name is not null ? Name(name) : subject;
+            condition = SymbolEqualityComparer.Default.Equals(Underlying(subjectType), subjectType) && subjectType.IsValueType
+                ? Bool(true)
+                : NotEqual(input, Nil());
+        } else {
+            var value = LowerTypeTest(subject, subjectType, matched, pattern.Location);
+            if (name is not null) {
+                _names.Emit(Assign(VarName.FromString(name), Cast(value, Type("any"))));
+            }
+
+            input = name is not null ? Name(name) : Hoist(Cast(value, Type("any")), "input");
+            condition = NotEqual(input, Nil());
+        }
+
+        foreach (var property in pattern.Properties) {
+            Expression part = Nil();
+
+            _patternInputs.Push(input);
+
+            var preludes = _names.Capture(() => {
+                var member = LowerExpression(property.Member);
+                if (property.Pattern is HirRecursivePattern) {
+                    member = Hoist(Cast(member, Type("any")), "member");
+                } else if (!UsesSubjectOnce(property.Pattern)) {
+                    member = Hoist(member, "member");
+                }
+
+                part = LowerPattern(member, property.Member.Type, property.Pattern);
+            });
+
+            _patternInputs.Pop();
+
+            if (condition is BooleanExpression { Value: true }) {
+                foreach (var prelude in preludes) {
+                    _names.Emit(prelude);
+                }
+
+                condition = part;
+            } else {
+                condition = ShortCircuit(condition, BinOp.And, part, preludes);
+            }
+        }
+
+        return condition;
     }
 
     private string? DeclarePatternLocal(ILocalSymbol local, Location location) {
@@ -140,7 +210,11 @@ public sealed partial class HirLowerer {
     }
 
     private static HirExpression UnwrapPatternValue(HirExpression value) {
-        while (value is HirConversion { Kind: HirConversionKind.Boxing or HirConversionKind.Reference or HirConversionKind.Identity or HirConversionKind.NullableWrap } conversion) {
+        while (
+            value is HirConversion {
+                Kind: HirConversionKind.Boxing or HirConversionKind.Reference or HirConversionKind.Identity or HirConversionKind.NullableWrap
+            } conversion
+        ) {
             value = conversion.Operand;
         }
 
