@@ -31,6 +31,10 @@ public sealed partial class HirBuilder {
     }
 
     private HirPattern BuildPattern(IPatternOperation operation) {
+        return BuildPatternCore(operation) with { NarrowedType = operation.NarrowedType };
+    }
+
+    private HirPattern BuildPatternCore(IPatternOperation operation) {
         var location = operation.Syntax.GetLocation();
 
         return operation switch {

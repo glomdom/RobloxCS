@@ -66,7 +66,8 @@ public sealed partial class HirLowerer {
 
             case HirBinaryPattern binary: {
                 var left = LowerPattern(subject, subjectType, binary.Left);
-                var (right, preludes) = LowerCapturedPattern(subject, subjectType, binary.Right);
+                var narrowed = binary.IsAnd ? NarrowedFrom(subjectType, binary.Left) : null;
+                var (right, preludes) = LowerCapturedPattern(subject, subjectType, binary.Right, narrowed);
 
                 return ShortCircuit(left, binary.IsAnd ? BinOp.And : BinOp.Or, right, preludes);
             }
@@ -83,11 +84,31 @@ public sealed partial class HirLowerer {
         }
     }
 
-    private (Expression Condition, List<Statement> Preludes) LowerCapturedPattern(Expression subject, ITypeSymbol subjectType, HirPattern pattern) {
+    private (Expression Condition, List<Statement> Preludes) LowerCapturedPattern(
+        Expression subject,
+        ITypeSymbol subjectType,
+        HirPattern pattern,
+        ITypeSymbol? narrowed = null
+    ) {
         Expression condition = Nil();
-        var preludes = _names.Capture(() => condition = LowerPattern(subject, subjectType, pattern));
+        var preludes = _names.Capture(() => {
+            if (narrowed is not null) {
+                subject = Hoist(Cast(LowerTypeTest(subject, subjectType, narrowed, pattern.Location), Type("any")), "narrowed");
+                subjectType = narrowed;
+            }
+
+            condition = LowerPattern(subject, subjectType, pattern);
+        });
 
         return (condition, preludes);
+    }
+
+    private static ITypeSymbol? NarrowedFrom(ITypeSymbol subjectType, HirPattern pattern) {
+        if (!subjectType.IsReferenceType || pattern.NarrowedType is not { } narrowed) {
+            return null;
+        }
+
+        return SymbolEqualityComparer.Default.Equals(Underlying(narrowed), subjectType) ? null : narrowed;
     }
 
     private Expression LowerRecursivePattern(Expression subject, ITypeSymbol subjectType, HirRecursivePattern pattern) {
