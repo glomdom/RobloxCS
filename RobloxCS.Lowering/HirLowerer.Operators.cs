@@ -54,7 +54,7 @@ public sealed partial class HirLowerer {
         }
 
         if (binary.Op is BinaryOperatorKind.Add && binary.Type.SpecialType is SpecialType.System_String) {
-            return LowerStringConcat(binary);
+            return LowerText(binary);
         }
 
         var left = LowerExpression(binary.Left);

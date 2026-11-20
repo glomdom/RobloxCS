@@ -51,6 +51,10 @@ public sealed partial class HirBuilder {
                 return BuildSwitchExpression(switchExpression);
             }
 
+            case OperationKind.InterpolatedString when operation is IInterpolatedStringOperation interpolated: {
+                return BuildInterpolatedString(interpolated);
+            }
+
             case OperationKind.ArrayCreation when operation is IArrayCreationOperation array: {
                 if (array.Type is not IArrayTypeSymbol { Rank: 1 }) {
                     throw new NotSupportedException("Only one-dimensional and jagged arrays are supported.");

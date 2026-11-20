@@ -89,6 +89,10 @@ public sealed partial class HirLowerer {
                 return LowerIsPattern(isPattern);
             }
 
+            case HirInterpolatedString interpolated: {
+                return LowerText(interpolated);
+            }
+
             case HirSwitchExpression switchExpression: {
                 return LowerSwitchExpression(switchExpression);
             }

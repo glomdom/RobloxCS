@@ -6,6 +6,7 @@ using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
 using RobloxCS.AST.Statements;
 using RobloxCS.HIR.Expressions;
+using RobloxCS.HIR.Interpolation;
 using Serilog;
 using static RobloxCS.Lowering.Luau;
 
@@ -23,17 +24,17 @@ public sealed partial class HirLowerer {
         };
     }
 
-    private Expression LowerStringConcat(HirBinary binary) {
-        var operands = new List<HirExpression>();
-        FlattenConcat(binary, operands);
+    private Expression LowerText(HirExpression root) {
+        var pieces = new List<(string? Text, HirExpression? Value)>();
+        FlattenText(root, pieces);
 
-        Log.Verbose("Lowering string concatenation of {OperandCount} operands to an interpolated string", operands.Count);
+        Log.Verbose("Lowering text of {PieceCount} pieces to an interpolated string", pieces.Count);
 
         var parts = new List<(string Literal, Expression Value, List<Statement> Preludes)>();
         var text = new StringBuilder();
 
-        foreach (var operand in operands) {
-            if (operand is HirLiteral { Value: string literal }) {
+        foreach (var (literal, operand) in pieces) {
+            if (operand is null) {
                 text.Append(literal);
 
                 continue;
@@ -68,19 +69,52 @@ public sealed partial class HirLowerer {
         };
     }
 
-    private static void FlattenConcat(HirExpression expression, List<HirExpression> operands) {
-        while (true) {
-            if (expression is HirBinary { Op: BinaryOperatorKind.Add, OperatorMethod: null, Type.SpecialType: SpecialType.System_String } binary) {
-                FlattenConcat(binary.Left, operands);
+    private void FlattenText(HirExpression expression, List<(string? Text, HirExpression? Value)> pieces) {
+        switch (UnwrapBox(expression)) {
+            case HirBinary { Op: BinaryOperatorKind.Add, OperatorMethod: null, Type.SpecialType: SpecialType.System_String } binary: {
+                FlattenText(binary.Left, pieces);
+                FlattenText(binary.Right, pieces);
 
-                expression = binary.Right;
-
-                continue;
+                break;
             }
 
-            operands.Add(expression);
+            case HirInterpolatedString interpolated: {
+                foreach (var part in interpolated.Parts) {
+                    switch (part) {
+                        case HirInterpolationText text: {
+                            pieces.Add((text.Value, null));
 
-            break;
+                            break;
+                        }
+
+                        case HirInterpolationExpression { Format: not null }: {
+                            Unsupported("Format specifiers in interpolated strings are not supported yet.", part.Location);
+
+                            break;
+                        }
+
+                        case HirInterpolationExpression value: {
+                            FlattenText(value.Expression, pieces);
+
+                            break;
+                        }
+                    }
+                }
+
+                break;
+            }
+
+            case HirLiteral { Value: string text }: {
+                pieces.Add((text, null));
+
+                break;
+            }
+
+            default: {
+                pieces.Add((null, expression));
+
+                break;
+            }
         }
     }
 
