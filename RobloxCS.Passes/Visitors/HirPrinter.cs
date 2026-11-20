@@ -4,6 +4,7 @@ using RobloxCS.HIR;
 using RobloxCS.HIR.Declarations;
 using RobloxCS.HIR.Expressions;
 using RobloxCS.HIR.Interpolation;
+using RobloxCS.HIR.Patterns;
 using RobloxCS.HIR.Statements;
 using Spectre.Console;
 
@@ -362,6 +363,49 @@ public sealed class HirPrinter : HirVisitor {
         Line($"[cyan]convert[/] [yellow]{node.Kind.ToString().ToLowerInvariant()}[/] [grey]{Type(node.Operand.Type)} -> {Type(node.Type)}[/]{flags}");
 
         Nested(() => base.VisitConversion(node));
+    }
+
+    protected override void VisitIsPattern(HirIsPattern node) {
+        Line("[cyan]is[/]");
+
+        Nested(() => {
+            Section("operand", () => VisitExpression(node.Operand));
+            Section("pattern", () => VisitPattern(node.Pattern));
+        });
+    }
+
+    protected override void VisitBinaryPattern(HirBinaryPattern node) {
+        Line(node.IsAnd ? "[magenta]and[/]" : "[magenta]or[/]");
+
+        Nested(() => base.VisitBinaryPattern(node));
+    }
+
+    protected override void VisitConstantPattern(HirConstantPattern node) {
+        Line("[magenta]constant[/]");
+
+        Nested(() => base.VisitConstantPattern(node));
+    }
+
+    protected override void VisitNotPattern(HirNotPattern node) {
+        Line("[magenta]not[/]");
+
+        Nested(() => base.VisitNotPattern(node));
+    }
+
+    protected override void VisitRelationalPattern(HirRelationalPattern node) {
+        Line($"[magenta]relational[/] [yellow]{node.Op}[/]");
+
+        Nested(() => base.VisitRelationalPattern(node));
+    }
+
+    protected override void VisitTypePattern(HirTypePattern node) {
+        var declared = node.Declared is { } local ? $" [blue]declare[/] {Escape(local.Name)}" : string.Empty;
+
+        Line($"[magenta]type[/] [grey]{Type(node.TestType)}[/]{declared}");
+    }
+
+    protected override void VisitVarPattern(HirVarPattern node) {
+        Line(node.Declared is { } local ? $"[magenta]var[/] [blue]declare[/] {Escape(local.Name)}" : "[magenta]discard[/]");
     }
 
     protected override void VisitDefault(HirDefault node) {

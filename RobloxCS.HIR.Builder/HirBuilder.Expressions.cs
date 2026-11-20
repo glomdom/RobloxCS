@@ -32,6 +32,14 @@ public sealed partial class HirBuilder {
 
     private HirExpression BuildExpressionCore(IOperation operation) {
         switch (operation.Kind) {
+            case OperationKind.IsType when operation is IIsTypeOperation isType: {
+                return BuildTypeTest(isType);
+            }
+
+            case OperationKind.IsPattern when operation is IIsPatternOperation isPattern: {
+                return BuildIsPattern(isPattern);
+            }
+
             case OperationKind.ArrayCreation when operation is IArrayCreationOperation array: {
                 if (array.Type is not IArrayTypeSymbol { Rank: 1 }) {
                     throw new NotSupportedException("Only one-dimensional and jagged arrays are supported.");

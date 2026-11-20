@@ -12,15 +12,19 @@ namespace RobloxCS.Lowering;
 public sealed partial class HirLowerer {
     private List<Statement> LowerStatement(HirStatement statement) {
         List<Statement> lowered = [];
-        var preludes = _names.Capture(() => lowered = LowerStatementCore(statement));
+        var locals = new List<Statement>();
 
-        if (preludes.Count == 0) {
+        _patternLocals.Push(locals);
+        var preludes = _names.Capture(() => lowered = LowerStatementCore(statement));
+        _patternLocals.Pop();
+
+        if (preludes.Count == 0 && locals.Count == 0) {
             return lowered;
         }
 
-        Log.Verbose("Emitting {Count} prelude statements before {StatementKind}", preludes.Count, statement.GetType().Name);
+        Log.Verbose("Emitting {Count} prelude statements before {StatementKind}", locals.Count + preludes.Count, statement.GetType().Name);
 
-        return [..preludes, ..lowered];
+        return [..locals, ..preludes, ..lowered];
     }
 
     private Expression Hoist(Expression value, string hint = "t") {

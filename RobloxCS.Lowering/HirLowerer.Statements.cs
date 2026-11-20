@@ -168,15 +168,27 @@ public sealed partial class HirLowerer {
         return statements;
     }
 
-    private List<Statement> LowerIf(HirIf compare) {
+    private List<Statement> LowerIf(HirIf compare) => LowerIfChain(LowerExpression(compare.Condition), compare);
+
+    private List<Statement> LowerIfChain(Expression condition, HirIf compare) {
+        var then = LowerBlock(compare.Then);
         var elseIfs = new List<ElseIfBlock>();
         Block? elseBlock = null;
 
         var next = compare.Else;
         while (next is not null) {
             if (next is HirIf elseIf) {
+                var (elseIfCondition, preludes) = LowerCaptured(elseIf.Condition);
+                if (preludes.Count > 0) {
+                    Log.Verbose("Else-if condition needs temps, nesting it in an else block");
+
+                    elseBlock = BlockOf([..preludes, ..LowerIfChain(elseIfCondition, elseIf)]);
+
+                    break;
+                }
+
                 elseIfs.Add(new ElseIfBlock {
-                    Condition = LowerExpression(elseIf.Condition),
+                    Condition = elseIfCondition,
                     Block = new Block { Statements = LowerBlock(elseIf.Then) },
                 });
 
@@ -196,8 +208,8 @@ public sealed partial class HirLowerer {
 
         return [
             new IfStatement {
-                Condition = LowerExpression(compare.Condition),
-                Block = new Block { Statements = LowerBlock(compare.Then) },
+                Condition = condition,
+                Block = new Block { Statements = then },
                 ElseIf = elseIfs.Count > 0 ? elseIfs : null,
                 Else = elseBlock,
             },

@@ -1,6 +1,7 @@
 ﻿using RobloxCS.HIR.Declarations;
 using RobloxCS.HIR.Expressions;
 using RobloxCS.HIR.Interpolation;
+using RobloxCS.HIR.Patterns;
 using RobloxCS.HIR.Statements;
 
 namespace RobloxCS.HIR;
@@ -50,6 +51,7 @@ public abstract class HirVisitor {
             case HirIncrementDecrement n: VisitIncrementDecrement(n); break;
             case HirIndexAccess n: VisitIndexAccess(n); break;
             case HirInterpolatedString n: VisitInterpolatedString(n); break;
+            case HirIsPattern n: VisitIsPattern(n); break;
             case HirLambda n: VisitLambda(n); break;
             case HirLiteral n: VisitLiteral(n); break;
             case HirLocalRef n: VisitLocalRef(n); break;
@@ -72,6 +74,19 @@ public abstract class HirVisitor {
             case HirType n: VisitType(n); break;
 
             default: throw new InvalidOperationException($"Unhandled declaration '{node.GetType().Name}'");
+        }
+    }
+
+    public virtual void VisitPattern(HirPattern node) {
+        switch (node) {
+            case HirBinaryPattern n: VisitBinaryPattern(n); break;
+            case HirConstantPattern n: VisitConstantPattern(n); break;
+            case HirNotPattern n: VisitNotPattern(n); break;
+            case HirRelationalPattern n: VisitRelationalPattern(n); break;
+            case HirTypePattern n: VisitTypePattern(n); break;
+            case HirVarPattern n: VisitVarPattern(n); break;
+
+            default: throw new InvalidOperationException($"Unhandled pattern '{node.GetType().Name}'");
         }
     }
 
@@ -209,6 +224,26 @@ public abstract class HirVisitor {
     protected virtual void VisitInterpolatedString(HirInterpolatedString node) {
         foreach (var part in node.Parts) VisitInterpolationPart(part);
     }
+
+    protected virtual void VisitIsPattern(HirIsPattern node) {
+        VisitExpression(node.Operand);
+        VisitPattern(node.Pattern);
+    }
+
+    protected virtual void VisitBinaryPattern(HirBinaryPattern node) {
+        VisitPattern(node.Left);
+        VisitPattern(node.Right);
+    }
+
+    protected virtual void VisitConstantPattern(HirConstantPattern node) => VisitExpression(node.Value);
+
+    protected virtual void VisitNotPattern(HirNotPattern node) => VisitPattern(node.Pattern);
+
+    protected virtual void VisitRelationalPattern(HirRelationalPattern node) => VisitExpression(node.Value);
+
+    protected virtual void VisitTypePattern(HirTypePattern node) { } // leaf
+
+    protected virtual void VisitVarPattern(HirVarPattern node) { } // leaf
 
     protected virtual void VisitLambda(HirLambda node) {
         foreach (var param in node.Parameters) VisitParameter(param);

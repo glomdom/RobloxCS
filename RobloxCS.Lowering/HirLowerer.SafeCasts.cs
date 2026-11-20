@@ -23,10 +23,12 @@ public sealed partial class HirLowerer {
             return LowerBoxing(conversion.Operand);
         }
 
-        var value = LowerExpression(conversion.Operand);
+        return LowerSafeCastValue(LowerExpression(conversion.Operand), target, conversion.Location);
+    }
 
+    private Expression LowerSafeCastValue(Expression value, ITypeSymbol target, Location location) {
         if (CollectionElement(target) is not null) {
-            return Cast(LowerCollectionSafeCast(value, target), Optional(LowerType(target, conversion.Location)));
+            return Cast(LowerCollectionSafeCast(value, target), Optional(LowerType(target, location)));
         }
 
         Expression result;
@@ -56,9 +58,9 @@ public sealed partial class HirLowerer {
 
                     result = CheckedValue(value, check);
                 } else if (target is INamedTypeSymbol named && IsTranspiledType(named) && named.TypeKind is TypeKind.Class or TypeKind.Interface) {
-                    result = LowerReferenceSafeCast(value, named, conversion.Location);
+                    result = LowerReferenceSafeCast(value, named, location);
                 } else {
-                    Unsupported($"Safe casts to '{target.ToDisplayString()}' are not supported yet.", conversion.Location);
+                    Unsupported($"Safe casts to '{target.ToDisplayString()}' are not supported yet.", location);
 
                     return Nil();
                 }
@@ -67,7 +69,7 @@ public sealed partial class HirLowerer {
             }
         }
 
-        return Cast(result, Optional(LowerType(target, conversion.Location)));
+        return Cast(result, Optional(LowerType(target, location)));
     }
 
     private Expression LowerNullableSafeCast(HirConversion conversion, INamedTypeSymbol target) {

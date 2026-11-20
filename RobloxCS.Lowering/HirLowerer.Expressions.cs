@@ -85,6 +85,10 @@ public sealed partial class HirLowerer {
                 return LowerLambda(lambda);
             }
 
+            case HirIsPattern isPattern: {
+                return LowerIsPattern(isPattern);
+            }
+
             case HirUnary unary: {
                 if (IsSourceEnum(unary.Type) && unary.Op == UnaryOperatorKind.BitwiseNegation) {
                     return LowerEnumBits(unary.Type, "bnot", [LowerExpression(unary.Operand)], unary.Location);
