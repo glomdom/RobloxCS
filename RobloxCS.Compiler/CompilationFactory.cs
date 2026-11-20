@@ -26,7 +26,7 @@ internal static class CompilationFactory {
             assemblyName,
             syntaxTrees: [syntaxTree, globalUsingsTree],
             references: allRefs,
-            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable)
         );
 
         watch.Stop();

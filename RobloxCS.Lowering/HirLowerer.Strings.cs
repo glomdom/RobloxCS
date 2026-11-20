@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.AST;
 using RobloxCS.AST.Expressions;
+using RobloxCS.AST.Statements;
 using RobloxCS.HIR.Expressions;
 using Serilog;
 using static RobloxCS.Lowering.Luau;
@@ -28,7 +29,7 @@ public sealed partial class HirLowerer {
 
         Log.Verbose("Lowering string concatenation of {OperandCount} operands to an interpolated string", operands.Count);
 
-        var segments = new List<InterpolatedStringSegment>();
+        var parts = new List<(string Literal, Expression Value, List<Statement> Preludes)>();
         var text = new StringBuilder();
 
         foreach (var operand in operands) {
@@ -38,12 +39,23 @@ public sealed partial class HirLowerer {
                 continue;
             }
 
-            segments.Add(new InterpolatedStringSegment {
-                Literal = text.ToString(),
-                Expression = CaptureValue(LowerDisplayValue(operand), "concat"),
-            });
+            Expression value = Nil();
+            var preludes = _names.Capture(() => value = LowerDisplayValue(operand));
 
+            parts.Add((text.ToString(), value, preludes));
             text.Clear();
+        }
+
+        var lastPrelude = parts.FindLastIndex(part => part.Preludes.Count > 0);
+        var segments = new List<InterpolatedStringSegment>();
+
+        for (var i = 0; i < parts.Count; i++) {
+            foreach (var prelude in parts[i].Preludes) {
+                _names.Emit(prelude);
+            }
+
+            var value = i < lastPrelude && HasEvaluationEffects(parts[i].Value) ? CaptureValue(parts[i].Value, "concat") : parts[i].Value;
+            segments.Add(new InterpolatedStringSegment { Literal = parts[i].Literal, Expression = value });
         }
 
         if (segments.Count == 0) {
@@ -92,11 +104,23 @@ public sealed partial class HirLowerer {
             return IfExpression.From(lowered, Str("True"), Str("False"));
         }
 
-        if (value.Type.IsReferenceType || value.Type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T) {
+        if (CanBeNull(value)) {
             var subject = Hoist(lowered, "display");
             return IfExpression.From(new BinaryOperatorExpression { Left = subject, Op = BinOp.TwoEqual, Right = Nil() }, Str(""), subject);
         }
 
         return lowered;
+    }
+
+    private static bool CanBeNull(HirExpression value) {
+        if (value.IsNotNull || value is HirLiteral { Value: not null }) {
+            return false;
+        }
+
+        if (value is HirBinary { Op: BinaryOperatorKind.Add, OperatorMethod: null, Type.SpecialType: SpecialType.System_String }) {
+            return false;
+        }
+
+        return value.Type.IsReferenceType || value.Type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T;
     }
 }

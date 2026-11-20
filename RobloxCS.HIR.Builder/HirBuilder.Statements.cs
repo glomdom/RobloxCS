@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using RobloxCS.HIR.Expressions;
@@ -111,9 +112,15 @@ public sealed partial class HirBuilder {
                 collection = conversion.Operand;
             }
 
+            var variableType = variable.Symbol.Type;
+            if (loop.Syntax is ForEachStatementSyntax { Type.IsVar: true } syntax && Semantics.GetForEachStatementInfo(syntax).ElementType is { } element) {
+                variableType = element;
+            }
+
             return new HirForEach {
                 Location = loop.Syntax.GetLocation(),
                 Variable = variable.Symbol,
+                VariableType = variableType,
                 Collection = BuildExpression(collection),
                 Body = BuildBlock(loop.Body),
             };

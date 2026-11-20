@@ -4,4 +4,5 @@ namespace RobloxCS.HIR.Expressions;
 
 public abstract record HirExpression : HirNode {
     public required ITypeSymbol Type { get; init; }
+    public bool IsNotNull { get; init; }
 }

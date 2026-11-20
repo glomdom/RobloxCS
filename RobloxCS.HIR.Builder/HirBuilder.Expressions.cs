@@ -10,6 +10,13 @@ namespace RobloxCS.HIR.Builder;
 public sealed partial class HirBuilder {
     public HirExpression BuildExpression(IOperation operation) {
         var expression = BuildExpressionCore(operation);
+        if (
+            operation is { IsImplicit: false, Syntax: ExpressionSyntax expressionSyntax } &&
+            Semantics.GetTypeInfo(expressionSyntax).Nullability.FlowState == NullableFlowState.NotNull
+        ) {
+            expression = expression with { IsNotNull = true };
+        }
+
         var syntax = operation.Syntax;
         while (syntax.Parent is ParenthesizedExpressionSyntax parentheses) {
             syntax = parentheses;

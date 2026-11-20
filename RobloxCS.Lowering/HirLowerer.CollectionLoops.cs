@@ -21,7 +21,7 @@ public sealed partial class HirLowerer {
         var body = LowerBlock(loop.Body);
         _continueIncrementors.Pop();
 
-        var value = ConvertCollectionElement(CollectionCall("get", collection, Name(index)), element, loop.Variable.Type, loop.Location);
+        var value = ConvertCollectionElement(CollectionCall("get", collection, Name(index)), element, loop.VariableType, loop.Location);
         List<Statement> iteration = [
             CollectionIf(
                 Binary(
@@ -31,7 +31,7 @@ public sealed partial class HirLowerer {
                 ), Stmt(Call("error", Str("Collection was modified during enumeration.")))
             ),
             CollectionIf(Binary(Name(index), BinOp.GreaterThanEqual, Index(collection, "count")), new BreakStatement()),
-            Local(_names.NameFor(loop.Variable), LowerType(loop.Variable.Type, loop.Location), Cast(value, LowerType(loop.Variable.Type, loop.Location))),
+            Local(_names.NameFor(loop.Variable), LowerType(loop.VariableType, loop.Location), Cast(value, LowerType(loop.VariableType, loop.Location))),
             ..body,
         ];
 
