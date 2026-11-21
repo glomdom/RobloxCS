@@ -9,6 +9,10 @@ namespace RobloxCS.Lowering;
 
 public sealed partial class HirLowerer {
     private Expression LowerExpression(HirExpression expression) {
+        if (_nativeTables.Remove(expression)) {
+            return LowerNativeTable(expression);
+        }
+
         switch (expression) {
             case HirCollectionLiteral collection: {
                 return LowerCollection(collection);

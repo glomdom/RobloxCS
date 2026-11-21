@@ -47,7 +47,7 @@ public sealed partial class HirLowerer {
             }
 
             if (!argument.Symbol.IsParams) {
-                flattened.Add(argument with { Value = UnwrapBox(argument.Value) });
+                flattened.Add(argument with { Value = MarkNativeTable(UnwrapBox(argument.Value)) });
 
                 continue;
             }
@@ -59,7 +59,7 @@ public sealed partial class HirLowerer {
             }
 
             foreach (var element in collection.Elements) {
-                flattened.Add(argument with { Value = UnwrapBox(element), Location = element.Location });
+                flattened.Add(argument with { Value = MarkNativeTable(UnwrapBox(element)), Location = element.Location });
             }
         }
 

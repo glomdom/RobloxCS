@@ -53,4 +53,18 @@ public sealed class NameKey : TableField {
     public override string ToString() => $"{Key}: {Value}";
 }
 
-// TODO: Index signature
+public sealed class IndexKey : TableField {
+    public required Expression Key { get; set; }
+    public required Expression Value { get; set; }
+
+    public override IndexKey DeepClone() => new() { Key = (Expression)Key.DeepClone(), Value = (Expression)Value.DeepClone() };
+    public override void Accept(IAstVisitor v) => v.VisitIndexKey(this);
+    public override T Accept<T>(IAstVisitor<T> v) => v.VisitIndexKey(this);
+
+    public override IEnumerable<AstNode> Children() {
+        yield return Key;
+        yield return Value;
+    }
+
+    public override string ToString() => $"[{Key}]: {Value}";
+}

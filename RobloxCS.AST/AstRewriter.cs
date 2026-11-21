@@ -107,6 +107,13 @@ public class AstRewriter : IAstVisitor<AstNode> {
         return node;
     }
 
+    public virtual AstNode VisitIndexKey(IndexKey node) {
+        node.Key = Visit(node.Key, node)!;
+        node.Value = Visit(node.Value, node)!;
+
+        return node;
+    }
+
     public virtual AstNode VisitTypeAssertionExpression(TypeAssertionExpression node) => throw new NotImplementedException();
 
     public virtual AstNode VisitUnaryOperatorExpression(UnaryOperatorExpression node) {

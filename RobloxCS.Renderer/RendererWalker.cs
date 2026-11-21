@@ -493,6 +493,14 @@ public class RendererWalker : AstVisitorBase {
         Visit(node.Value);
     }
 
+    public override void VisitIndexKey(IndexKey node) {
+        _state.AppendIndent();
+        _state.Builder.Append('[');
+        Visit(node.Key);
+        _state.Builder.Append("] = ");
+        Visit(node.Value);
+    }
+
     public override void VisitAnonymousFunction(AnonymousFunctionExpression node) {
         _state.Builder.Append("function");
         Visit(node.Body);

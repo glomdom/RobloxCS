@@ -337,6 +337,10 @@ public sealed partial class HirLowerer {
     }
 
     private List<Statement> LowerAssignment(HirAssignment assignment) {
+        if (assignment.Target is HirPropertyAccess { Symbol.ContainingType: { } owner } && GetRobloxNative(owner) is not null) {
+            MarkNativeTable(UnwrapBox(assignment.Value));
+        }
+
         if (assignment.Target is HirIndexAccess index) {
             return LowerCollectionWrite(index, assignment.Value);
         }

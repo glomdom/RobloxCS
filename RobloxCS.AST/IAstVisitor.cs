@@ -36,6 +36,7 @@ public interface IAstVisitor {
     void VisitTableField(TableField node);
     void VisitNoKey(NoKey node);
     void VisitNameKey(NameKey node);
+    void VisitIndexKey(IndexKey node);
     void VisitTypeAssertionExpression(TypeAssertionExpression node);
     void VisitUnaryOperatorExpression(UnaryOperatorExpression node);
 
@@ -125,6 +126,7 @@ public interface IAstVisitor<out T> where T : AstNode {
     T VisitTableConstructor(TableConstructorExpression node);
     T VisitNoKey(NoKey node);
     T VisitNameKey(NameKey node);
+    T VisitIndexKey(IndexKey node);
     T VisitTypeAssertionExpression(TypeAssertionExpression node);
     T VisitUnaryOperatorExpression(UnaryOperatorExpression node);
 

@@ -49,7 +49,7 @@ public sealed partial class HirLowerer {
 
         var branches = arms.Select(arm => (arm.Condition, arm.Preludes, Body: (List<Statement>)[..arm.ValuePreludes, Assign(VarName.FromString(result), arm.Value)])).ToList();
         List<Statement> otherwise = [Stmt(Call("error", Str("The switch expression did not match its value.")))];
-
+        
         if (exhaustive) {
             var last = branches[^1];
             branches.RemoveAt(branches.Count - 1);

@@ -48,6 +48,7 @@ public class AstVisitorBase<T> : IAstVisitor<T> where T : AstNode {
     public virtual T VisitTableField(TableField node) => DefaultVisit(node);
     public virtual T VisitNoKey(NoKey node) => DefaultVisit(node);
     public virtual T VisitNameKey(NameKey node) => DefaultVisit(node);
+    public virtual T VisitIndexKey(IndexKey node) => DefaultVisit(node);
     public virtual T VisitTypeAssertionExpression(TypeAssertionExpression node) => DefaultVisit(node);
     public virtual T VisitUnaryOperatorExpression(UnaryOperatorExpression node) => DefaultVisit(node);
 
