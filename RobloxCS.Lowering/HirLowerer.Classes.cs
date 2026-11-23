@@ -19,12 +19,6 @@ public sealed partial class HirLowerer {
             return [];
         }
 
-        if (symbol.IsGenericType) {
-            Unsupported("Generic classes are not supported yet.", type.Location);
-
-            return [];
-        }
-
         if (symbol.BaseType is { SpecialType: not SpecialType.System_Object } baseType && !IsTranspiledType(baseType)) {
             Unsupported("Inheriting from external classes is not supported yet.", type.Location);
 
@@ -57,6 +51,12 @@ public sealed partial class HirLowerer {
         }
 
         foreach (var field in staticFields) {
+            if (symbol.IsGenericType) {
+                Unsupported("Static fields in generic classes are not supported yet, because every type argument would share one value.", field.Location);
+
+                continue;
+            }
+
             Log.Verbose("Assigning static field {ClassName}.{FieldName}", name, field.Symbol.Name);
 
             statements.AddRange(_names.Capture(() => _names.Emit(

@@ -33,7 +33,8 @@ public sealed partial class HirLowerer {
     }
 
     private static Expression DefaultValue(ITypeSymbol type) {
-        if (type.IsReferenceType || type.OriginalDefinition.SpecialType is SpecialType.System_Nullable_T) {
+        // erased type parameters have no runtime type to pick a default from
+        if (type.IsReferenceType || type is ITypeParameterSymbol || type.OriginalDefinition.SpecialType is SpecialType.System_Nullable_T) {
             return Nil();
         }
 

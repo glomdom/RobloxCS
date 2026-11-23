@@ -41,10 +41,13 @@ public sealed partial class HirLowerer {
     }
 
     private bool IsTranspiledType(ITypeSymbol type) {
-        return type is INamedTypeSymbol named && (_moduleTypes.Contains(named) || Modules.TryGetModule(named, out _));
+        return type is INamedTypeSymbol named && (_moduleTypes.Contains(named.OriginalDefinition) || Modules.TryGetModule(named, out _));
     }
 
+    // type arguments are erased, so every construction of a generic type refers to its one definition
     private string ReferenceType(INamedTypeSymbol type, Location location) {
+        type = type.OriginalDefinition;
+
         if (_moduleTypes.Contains(type) || !Modules.TryGetModule(type, out var module)) {
             return TypeName(type);
         }

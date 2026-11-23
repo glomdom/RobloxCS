@@ -6,6 +6,11 @@ namespace RobloxCS.Lowering;
 
 public sealed partial class HirLowerer {
     private TypeInfo LowerType(ITypeSymbol type, Location location) {
+        // type parameters are erased, values of them stay raw
+        if (type is ITypeParameterSymbol) {
+            return Type("any");
+        }
+
         if (type is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } nullable) {
             return Optional(LowerType(nullable.TypeArguments[0], location));
         }

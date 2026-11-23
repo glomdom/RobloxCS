@@ -11,6 +11,12 @@ public sealed partial class HirLowerer {
     private Expression LowerBoxing(HirExpression operand) {
         var type = operand.Type;
         var value = LowerExpression(operand);
+
+        // values of a type parameter are already raw, and unboxing accepts raw values
+        if (type is ITypeParameterSymbol) {
+            return value;
+        }
+
         if (type is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } nullable) {
             var subject = CaptureValue(value, "boxed");
 
@@ -45,6 +51,10 @@ public sealed partial class HirLowerer {
         var nullable = target is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T };
         var underlying = nullable ? ((INamedTypeSymbol)target).TypeArguments[0] : target;
 
+        if (underlying is ITypeParameterSymbol) {
+            return Cast(LowerErasedUnboxing(LowerExpression(conversion.Operand)), LowerType(target, conversion.Location));
+        }
+
         return Cast(LowerBoxCast(LowerExpression(conversion.Operand), underlying, false, nullable), LowerType(target, conversion.Location));
     }
 
@@ -74,6 +84,26 @@ public sealed partial class HirLowerer {
         return Call(Lambda([("value", Type("any")), ("target", Type("string"))], Type("any"), body), value, Str(RuntimeTypeKey(target)));
 
         ReturnStatement Failure() => Return(safe ? Nil() : Call("error", Str("Invalid unboxing cast")));
+    }
+
+    // the target type is erased, so a box is unwrapped and anything else passes through unchecked
+    private static Expression LowerErasedUnboxing(Expression value) {
+        var body = new List<Statement> {
+            new IfStatement { Condition = NotEqual(Call("typeof", Name("value")), Str("table")), Block = BlockOf([Return(Name("value"))]) },
+            Local("class", Type("any"), Call("getmetatable", Name("value"))),
+            new IfStatement { Condition = NotEqual(Call("typeof", Name("class")), Str("table")), Block = BlockOf([Return(Name("value"))]) },
+            Local("metadata", Type("any"), Call("getmetatable", Name("class"))),
+            new IfStatement {
+                Condition = Binary(
+                    Equal(Call("typeof", Name("metadata")), Str("table")), BinOp.And,
+                    NotEqual(Call("rawget", Name("metadata"), Str("__boxedType")), Nil())
+                ),
+                Block = BlockOf([Return(Call("rawget", Name("value"), Str("__value")))]),
+            },
+            Return(Name("value")),
+        };
+
+        return Call(Lambda([("value", Type("any"))], Type("any"), body), value);
     }
 
     private Expression? RawValueCheck(ITypeSymbol target) {

@@ -67,7 +67,7 @@ public sealed partial class HirLowerer {
                 return;
             }
 
-            var parent = module.Types.FirstOrDefault(candidate => SymbolEqualityComparer.Default.Equals(candidate.Symbol, type.Symbol.BaseType));
+            var parent = module.Types.FirstOrDefault(candidate => SymbolEqualityComparer.Default.Equals(candidate.Symbol, type.Symbol.BaseType?.OriginalDefinition));
             if (parent is not null) {
                 LowerWithBase(parent);
             }

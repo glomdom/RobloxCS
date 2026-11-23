@@ -403,7 +403,7 @@ public sealed partial class HirBuilder {
             return HirConversionKind.UserDefined;
         }
 
-        if (conversion.IsIdentity || conversion.IsConditionalExpression || conversion.IsCollectionExpression || conversion.IsObjectCreation) {
+        if (conversion.IsIdentity || conversion.IsConditionalExpression || conversion.IsCollectionExpression || conversion.IsObjectCreation || conversion.IsDefaultLiteral) {
             return HirConversionKind.Identity;
         }
 

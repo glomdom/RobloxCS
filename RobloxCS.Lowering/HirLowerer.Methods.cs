@@ -11,12 +11,6 @@ namespace RobloxCS.Lowering;
 
 public sealed partial class HirLowerer {
     private List<Statement> LowerMethod(string className, HirMethod method) {
-        if (method.Symbol.IsGenericMethod) {
-            Unsupported("Generic methods are not supported yet.", method.Location);
-
-            return [];
-        }
-
         Log.Debug(
             "Lowering {MethodKind} method {ClassName}.{MethodName} ({ParameterCount} parameters)",
             method.IsStatic ? "static" : "instance", className, method.Symbol.Name, method.Parameters.Length

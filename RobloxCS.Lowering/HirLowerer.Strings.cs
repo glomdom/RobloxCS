@@ -130,7 +130,7 @@ public sealed partial class HirLowerer {
         }
 
         var lowered = LowerExpression(value);
-        if (value.Type.SpecialType is SpecialType.System_Object or SpecialType.System_ValueType or SpecialType.System_Enum) {
+        if (value.Type is ITypeParameterSymbol || value.Type.SpecialType is SpecialType.System_Object or SpecialType.System_ValueType or SpecialType.System_Enum) {
             return LowerRuntimeDisplay(lowered);
         }
 

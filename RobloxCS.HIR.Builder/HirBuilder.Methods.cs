@@ -24,7 +24,7 @@ public sealed partial class HirBuilder {
             Symbol = method,
             Initializer = isCtor ? BuildConstructorInitializer(method) : null,
             Parameters = [.. parameters],
-            TypeParameters = [], // todo
+            TypeParameters = method.TypeParameters,
             Block = block,
             IsStatic = method.IsStatic,
             IsConstructor = isCtor,
