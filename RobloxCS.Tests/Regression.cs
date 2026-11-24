@@ -103,7 +103,7 @@ public class Regression {
         TranspileCache.GetOrAdd(path, static p => {
             var transpiler = new CSharpTranspiler(
                 new TranspilerOptions(ScriptType.Local) {
-                    CollectionRuntimePath = "./RuntimeLib/Collections",
+                    RuntimeFolder = "./RuntimeLib",
                 },
                 new CSharpCompiler(p, "RobloxCS.Types.dll", false)
             );
@@ -115,7 +115,7 @@ public class Regression {
                 Assert.Fail($"Failed to transpile '{p}':\n" + string.Join("\n", result.Diagnostics.Select(d => d.Render())));
             }
 
-            if (result.UsesCollections) {
+            if (result.UsesRuntime) {
                 RuntimeLibrary.Install(Path.Join(OutputDir, "RuntimeLib"));
             }
 
