@@ -260,6 +260,12 @@ public sealed class HirPrinter : HirVisitor {
         Nested(() => base.VisitReturn(node));
     }
 
+    protected override void VisitThrow(HirThrow node) {
+        Line($"[magenta]throw[/] {Markup.Escape(node.ExceptionType.ToDisplayString())}");
+
+        Nested(() => base.VisitThrow(node));
+    }
+
     protected override void VisitBreak(HirBreak node) {
         Line("[magenta]break[/]");
     }
