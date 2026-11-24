@@ -23,7 +23,7 @@ public sealed partial class HirLowerer {
         foreach (var statement in block.Statements) {
             statements.AddRange(LowerStatement(statement));
 
-            if (statement is not (HirReturn or HirBreak or HirContinue)) continue;
+            if (statement is not (HirReturn or HirBreak or HirContinue or HirThrow)) continue;
             if (statement != block.Statements[^1]) {
                 Log.Verbose("Dropping unreachable statements after {Terminator}", statement.GetType().Name);
             }
@@ -86,6 +86,10 @@ public sealed partial class HirLowerer {
                 return LowerReturn(returnStatement);
             }
 
+            case HirThrow throwStatement: {
+                return LowerThrow(throwStatement);
+            }
+
             case HirConditionalStatement conditional: {
                 return LowerConditionalStatement(conditional);
             }
@@ -142,6 +146,15 @@ public sealed partial class HirLowerer {
 
             return [Assign(lowered, LowerExpression(combined))];
         });
+    }
+
+    // There is no try/catch yet, so a throw only has to stop execution with a readable message: error(message).
+    private List<Statement> LowerThrow(HirThrow statement) {
+        var message = statement.Message is not null
+            ? LowerExpression(statement.Message)
+            : Str(statement.ExceptionType.ToDisplayString());
+
+        return [Stmt(Call("error", message))];
     }
 
     private List<Statement> LowerReturn(HirReturn statement) {

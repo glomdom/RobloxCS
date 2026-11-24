@@ -123,7 +123,11 @@ public sealed partial class HirLowerer {
         }
 
         if (native is not null) {
-            return LowerNativeCall(call, native.Value, args, receiver) as FunctionCallExpression;
+            var nativeCall = LowerNativeCall(call, native.Value, args, receiver) as FunctionCallExpression;
+
+            return nativeCall is not null && (IsList(method.ReturnType) || method.ReturnType is IArrayTypeSymbol)
+                ? WrapNativeCollection(nativeCall, method.ReturnType, call.Location)
+                : nativeCall;
         }
 
         if (!IsTranspiledType(method.ContainingType)) {

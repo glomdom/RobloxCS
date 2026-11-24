@@ -155,6 +155,12 @@ internal static class Luau {
             return NamePrefix.FromString(symbol.Value);
         }
 
+        // A bare name (e.g. a parameter) needs no parentheses. Wrapping it is also wrong at the start of a statement:
+        // `(next)()` after a line ending in `)` is ambiguous Luau syntax and fails to parse.
+        if (expression is VarName name) {
+            return NamePrefix.FromString(name.Name);
+        }
+
         if (expression is not (VarExpression or FunctionCallExpression or ParenthesisExpression)) {
             expression = new ParenthesisExpression { Expression = expression };
         }

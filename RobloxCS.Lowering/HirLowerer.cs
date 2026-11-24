@@ -116,9 +116,10 @@ public sealed partial class HirLowerer {
         return name;
     }
 
+    // Generic arity is part of a class's identity: Box, Box<T> and Box<T1, T2> are three classes and need three Luau names.
     private static string TypeName(INamedTypeSymbol type) => type.TypeKind == TypeKind.Interface
         ? type.InterfaceTypeName()
-        : type.Name;
+        : type.Arity > 0 ? $"{type.Name}_{type.Arity}" : type.Name;
 
     private void Unsupported(string message, Location location) {
         Log.Debug("Reporting unsupported construct: {Message}", message);

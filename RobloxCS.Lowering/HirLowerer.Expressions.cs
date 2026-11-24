@@ -26,6 +26,10 @@ public sealed partial class HirLowerer {
                 return DefaultValue(value.Type);
             }
 
+            case HirNativeSpread spread: {
+                return CollectionCall("unpackNative", LowerExpression(spread.Collection));
+            }
+
             case HirTypeParameterCreation creation: {
                 return Cast(Call(Index(TypeParameterDescriptor((Microsoft.CodeAnalysis.ITypeParameterSymbol)creation.Type), "new")), Type("any"));
             }

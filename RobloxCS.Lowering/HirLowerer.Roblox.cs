@@ -53,7 +53,17 @@ public sealed partial class HirLowerer {
             }
 
             if (argument.Value is not HirCollectionLiteral collection || !IsExpandedParams(collection)) {
-                Unsupported("Roblox APIs take params values directly. Pass them as separate arguments instead of an existing collection.", argument.Location);
+                // An existing array or list passed as the params argument: spread its items into the call.
+                // The params parameter is always last, so the spread is the final argument and Luau keeps every value.
+                if (CollectionElement(argument.Value.Type) is null) {
+                    Unsupported("Roblox APIs take params values directly. Pass them as separate arguments or as an array or list.", argument.Location);
+
+                    continue;
+                }
+
+                flattened.Add(argument with {
+                    Value = new HirNativeSpread { Location = argument.Location, Type = argument.Value.Type, Collection = argument.Value },
+                });
 
                 continue;
             }

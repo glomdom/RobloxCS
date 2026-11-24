@@ -115,6 +115,17 @@ public sealed partial class HirLowerer {
         );
     }
 
+    // Roblox APIs typed as returning List<T> or T[] hand back plain Luau arrays; wrap them so the C# collection
+    // operations (foreach, Count, indexing, ...) work on them.
+    private FunctionCallExpression WrapNativeCollection(FunctionCallExpression nativeValue, ITypeSymbol type, Location location) {
+        var element = CollectionElement(type)!;
+        var accepts = Binary(Equal(Name("value"), Nil()), BinOp.Or, CollectionElementCheck(Name("value"), element, location));
+
+        return CollectionCall("fromNative", nativeValue, Bool(type is IArrayTypeSymbol), DefaultValue(element),
+            CollectionMetadata(element), Lambda([("value", Type("unknown"))], Type("boolean"), [Return(accepts)])
+        );
+    }
+
     private Expression CollectionElementCheck(Expression value, ITypeSymbol element, Location location) {
         if (element is ITypeParameterSymbol parameter) {
             return NotEqual(Call(Index(TypeParameterDescriptor(parameter), "test"), value), Nil());
