@@ -11,7 +11,8 @@ namespace RobloxCS.Lowering;
 public sealed partial class HirLowerer {
     private string _collectionsName = "__collections";
     private bool _usesCollections;
-    public bool UsesCollections => _usesCollections;
+    // whether the emitted code requires any runtime module, so the runtime folder must be installed
+    public bool UsesRuntime => _usesCollections || _usesTypes;
 
     private static bool IsList(ITypeSymbol type) =>
         type is INamedTypeSymbol { Name: "List", Arity: 1 } named && named.ContainingNamespace.ToDisplayString() == "System.Collections.Generic";
@@ -41,15 +42,20 @@ public sealed partial class HirLowerer {
     private Expression CollectionMetadata(ITypeSymbol element) {
         var assignableType = Type($"{_collectionsName}.AssignableTypes");
         var assignable = new List<Statement> { Local("types", assignableType, Table()) };
-        foreach (var key in CollectionAssignableKeys(element)) {
+        foreach (var key in IsOpen(element) ? [] : CollectionAssignableKeys(element)) {
             assignable.Add(Assign(Index(Name("types"), Str(key)), Bool(true)));
         }
 
         var metadata = Table();
-        metadata.Fields.Add(new NameKey { Key = "__arrayName", Value = Str(CollectionDisplayName(element) + "[]") });
-        metadata.Fields.Add(new NameKey { Key = "__listName", Value = Str("System.Collections.Generic.List`1[" + CollectionDisplayName(element) + "]") });
-        metadata.Fields.Add(new NameKey { Key = "__element", Value = Str(RuntimeTypeKey(element)) });
-        metadata.Fields.Add(new NameKey { Key = "__assignable", Value = Call(Lambda([], assignableType, [..assignable, Return(Name("types"))])) });
+        metadata.Fields.Add(new NameKey { Key = "__arrayName", Value = Concat(DisplayNameOf(element), Str("[]")) });
+        metadata.Fields.Add(new NameKey { Key = "__listName", Value = Concat(Str("System.Collections.Generic.List`1["), DisplayNameOf(element), Str("]")) });
+        metadata.Fields.Add(new NameKey { Key = "__element", Value = RuntimeTypeKeyOf(element) });
+        metadata.Fields.Add(new NameKey {
+            Key = "__assignable",
+            Value = IsOpen(element)
+                ? Cast(AssignableTypesOf(element), assignableType)
+                : Call(Lambda([], assignableType, [..assignable, Return(Name("types"))])),
+        });
 
         return metadata;
     }
@@ -91,7 +97,11 @@ public sealed partial class HirLowerer {
         var kind = target is IArrayTypeSymbol ? "array" : IsList(target) ? "list" : target.Name is "IList" or "ICollection" ? "mutableInterface" : "interface";
         var covariant = !IsList(target);
 
-        return CollectionCall("cast", value, Str(RuntimeTypeKey(element)), Str(kind), Bool(covariant && element.IsReferenceType));
+        Expression covariantElement = element is ITypeParameterSymbol parameter && covariant
+            ? new UnaryOperatorExpression { UnOp = UnOp.Not, Expression = Index(TypeParameterDescriptor(parameter), "valueType") }
+            : Bool(covariant && element.IsReferenceType);
+
+        return CollectionCall("cast", value, RuntimeTypeKeyOf(element), Str(kind), covariantElement);
     }
 
     private Expression NewCollection(ITypeSymbol type, Expression length, Expression capacity, bool array, Location location) {
@@ -106,6 +116,10 @@ public sealed partial class HirLowerer {
     }
 
     private Expression CollectionElementCheck(Expression value, ITypeSymbol element, Location location) {
+        if (element is ITypeParameterSymbol parameter) {
+            return NotEqual(Call(Index(TypeParameterDescriptor(parameter), "test"), value), Nil());
+        }
+
         if (element.SpecialType == SpecialType.System_String) {
             return Equal(Call("typeof", value), Str("string"));
         }
@@ -151,7 +165,7 @@ public sealed partial class HirLowerer {
         var isArray = collection.Type is IArrayTypeSymbol;
         var isReadOnly = !isArray && !IsList(collection.Type) && collection.Type.Name is not ("IList" or "ICollection");
         if ((isArray || isReadOnly) && collection.Length is null && collection.Elements.IsEmpty) {
-            return Cast(CollectionCall("empty", Str(RuntimeTypeKey(element)), Lambda([], Type("any"), [
+            return Cast(CollectionCall("empty", RuntimeTypeKeyOf(element), Lambda([], Type("any"), [
                 Return(NewCollection(collection.Type, Num(0), Num(0), true, collection.Location)),
             ])), LowerType(collection.Type, collection.Location));
         }
@@ -448,7 +462,7 @@ public sealed partial class HirLowerer {
 
         if (method.ContainingType.SpecialType == SpecialType.System_Array && method.Name == "Empty") {
             var type = (IArrayTypeSymbol)method.ReturnType;
-            result = CollectionCall("empty", Str(RuntimeTypeKey(type.ElementType)),
+            result = CollectionCall("empty", RuntimeTypeKeyOf(type.ElementType),
                 Lambda([], Type("any"), [Return(NewCollection(type, Num(0), Num(0), true, call.Location))])
             );
 

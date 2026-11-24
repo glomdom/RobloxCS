@@ -47,6 +47,7 @@ public abstract class HirVisitor {
             case HirConditional n: VisitConditional(n); break;
             case HirConversion n: VisitConversion(n); break;
             case HirDefault n: VisitDefault(n); break;
+            case HirTypeParameterCreation n: VisitTypeParameterCreation(n); break;
             case HirExpressionError n: VisitExpressionError(n); break;
             case HirFieldAccess n: VisitFieldAccess(n); break;
             case HirIncrementDecrement n: VisitIncrementDecrement(n); break;
@@ -208,6 +209,7 @@ public abstract class HirVisitor {
     }
 
     protected virtual void VisitDefault(HirDefault node) { } // leaf
+    protected virtual void VisitTypeParameterCreation(HirTypeParameterCreation node) { } // leaf
 
     protected virtual void VisitExpressionError(HirExpressionError node) { } // leaf
 

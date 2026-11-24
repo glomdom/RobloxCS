@@ -12,7 +12,7 @@ using static RobloxCS.Lowering.Luau;
 namespace RobloxCS.Lowering;
 
 public sealed partial class HirLowerer {
-    private readonly string _collectionRuntimePath;
+    private readonly string _runtimeFolder;
 
     private const string EntryPointLocal = "__entrypointCls";
 
@@ -25,8 +25,9 @@ public sealed partial class HirLowerer {
     private readonly HashSet<INamedTypeSymbol> _imports = new(SymbolEqualityComparer.Default);
     private readonly HashSet<string> _importNames = [];
 
-    public HirLowerer(ScriptType scriptType, ModuleGraph modules, DiagnosticBag diagnostics, string collectionRuntimePath = RuntimeLibrary.CollectionsRequirePath) {
-        _collectionRuntimePath = collectionRuntimePath;
+    /// <param name="runtimeFolder">Require path of the folder holding the runtime modules, without a trailing slash.</param>
+    public HirLowerer(ScriptType scriptType, ModuleGraph modules, DiagnosticBag diagnostics, string runtimeFolder = RuntimeLibrary.RequireFolder) {
+        _runtimeFolder = runtimeFolder;
         ScriptType = scriptType;
         Diagnostics = diagnostics;
         Modules = modules;
@@ -41,18 +42,12 @@ public sealed partial class HirLowerer {
             _moduleTypes.Add(type.Symbol);
         }
 
-        _collectionsName = "__collections";
-
         var identifiers = module.Types.SelectMany(type => type.Symbol.DeclaringSyntaxReferences)
             .Select(reference => reference.SyntaxTree).Distinct()
             .SelectMany(tree => tree.GetRoot().DescendantTokens()).Select(token => token.ValueText).ToHashSet();
 
-        while (identifiers.Contains(_collectionsName)) {
-            _collectionsName += "_";
-        }
-
-        _names.ReserveGlobal(_collectionsName);
-        _importNames.Add(_collectionsName);
+        _collectionsName = ReserveRuntimeName("__collections", identifiers);
+        _typesName = ReserveRuntimeName("__types", identifiers);
 
         var statements = module.Types.Where(type => type.Symbol.TypeKind == TypeKind.Class)
             .Select(type => (Statement)Local(TypeName(type.Symbol), Table())).ToList();
@@ -89,10 +84,17 @@ public sealed partial class HirLowerer {
 
         Log.Information("Lowered {SourcePath} into {StatementCount} top-level statements", module.SourcePath, statements.Count);
 
+        // descriptors only close over class tables, so they can follow the class locals
+        statements.InsertRange(module.Types.Count(type => type.Symbol.TypeKind == TypeKind.Class), _descriptorStatements);
+
         statements.InsertRange(0, LowerImports());
 
+        if (_usesTypes) {
+            statements.Insert(0, Local(_typesName, Call("require", Str($"{_runtimeFolder}/{RuntimeLibrary.TypesModule}"))));
+        }
+
         if (_usesCollections) {
-            statements.Insert(0, Local(_collectionsName, Call("require", Str(_collectionRuntimePath))));
+            statements.Insert(0, Local(_collectionsName, Call("require", Str($"{_runtimeFolder}/{RuntimeLibrary.CollectionsModule}"))));
         }
 
         return new Chunk {
@@ -101,6 +103,17 @@ public sealed partial class HirLowerer {
                 Statements = statements,
             },
         };
+    }
+
+    private string ReserveRuntimeName(string name, HashSet<string> identifiers) {
+        while (identifiers.Contains(name)) {
+            name += "_";
+        }
+
+        _names.ReserveGlobal(name);
+        _importNames.Add(name);
+
+        return name;
     }
 
     private static string TypeName(INamedTypeSymbol type) => type.TypeKind == TypeKind.Interface

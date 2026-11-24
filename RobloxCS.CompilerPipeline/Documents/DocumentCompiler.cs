@@ -33,26 +33,26 @@ public static class DocumentCompiler {
 
         var transpilerOptions = new TranspilerOptions(ScriptTypeResolver.FromFileName(document.Name), options.PrintHir) {
             Modules = options.Modules,
-            CollectionRuntimePath = plan.RuntimeAnchor is { } runtimeAnchor
-                ? $"@game/{string.Join('/', runtimeAnchor.InstancePath)}/Collections"
-                : RuntimeLibrary.CollectionsRequirePath,
+            RuntimeFolder = plan.RuntimeAnchor is { } runtimeAnchor
+                ? $"@game/{string.Join('/', runtimeAnchor.InstancePath)}"
+                : RuntimeLibrary.RequireFolder,
         };
 
-        var code = LuauEmitter.Emit(compiler, transpilerOptions, diagnostics, out var usesCollections);
+        var code = LuauEmitter.Emit(compiler, transpilerOptions, diagnostics, out var usesRuntime);
         if (!code.Ok) {
             return code.Diagnostic;
         }
 
-        if (usesCollections && plan.RuntimeAnchor is null) {
+        if (usesRuntime && plan.RuntimeAnchor is null) {
             return Diagnostic.Error(
                 DiagnosticId.NoRuntimeAnchor,
-                $"'{document.Name}' uses collections, but the Rojo project doesn't map an \"include\" folder under ReplicatedStorage. Add \"rbxcs_include\": {{ \"$path\": \"include\" }} to it."
+                $"'{document.Name}' uses the RobloxCS runtime (collections or generics), but the Rojo project doesn't map an \"include\" folder under ReplicatedStorage. Add \"rbxcs_include\": {{ \"$path\": \"include\" }} to it."
             );
         }
 
         var outPath = OutPathFor(document, plan);
 
-        return new CompiledFile(outPath, code.Value) { UsesCollections = usesCollections };
+        return new CompiledFile(outPath, code.Value) { UsesRuntime = usesRuntime };
     }
     
     public static string OutPathFor(Document document, ProjectPlan plan) {

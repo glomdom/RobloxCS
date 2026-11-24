@@ -18,13 +18,27 @@ public sealed partial class HirLowerer {
 
         _names.BeginFunction();
 
+        // descriptors lead: self, then the class's (static methods only), then the method's own
         var parameters = LowerParameters(method.Parameters);
-        if (!method.IsStatic) {
+        parameters.InsertRange(0, HiddenParameters(method.Symbol.TypeParameters));
+
+        if (method.IsStatic) {
+            parameters.InsertRange(0, HiddenParameters(ClassTypeParameters(method.Symbol.ContainingType)));
+        } else {
             parameters.Insert(0, ("self", Type(className)));
         }
 
         var returnType = LowerType(method.Symbol.ReturnType, method.Location);
-        var body = LowerBlock(method.Block);
+
+        var previous = _typeArgumentsFromSelf;
+        _typeArgumentsFromSelf = !method.IsStatic;
+
+        List<Statement> body;
+        try {
+            body = LowerBlock(method.Block);
+        } finally {
+            _typeArgumentsFromSelf = previous;
+        }
 
         Log.Verbose("Lowered {ClassName}.{MethodName} into {StatementCount} statements", className, method.Symbol.Name, body.Count);
 

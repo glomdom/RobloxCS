@@ -99,6 +99,14 @@ public sealed partial class HirBuilder {
                 return new HirDefault { Location = operation.Syntax.GetLocation(), Type = operation.Type! };
             }
 
+            case OperationKind.TypeParameterObjectCreation when operation is ITypeParameterObjectCreationOperation creation: {
+                if (creation.Initializer is not null) {
+                    throw new NotSupportedException("Object initializers on type parameters are not supported yet.");
+                }
+
+                return new HirTypeParameterCreation { Location = creation.Syntax.GetLocation(), Type = creation.Type! };
+            }
+
             case OperationKind.Literal when operation is ILiteralOperation literalOperation: {
                 return HandleLiteralOperation(literalOperation);
             }

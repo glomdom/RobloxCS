@@ -470,6 +470,10 @@ public sealed class HirPrinter : HirVisitor {
         Line($"[cyan]default[/] [grey]{Type(node.Type)}[/]");
     }
 
+    protected override void VisitTypeParameterCreation(HirTypeParameterCreation node) {
+        Line($"[cyan]new[/] [grey]{Type(node.Type)}[/]");
+    }
+
     protected override void VisitExpressionError(HirExpressionError node) {
         Line("[red]error expression[/]");
     }

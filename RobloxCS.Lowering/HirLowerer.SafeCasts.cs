@@ -27,6 +27,10 @@ public sealed partial class HirLowerer {
     }
 
     private Expression LowerSafeCastValue(Expression value, ITypeSymbol target, Location location) {
+        if (target is ITypeParameterSymbol parameter) {
+            return Cast(Call(Index(TypeParameterDescriptor(parameter), "test"), value), Type("any"));
+        }
+
         if (CollectionElement(target) is not null) {
             return Cast(LowerCollectionSafeCast(value, target), Optional(LowerType(target, location)));
         }
@@ -58,7 +62,7 @@ public sealed partial class HirLowerer {
 
                     result = CheckedValue(value, check);
                 } else if (target is INamedTypeSymbol named && IsTranspiledType(named) && named.TypeKind is TypeKind.Class or TypeKind.Interface) {
-                    result = LowerReferenceSafeCast(value, named, location);
+                    result = CheckTypeArguments(LowerReferenceSafeCast(value, named, location), named);
                 } else {
                     Unsupported($"Safe casts to '{target.ToDisplayString()}' are not supported yet.", location);
 

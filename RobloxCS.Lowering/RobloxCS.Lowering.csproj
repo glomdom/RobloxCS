@@ -21,6 +21,7 @@
 
     <ItemGroup>
         <EmbeddedResource Include="..\RuntimeLib\Collections.luau" LogicalName="RobloxCS.RuntimeLib.Collections.luau" />
+        <EmbeddedResource Include="..\RuntimeLib\Types.luau" LogicalName="RobloxCS.RuntimeLib.Types.luau" />
     </ItemGroup>
 
 </Project>

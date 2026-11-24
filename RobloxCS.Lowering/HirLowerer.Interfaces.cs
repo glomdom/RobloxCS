@@ -16,6 +16,7 @@ public sealed partial class HirLowerer {
     private TypeInfo LowerMethodType(IMethodSymbol method) => new CallbackTypeInfo {
         Arguments = [
             TypeArgument.From("self", Type("any")),
+            ..method.TypeParameters.Select(parameter => TypeArgument.From(HiddenName(parameter), Type("any"))),
             ..method.Parameters.Select(parameter => TypeArgument.From(parameter.Name, LowerType(parameter.Type, parameter.Locations.FirstOrDefault() ?? Location.None))),
         ],
         ReturnType = LowerType(method.ReturnType, method.Locations.FirstOrDefault() ?? Location.None),

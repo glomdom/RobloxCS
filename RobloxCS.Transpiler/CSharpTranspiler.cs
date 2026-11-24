@@ -47,12 +47,12 @@ public sealed class CSharpTranspiler {
             return new TranspileResult(null, diagnostics.All);
         }
 
-        var lowerer = new HirLowerer(Options.ScriptType, Options.Modules, diagnostics, Options.CollectionRuntimePath);
+        var lowerer = new HirLowerer(Options.ScriptType, Options.Modules, diagnostics, Options.RuntimeFolder);
         var chunk = lowerer.Lower(module);
         if (diagnostics.HasErrors) {
             return new TranspileResult(null, diagnostics.All);
         }
 
-        return new TranspileResult(chunk, diagnostics.All) { UsesCollections = lowerer.UsesCollections };
+        return new TranspileResult(chunk, diagnostics.All) { UsesRuntime = lowerer.UsesRuntime };
     }
 }

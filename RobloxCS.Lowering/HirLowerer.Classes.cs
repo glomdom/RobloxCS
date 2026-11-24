@@ -50,13 +50,12 @@ public sealed partial class HirLowerer {
             statements.Add(TypeDecl(name, LowerInstanceType(symbol), true));
         }
 
+        if (symbol.IsGenericType && staticFields.Count > 0) {
+            statements.AddRange(LowerGenericStatics(symbol, name, staticFields));
+            staticFields = [];
+        }
+
         foreach (var field in staticFields) {
-            if (symbol.IsGenericType) {
-                Unsupported("Static fields in generic classes are not supported yet, because every type argument would share one value.", field.Location);
-
-                continue;
-            }
-
             Log.Verbose("Assigning static field {ClassName}.{FieldName}", name, field.Symbol.Name);
 
             statements.AddRange(_names.Capture(() => _names.Emit(
@@ -96,6 +95,10 @@ public sealed partial class HirLowerer {
         var fields = new Dictionary<string, TypeInfo>(StringComparer.Ordinal);
 
         for (var current = symbol; current is { SpecialType: not SpecialType.System_Object }; current = current.BaseType) {
+            foreach (var parameter in ClassTypeParameters(current)) {
+                fields.TryAdd(TypeSlot(parameter), Type("any"));
+            }
+
             foreach (var field in current.GetMembers().OfType<IFieldSymbol>().Where(field => !field.IsStatic)) {
                 fields.TryAdd(field.SlotName(), LowerType(field.Type, field.Locations.FirstOrDefault() ?? Location.None));
             }

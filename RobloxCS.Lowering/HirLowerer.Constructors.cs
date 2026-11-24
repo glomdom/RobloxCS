@@ -30,8 +30,13 @@ public sealed partial class HirLowerer {
 
         _names.BeginFunction();
 
+        var typeParameters = ClassTypeParameters(type.Symbol).ToList();
         var parameters = constructor is null ? [] : LowerParameters(constructor.Parameters);
         var arguments = constructor is null ? new List<Expression>() : constructor.Parameters.Select(parameter => (Expression)Name(_names.NameFor(parameter.Symbol))).ToList();
+
+        parameters.InsertRange(0, HiddenParameters(typeParameters));
+        arguments.InsertRange(0, typeParameters.Select(parameter => (Expression)Name(HiddenName(parameter))));
+
         var factory = new List<Statement> {
             Local("self", Cast(new ParenthesisExpression { Expression = Cast(NewInstance(name, instanceFields.Count > 0), Type("any")) }, Type(name))),
             Stmt(Call(Index(name, "__init"), [Name("self"), .. arguments])),
@@ -39,7 +44,10 @@ public sealed partial class HirLowerer {
         };
         var factoryMethod = Function(name, "new", [.. parameters], Type(name), factory);
         parameters.Insert(0, ("self", Type("any")));
-        var body = LowerConstructorInitializers(constructor, name, instanceFields);
+
+        // slots first, so anything the initializers call on self already sees the type arguments
+        var body = typeParameters.Select(parameter => (Statement)Assign(Index("self", TypeSlot(parameter)), Name(HiddenName(parameter)))).ToList();
+        body.AddRange(LowerConstructorInitializers(constructor, name, instanceFields));
 
         if (constructor is { IsImplicit: false }) {
             _returnsSelf = true;
@@ -71,7 +79,7 @@ public sealed partial class HirLowerer {
             }
 
             if (constructor?.Initializer is { } initializer) {
-                var args = new List<Expression> { Name("self") };
+                List<Expression> args = [Name("self"), ..ClassDescriptorArguments(initializer.Method.ContainingType, initializer.Location)];
                 body.AddRange(_names.Capture(() => args.AddRange(LowerArguments(initializer.Arguments))));
                 body.Add(Stmt(Call(Index(ReferenceType(initializer.Method.ContainingType, initializer.Location), "__init"), args)));
             }

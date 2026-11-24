@@ -26,6 +26,10 @@ public sealed partial class HirLowerer {
                 return DefaultValue(value.Type);
             }
 
+            case HirTypeParameterCreation creation: {
+                return Cast(Call(Index(TypeParameterDescriptor((Microsoft.CodeAnalysis.ITypeParameterSymbol)creation.Type), "new")), Type("any"));
+            }
+
             case HirLiteral literal: {
                 return LowerLiteral(literal);
             }

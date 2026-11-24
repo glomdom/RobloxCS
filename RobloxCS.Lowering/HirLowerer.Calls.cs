@@ -64,6 +64,7 @@ public sealed partial class HirLowerer {
         }
 
         var args = LowerArguments(creation.Arguments);
+        args.InsertRange(0, ClassDescriptorArguments(type, creation.Location));
 
         Log.Verbose("Lowering object creation {ClassName}.new with {ArgumentCount} arguments", type.Name, args.Count);
 
@@ -131,8 +132,12 @@ public sealed partial class HirLowerer {
             return null;
         }
 
+        args.InsertRange(0, MethodDescriptorArguments(method, call.Location));
+
         if (method.IsStatic) {
             Log.Verbose("Lowering static call {ClassName}.{MethodName} with {ArgumentCount} arguments", method.ContainingType.Name, method.Name, args.Count);
+
+            args.InsertRange(0, ClassDescriptorArguments(method.ContainingType, call.Location));
 
             return Call(Index(ReferenceType(method.ContainingType, call.Location), method.SlotName()), args);
         }

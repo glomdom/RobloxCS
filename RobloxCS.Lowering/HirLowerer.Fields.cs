@@ -32,9 +32,12 @@ public sealed partial class HirLowerer {
         return DefaultValue(field.Symbol.Type);
     }
 
-    private static Expression DefaultValue(ITypeSymbol type) {
-        // erased type parameters have no runtime type to pick a default from
-        if (type.IsReferenceType || type is ITypeParameterSymbol || type.OriginalDefinition.SpecialType is SpecialType.System_Nullable_T) {
+    private Expression DefaultValue(ITypeSymbol type) {
+        if (type is ITypeParameterSymbol parameter) {
+            return Index(TypeParameterDescriptor(parameter), "default");
+        }
+
+        if (type.IsReferenceType || type.OriginalDefinition.SpecialType is SpecialType.System_Nullable_T) {
             return Nil();
         }
 
@@ -66,7 +69,7 @@ public sealed partial class HirLowerer {
         if (field.IsStatic) {
             Log.Verbose("Lowering static field access {ClassName}.{FieldName}", field.ContainingType.Name, field.SlotName());
 
-            return Index(ReferenceType(field.ContainingType, access.Location), field.SlotName());
+            return Index(StaticStorage(field.ContainingType, access.Location), field.SlotName());
         }
 
         var receiver = access.Receiver is null ? Name("self") : LowerExpression(access.Receiver);

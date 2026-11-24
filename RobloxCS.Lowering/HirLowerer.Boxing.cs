@@ -12,7 +12,7 @@ public sealed partial class HirLowerer {
         var type = operand.Type;
         var value = LowerExpression(operand);
 
-        // values of a type parameter are already raw, and unboxing accepts raw values
+        // values of a type parameter stay raw, and every unboxing path accepts raw values
         if (type is ITypeParameterSymbol) {
             return value;
         }
@@ -51,14 +51,16 @@ public sealed partial class HirLowerer {
         var nullable = target is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T };
         var underlying = nullable ? ((INamedTypeSymbol)target).TypeArguments[0] : target;
 
-        if (underlying is ITypeParameterSymbol) {
-            return Cast(LowerErasedUnboxing(LowerExpression(conversion.Operand)), LowerType(target, conversion.Location));
-        }
-
         return Cast(LowerBoxCast(LowerExpression(conversion.Operand), underlying, false, nullable), LowerType(target, conversion.Location));
     }
 
     private Expression LowerBoxCast(Expression value, ITypeSymbol target, bool safe, bool allowNull = false) {
+        if (target is ITypeParameterSymbol parameter) {
+            var descriptor = TypeParameterDescriptor(parameter);
+
+            return safe ? Call(Index(descriptor, "test"), value) : TypesCall("typeCast", descriptor, value, Bool(allowNull));
+        }
+
         var body = new List<Statement>();
         if (allowNull) {
             body.Add(new IfStatement { Condition = Equal(Name("value"), Nil()), Block = BlockOf([Return(Nil())]) });
@@ -84,26 +86,6 @@ public sealed partial class HirLowerer {
         return Call(Lambda([("value", Type("any")), ("target", Type("string"))], Type("any"), body), value, Str(RuntimeTypeKey(target)));
 
         ReturnStatement Failure() => Return(safe ? Nil() : Call("error", Str("Invalid unboxing cast")));
-    }
-
-    // the target type is erased, so a box is unwrapped and anything else passes through unchecked
-    private static Expression LowerErasedUnboxing(Expression value) {
-        var body = new List<Statement> {
-            new IfStatement { Condition = NotEqual(Call("typeof", Name("value")), Str("table")), Block = BlockOf([Return(Name("value"))]) },
-            Local("class", Type("any"), Call("getmetatable", Name("value"))),
-            new IfStatement { Condition = NotEqual(Call("typeof", Name("class")), Str("table")), Block = BlockOf([Return(Name("value"))]) },
-            Local("metadata", Type("any"), Call("getmetatable", Name("class"))),
-            new IfStatement {
-                Condition = Binary(
-                    Equal(Call("typeof", Name("metadata")), Str("table")), BinOp.And,
-                    NotEqual(Call("rawget", Name("metadata"), Str("__boxedType")), Nil())
-                ),
-                Block = BlockOf([Return(Call("rawget", Name("value"), Str("__value")))]),
-            },
-            Return(Name("value")),
-        };
-
-        return Call(Lambda([("value", Type("any"))], Type("any"), body), value);
     }
 
     private Expression? RawValueCheck(ITypeSymbol target) {
