@@ -1,4 +1,4 @@
---!strict
+﻿--!strict
 
 export type Kind = "array" | "list" | "readonly"
 export type CastKind = Kind | "interface" | "mutableInterface"
@@ -135,6 +135,37 @@ function Collections.new<T>(array: boolean, length: number, default: T?, capacit
   end
 
   return setmetatable(sequence, setmetatable({}, runtimeMetadata))
+end
+
+function Collections.fromNative<T>(items: { T }?, array: boolean, default: T?, metadata: Descriptor, accept: (value: unknown) -> boolean): Sequence<T>
+  local source: { T } = if items == nil then {} else items
+  local count = #source
+  local sequence = Collections.new(false, 0, default, count, metadata, accept)
+  sequence.items = source
+  sequence.count = count
+
+  if array then
+    Collections.seal(sequence, "array")
+  end
+
+  return sequence
+end
+
+function Collections.unpackNative<T>(sequence: Sequence<T>): ...any
+  local count = sequence.count
+  local values = table.create(count)
+
+  for i = 1, count do
+    local value: unknown = sequence.items[i]
+    local metadata = runtimeMetadata(value)
+    if metadata ~= nil and rawget(metadata, "__boxedType") ~= nil then
+      value = rawget(value :: any, "__value")
+    end
+
+    values[i] = value
+  end
+
+  return table.unpack(values, 1, count)
 end
 
 function Collections.seal<T>(sequence: Sequence<T>, kind: Kind): ()
