@@ -26,6 +26,7 @@ public sealed partial class HirBuilder {
             OperationKind.CompoundAssignment => HandleCompoundAssignment((ICompoundAssignmentOperation)operation),
             OperationKind.DeconstructionAssignment => HandleDeconstruction((IDeconstructionAssignmentOperation)operation),
             OperationKind.Switch => BuildSwitch((ISwitchOperation)operation),
+            OperationKind.Throw => HandleThrow((IThrowOperation)operation),
 
             _ => throw new NotSupportedException($"Statement operation of kind '{operation.Kind}' is not supported."),
         };
@@ -49,6 +50,24 @@ public sealed partial class HirBuilder {
                 Location = conditionalAccessOperation.Syntax.GetLocation(),
                 Receiver = BuildExpression(conditionalAccessOperation.Operation),
                 Body = BuildStatement(conditionalAccessOperation.WhenNotNull),
+            };
+        }
+
+        HirStatement HandleThrow(IThrowOperation throwOperation) {
+            var thrown = throwOperation.Exception is IConversionOperation { IsImplicit: true } conversion
+                ? conversion.Operand
+                : throwOperation.Exception;
+
+            if (thrown is not IObjectCreationOperation creation) {
+                throw new NotSupportedException("Only 'throw new SomeException(...)' is supported; rethrowing and throwing existing exceptions are not supported yet.");
+            }
+
+            var message = creation.Arguments.FirstOrDefault(argument => argument.Parameter?.Name == "message");
+
+            return new HirThrow {
+                Location = throwOperation.Syntax.GetLocation(),
+                Message = message is not null ? BuildExpression(message.Value) : null,
+                ExceptionType = creation.Type!,
             };
         }
 

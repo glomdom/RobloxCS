@@ -32,6 +32,7 @@ public abstract class HirVisitor {
             case HirLocalDeclaration n: VisitLocalDeclaration(n); break;
             case HirReturn n: VisitReturn(n); break;
             case HirSwitch n: VisitSwitch(n); break;
+            case HirThrow n: VisitThrow(n); break;
             case HirWhile n: VisitWhile(n); break;
 
             default: throw new InvalidOperationException($"Unhandled statement '{node.GetType().Name}'");
@@ -169,6 +170,10 @@ public abstract class HirVisitor {
 
     protected virtual void VisitReturn(HirReturn node) {
         if (node.Value is not null) VisitExpression(node.Value);
+    }
+
+    protected virtual void VisitThrow(HirThrow node) {
+        if (node.Message is not null) VisitExpression(node.Message);
     }
 
     protected virtual void VisitWhile(HirWhile node) {
