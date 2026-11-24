@@ -5,6 +5,13 @@ using Spectre.Console;
 namespace RobloxCS.CLI.Reporting;
 
 internal static class DotnetRestore {
+    // after packages change, so IDEs see the new project references without a manual reload
+    public static Task<bool> RunForProjectAsync(IAnsiConsole console, string root, CancellationToken cancellation) {
+        var solution = RobloxCS.Packages.SolutionPackages.FindSolutions(root).FirstOrDefault();
+
+        return solution is null ? Task.FromResult(true) : RunAsync(console, solution, cancellation);
+    }
+
     public static Task<bool> RunAsync(IAnsiConsole console, string solution, CancellationToken cancellation) {
         var terminal = new TerminalOutput(console);
 

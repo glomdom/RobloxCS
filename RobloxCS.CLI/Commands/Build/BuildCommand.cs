@@ -54,9 +54,10 @@ public sealed class BuildCommand : AsyncCommand<BuildSettings> {
             } else if (PropsAreStale(root)) {
                 reporter.Status("Updating project references");
 
-                var packages = Lockfile.Load(root).Packages.Select(package => Path.GetFullPath(Path.Combine(root, package.Project)));
+                var packages = Lockfile.Load(root).Packages.Select(package => Path.GetFullPath(Path.Combine(root, package.Project))).ToList();
 
                 Props.Write(root, manifest.RobloxCSVersion, packages);
+                SolutionPackages.Sync(root, packages);
                 PackageInstaller.InvalidateRestore(root);
             }
         } catch (PackageException ex) {

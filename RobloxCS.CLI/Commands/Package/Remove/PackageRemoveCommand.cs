@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using JetBrains.Annotations;
+using RobloxCS.CLI.Reporting;
 using RobloxCS.Common;
 using RobloxCS.Packages;
 using Spectre.Console;
@@ -43,7 +44,7 @@ public sealed class PackageRemoveCommand : AsyncCommand<PackageRemoveSettings> {
                 output.Write("removed", "grey", $"{pruned - 1} transitive {(pruned == 2 ? "dependency" : "dependencies")} no longer needed");
             }
 
-            return 0;
+            return await DotnetRestore.RunForProjectAsync(_console, root, cancellationToken) ? 0 : -1;
         } catch (Exception ex) when (ex is ManifestException or PackageException) {
             output.Write("error", "red", Markup.Escape(ex.Message));
 

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using JetBrains.Annotations;
+using RobloxCS.CLI.Reporting;
 using RobloxCS.Common;
 using RobloxCS.Packages;
 using Spectre.Console;
@@ -31,7 +32,7 @@ public sealed class PackageRestoreCommand : AsyncCommand<PackageSettings> {
 
             output.Write("success", "green", $"Restored {packages.Count} {(packages.Count == 1 ? "package" : "packages")}");
 
-            return 0;
+            return await DotnetRestore.RunForProjectAsync(_console, root, cancellationToken) ? 0 : -1;
         } catch (Exception ex) when (ex is ManifestException or PackageException) {
             output.Write("error", "red", Markup.Escape(ex.Message));
 

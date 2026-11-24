@@ -14,6 +14,7 @@ public static class PackageInstaller {
             Props.Write(PackageStore.DirectoryFor(root, package.Name), robloxCSVersion, dependencyProjects);
         }
 
+        SolutionPackages.Sync(root, projects.Values);
         InvalidateRestore(root);
 
         return PackageStore.Prune(root, packages);
