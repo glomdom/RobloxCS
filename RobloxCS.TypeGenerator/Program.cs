@@ -16,7 +16,11 @@ internal static class Program {
     private const string FunctionBody = "ThrowHelper.ThrowTranspiledMethod();"; // im lazy
 
     // format is RawClassName::PatchedFunction
-    private static readonly List<string> PatchedNames = ["Players::GetPlayers"];
+    private static readonly List<string> PatchedNames = [
+        "Players::GetPlayers",
+        // Signal-suffixed
+        "AnimationTrack::GetMarkerReachedSignal", "ContentProvider::GetAssetFetchStatusChangedSignal"
+    ];
     private static readonly List<string> EnumNames = [];
     private static CreatorDocs _docs = CreatorDocs.Empty;
 
