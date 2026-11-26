@@ -8,7 +8,6 @@ public partial class ContentProvider : Instance  {
     public string BaseUrl { get; set; } = default!;
     public int RequestQueueSize { get; set; } = default!;
     public Enums.AssetFetchStatus GetAssetFetchStatus(string contentId) => ThrowHelper.ThrowTranspiledMethod();
-    public RBXScriptSignal GetAssetFetchStatusChangedSignal(string contentId) => ThrowHelper.ThrowTranspiledMethod();
     public List<object> ListEncryptedAssets() => ThrowHelper.ThrowTranspiledMethod();
     public void RegisterDefaultEncryptionKey(string encryptionKey) => ThrowHelper.ThrowTranspiledMethod();
     public void RegisterDefaultSessionKey(string sessionKey) => ThrowHelper.ThrowTranspiledMethod();

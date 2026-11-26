@@ -16,7 +16,6 @@ public partial class AnimationTrack : Instance  {
     public float WeightTarget { get; set; } = default!;
     public void AdjustSpeed(float speed = default!) => ThrowHelper.ThrowTranspiledMethod();
     public void AdjustWeight(float weight = default!, float fadeTime = default!) => ThrowHelper.ThrowTranspiledMethod();
-    public RBXScriptSignal GetMarkerReachedSignal(string name) => ThrowHelper.ThrowTranspiledMethod();
     public object GetParameter(string key) => ThrowHelper.ThrowTranspiledMethod();
     public Dictionary<string, object> GetParameterDefaults() => ThrowHelper.ThrowTranspiledMethod();
     public Instance GetTargetInstance(string name) => ThrowHelper.ThrowTranspiledMethod();
